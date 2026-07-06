@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // @ts-ignore
+  allowedHosts: ["ngrok-free.app", "localhost"]
 };
 
 export default nextConfig;
