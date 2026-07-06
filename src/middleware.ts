@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 // زبان‌هایی که سایت Safi Academy پشتیبانی می‌کند
-const locales = ['en', 'fa'];
+// زبان‌هایی که سایت Safi Academy پشتیبانی می‌کند
+const locales = ['en', 'fa', 'ps', 'ur', 'de', 'fr'];
 const defaultLocale = 'en';
 
 export function middleware(request: NextRequest) {
