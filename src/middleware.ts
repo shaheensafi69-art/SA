@@ -5,20 +5,6 @@ import type { NextRequest } from 'next/server';
 const locales = ['en', 'fa'];
 const defaultLocale = 'en';
 
-// تابع هوشمند برای خواندن زبان مرورگر/کشور کاربر
-function getPreferredLocale(request: NextRequest): string {
-  // خواندن هدر زبان از درخواست کاربر
-  const acceptLanguage = request.headers.get('accept-language') || '';
-  
-  // اگر مرورگر کاربر تنظیمات فارسی یا ایران/افغانستان داشته باشد
-  if (acceptLanguage.includes('fa') || acceptLanguage.includes('fa-IR') || acceptLanguage.includes('fa-AF')) {
-    return 'fa';
-  }
-  
-  // در غیر این صورت، زبان پیش‌فرض (انگلیسی) انتخاب می‌شود
-  return defaultLocale;
-}
-
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -33,11 +19,8 @@ export function middleware(request: NextRequest) {
   }
 
   // ۲. اگر کاربر آدرس اصلی سایت (بدون زبان) را وارد کرده بود:
-  // زبان او را تشخیص می‌دهیم
-  const locale = getPreferredLocale(request);
-  
-  // او را به آدرس جدید (همراه با زبان) منتقل (Redirect) می‌کنیم
-  request.nextUrl.pathname = `/${locale}${pathname === '/' ? '' : pathname}`;
+  // بدون توجه به زبان مرورگر یا سیستم‌عامل کاربر، او را مستقیماً به انگلیسی (en) می‌فرستیم
+  request.nextUrl.pathname = `/${defaultLocale}${pathname === '/' ? '' : pathname}`;
   
   return NextResponse.redirect(request.nextUrl);
 }
@@ -46,6 +29,6 @@ export function middleware(request: NextRequest) {
 // (ما نمی‌خواهیم فایل‌های عکس، فونت یا کدهای سیستمی ریدایرکت شوند)
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)',
+    '/((?!api|_next/static|_next/image|manifest.json|icon.png|favicon.ico|.*\\..*).*)',
   ],
 };

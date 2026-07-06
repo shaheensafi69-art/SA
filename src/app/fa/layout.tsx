@@ -1,17 +1,17 @@
 import "../globals.css";
 
 export const metadata = {
-  title: "صافی آکادمی",
-  description: "بهترین پلتفرم یادگیری آنلاین.",
+  title: "Safi Academy",
+  description: "The best place to learn.",
 };
 
-export default function PersianLayout({
+export default function EnglishLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fa" dir="rtl">
+    <html lang="en" dir="ltr">
       <body className="bg-neutral-950 text-white">
         {children}
       </body>
