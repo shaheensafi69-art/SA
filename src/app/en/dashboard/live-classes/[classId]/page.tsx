@@ -29,9 +29,10 @@ export default function ClassHubPage() {
   const [newMessage, setNewMessage] = useState("");
   const [isClassLive, setIsClassLive] = useState(false);
   const [className, setClassName] = useState("Loading Classroom...");
-  
-  // سیستم تب‌ها: 'group' (واتساپ) | 'live' (استودیو) | 'recordings' (ضبط شده‌ها)
   const [activeTab, setActiveTab] = useState<"group" | "live" | "recordings">("group");
+  
+  // استیت‌های جدید برای مدیریت وضعیت ویدیو در موبایل
+  const [videoMode, setVideoMode] = useState<"normal" | "fullscreen" | "minimized">("normal");
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
@@ -53,7 +54,6 @@ export default function ClassHubPage() {
     const { data: profile } = await supabase.from("profiles").select("id, role, first_name").eq("id", session.user.id).single();
     setCurrentUser(profile);
 
-    // بررسی ثبت‌نام شاگرد (جلوگیری از ورود افراد متفرقه)
     if (profile?.role === "student") {
       const { data: enrollment } = await supabase.from("class_students").select("id").eq("class_group_id", classId).eq("student_id", profile.id).single();
       if (!enrollment) {
@@ -66,7 +66,6 @@ export default function ClassHubPage() {
     if (classData) {
       setClassName(classData.class_name);
       setIsClassLive(classData.is_active);
-      // اگر کلاس لایو بود، خودکار تب را روی لایو می‌بریم
       if (classData.is_active) setActiveTab("live");
     }
 
@@ -80,8 +79,9 @@ export default function ClassHubPage() {
   };
 
   const setupRealtimeChat = () => {
+    // ۱. شنودگر برای چت‌های جدید
     supabase
-      .channel(`room_${classId}`)
+      .channel(`chat_room_${classId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'class_messages', filter: `class_group_id=eq.${classId}` }, 
         async (payload) => {
           const { data: senderInfo } = await supabase.from("profiles").select("first_name, last_name, avatar_url, role").eq("id", payload.new.sender_id).single();
@@ -92,17 +92,36 @@ export default function ClassHubPage() {
           if (payload.new.message_text.includes("⏹ LIVE_ENDED")) setIsClassLive(false);
       })
       .subscribe();
+
+    // ۲. شنودگر زنده تغییرات کلاس (اتصال آنی ویدیو بدون رفرش)
+    supabase
+      .channel(`video_status_${classId}`)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'class_groups', filter: `id=eq.${classId}` },
+        (payload) => {
+          setIsClassLive(payload.new.is_active);
+          if (payload.new.is_active) {
+            setIsClassLive(true);
+            setActiveTab("live");
+          } else {
+            setIsClassLive(false);
+          }
+        }
+      )
+      .subscribe();
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || !currentUser) return;
+    const currentText = newMessage.trim();
+    setNewMessage(""); 
+
     const { error } = await supabase.from("class_messages").insert({
       class_group_id: classId,
       sender_id: currentUser.id,
-      message_text: newMessage.trim(),
+      message_text: currentText,
     });
-    if (!error) setNewMessage("");
+    if (error) console.error(error);
   };
 
   const toggleLiveStatus = async () => {
@@ -119,8 +138,138 @@ export default function ClassHubPage() {
     });
   };
 
-  // کامپوننت مشترک چت (استفاده در هر دو تب)
-  const ChatInterface = ({ isSidebar = false }) => (
+  return (
+    <div className="min-h-[calc(100vh-6rem)] bg-[#020202] text-white font-sans flex flex-col p-4 sm:p-6 relative">
+      
+      {/* ================= HEADER & TABS ================= */}
+      <header className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+        <div>
+          <h1 className="text-2xl font-black tracking-tight text-white mb-1">{className}</h1>
+          <p className="text-xs text-neutral-500 font-mono">Class ID: {classId}</p>
+        </div>
+
+        <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 w-full md:w-auto">
+          <button onClick={() => setActiveTab("group")} className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg text-xs font-bold transition-all ${activeTab === "group" ? "bg-white/10 text-white shadow-md" : "text-neutral-400 hover:text-white hover:bg-white/5"}`}>
+            💬 Group Chat
+          </button>
+          <button onClick={() => setActiveTab("live")} className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all ${activeTab === "live" ? "bg-white/10 text-white shadow-md" : "text-neutral-400 hover:text-white hover:bg-white/5"}`}>
+            {isClassLive && <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>}
+            🔴 Live Studio
+          </button>
+          <button onClick={() => setActiveTab("recordings")} className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg text-xs font-bold transition-all ${activeTab === "recordings" ? "bg-white/10 text-white shadow-md" : "text-neutral-400 hover:text-white hover:bg-white/5"}`}>
+            📼 Recordings
+          </button>
+        </div>
+      </header>
+
+      {/* ================= MAIN CONTENT AREA ================= */}
+      <div className="flex-1 w-full h-[calc(100vh-14rem)] relative">
+        
+        {/* حالت اول: گروه مستقل */}
+        {activeTab === "group" && (
+          <div className="max-w-4xl mx-auto h-full animate-[fadeIn_0.3s_ease-out]">
+            <ChatInterface 
+              isSidebar={false} 
+              messages={messages} 
+              currentUser={currentUser} 
+              newMessage={newMessage} 
+              setNewMessage={setNewMessage} 
+              handleSendMessage={handleSendMessage} 
+              messagesEndRef={messagesEndRef}
+            />
+          </div>
+        )}
+
+        {/* حالت دوم: استودیو لایو */}
+        {activeTab === "live" && (
+          <div className="w-full h-full flex flex-col lg:flex-row bg-[#080808] rounded-3xl border border-white/5 shadow-2xl overflow-hidden animate-[fadeIn_0.3s_ease-out] relative">
+            
+            {/* باکس رندر ویدیو پلیر */}
+            <div className={`flex-1 relative flex items-center justify-center bg-black transition-all duration-300 ${
+              videoMode === "fullscreen" ? "fixed inset-0 z-[9999] w-screen h-screen rounded-none" : 
+              videoMode === "minimized" ? "fixed bottom-24 right-6 w-48 h-32 z-[50] rounded-2xl border border-white/20 shadow-2xl overflow-hidden" : "w-full h-full"
+            }`}>
+              {!isClassLive ? (
+                <div className="text-center p-8">
+                  <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">☕</div>
+                  <h3 className="text-xl font-bold text-white mb-2">Instructor is offline</h3>
+                  <p className="text-neutral-400 text-sm max-w-sm mx-auto">The live broadcast has not started yet.</p>
+                  
+                  {currentUser && (currentUser.role === "teacher" || currentUser.role === "super_admin") && (
+                    <button onClick={toggleLiveStatus} className="mt-8 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold text-sm py-3 px-8 rounded-xl">
+                      🔴 Go Live Now
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="w-full h-full relative group">
+                  <StudentVideoPlayer channelName={classId} />
+                  
+                  {/* دکمه‌های کنترل فول‌اسکرین و مینی‌مایز برای گوشی و دسکتاپ */}
+                  <div className="absolute bottom-4 right-4 z-50 flex gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 p-2 rounded-xl backdrop-blur-md border border-white/10">
+                    <button 
+                      onClick={() => setVideoMode(videoMode === "fullscreen" ? "normal" : "fullscreen")}
+                      className="p-2 hover:bg-white/10 rounded-lg text-xs font-bold"
+                      title="Toggle Fullscreen"
+                    >
+                      {videoMode === "fullscreen" ? "🔳 Exit Fullscreen" : "📺 Fullscreen"}
+                    </button>
+                    <button 
+                      onClick={() => setVideoMode(videoMode === "minimized" ? "normal" : "minimized")}
+                      className="p-2 hover:bg-white/10 rounded-lg text-xs font-bold hidden sm:block"
+                    >
+                      {videoMode === "minimized" ? "🔼 Maximize" : "🔽 Minimize"}
+                    </button>
+                    {videoMode !== "normal" && (
+                      <button onClick={() => setVideoMode("normal")} className="p-2 bg-red-600 rounded-lg text-xs font-bold">✕</button>
+                    )}
+                  </div>
+
+                  {currentUser && (currentUser.role === "teacher" || currentUser.role === "super_admin") && (
+                    <div className="absolute top-4 right-4 z-50">
+                      <button onClick={toggleLiveStatus} className="bg-red-600/90 text-white font-bold text-xs py-2 px-4 rounded-lg">
+                        End Stream
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            {/* سایدبار چت در حالت لایو */}
+            <div className={`w-full lg:w-[350px] xl:w-[400px] transition-all ${videoMode === "fullscreen" ? "hidden" : "h-[350px] lg:h-full"}`}>
+              <ChatInterface 
+                isSidebar={true} 
+                messages={messages} 
+                currentUser={currentUser} 
+                newMessage={newMessage} 
+                setNewMessage={setNewMessage} 
+                handleSendMessage={handleSendMessage} 
+                messagesEndRef={messagesEndRef}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* حالت سوم: رکوردهای ضبط شده */}
+        {activeTab === "recordings" && (
+          <div className="w-full h-full bg-[#0a0a0a] rounded-3xl border border-white/5 p-8 flex flex-col items-center justify-center animate-[fadeIn_0.3s_ease-out]">
+            <span className="text-5xl mb-4 opacity-50">📼</span>
+            <h3 className="text-xl font-bold text-white mb-2">No recordings yet</h3>
+            <p className="text-neutral-500 text-sm">Past live sessions will automatically appear here once processed.</p>
+          </div>
+        )}
+        
+      </div>
+    </div>
+  );
+}
+
+// =====================================================================
+// کامپوننت چت که کاملاً به بیرون منتقل شده تا فوکوس کیبورد گوشی قطع نشود
+// =====================================================================
+function ChatInterface({ isSidebar, messages, currentUser, newMessage, setNewMessage, handleSendMessage, messagesEndRef }: any) {
+  return (
     <div className={`flex flex-col h-full ${isSidebar ? 'bg-[#080808] border-l border-white/5' : 'bg-[#0a0a0a] rounded-3xl border border-white/5 shadow-2xl overflow-hidden'}`}>
       {!isSidebar && (
         <div className="p-5 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
@@ -134,9 +283,8 @@ export default function ClassHubPage() {
         </div>
       )}
       
-      {/* پیام‌ها */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 custom-scrollbar">
-        {messages.map((msg) => {
+        {messages.map((msg: any) => {
           const isMe = msg.sender_id === currentUser?.id;
           const isSystem = msg.message_text.includes("LIVE_STARTED") || msg.message_text.includes("LIVE_ENDED");
           const isStaff = msg.profiles?.role === "teacher" || msg.profiles?.role === "super_admin";
@@ -163,7 +311,6 @@ export default function ClassHubPage() {
                 <div className={`p-3.5 text-sm rounded-2xl inline-block leading-relaxed shadow-sm ${isMe ? "bg-indigo-600 text-white rounded-tr-none" : "bg-white/5 text-neutral-200 rounded-tl-none border border-white/5"}`}>
                   {msg.message_text}
                 </div>
-                <p className="text-[9px] text-neutral-600 mt-1">{new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
               </div>
             </div>
           );
@@ -171,11 +318,12 @@ export default function ClassHubPage() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* ورودی متن */}
       <div className="p-4 bg-black/40 border-t border-white/5 backdrop-blur-xl">
         <form onSubmit={handleSendMessage} className="relative flex items-center">
           <input 
-            type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
+            type="text" 
+            value={newMessage} 
+            onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type your message..." 
             className="w-full bg-white/5 border border-white/10 rounded-xl pl-4 pr-12 py-3.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all shadow-inner"
           />
@@ -183,92 +331,6 @@ export default function ClassHubPage() {
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
           </button>
         </form>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="min-h-[calc(100vh-6rem)] bg-[#020202] text-white font-sans flex flex-col p-4 sm:p-6 animate-[fadeIn_0.3s_ease-out]">
-      
-      {/* ================= HEADER & TABS ================= */}
-      <header className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-black tracking-tight text-white mb-1">{className}</h1>
-          <p className="text-xs text-neutral-500 font-mono">Class ID: {classId}</p>
-        </div>
-
-        <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 w-full md:w-auto">
-          <button onClick={() => setActiveTab("group")} className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg text-xs font-bold transition-all ${activeTab === "group" ? "bg-white/10 text-white shadow-md" : "text-neutral-400 hover:text-white hover:bg-white/5"}`}>
-            💬 Group Chat
-          </button>
-          <button onClick={() => setActiveTab("live")} className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all ${activeTab === "live" ? "bg-white/10 text-white shadow-md" : "text-neutral-400 hover:text-white hover:bg-white/5"}`}>
-            {isClassLive && <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>}
-            🔴 Live Studio
-          </button>
-          <button onClick={() => setActiveTab("recordings")} className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg text-xs font-bold transition-all ${activeTab === "recordings" ? "bg-white/10 text-white shadow-md" : "text-neutral-400 hover:text-white hover:bg-white/5"}`}>
-            📼 Recordings
-          </button>
-        </div>
-      </header>
-
-      {/* ================= MAIN CONTENT AREA ================= */}
-      <div className="flex-1 w-full h-[calc(100vh-14rem)]">
-        
-        {/* حالت اول: گروه واتساپی مستقل */}
-        {activeTab === "group" && (
-          <div className="max-w-4xl mx-auto h-full animate-[fadeIn_0.3s_ease-out]">
-            <ChatInterface />
-          </div>
-        )}
-
-        {/* حالت دوم: استودیو لایو (ویدیو + سایدبار چت) */}
-        {activeTab === "live" && (
-          <div className="w-full h-full flex flex-col lg:flex-row bg-[#080808] rounded-3xl border border-white/5 shadow-2xl overflow-hidden animate-[fadeIn_0.3s_ease-out]">
-            
-            <div className="flex-1 relative flex items-center justify-center bg-black">
-              {!isClassLive ? (
-                <div className="text-center p-8">
-                  <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">☕</div>
-                  <h3 className="text-xl font-bold text-white mb-2">Instructor is offline</h3>
-                  <p className="text-neutral-400 text-sm max-w-sm mx-auto">The live broadcast has not started yet. You can chat with your classmates in the meantime.</p>
-                  
-                  {currentUser && (currentUser.role === "teacher" || currentUser.role === "super_admin") && (
-                    <button onClick={toggleLiveStatus} className="mt-8 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-sm py-3 px-8 rounded-xl shadow-[0_10px_30px_rgba(220,38,38,0.3)] transition-all hover:scale-105">
-                      🔴 Go Live Now
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <div className="w-full h-full relative group">
-                  <StudentVideoPlayer channelName={classId} />
-                  
-                  {currentUser && (currentUser.role === "teacher" || currentUser.role === "super_admin") && (
-                    <div className="absolute top-4 right-4 z-50">
-                      <button onClick={toggleLiveStatus} className="bg-red-600/90 hover:bg-red-500 backdrop-blur-md text-white font-bold text-xs py-2 px-4 rounded-lg shadow-lg border border-red-400/30 transition-all">
-                        End Stream
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-            
-            {/* سایدبار چت در حالت لایو (همان پیام‌های گروه) */}
-            <div className="w-full lg:w-[350px] xl:w-[400px] h-[350px] lg:h-full">
-              <ChatInterface isSidebar={true} />
-            </div>
-          </div>
-        )}
-
-        {/* حالت سوم: رکوردهای ضبط شده */}
-        {activeTab === "recordings" && (
-          <div className="w-full h-full bg-[#0a0a0a] rounded-3xl border border-white/5 p-8 flex flex-col items-center justify-center animate-[fadeIn_0.3s_ease-out]">
-            <span className="text-5xl mb-4 opacity-50">📼</span>
-            <h3 className="text-xl font-bold text-white mb-2">No recordings yet</h3>
-            <p className="text-neutral-500 text-sm">Past live sessions will automatically appear here once processed.</p>
-          </div>
-        )}
-        
       </div>
     </div>
   );

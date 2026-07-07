@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import AgoraRTC, {
   AgoraRTCProvider,
   useRTCClient,
@@ -8,9 +8,8 @@ import AgoraRTC, {
   useRemoteUsers,
 } from "agora-rtc-react";
 
-// اطلاعات اپلیکیشن آگورای شما
-// در حالت واقعی، App ID باید در فایل env. ذخیره شود
-const appId = "YOUR_AGORA_APP_ID"; // <--- اپلیکیشن آیدی آگورای خود را اینجا بگذارید
+// ⚠️ دقیقاً همان App ID که در فایل استاد گذاشتید را اینجا قرار دهید
+const appId = "YOUR_AGORA_APP_ID"; 
 
 export default function StudentVideoPlayer({ channelName }: { channelName: string }) {
   // تنظیم کلاینت آگورا در حالت لایو (live) و نقش تماشاچی (audience)
@@ -30,79 +29,131 @@ function LiveStreamContent({ channelName }: { channelName: string }) {
   useJoin({
     appid: appId,
     channel: channelName,
-    token: null, // اگر پروژه در حالت تست است، null بگذارید. در تولید باید توکن بدهید.
+    token: null, // در حالت تولید باید توکن امنیتی ست شود
   }, isJoined);
 
   useEffect(() => {
-    // به محض لود شدن کامپوننت، دانشجو به کانال وصل می‌شود
     setIsJoined(true);
     return () => setIsJoined(false);
   }, []);
 
-  // دریافت لیست تمام افرادی که در حال پخش ویدیو هستند (استاد)
+  // دریافت لیست تمام افرادی که در حال پخش ویدیو/صدا هستند
   const remoteUsers = useRemoteUsers();
   
-  // چون معمولاً فقط یک استاد داریم، اولین نفر را به عنوان استاد در نظر می‌گیریم
+  // پیدا کردن استاد (اولین نفری که دیتا می‌فرستد)
   const teacher = remoteUsers.find(user => user.hasVideo || user.hasAudio);
 
   if (!isJoined) {
-    return <div className="text-neutral-500 animate-pulse">Connecting to secure stream...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center text-center w-full h-full bg-black">
+        <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_15px_rgba(99,102,241,0.5)]"></div>
+        <p className="text-white font-bold tracking-widest uppercase text-sm">Connecting to secure server...</p>
+      </div>
+    );
   }
 
   if (!teacher) {
     return (
-      <div className="flex flex-col items-center justify-center text-center">
-         <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4 text-2xl">📡</div>
-         <p className="text-white font-bold">Waiting for instructor...</p>
-         <p className="text-neutral-500 text-xs mt-2">The video will appear here automatically.</p>
+      <div className="flex flex-col items-center justify-center text-center w-full h-full bg-gradient-to-br from-neutral-900 to-black relative overflow-hidden">
+         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+         <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mb-6 text-3xl shadow-inner relative z-10 animate-pulse">📡</div>
+         <h3 className="text-xl font-bold text-white mb-2 relative z-10">Waiting for Instructor</h3>
+         <p className="text-neutral-500 text-sm max-w-xs relative z-10">The live broadcast will appear here automatically once the instructor starts the stream.</p>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full h-full bg-black rounded-3xl overflow-hidden">
-      {/* رندر کردن ویدیوی استاد */}
-      {teacher.hasVideo ? (
-        <VideoPlayer track={teacher.videoTrack} className="w-full h-full object-cover" />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center bg-neutral-900">
-           <span className="text-neutral-500">Instructor's camera is off</span>
+    <div className="relative w-full h-full bg-black rounded-[inherit] overflow-hidden group">
+      
+      {/* کامپوننت هوشمند برای پخش همزمان صدا و تصویر */}
+      <AgoraRemotePlayer user={teacher} />
+
+      {/* ================= Overlays (اطلاعات روی ویدیو) ================= */}
+      
+      {/* 1. نشانگر زنده بودن */}
+      <div className="absolute top-4 left-4 bg-red-600/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-lg z-20">
+         <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+         <span className="text-white text-xs font-black tracking-widest uppercase">Live</span>
+      </div>
+
+      {/* 2. وضعیت میکروفون استاد */}
+      {!teacher.hasAudio && (
+        <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-lg z-20 animate-[fadeIn_0.3s_ease-out]">
+           <span className="text-red-400 text-xs">🔇</span>
+           <span className="text-neutral-300 text-[10px] font-bold uppercase tracking-widest">Instructor Muted</span>
         </div>
       )}
 
-      {/* افکت‌های ظاهری و اطلاعات روی ویدیو */}
-      <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-lg flex items-center gap-2">
-         <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-         <span className="text-white text-xs font-bold">LIVE</span>
+      {/* 3. واترمارک امنیتی آکادمی */}
+      <div className="absolute bottom-4 left-4 bg-black/40 backdrop-blur-md border border-white/5 px-3 py-1.5 rounded-lg flex items-center gap-2 z-20 opacity-50 group-hover:opacity-100 transition-opacity">
+        <img src="/logo-without-b.png" alt="Safi Academy" className="w-4 h-4 object-contain opacity-70" />
+        <span className="text-white/70 text-[9px] font-bold uppercase tracking-[0.2em]">Safi Academy Secure Stream</span>
       </div>
+
     </div>
   );
 }
 
-// Simple video player that attaches an Agora video track to a DOM element
-function VideoPlayer({ track, className }: { track: any; className?: string }) {
-  const ref = (node: HTMLDivElement | null) => {
-    // store ref on the element itself for Agora's play
-    if (node && track) {
-      // play will attach a video element inside the node
-      try {
-        track.play(node);
-      } catch (e) {
-        // ignore
-      }
-    }
-  };
+// =====================================================================
+// کامپوننت اختصاصی و امن برای اتصال ترک‌های صدا و تصویر آگورا به DOM
+// =====================================================================
+function AgoraRemotePlayer({ user }: { user: any }) {
+  const videoRef = useRef<HTMLDivElement>(null);
 
-  // cleanup when track changes/unmounts
+  // مدیریت تصویر
   useEffect(() => {
+    if (user.videoTrack && videoRef.current) {
+      user.videoTrack.play(videoRef.current);
+    }
     return () => {
-      try {
-        track && track.stop && track.stop();
-      } catch (e) {
-        // ignore
-      }
+      user.videoTrack?.stop();
     };
-  }, [track]);
+  }, [user.videoTrack]);
 
-  return <div ref={ref} className={className} />;
+  // مدیریت صدا
+  useEffect(() => {
+    if (user.audioTrack) {
+      user.audioTrack.play();
+    }
+    return () => {
+      user.audioTrack?.stop();
+    };
+  }, [user.audioTrack]);
+
+  return (
+    <div className="w-full h-full relative">
+      {/* فریم رندر ویدیو */}
+      <div ref={videoRef} className={`w-full h-full ${user.hasVideo ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`} />
+      
+      {/* حالت "فقط صدا" (وقتی استاد دوربین را می‌بندد اما میکروفون باز است) */}
+      {!user.hasVideo && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-neutral-900 to-black z-10">
+          <div className="w-24 h-24 bg-indigo-500/10 border border-indigo-500/30 rounded-full flex items-center justify-center text-4xl shadow-[0_0_30px_rgba(99,102,241,0.2)] mb-6">
+            🎙️
+          </div>
+          <h3 className="text-xl font-bold text-white mb-2">Voice Only Mode</h3>
+          <p className="text-neutral-500 text-sm">Instructor's camera is turned off.</p>
+          
+          {/* انیمیشن اکولایزر صدا */}
+          {user.hasAudio && (
+            <div className="flex items-end gap-1.5 h-6 mt-6">
+              <div className="w-1.5 bg-indigo-500 rounded-t-full animate-[equalizer_1s_ease-in-out_infinite]"></div>
+              <div className="w-1.5 bg-indigo-500 rounded-t-full animate-[equalizer_1.2s_ease-in-out_infinite_0.2s]"></div>
+              <div className="w-1.5 bg-indigo-500 rounded-t-full animate-[equalizer_0.8s_ease-in-out_infinite_0.4s]"></div>
+              <div className="w-1.5 bg-indigo-500 rounded-t-full animate-[equalizer_1.1s_ease-in-out_infinite_0.1s]"></div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* استایل‌های انیمیشن اکولایزر */}
+      <style jsx>{`
+        @keyframes equalizer {
+          0%, 100% { height: 20%; }
+          50% { height: 100%; }
+        }
+      `}</style>
+    </div>
+  );
 }
