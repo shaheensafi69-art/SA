@@ -1,15 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 export default function DashboardOverview() {
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  
+  // استیت برای باز و بسته کردن منوی پروفایل
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   
   const [student, setStudent] = useState({
     first_name: "",
     avatar: "",
+    email: "", // اضافه شدن ایمیل برای نمایش در منوی پروفایل
   });
 
   const [stats, setStats] = useState({
@@ -24,6 +31,32 @@ export default function DashboardOverview() {
     thumbnail: string;
   } | null>(null);
 
+  // گزینه‌های منو
+  const menuItems = [
+    { name: "Overview", path: "/en/dashboard", icon: "📊" },
+    { name: "My Courses", path: "/en/dashboard/courses", icon: "📚" },
+    { name: "Live Classes", path: "/en/dashboard/live-classes", icon: "🔴" },
+    { name: "Assignments", path: "/en/dashboard/assignments", icon: "📝" },
+    { name: "Exams & Quizzes", path: "/en/dashboard/quizzes", icon: "🎯" },
+    { name: "Trading Journal", path: "/en/dashboard/trading-journal", icon: "📈" },
+    { name: "Wallet & Referral", path: "/en/dashboard/wallet", icon: "💰" },
+    { name: "Achievements", path: "/en/dashboard/achievements", icon: "🏆" },
+    { name: "AI Assistant", path: "/en/dashboard/ai-assistant", icon: "🤖" },
+    { name: "Support Tickets", path: "/en/dashboard/support", icon: "🎧" },
+    { name: "Settings", path: "/en/dashboard/settings", icon: "⚙️" },
+  ];
+
+  // بستن منو وقتی کاربر بیرون از آن کلیک می‌کند
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       const supabase = createClient();
@@ -31,6 +64,7 @@ export default function DashboardOverview() {
       
       if (!session?.user) return;
       const userId = session.user.id;
+      const userEmail = session.user.email;
 
       const { data: profile } = await supabase
         .from("profiles")
@@ -42,6 +76,7 @@ export default function DashboardOverview() {
         setStudent({
           first_name: profile.first_name || "Student",
           avatar: profile.avatar_url || "https://i.pravatar.cc/150?img=11",
+          email: userEmail || "",
         });
       }
 
@@ -56,8 +91,6 @@ export default function DashboardOverview() {
         certificates: certsRes.count || 0,
       });
 
-      // برای بخش Continue Learning (نمایشی تا زمانی که سیستم ویدیوهای کورس ضبط شده آماده شود)
-      // در حال حاضر اگر در کلاسی ثبت نام کرده باشد، اولین کلاس را نشان می‌دهیم
       const { data: latestEnrollment } = await supabase
         .from("class_students")
         .select(`
@@ -76,7 +109,7 @@ export default function DashboardOverview() {
         setActiveCourse({
           title: courseData.class_name || "Untitled Course",
           thumbnail: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=800",
-          progress: 15, // هاردکد شده فعلا
+          progress: 15,
         });
       }
 
@@ -86,11 +119,17 @@ export default function DashboardOverview() {
     fetchDashboardData();
   }, []);
 
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/en/login");
+  };
+
   return (
-    <div className="w-full relative overflow-hidden bg-[#020202]">
+    <div className="w-full relative overflow-hidden bg-[#020202] font-sans">
       
-      {/* ================= Header / تراز شده دقیقاً با سایدبار ================= */}
-      <header className="h-24 px-8 md:px-12 flex justify-between items-center animate-[fadeIn_0.5s_ease-out] relative z-10">
+      {/* ================= Header ================= */}
+      <header className="h-24 px-6 md:px-12 flex justify-between items-center animate-[fadeIn_0.5s_ease-out] relative z-40">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
             Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">{isLoading ? "..." : student.first_name}</span>
@@ -104,18 +143,66 @@ export default function DashboardOverview() {
             <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#050505] animate-pulse"></span>
           </button>
           
-          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.2)] bg-neutral-800 flex items-center justify-center">
-            {student.avatar && student.avatar !== "https://i.pravatar.cc/150?img=11" ? (
-              <img src={student.avatar} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-lg font-bold text-yellow-500">{student.first_name.charAt(0) || "S"}</span>
+          {/* ================= Profile Dropdown ================= */}
+          <div className="relative" ref={menuRef}>
+            <button 
+              onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+              className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.2)] bg-neutral-800 flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+            >
+              {student.avatar && student.avatar !== "https://i.pravatar.cc/150?img=11" ? (
+                <img src={student.avatar} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-lg font-bold text-yellow-500">{student.first_name.charAt(0) || "S"}</span>
+              )}
+            </button>
+
+            {/* Dropdown Menu */}
+            {isProfileMenuOpen && (
+              <div className="absolute right-0 mt-4 w-72 bg-neutral-900/95 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-[fadeIn_0.2s_ease-out] z-50">
+                {/* User Info */}
+                <div className="p-5 border-b border-white/5 bg-black/40">
+                  <p className="text-white font-bold truncate">{student.first_name}</p>
+                  <p className="text-neutral-500 text-xs truncate mt-0.5">{student.email}</p>
+                </div>
+                
+                {/* Menu List */}
+                <div className="p-3 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                  <ul className="space-y-1">
+                    {menuItems.map((item) => (
+                      <li key={item.path}>
+                        <Link 
+                          href={item.path}
+                          onClick={() => setIsProfileMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-neutral-300 hover:text-yellow-500 hover:bg-white/5 transition-colors"
+                        >
+                          <span className="text-lg">{item.icon}</span>
+                          {item.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Logout Button */}
+                <div className="p-3 border-t border-white/5 bg-black/40">
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-400 hover:text-white hover:bg-red-500/20 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    Sign Out
+                  </button>
+                </div>
+              </div>
             )}
           </div>
+          {/* ================= End Dropdown ================= */}
+
         </div>
       </header>
 
       {/* ================= بدنه اصلی محتوا ================= */}
-      <div className="px-8 md:px-12 pt-6 pb-12 max-w-7xl mx-auto relative z-10">
+      <div className="px-6 md:px-12 pt-6 pb-12 max-w-7xl mx-auto relative z-10">
         
         {/* ================= Overview Stats ================= */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
@@ -144,10 +231,10 @@ export default function DashboardOverview() {
           </div>
         </div>
 
-        {/* ================= Grid دو ستونه برای ادامه یادگیری و گروه‌ها ================= */}
+        {/* ================= Grid دو ستونه ================= */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
           
-          {/* ================= بخش چپ: Continue Learning (70% عرض) ================= */}
+          {/* بخش چپ: Continue Learning */}
           <section className="lg:col-span-2">
             <h2 className="text-xl font-bold text-white mb-6">Continue Learning</h2>
             
@@ -157,7 +244,6 @@ export default function DashboardOverview() {
               </div>
             ) : activeCourse ? (
               <div className="bg-gradient-to-r from-neutral-900/80 to-black/60 p-6 rounded-[2rem] border border-white/10 backdrop-blur-2xl flex flex-col sm:flex-row items-center gap-6 shadow-2xl relative overflow-hidden group cursor-pointer hover:border-yellow-500/30 transition-colors h-full">
-                
                 <div className="w-full sm:w-48 h-40 sm:h-full rounded-2xl overflow-hidden shrink-0 relative bg-neutral-800">
                   <img src={activeCourse.thumbnail} alt={activeCourse.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -170,7 +256,6 @@ export default function DashboardOverview() {
                 <div className="flex-1 w-full py-2">
                   <p className="text-yellow-500 font-bold text-xs mb-2 uppercase tracking-widest">In Progress</p>
                   <h3 className="text-xl font-extrabold text-white mb-6 leading-tight">{activeCourse.title}</h3>
-                  
                   <div className="space-y-3">
                     <div className="flex justify-between text-xs font-bold">
                       <span className="text-neutral-400">Course Progress</span>
@@ -194,23 +279,17 @@ export default function DashboardOverview() {
             )}
           </section>
 
-          {/* ================= بخش راست: کارت ورود به گروه‌ها (30% عرض) ================= */}
+          {/* بخش راست: Community */}
           <section className="lg:col-span-1">
             <h2 className="text-xl font-bold text-white mb-6">Community</h2>
-            
             <Link href="/en/dashboard/groups" className="block h-48 sm:h-[calc(100%-3rem)] lg:h-48 rounded-[2rem] border border-indigo-500/30 bg-gradient-to-br from-indigo-950/40 to-black p-6 relative overflow-hidden group hover:border-indigo-500/60 transition-all duration-300 shadow-[0_10px_30px_rgba(79,70,229,0.15)] hover:-translate-y-1">
-               {/* افکت پس‌زمینه */}
                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full blur-[40px] group-hover:bg-indigo-500/30 transition-all"></div>
-               
                <div className="relative z-10 h-full flex flex-col justify-between">
                  <div>
-                   <div className="w-12 h-12 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
-                     💬
-                   </div>
+                   <div className="w-12 h-12 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">💬</div>
                    <h3 className="text-lg font-extrabold text-white">Class Groups</h3>
                    <p className="text-xs text-neutral-400 mt-1 max-w-[200px]">Join discussions, ask questions, and collaborate.</p>
                  </div>
-                 
                  <div className="flex items-center text-indigo-400 text-xs font-bold uppercase tracking-widest mt-4">
                    Open Messenger <span className="ml-2 group-hover:translate-x-2 transition-transform">→</span>
                  </div>
@@ -219,7 +298,6 @@ export default function DashboardOverview() {
           </section>
 
         </div>
-
       </div>
     </div>
   );
