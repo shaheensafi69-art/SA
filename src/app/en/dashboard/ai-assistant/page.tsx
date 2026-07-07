@@ -47,7 +47,7 @@ export default function AIAssistantPage() {
         .order("created_at", { ascending: true });
 
       if (history && history.length > 0) {
-        // تبدیل فرمت دیتابیس (که در هر ردیف هم prompt دارد هم response) به فرمت رابط کاربری (آرایه خطی)
+        // تبدیل فرمت دیتابیس به فرمت رابط کاربری
         const formattedMessages: Message[] = [];
         history.forEach((chat) => {
           formattedMessages.push({
@@ -99,20 +99,25 @@ export default function AIAssistantPage() {
 
     try {
       // =====================================================================
-      // ⚠️ در اینجا باید درخواست را به API هوش مصنوعی (مثل OpenAI یا سرور خودتان) بفرستید
-      // برای تست، ما یک تاخیر ۲ ثانیه‌ای و یک جواب شبیه‌سازی شده می‌گذاریم
+      // ⚠️ فراخوانی API امن سرور برای صحبت با هوش مصنوعی
       // =====================================================================
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const simulatedAIResponse = `I am Safi AI. You asked: "${userText}". How else can I assist you with your fintech and development goals today?`;
+      const aiResponseCall = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: userText }),
+      });
 
-      // 2. ذخیره کامل در دیتابیس (مطابق استراکچر شما)
+      if (!aiResponseCall.ok) throw new Error("Failed to fetch from AI API");
+      
+      const { message: realAIResponse } = await aiResponseCall.json();
+
+      // 2. ذخیره کامل در دیتابیس
       const { data: savedChat, error } = await supabase
         .from("ai_chat_history")
         .insert({
           student_id: userId,
           user_prompt: userText,
-          ai_response: simulatedAIResponse
+          ai_response: realAIResponse
         })
         .select()
         .single();
@@ -132,7 +137,11 @@ export default function AIAssistantPage() {
 
     } catch (error) {
       console.error("Error sending message:", error);
-      // هندل کردن ارور در رابط کاربری
+      // نمایش پیام خطای موقت در رابط کاربری برای اطلاع دانشجو
+      setMessages(prev => [
+        ...prev,
+        { id: `error-${Date.now()}`, role: "ai", content: "Connection error. Please try again.", created_at: new Date().toISOString() }
+      ]);
     } finally {
       setIsTyping(false);
     }

@@ -46,7 +46,7 @@ export default function DashboardOverview() {
       }
 
       const [enrollmentsRes, certsRes] = await Promise.all([
-        supabase.from("enrollments").select("id", { count: "exact", head: true }).eq("student_id", userId),
+        supabase.from("class_students").select("id", { count: "exact", head: true }).eq("student_id", userId),
         supabase.from("certificates").select("id", { count: "exact", head: true }).eq("student_id", userId)
       ]);
 
@@ -56,29 +56,27 @@ export default function DashboardOverview() {
         certificates: certsRes.count || 0,
       });
 
+      // برای بخش Continue Learning (نمایشی تا زمانی که سیستم ویدیوهای کورس ضبط شده آماده شود)
+      // در حال حاضر اگر در کلاسی ثبت نام کرده باشد، اولین کلاس را نشان می‌دهیم
       const { data: latestEnrollment } = await supabase
-        .from("enrollments")
+        .from("class_students")
         .select(`
-          progress_percentage,
-          courses (
-            title,
-            thumbnail_url
-          )
+          class_groups ( class_name )
         `)
         .eq("student_id", userId)
         .order("enrolled_at", { ascending: false })
         .limit(1)
         .single();
 
-      if (latestEnrollment && latestEnrollment.courses) {
-        const courseData = Array.isArray(latestEnrollment.courses) 
-          ? latestEnrollment.courses[0] 
-          : latestEnrollment.courses;
+      if (latestEnrollment && latestEnrollment.class_groups) {
+        const courseData = Array.isArray(latestEnrollment.class_groups) 
+          ? latestEnrollment.class_groups[0] 
+          : latestEnrollment.class_groups;
 
         setActiveCourse({
-          title: courseData.title || "Untitled Course",
-          thumbnail: courseData.thumbnail_url || "https://images.unsplash.com/photo-1616077168079-7e09a677fb2c?auto=format&fit=crop&q=80&w=800",
-          progress: latestEnrollment.progress_percentage || 0,
+          title: courseData.class_name || "Untitled Course",
+          thumbnail: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=800",
+          progress: 15, // هاردکد شده فعلا
         });
       }
 
@@ -89,11 +87,10 @@ export default function DashboardOverview() {
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full relative overflow-hidden bg-[#020202]">
       
       {/* ================= Header / تراز شده دقیقاً با سایدبار ================= */}
-      {/* ارتفاع دقیقاً h-24 تنظیم شد تا با هدر سایدبار در یک خط قرار بگیرد */}
-      <header className="h-24 px-8 md:px-12 flex justify-between items-center animate-[fadeIn_0.5s_ease-out]">
+      <header className="h-24 px-8 md:px-12 flex justify-between items-center animate-[fadeIn_0.5s_ease-out] relative z-10">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
             Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">{isLoading ? "..." : student.first_name}</span>
@@ -118,7 +115,7 @@ export default function DashboardOverview() {
       </header>
 
       {/* ================= بدنه اصلی محتوا ================= */}
-      <div className="px-8 md:px-12 pt-6 pb-12 max-w-7xl mx-auto">
+      <div className="px-8 md:px-12 pt-6 pb-12 max-w-7xl mx-auto relative z-10">
         
         {/* ================= Overview Stats ================= */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
@@ -147,52 +144,81 @@ export default function DashboardOverview() {
           </div>
         </div>
 
-        {/* ================= Continue Learning ================= */}
-        <section className="mb-12">
-          <h2 className="text-xl font-bold text-white mb-6">Continue Learning</h2>
+        {/* ================= Grid دو ستونه برای ادامه یادگیری و گروه‌ها ================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
           
-          {isLoading ? (
-            <div className="w-full h-40 bg-neutral-900/40 rounded-[2rem] border border-white/5 animate-pulse flex items-center justify-center">
-              <span className="text-neutral-500 font-bold">Loading...</span>
-            </div>
-          ) : activeCourse ? (
-            <div className="bg-gradient-to-r from-neutral-900/80 to-black/60 p-6 md:p-8 rounded-[2rem] border border-white/10 backdrop-blur-2xl flex flex-col md:flex-row items-center gap-8 shadow-2xl relative overflow-hidden group cursor-pointer hover:border-yellow-500/30 transition-colors">
-              
-              <div className="w-full md:w-64 h-48 md:h-40 rounded-2xl overflow-hidden shrink-0 relative bg-neutral-800">
-                <img src={activeCourse.thumbnail} alt={activeCourse.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                   <button className="w-12 h-12 bg-yellow-500 text-black rounded-full flex items-center justify-center pl-1 hover:scale-110 transition-transform shadow-[0_0_30px_rgba(234,179,8,0.5)]">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                   </button>
-                </div>
+          {/* ================= بخش چپ: Continue Learning (70% عرض) ================= */}
+          <section className="lg:col-span-2">
+            <h2 className="text-xl font-bold text-white mb-6">Continue Learning</h2>
+            
+            {isLoading ? (
+              <div className="w-full h-48 bg-neutral-900/40 rounded-[2rem] border border-white/5 animate-pulse flex items-center justify-center">
+                <span className="text-neutral-500 font-bold">Loading...</span>
               </div>
-
-              <div className="flex-1 w-full">
-                <p className="text-yellow-500 font-bold text-sm mb-2">Pick up where you left off</p>
-                <h3 className="text-xl md:text-2xl font-extrabold text-white mb-6 leading-tight">{activeCourse.title}</h3>
+            ) : activeCourse ? (
+              <div className="bg-gradient-to-r from-neutral-900/80 to-black/60 p-6 rounded-[2rem] border border-white/10 backdrop-blur-2xl flex flex-col sm:flex-row items-center gap-6 shadow-2xl relative overflow-hidden group cursor-pointer hover:border-yellow-500/30 transition-colors h-full">
                 
-                <div className="space-y-3">
-                  <div className="flex justify-between text-xs font-bold">
-                    <span className="text-neutral-400">Course Progress</span>
-                    <span className="text-yellow-400">{activeCourse.progress}%</span>
+                <div className="w-full sm:w-48 h-40 sm:h-full rounded-2xl overflow-hidden shrink-0 relative bg-neutral-800">
+                  <img src={activeCourse.thumbnail} alt={activeCourse.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                     <button className="w-12 h-12 bg-yellow-500 text-black rounded-full flex items-center justify-center pl-1 hover:scale-110 transition-transform shadow-[0_0_30px_rgba(234,179,8,0.5)]">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                     </button>
                   </div>
-                  <div className="w-full h-2 bg-black/50 rounded-full overflow-hidden border border-white/5">
-                    <div className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full relative" style={{ width: `${activeCourse.progress}%` }}>
-                      <div className="absolute top-0 right-0 bottom-0 left-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_25%,rgba(255,255,255,0.2)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.2)_75%,rgba(255,255,255,0.2)_100%)] bg-[length:20px_20px] animate-[progress_1s_linear_infinite]"></div>
+                </div>
+
+                <div className="flex-1 w-full py-2">
+                  <p className="text-yellow-500 font-bold text-xs mb-2 uppercase tracking-widest">In Progress</p>
+                  <h3 className="text-xl font-extrabold text-white mb-6 leading-tight">{activeCourse.title}</h3>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-xs font-bold">
+                      <span className="text-neutral-400">Course Progress</span>
+                      <span className="text-yellow-400">{activeCourse.progress}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-black/50 rounded-full overflow-hidden border border-white/5">
+                      <div className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full relative" style={{ width: `${activeCourse.progress}%` }}>
+                        <div className="absolute top-0 right-0 bottom-0 left-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_25%,rgba(255,255,255,0.2)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.2)_75%,rgba(255,255,255,0.2)_100%)] bg-[length:20px_20px] animate-[progress_1s_linear_infinite]"></div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="bg-neutral-900/40 p-8 rounded-[2rem] border border-white/5 backdrop-blur-2xl flex flex-col items-center justify-center text-center shadow-lg h-40">
-              <p className="text-neutral-400 font-bold mb-4">You haven't enrolled in any courses yet.</p>
-              <Link href="/en/courses" className="px-6 py-3 bg-yellow-500 text-black font-extrabold rounded-xl hover:bg-yellow-400 transition-colors">
-                Explore Courses
-              </Link>
-            </div>
-          )}
-        </section>
+            ) : (
+              <div className="bg-neutral-900/40 p-8 rounded-[2rem] border border-white/5 backdrop-blur-2xl flex flex-col items-center justify-center text-center shadow-lg h-48">
+                <p className="text-neutral-400 font-bold mb-4">You haven't enrolled in any courses yet.</p>
+                <Link href="/en/courses" className="px-6 py-3 bg-yellow-500 text-black font-extrabold rounded-xl hover:bg-yellow-400 transition-colors">
+                  Explore Courses
+                </Link>
+              </div>
+            )}
+          </section>
+
+          {/* ================= بخش راست: کارت ورود به گروه‌ها (30% عرض) ================= */}
+          <section className="lg:col-span-1">
+            <h2 className="text-xl font-bold text-white mb-6">Community</h2>
+            
+            <Link href="/en/dashboard/groups" className="block h-48 sm:h-[calc(100%-3rem)] lg:h-48 rounded-[2rem] border border-indigo-500/30 bg-gradient-to-br from-indigo-950/40 to-black p-6 relative overflow-hidden group hover:border-indigo-500/60 transition-all duration-300 shadow-[0_10px_30px_rgba(79,70,229,0.15)] hover:-translate-y-1">
+               {/* افکت پس‌زمینه */}
+               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full blur-[40px] group-hover:bg-indigo-500/30 transition-all"></div>
+               
+               <div className="relative z-10 h-full flex flex-col justify-between">
+                 <div>
+                   <div className="w-12 h-12 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                     💬
+                   </div>
+                   <h3 className="text-lg font-extrabold text-white">Class Groups</h3>
+                   <p className="text-xs text-neutral-400 mt-1 max-w-[200px]">Join discussions, ask questions, and collaborate.</p>
+                 </div>
+                 
+                 <div className="flex items-center text-indigo-400 text-xs font-bold uppercase tracking-widest mt-4">
+                   Open Messenger <span className="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                 </div>
+               </div>
+            </Link>
+          </section>
+
+        </div>
 
       </div>
     </div>
