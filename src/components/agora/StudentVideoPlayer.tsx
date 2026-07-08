@@ -8,11 +8,10 @@ import AgoraRTC, {
   useRemoteUsers,
 } from "agora-rtc-react";
 
-// ⚠️ دقیقاً همان App ID که در فایل استاد گذاشتید را اینجا قرار دهید
-const appId = "YOUR_AGORA_APP_ID"; 
+// خواندن اتوماتیک App ID از فایل env
+const appId = process.env.NEXT_PUBLIC_AGORA_APP_ID!; 
 
 export default function StudentVideoPlayer({ channelName }: { channelName: string }) {
-  // تنظیم کلاینت آگورا در حالت لایو (live) و نقش تماشاچی (audience)
   const agoraClient = useRTCClient(AgoraRTC.createClient({ codec: "vp8", mode: "live", role: "audience" }));
 
   return (
@@ -24,30 +23,44 @@ export default function StudentVideoPlayer({ channelName }: { channelName: strin
 
 function LiveStreamContent({ channelName }: { channelName: string }) {
   const [isJoined, setIsJoined] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [uid] = useState(() => Math.floor(Math.random() * 1000000));
 
-  // اتصال خودکار به کانال کلاس
-  useJoin({
-    appid: appId,
-    channel: channelName,
-    token: null, // در حالت تولید باید توکن امنیتی ست شود
-  }, isJoined);
-
+  // درخواست توکن برای شاگرد قبل از اتصال به ویدیو
   useEffect(() => {
-    setIsJoined(true);
-    return () => setIsJoined(false);
-  }, []);
+    const fetchSecureToken = async () => {
+      try {
+        const response = await fetch("/api/agora/video", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ channelName, uid, role: "student" }), // نقش شاگرد
+        });
+        const data = await response.json();
+        
+        if (data.token) {
+          setToken(data.token);
+          setIsJoined(true);
+        }
+      } catch (error) {
+        console.error("Failed to fetch Agora token:", error);
+      }
+    };
 
-  // دریافت لیست تمام افرادی که در حال پخش ویدیو/صدا هستند
+    fetchSecureToken();
+    return () => setIsJoined(false);
+  }, [channelName, uid]);
+
+  // اتصال با توکن
+  useJoin({ appid: appId, channel: channelName, token: token, uid: uid }, isJoined && !!token);
+
   const remoteUsers = useRemoteUsers();
-  
-  // پیدا کردن استاد (اولین نفری که دیتا می‌فرستد)
   const teacher = remoteUsers.find(user => user.hasVideo || user.hasAudio);
 
-  if (!isJoined) {
+  if (!isJoined || !token) {
     return (
       <div className="flex flex-col items-center justify-center text-center w-full h-full bg-black">
         <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_15px_rgba(99,102,241,0.5)]"></div>
-        <p className="text-white font-bold tracking-widest uppercase text-sm">Connecting to secure server...</p>
+        <p className="text-white font-bold tracking-widest uppercase text-sm">Authenticating Secure Connection...</p>
       </div>
     );
   }
@@ -65,19 +78,13 @@ function LiveStreamContent({ channelName }: { channelName: string }) {
 
   return (
     <div className="relative w-full h-full bg-black rounded-[inherit] overflow-hidden group">
-      
-      {/* کامپوننت هوشمند برای پخش همزمان صدا و تصویر */}
       <AgoraRemotePlayer user={teacher} />
 
-      {/* ================= Overlays (اطلاعات روی ویدیو) ================= */}
-      
-      {/* 1. نشانگر زنده بودن */}
       <div className="absolute top-4 left-4 bg-red-600/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-lg z-20">
          <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>
          <span className="text-white text-xs font-black tracking-widest uppercase">Live</span>
       </div>
 
-      {/* 2. وضعیت میکروفون استاد */}
       {!teacher.hasAudio && (
         <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-lg z-20 animate-[fadeIn_0.3s_ease-out]">
            <span className="text-red-400 text-xs">🔇</span>
@@ -85,57 +92,41 @@ function LiveStreamContent({ channelName }: { channelName: string }) {
         </div>
       )}
 
-      {/* 3. واترمارک امنیتی آکادمی */}
       <div className="absolute bottom-4 left-4 bg-black/40 backdrop-blur-md border border-white/5 px-3 py-1.5 rounded-lg flex items-center gap-2 z-20 opacity-50 group-hover:opacity-100 transition-opacity">
         <img src="/logo-without-b.png" alt="Safi Academy" className="w-4 h-4 object-contain opacity-70" />
         <span className="text-white/70 text-[9px] font-bold uppercase tracking-[0.2em]">Safi Academy Secure Stream</span>
       </div>
-
     </div>
   );
 }
 
-// =====================================================================
-// کامپوننت اختصاصی و امن برای اتصال ترک‌های صدا و تصویر آگورا به DOM
-// =====================================================================
 function AgoraRemotePlayer({ user }: { user: any }) {
   const videoRef = useRef<HTMLDivElement>(null);
 
-  // مدیریت تصویر
   useEffect(() => {
     if (user.videoTrack && videoRef.current) {
       user.videoTrack.play(videoRef.current);
     }
-    return () => {
-      user.videoTrack?.stop();
-    };
+    return () => { user.videoTrack?.stop(); };
   }, [user.videoTrack]);
 
-  // مدیریت صدا
   useEffect(() => {
     if (user.audioTrack) {
       user.audioTrack.play();
     }
-    return () => {
-      user.audioTrack?.stop();
-    };
+    return () => { user.audioTrack?.stop(); };
   }, [user.audioTrack]);
 
   return (
     <div className="w-full h-full relative">
-      {/* فریم رندر ویدیو */}
       <div ref={videoRef} className={`w-full h-full ${user.hasVideo ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`} />
       
-      {/* حالت "فقط صدا" (وقتی استاد دوربین را می‌بندد اما میکروفون باز است) */}
       {!user.hasVideo && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-neutral-900 to-black z-10">
-          <div className="w-24 h-24 bg-indigo-500/10 border border-indigo-500/30 rounded-full flex items-center justify-center text-4xl shadow-[0_0_30px_rgba(99,102,241,0.2)] mb-6">
-            🎙️
-          </div>
+          <div className="w-24 h-24 bg-indigo-500/10 border border-indigo-500/30 rounded-full flex items-center justify-center text-4xl shadow-[0_0_30px_rgba(99,102,241,0.2)] mb-6">🎙️</div>
           <h3 className="text-xl font-bold text-white mb-2">Voice Only Mode</h3>
           <p className="text-neutral-500 text-sm">Instructor's camera is turned off.</p>
           
-          {/* انیمیشن اکولایزر صدا */}
           {user.hasAudio && (
             <div className="flex items-end gap-1.5 h-6 mt-6">
               <div className="w-1.5 bg-indigo-500 rounded-t-full animate-[equalizer_1s_ease-in-out_infinite]"></div>
@@ -146,13 +137,8 @@ function AgoraRemotePlayer({ user }: { user: any }) {
           )}
         </div>
       )}
-
-      {/* استایل‌های انیمیشن اکولایزر */}
       <style jsx>{`
-        @keyframes equalizer {
-          0%, 100% { height: 20%; }
-          50% { height: 100%; }
-        }
+        @keyframes equalizer { 0%, 100% { height: 20%; } 50% { height: 100%; } }
       `}</style>
     </div>
   );

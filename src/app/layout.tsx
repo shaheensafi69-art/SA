@@ -2,9 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-// ایمپورت کردن کامپوننت هوشمندی که ساختیم
+// ایمپورت کردن کامپوننت مدیریت لایاوت
 import ConditionalLayout from "@/components/ConditionalLayout";
-import InstallPWA from "@/components/InstallPWA"; // اضافه شد
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +23,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-// ۲. تنظیمات متادیتا و مانیفست برای تبدیل سایت به اپلیکیشن
+// ۲. تنظیمات متادیتا و مانیفست برای تبدیل سایت به اپلیکیشن (کاملاً حفظ شده است)
 export const metadata: Metadata = {
   title: "Safi Academy",
   description: "The premium educational platform for modern skills.",
@@ -51,13 +50,10 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-neutral-950 text-white">
         
-        {/* مدیریت نمایش هدر، فوتر و پدینگ به این کامپوننت سپرده شد */}
+        {/* مدیریت نمایش هدر، فوتر و پدینگ دسکتاپ/موبایل */}
         <ConditionalLayout>
           {children}
         </ConditionalLayout>
-        
-        {/* ۳. دکمه شناور نصب اپلیکیشن (فقط در صفحات تعیین شده نمایش داده می‌شود) */}
-        <InstallPWA />
         
       </body>
     </html>
