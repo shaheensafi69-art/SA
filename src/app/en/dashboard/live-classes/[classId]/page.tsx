@@ -31,10 +31,11 @@ export default function ClassHubPage() {
   const [className, setClassName] = useState("Loading Classroom...");
   const [activeTab, setActiveTab] = useState<"group" | "live" | "recordings">("group");
   
-  // استیت‌های جدید برای مدیریت وضعیت ویدیو در موبایل
+  // استیت و رفرنس برای مدیریت حرفه‌ای فول‌اسکرین
   const [videoMode, setVideoMode] = useState<"normal" | "fullscreen" | "minimized">("normal");
-  
+  const videoContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
   const supabase = createClient();
 
   useEffect(() => {
@@ -43,9 +44,21 @@ export default function ClassHubPage() {
     return () => { supabase.channel(`room_${classId}`).unsubscribe(); };
   }, [classId]);
 
+  // اسکرول خودکار چت
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, activeTab]);
+
+  // شنودگر (Listener) برای زمانی که کاربر با دکمه Back گوشی یا دکمه Esc کیبورد از فول‌اسکرین خارج می‌شود
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        setVideoMode("normal");
+      }
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
 
   const checkAccessAndLoadData = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -79,7 +92,6 @@ export default function ClassHubPage() {
   };
 
   const setupRealtimeChat = () => {
-    // ۱. شنودگر برای چت‌های جدید
     supabase
       .channel(`chat_room_${classId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'class_messages', filter: `class_group_id=eq.${classId}` }, 
@@ -93,7 +105,6 @@ export default function ClassHubPage() {
       })
       .subscribe();
 
-    // ۲. شنودگر زنده تغییرات کلاس (اتصال آنی ویدیو بدون رفرش)
     supabase
       .channel(`video_status_${classId}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'class_groups', filter: `id=eq.${classId}` },
@@ -138,6 +149,27 @@ export default function ClassHubPage() {
     });
   };
 
+  // تابع حرفه‌ای برای مدیریت فول‌اسکرین واقعی مرورگر
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        if (videoContainerRef.current?.requestFullscreen) {
+          await videoContainerRef.current.requestFullscreen();
+          setVideoMode("fullscreen");
+        }
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+          setVideoMode("normal");
+        }
+      }
+    } catch (err) {
+      console.warn("Fullscreen API is not supported on this device/browser.", err);
+      // Fallback به فول‌اسکرین CSS در صورت عدم پشتیبانی مرورگر
+      setVideoMode(videoMode === "fullscreen" ? "normal" : "fullscreen");
+    }
+  };
+
   return (
     <div className="min-h-[calc(100vh-6rem)] bg-[#020202] text-white font-sans flex flex-col p-4 sm:p-6 relative">
       
@@ -148,7 +180,7 @@ export default function ClassHubPage() {
           <p className="text-xs text-neutral-500 font-mono">Class ID: {classId}</p>
         </div>
 
-        <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 w-full md:w-auto">
+        <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 w-full md:w-auto shrink-0">
           <button onClick={() => setActiveTab("group")} className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg text-xs font-bold transition-all ${activeTab === "group" ? "bg-white/10 text-white shadow-md" : "text-neutral-400 hover:text-white hover:bg-white/5"}`}>
             💬 Group Chat
           </button>
@@ -184,11 +216,14 @@ export default function ClassHubPage() {
         {activeTab === "live" && (
           <div className="w-full h-full flex flex-col lg:flex-row bg-[#080808] rounded-3xl border border-white/5 shadow-2xl overflow-hidden animate-[fadeIn_0.3s_ease-out] relative">
             
-            {/* باکس رندر ویدیو پلیر */}
-            <div className={`flex-1 relative flex items-center justify-center bg-black transition-all duration-300 ${
-              videoMode === "fullscreen" ? "fixed inset-0 z-[9999] w-screen h-screen rounded-none" : 
-              videoMode === "minimized" ? "fixed bottom-24 right-6 w-48 h-32 z-[50] rounded-2xl border border-white/20 shadow-2xl overflow-hidden" : "w-full h-full"
-            }`}>
+            {/* باکس رندر ویدیو پلیر با پشتیبانی از فول اسکرین */}
+            <div 
+              ref={videoContainerRef}
+              className={`flex-1 relative flex items-center justify-center bg-black transition-all duration-300 ${
+                videoMode === "fullscreen" ? "fixed inset-0 z-[9999] w-screen h-screen rounded-none" : 
+                videoMode === "minimized" ? "fixed bottom-24 right-6 w-48 h-32 z-[50] rounded-2xl border border-white/20 shadow-2xl overflow-hidden" : "w-full h-full"
+              }`}
+            >
               {!isClassLive ? (
                 <div className="text-center p-8">
                   <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">☕</div>
@@ -196,38 +231,42 @@ export default function ClassHubPage() {
                   <p className="text-neutral-400 text-sm max-w-sm mx-auto">The live broadcast has not started yet.</p>
                   
                   {currentUser && (currentUser.role === "teacher" || currentUser.role === "super_admin") && (
-                    <button onClick={toggleLiveStatus} className="mt-8 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold text-sm py-3 px-8 rounded-xl">
+                    <button onClick={toggleLiveStatus} className="mt-8 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold text-sm py-3 px-8 rounded-xl hover:scale-105 transition-transform">
                       🔴 Go Live Now
                     </button>
                   )}
                 </div>
               ) : (
                 <div className="w-full h-full relative group">
+                  {/* این کامپوننت خودش به صورت اتوماتیک توکن را از فایل API می‌گیرد! */}
                   <StudentVideoPlayer channelName={classId} />
                   
-                  {/* دکمه‌های کنترل فول‌اسکرین و مینی‌مایز برای گوشی و دسکتاپ */}
-                  <div className="absolute bottom-4 right-4 z-50 flex gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 p-2 rounded-xl backdrop-blur-md border border-white/10">
+                  {/* دکمه‌های کنترل فول‌اسکرین و مینی‌مایز */}
+                  <div className="absolute bottom-4 right-4 z-[9999] flex gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 p-2 rounded-xl backdrop-blur-md border border-white/10">
                     <button 
-                      onClick={() => setVideoMode(videoMode === "fullscreen" ? "normal" : "fullscreen")}
-                      className="p-2 hover:bg-white/10 rounded-lg text-xs font-bold"
+                      onClick={toggleFullscreen}
+                      className="p-2 hover:bg-white/10 rounded-lg text-xs font-bold text-white transition-colors"
                       title="Toggle Fullscreen"
                     >
-                      {videoMode === "fullscreen" ? "🔳 Exit Fullscreen" : "📺 Fullscreen"}
+                      {videoMode === "fullscreen" ? "🔲 Exit Fullscreen" : "📺 Fullscreen"}
                     </button>
                     <button 
                       onClick={() => setVideoMode(videoMode === "minimized" ? "normal" : "minimized")}
-                      className="p-2 hover:bg-white/10 rounded-lg text-xs font-bold hidden sm:block"
+                      className="p-2 hover:bg-white/10 rounded-lg text-xs font-bold text-white transition-colors hidden sm:block"
                     >
                       {videoMode === "minimized" ? "🔼 Maximize" : "🔽 Minimize"}
                     </button>
                     {videoMode !== "normal" && (
-                      <button onClick={() => setVideoMode("normal")} className="p-2 bg-red-600 rounded-lg text-xs font-bold">✕</button>
+                      <button onClick={() => {
+                          if (document.fullscreenElement) document.exitFullscreen();
+                          setVideoMode("normal");
+                      }} className="p-2 hover:bg-red-500 text-red-400 hover:text-white rounded-lg text-xs font-bold transition-colors">✕</button>
                     )}
                   </div>
 
                   {currentUser && (currentUser.role === "teacher" || currentUser.role === "super_admin") && (
                     <div className="absolute top-4 right-4 z-50">
-                      <button onClick={toggleLiveStatus} className="bg-red-600/90 text-white font-bold text-xs py-2 px-4 rounded-lg">
+                      <button onClick={toggleLiveStatus} className="bg-red-600/90 text-white font-bold text-xs py-2 px-4 rounded-lg shadow-lg">
                         End Stream
                       </button>
                     </div>
@@ -266,7 +305,7 @@ export default function ClassHubPage() {
 }
 
 // =====================================================================
-// کامپوننت چت که کاملاً به بیرون منتقل شده تا فوکوس کیبورد گوشی قطع نشود
+// کامپوننت چت
 // =====================================================================
 function ChatInterface({ isSidebar, messages, currentUser, newMessage, setNewMessage, handleSendMessage, messagesEndRef }: any) {
   return (
