@@ -40,7 +40,7 @@ const defaultPath = '/en/login';
 
 function normalizePath(pathname: string) {
   const url = new URL(pathname, 'http://localhost');
-  return url.pathname.replace(/\/+$|\\/\?$/, '') || '/';
+  return url.pathname.replace(/\/+$/u, '') || '/';
 }
 
 export async function middleware(request: NextRequest) {
