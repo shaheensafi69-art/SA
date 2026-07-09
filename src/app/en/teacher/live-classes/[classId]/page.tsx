@@ -3,7 +3,8 @@
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useParams, useRouter } from "next/navigation";
-import TeacherBroadcaster from "@/components/agora/TeacherBroadcaster";
+import dynamic from "next/dynamic";
+const TeacherBroadcaster = dynamic(() => import("@/components/agora/TeacherBroadcaster"), { ssr: false });
 
 export default function TeacherLiveStudio() {
   const params = useParams();

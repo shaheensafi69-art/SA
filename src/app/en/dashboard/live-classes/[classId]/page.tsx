@@ -3,7 +3,8 @@
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useParams, useRouter } from "next/navigation";
-import StudentVideoPlayer from "@/components/agora/StudentVideoPlayer";
+import dynamic from "next/dynamic";
+const StudentVideoPlayer = dynamic(() => import("@/components/agora/StudentVideoPlayer"), { ssr: false });
 
 type Message = {
   id: string;

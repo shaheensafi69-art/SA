@@ -37,27 +37,42 @@ export default function Header() {
 
   // بستن منوی موبایل در صورت تغییر مسیر (تغییر صفحه)
   useEffect(() => {
-    setMobileMenuOpen(false);
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   // بررسی وضعیت لاگین به محض لود شدن هدر
   useEffect(() => {
     const checkUserStatus = async () => {
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
+      try {
+        const supabase = createClient();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) throw sessionError;
 
-      if (session?.user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("first_name, last_name, avatar_url")
-          .eq("id", session.user.id)
-          .single();
+        if (session?.user) {
+          const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("first_name, last_name, avatar_url")
+            .eq("id", session.user.id)
+            .single();
 
-        setUserProfile(profile || { first_name: "Student", avatar_url: null });
-      } else {
+          if (profileError && profileError.code !== 'PGRST116') {
+            console.error("Error fetching profile:", profileError);
+          }
+
+          setUserProfile(profile || { first_name: "Student", avatar_url: null });
+        } else {
+          setUserProfile(null);
+        }
+      } catch (error) {
+        console.error("Error checking user status:", error);
         setUserProfile(null);
+      } finally {
+        setIsLoadingUser(false);
       }
-      setIsLoadingUser(false);
     };
 
     checkUserStatus();

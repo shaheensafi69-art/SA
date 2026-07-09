@@ -4,34 +4,44 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 
 export default function TeacherLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() || "";
   const router = useRouter();
   
   const [instructor, setInstructor] = useState({ first_name: "Instructor", avatar: "" });
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
+    const supabase = createClient();
+    
     const fetchUser = async () => {
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return;
-      
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("first_name, avatar_url")
-        .eq("id", session.user.id)
-        .single();
-        
-      if (profile) {
-        setInstructor({
-          first_name: profile.first_name || "Instructor",
-          avatar: profile.avatar_url || ""
-        });
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (user && !userError) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("first_name, avatar_url")
+          .eq("id", user.id)
+          .single();
+        if (profile) {
+          setInstructor({
+            first_name: profile.first_name || "Instructor",
+            avatar: profile.avatar_url || ""
+          });
+        }
+      } else {
+        router.replace("/en/login");
       }
     };
+    
     fetchUser();
-  }, []);
+
+    
+  }, [router]);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -55,7 +65,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
       items: [
         { name: "Assignments", path: "/en/teacher/assignments", icon: "📝" },
         { name: "Exams & Quizzes", path: "/en/teacher/quizzes", icon: "🎯" },
-        { name: "Trading Journals", path: "/en/teacher/trading-journals", icon: "📈" },
+        { name: "Trading Journal", path: "/en/teacher/trading-journal", icon: "📈" },
       ]
     },
     {
@@ -69,10 +79,19 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
   ];
 
   return (
-    <div className="flex h-screen bg-[#020202] text-white overflow-hidden font-sans">
+    <div className="flex flex-col lg:flex-row h-screen bg-[#020202] text-white overflow-hidden font-sans">
+      {/* Mobile Top Header (Just Logo) */}
+      <div className="lg:hidden w-full flex items-center p-4 bg-[#080808] border-b border-white/5 relative z-40">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 flex items-center justify-center">
+            <img src="/logo-without-b.png" alt="Safi Academy" className="w-full h-full object-contain drop-shadow-2xl" />
+          </div>
+          <span className="font-extrabold text-sm tracking-widest text-white uppercase">Safi Academy</span>
+        </div>
+      </div>
       
       {/* ================= Sidebar اساتید ================= */}
-      <aside className="w-[260px] bg-[#080808] border-r border-white/5 flex flex-col shrink-0 relative z-50">
+      <aside className={`fixed lg:relative inset-y-0 left-0 transform ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 transition-transform duration-300 ease-in-out w-[260px] bg-[#080808] border-r border-white/5 flex flex-col shrink-0 z-50`}>
         
         {/* افکت نوری پس‌زمینه سایدبار */}
         <div className="absolute top-0 left-0 w-full h-40 bg-fuchsia-600/5 blur-[50px] pointer-events-none"></div>
@@ -80,9 +99,9 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
         {/* لوگو */}
         <div className="h-24 flex items-center px-6 border-b border-white/5 relative z-10">
           <Link href="/en/teacher" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-fuchsia-600 to-purple-600 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(192,38,211,0.3)] group-hover:scale-105 transition-transform">
-              <img src="/logo-without-b.png" alt="Safi Academy" className="w-6 h-6 object-contain" />
-            </div>
+            <div className="w-16 h-16 flex items-center justify-center group-hover:scale-105 transition-transform">
+      <img src="/logo-without-b.png" alt="Safi Academy" className="w-full h-full object-contain drop-shadow-2xl" />
+   </div>
             <div>
               <h1 className="font-extrabold text-sm tracking-widest text-white uppercase">Safi Academy</h1>
               <p className="text-[9px] text-fuchsia-400 font-black uppercase tracking-[0.2em] mt-0.5">Instructor Panel</p>
@@ -160,9 +179,98 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
       </aside>
 
       {/* ================= محتوای اصلی (پاس داده شده از pages) ================= */}
-      <main className="flex-1 h-screen overflow-y-auto custom-scrollbar relative bg-[#020202]">
+      <main className="flex-1 h-screen overflow-y-auto custom-scrollbar relative bg-[#020202] pb-20 lg:pb-0">
         {children}
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#080808] border-t border-white/10 z-50 px-2 py-2 flex justify-between items-center backdrop-blur-xl">
+        <Link href="/en/teacher" className={`flex flex-col items-center p-2 rounded-xl transition-colors ${pathname === "/en/teacher" ? "text-fuchsia-400" : "text-neutral-500"}`}>
+          <span className="text-xl mb-1">📊</span>
+          <span className="text-[10px] font-bold">Overview</span>
+        </Link>
+        <Link href="/en/teacher/courses" className={`flex flex-col items-center p-2 rounded-xl transition-colors ${pathname === "/en/teacher/courses" ? "text-fuchsia-400" : "text-neutral-500"}`}>
+          <span className="text-xl mb-1">📚</span>
+          <span className="text-[10px] font-bold">Courses</span>
+        </Link>
+        <Link href="/en/teacher/live-classes" className={`flex flex-col items-center p-2 rounded-xl transition-colors ${pathname === "/en/teacher/live-classes" ? "text-fuchsia-400" : "text-neutral-500"}`}>
+          <span className="text-xl mb-1">🔴</span>
+          <span className="text-[10px] font-bold">Live</span>
+        </Link>
+        <button onClick={() => setIsMobileMenuOpen(true)} className="flex flex-col items-center p-2 rounded-xl transition-colors text-neutral-500">
+          <span className="text-xl mb-1">⚙️</span>
+          <span className="text-[10px] font-bold">Menu</span>
+        </button>
+      </div>
+
+      {/* Mobile Menu Modal (Full Screen) */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 bg-[#020202] z-[100] flex flex-col animate-[fadeIn_0.2s_ease-out] lg:hidden">
+          <div className="p-4 border-b border-white/5 flex justify-between items-center bg-black/50">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8">
+                <img src="/logo-without-b.png" alt="Safi Academy" className="w-full h-full object-contain" />
+              </div>
+              <span className="font-bold text-white uppercase text-sm tracking-widest">Menu</span>
+            </div>
+            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-white bg-white/5 rounded-full">
+              <X size={20} />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-24">
+            {menuGroups.map((group, index) => (
+              <div key={index}>
+                <p className="px-2 text-[10px] font-bold text-neutral-500 uppercase tracking-[0.15em] mb-2">
+                  {group.title}
+                </p>
+                <ul className="space-y-2">
+                  {group.items.map((item) => {
+                    const isActive = item.path === "/en/teacher" 
+                      ? pathname === "/en/teacher" 
+                      : pathname.startsWith(item.path);
+                    return (
+                      <li key={item.path}>
+                        <Link 
+                          href={item.path}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={`flex items-center gap-4 px-4 py-4 rounded-xl font-bold transition-all ${
+                            isActive 
+                              ? "bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/20" 
+                              : "text-neutral-300 bg-white/5"
+                          }`}
+                        >
+                          <span className="text-2xl">{item.icon}</span>
+                          <span className="text-sm">{item.name}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+            
+            <div className="mt-8 pt-4 border-t border-white/10">
+              <div className="flex items-center gap-3 mb-6 bg-white/5 p-4 rounded-2xl">
+                <div className="w-12 h-12 rounded-xl overflow-hidden border border-fuchsia-500/30 bg-neutral-900 flex items-center justify-center">
+                  {instructor.avatar ? (
+                    <img src={instructor.avatar} alt="Instructor" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="font-bold text-fuchsia-400 text-lg">{instructor.first_name.charAt(0) || "I"}</span>
+                  )}
+                </div>
+                <div className="flex-1 overflow-hidden">
+                  <p className="text-sm font-bold text-white truncate">{instructor.first_name}</p>
+                  <p className="text-[10px] text-fuchsia-400 font-bold uppercase tracking-widest">Instructor</p>
+                </div>
+              </div>
+              <button onClick={handleLogout} className="flex items-center justify-center gap-2 px-4 py-4 text-red-400 bg-red-500/10 rounded-xl font-bold transition-all w-full border border-red-500/20">
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
     </div>
   );

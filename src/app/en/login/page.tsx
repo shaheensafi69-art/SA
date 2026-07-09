@@ -110,11 +110,11 @@ export default function LoginPage() {
 
         // هدایت هوشمند به پوشه‌های ایزوله‌ای که ساختیم
         if (finalRole === "super_admin") {
-            router.push("/en/admin");
+            window.location.href = "/en/admin";
         } else if (finalRole === "teacher") {
-            router.push("/en/teacher");
+            window.location.href = "/en/teacher";
         } else {
-            router.push("/en/dashboard");
+            window.location.href = "/en/dashboard";
         }
       }
     } catch (error: any) {

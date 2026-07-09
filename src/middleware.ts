@@ -1,33 +1,35 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { updateSession } from '@/utils/supabase/middleware';
 
-// زبان‌هایی که سایت Safi Academy پشتیبانی می‌کند
-// زبان‌هایی که سایت Safi Academy پشتیبانی می‌کند
 const locales = ['en', 'fa', 'ps', 'ur', 'de', 'fr'];
 const defaultLocale = 'en';
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+export async function middleware(request: NextRequest) {
+  // Update Supabase session to keep the user logged in
+  const supabaseResponse = await updateSession(request);
 
-  // ۱. بررسی می‌کنیم که آیا کاربر همین الان در پوشه en یا fa هست؟
+  const { pathname } = request.nextUrl;
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
 
-  // اگر در مسیر درستی بود، اجازه می‌دهیم سایت لود شود
   if (pathnameHasLocale) {
-    return NextResponse.next();
+    return supabaseResponse;
   }
 
-  // ۲. اگر کاربر آدرس اصلی سایت (بدون زبان) را وارد کرده بود:
-  // بدون توجه به زبان مرورگر یا سیستم‌عامل کاربر، او را مستقیماً به انگلیسی (en) می‌فرستیم
+  // Redirect to default locale if not present
   request.nextUrl.pathname = `/${defaultLocale}${pathname === '/' ? '' : pathname}`;
+  const redirectResponse = NextResponse.redirect(request.nextUrl);
   
-  return NextResponse.redirect(request.nextUrl);
+  // Transfer any cookies that were updated by Supabase to the redirect response
+  supabaseResponse.cookies.getAll().forEach((cookie) => {
+    redirectResponse.cookies.set(cookie.name, cookie.value);
+  });
+
+  return redirectResponse;
 }
 
-// این بخش به نکست‌جی‌اس می‌گوید که میدلور را روی چه فایل‌هایی اجرا نکند
-// (ما نمی‌خواهیم فایل‌های عکس، فونت یا کدهای سیستمی ریدایرکت شوند)
 export const config = {
   matcher: [
     '/((?!api|_next/static|_next/image|manifest.json|icon.png|favicon.ico|.*\\..*).*)',

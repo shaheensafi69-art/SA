@@ -103,7 +103,7 @@ export default function RegisterPage() {
       // ۶. نمایش پیام موفقیت و انتقال مستقیم به داشبورد
       setSuccessMsg("Account created successfully! Preparing your dashboard...");
       setTimeout(() => {
-        router.push("/en/dashboard"); // <-- تغییر مسیر به داشبورد
+        window.location.href = "/en/dashboard"; // <-- تغییر مسیر به داشبورد
       }, 2000); // زمان انتظار را به ۲ ثانیه کاهش دادم تا کاربر سریع‌تر وارد شود
 
     } catch (error: any) {

@@ -19,22 +19,13 @@ export default function ConditionalLayout({
   const isAnyPanel = isDashboardRoute || isAdminRoute || isTeacherRoute;
 
   // اگر داخل هر یک از پنل‌ها بودیم: بدون هدر/فوتر اصلی و بدون پدینگ رندر می‌شود
-  if (isAnyPanel) {
-    return (
-      <main className="flex-grow w-full h-full">
-        {children}
-      </main>
-    );
-  }
-
-  // اگر در صفحات عادی وب‌سایت (مثل صفحه اصلی یا لاگین) بودیم: هدر و فوتر نمایش داده شود
   return (
     <>
-      <Header />
-      <main className="flex-grow pt-28 md:pt-32 lg:pt-36">
+      {!isAnyPanel && <Header />}
+      <main className={`flex-grow w-full h-full ${!isAnyPanel ? "pt-28 md:pt-32 lg:pt-36" : ""}`}>
         {children}
       </main>
-      <Footer />
+      {!isAnyPanel && <Footer />}
     </>
   );
 }

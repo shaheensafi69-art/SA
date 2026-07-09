@@ -82,7 +82,7 @@ export default function ManageTeachersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white px-6 py-12 overflow-hidden relative">
+    <div className="min-h-full bg-[#020202] text-white px-6 py-12 overflow-hidden relative">
       
       {/* پس‌زمینه‌های متحرک و نئونی (3D Feeling) */}
       <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none animate-[pulse_6s_ease-in-out_infinite]"></div>

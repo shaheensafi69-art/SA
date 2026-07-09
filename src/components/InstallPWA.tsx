@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 
 export default function InstallPWA() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [showInstall, setShowInstall] = useState(false);
   const pathname = usePathname();
 
   // گرفتن رویداد نصب از مرورگر
@@ -20,18 +19,9 @@ export default function InstallPWA() {
   }, []);
 
   // بررسی مسیر فعلی کاربر برای نمایش دکمه
-  useEffect(() => {
-    // فقط در این مسیرها دکمه نصب نشان داده شود
-    const allowedRoutes = ["/admin", "/dashboard", "/teacher", "/login", "/register"];
-    const isAllowed = allowedRoutes.some((route) => pathname?.includes(route));
-    
-    // اگر در مسیر مجاز بودیم و مرورگر اجازه نصب داد، دکمه را نشان بده
-    if (isAllowed && deferredPrompt) {
-      setShowInstall(true);
-    } else {
-      setShowInstall(false);
-    }
-  }, [pathname, deferredPrompt]);
+  const allowedRoutes = ["/admin", "/dashboard", "/teacher", "/login", "/register"];
+  const isAllowed = allowedRoutes.some((route) => pathname?.includes(route));
+  const showInstall = isAllowed && !!deferredPrompt;
 
   const handleInstallClick = async () => {
     if (deferredPrompt) {
@@ -39,7 +29,6 @@ export default function InstallPWA() {
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === "accepted") {
         setDeferredPrompt(null);
-        setShowInstall(false);
       }
     }
   };

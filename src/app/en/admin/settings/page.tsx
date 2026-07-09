@@ -87,7 +87,7 @@ export default function AdminSettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-6 sm:p-10 relative overflow-hidden font-sans">
+    <div className="min-h-full bg-[#020202] text-white p-6 sm:p-10 relative overflow-hidden font-sans">
       
       {/* افکت‌های نوری پس‌زمینه */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40vw] h-[20vw] bg-indigo-600/10 rounded-[100%] blur-[120px] pointer-events-none"></div>

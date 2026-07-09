@@ -1,4 +1,5 @@
 import "../globals.css";
+import ConditionalLayout from "@/components/ConditionalLayout";
 
 export const metadata = {
   title: "Safi Academy",
@@ -11,10 +12,10 @@ export default function EnglishLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" dir="ltr">
-      <body className="bg-neutral-950 text-white">
+    <div dir="ltr" className="w-full h-full">
+      <ConditionalLayout>
         {children}
-      </body>
-    </html>
+      </ConditionalLayout>
+    </div>
   );
 }

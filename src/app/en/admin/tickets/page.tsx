@@ -116,7 +116,7 @@ export default function AdminTicketsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-6 sm:p-10 relative overflow-hidden font-sans">
+    <div className="min-h-full bg-[#020202] text-white p-6 sm:p-10 relative overflow-hidden font-sans">
       <div className="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto space-y-8 relative z-10 animate-[fadeIn_0.5s_ease-out]">

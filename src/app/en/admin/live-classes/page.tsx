@@ -50,7 +50,7 @@ export default function AdminGlobalLiveClasses() {
   const inactiveClasses = classes.filter(c => !c.is_active);
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-6 sm:p-10 relative overflow-hidden">
+    <div className="min-h-full bg-[#020202] text-white p-6 sm:p-10 relative overflow-hidden">
       {/* رادارهای نظارتی پس‌زمینه */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] border border-indigo-500/10 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none"></div>
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[35vw] h-[35vw] border border-purple-500/10 rounded-full animate-[spin_40s_linear_infinite_reverse] pointer-events-none"></div>

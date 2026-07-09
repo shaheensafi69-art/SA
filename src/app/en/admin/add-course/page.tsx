@@ -57,7 +57,7 @@ export default function AddCoursePage() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#050505] text-white font-sans">
+    <main className="relative min-h-full overflow-hidden bg-[#050505] text-white font-sans">
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-15 mix-blend-overlay"></div>
         <div className="absolute -left-20 top-10 h-[36rem] w-[36rem] rounded-full bg-yellow-500/10 blur-[160px] animate-blob"></div>

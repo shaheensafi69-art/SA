@@ -6,15 +6,17 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [pathname]);
+
   const [isReady, setIsReady] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -25,10 +27,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       if (user && !userError) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("first_name, last_name, avatar_url, wallet_balance")
+          .select("first_name, last_name, avatar_url, role")
           .eq("id", user.id)
           .single();
-        if (profile) setUserProfile(profile);
+        if (profile) {
+          if (profile.role !== "admin" && profile.role !== "super_admin") {
+            router.replace("/en/dashboard");
+            return;
+          }
+          setUserProfile(profile);
+        }
         setIsReady(true);
       } else {
         router.replace("/en/login");
@@ -47,29 +55,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   const menuItems = [
-    { name: "Overview", path: "/en/dashboard", icon: "📊" },
-    { name: "My Courses", path: "/en/dashboard/courses", icon: "📚" },
-    { name: "Live Classes", path: "/en/dashboard/live-classes", icon: "🔴" },
-    { name: "Assignments", path: "/en/dashboard/assignments", icon: "📝" },
-    { name: "Exams & Quizzes", path: "/en/dashboard/quizzes", icon: "🎯" },
-    { name: "Trading Journal", path: "/en/dashboard/trading-journal", icon: "📈" },
-    { name: "Wallet & Referral", path: "/en/dashboard/wallet", icon: "💰" },
-    { name: "Achievements", path: "/en/dashboard/achievements", icon: "🏆" },
-    { name: "AI Assistant", path: "/en/dashboard/ai-assistant", icon: "🤖" },
-    { name: "Support Tickets", path: "/en/dashboard/support", icon: "🎧" },
-    { name: "Settings", path: "/en/dashboard/settings", icon: "⚙️" },
+    { name: "Overview", path: "/en/admin", icon: "📊" },
+    { name: "Course Builder", path: "/en/admin/add-course", icon: "➕" },
+    { name: "Faculty Mgmt", path: "/en/admin/manage-teachers", icon: "👥" },
+    { name: "Live Studio", path: "/en/admin/live-classes", icon: "🔴" },
+    { name: "Support Tickets", path: "/en/admin/tickets", icon: "🎧" },
+    { name: "Settings", path: "/en/admin/settings", icon: "⚙️" },
   ];
 
   if (!isReady) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#050505] text-white">
-         <span className="text-yellow-500 font-bold animate-pulse">Loading Academy...</span>
+         <span className="text-blue-500 font-bold animate-pulse">Loading Admin Panel...</span>
       </div>
     );
   }
 
   return (
-    // با items-start مطمئن میشیم هیچ چیز در مرکز صفحه هول داده نمیشه
     <div className="min-h-screen bg-[#050505] flex flex-col lg:flex-row items-start text-white font-sans overflow-hidden">
       {/* Mobile Top Header (Just Logo) */}
       <div className="lg:hidden w-full flex items-center p-4 bg-black/40 border-b border-white/5 relative z-40">
@@ -77,28 +79,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="w-10 h-10 flex items-center justify-center">
             <img src="/logo-without-b.png" alt="Safi Academy" className="w-full h-full object-contain drop-shadow-2xl" />
           </div>
-          <span className="font-bold text-sm tracking-tight text-white uppercase">Safi Academy</span>
+          <span className="font-bold text-sm tracking-tight text-white uppercase">Admin Panel</span>
         </div>
       </div>
       
-      {/* بک‌گراند نوری */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-yellow-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-
-      {/* ================= Sidebar ================= */}
+      {/* ================= Sidebar (Desktop only since original admin didn't have one, but we add it for consistency) ================= */}
       <aside className="hidden lg:flex w-72 bg-black/40 border-r border-white/5 backdrop-blur-3xl flex-col relative z-10 h-screen shrink-0">
-        
-        {/* هدر سایدبار - با ارتفاع فیکس شده h-24 */}
         <div className="h-24 px-8 flex items-center gap-4 border-b border-white/5 shrink-0">
            <div className="w-16 h-16 flex items-center justify-center">
              <img src="/logo-without-b.png" alt="Safi Academy" className="w-full h-full object-contain drop-shadow-2xl" />
            </div>
            <div>
              <h2 className="text-lg font-bold text-white tracking-tight">Safi Academy</h2>
-             <p className="text-xs text-yellow-500 font-semibold uppercase tracking-widest">Ecosystem</p>
+             <p className="text-xs text-blue-500 font-semibold uppercase tracking-widest">Admin</p>
            </div>
         </div>
-
-        {/* منوی ناوبری */}
+        
         <nav className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
           {menuItems.map((item) => {
             const isActive = pathname === item.path;
@@ -108,7 +104,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 href={item.path} 
                 className={`flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold transition-all ${
                   isActive 
-                    ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 shadow-[0_0_15px_rgba(234,179,8,0.1)]" 
+                    ? "bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]" 
                     : "text-neutral-400 hover:bg-white/5 hover:text-white"
                 }`}
               >
@@ -119,14 +115,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           })}
         </nav>
 
-        {/* بخش پایین سایدبار */}
         <div className="p-6 border-t border-white/5 bg-neutral-900/20 shrink-0">
           {userProfile && (
             <div className="flex items-center gap-3 mb-6">
-              <img src={userProfile.avatar_url || "https://i.pravatar.cc/150"} alt="User" className="w-10 h-10 rounded-full border border-yellow-500 object-cover" />
+              <img src={userProfile.avatar_url || "https://i.pravatar.cc/150"} alt="User" className="w-10 h-10 rounded-full border border-blue-500 object-cover" />
               <div className="flex-1 overflow-hidden">
                 <p className="text-sm font-bold text-white truncate">{userProfile.first_name} {userProfile.last_name}</p>
-                <p className="text-xs text-green-400 font-bold">${userProfile.wallet_balance || "0.00"}</p>
+                <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Admin</p>
               </div>
             </div>
           )}
@@ -143,15 +138,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Mobile Bottom Navigation */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#0a0a0a] border-t border-white/10 z-50 px-2 py-2 flex justify-between items-center backdrop-blur-xl">
-        <Link href="/en/dashboard" className={`flex flex-col items-center p-2 rounded-xl transition-colors ${pathname === "/en/dashboard" ? "text-yellow-400" : "text-neutral-500"}`}>
+        <Link href="/en/admin" className={`flex flex-col items-center p-2 rounded-xl transition-colors ${pathname === "/en/admin" ? "text-blue-400" : "text-neutral-500"}`}>
           <span className="text-xl mb-1">📊</span>
           <span className="text-[10px] font-bold">Overview</span>
         </Link>
-        <Link href="/en/dashboard/courses" className={`flex flex-col items-center p-2 rounded-xl transition-colors ${pathname === "/en/dashboard/courses" ? "text-yellow-400" : "text-neutral-500"}`}>
-          <span className="text-xl mb-1">📚</span>
+        <Link href="/en/admin/add-course" className={`flex flex-col items-center p-2 rounded-xl transition-colors ${pathname === "/en/admin/add-course" ? "text-blue-400" : "text-neutral-500"}`}>
+          <span className="text-xl mb-1">➕</span>
           <span className="text-[10px] font-bold">Courses</span>
         </Link>
-        <Link href="/en/dashboard/live-classes" className={`flex flex-col items-center p-2 rounded-xl transition-colors ${pathname === "/en/dashboard/live-classes" ? "text-yellow-400" : "text-neutral-500"}`}>
+        <Link href="/en/admin/live-classes" className={`flex flex-col items-center p-2 rounded-xl transition-colors ${pathname === "/en/admin/live-classes" ? "text-blue-400" : "text-neutral-500"}`}>
           <span className="text-xl mb-1">🔴</span>
           <span className="text-[10px] font-bold">Live</span>
         </Link>
@@ -175,7 +170,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <X size={20} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+          <div className="flex-1 overflow-y-auto p-4 space-y-2 pb-24">
             {menuItems.map((item) => {
               const isActive = pathname === item.path;
               return (
@@ -185,7 +180,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center gap-4 px-4 py-4 rounded-xl font-bold transition-all ${
                     isActive 
-                      ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20" 
+                      ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" 
                       : "text-neutral-300 bg-white/5"
                   }`}
                 >
@@ -198,10 +193,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="mt-8 pt-4 border-t border-white/10">
                {userProfile && (
                 <div className="flex items-center gap-3 mb-6 bg-white/5 p-4 rounded-2xl">
-                  <img src={userProfile.avatar_url || "https://i.pravatar.cc/150"} alt="User" className="w-12 h-12 rounded-full border border-yellow-500 object-cover" />
+                  <img src={userProfile.avatar_url || "https://i.pravatar.cc/150"} alt="User" className="w-12 h-12 rounded-full border border-blue-500 object-cover" />
                   <div className="flex-1 overflow-hidden">
                     <p className="text-sm font-bold text-white truncate">{userProfile.first_name} {userProfile.last_name}</p>
-                    <p className="text-xs text-green-400 font-bold">${userProfile.wallet_balance || "0.00"}</p>
+                    <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Admin</p>
                   </div>
                 </div>
               )}
@@ -212,8 +207,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
       )}
-
-
     </div>
   );
 }

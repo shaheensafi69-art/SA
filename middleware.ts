@@ -1,139 +1,114 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
-  // ۱. ساخت پاسخ اولیه
   let response = NextResponse.next({
     request: {
       headers: request.headers,
     },
   });
 
-  // ۲. راه‌اندازی کلاینت سوپابیس برای میدلور (SSR)
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
+        getAll() {
+          return request.cookies.getAll();
         },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          });
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
+            request,
           });
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value: '',
-            ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
         },
       },
     }
   );
 
-  // ۳. بررسی وضعیت لاگین (گرفتن کاربر)
   const { data: { user } } = await supabase.auth.getUser();
-
   const pathname = request.nextUrl.pathname;
 
-  // =========================================================================
-  // قوانین دسترسی (Access Control)
-  // =========================================================================
+  // Helper function to create redirect with preserved cookies
+  const redirect = (path: string) => {
+    const url = request.nextUrl.clone();
+    url.pathname = path;
+    const redirectRes = NextResponse.redirect(url);
+    // Copy cookies set during session refresh
+    response.cookies.getAll().forEach((cookie) => {
+      redirectRes.cookies.set(cookie.name, cookie.value, cookie);
+    });
+    return redirectRes;
+  };
 
-  // لیست مسیرهایی که نیاز به لاگین دارند (محافظت شده‌اند)
+  // 0. Redirect root to /en
+  if (pathname === '/') {
+    return redirect('/en');
+  }
+
+  // 1. Access Control
   const isProtectedRoute = 
     pathname.startsWith('/en/dashboard') || 
     pathname.startsWith('/en/admin') || 
     pathname.startsWith('/en/teacher');
 
-  // اگر مسیر محافظت شده است اما کاربر لاگین نکرده -> هدایت به صفحه لاگین
   if (isProtectedRoute && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/en/login';
-    // در صورت تمایل می‌توانید مسیر قبلی را هم در URL نگه دارید تا بعد از لاگین به همانجا برگردد
-    // url.searchParams.set('next', pathname);
-    return NextResponse.redirect(url);
+    return redirect('/en/login');
   }
 
-  // اگر کاربر لاگین کرده بود، نقش او را از جدول profiles می‌خوانیم
-  if (user) {
+  // 2. Prevent logged-in users from seeing login/register pages
+  if (user && (pathname === '/en/login' || pathname === '/en/register')) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single();
 
-    const userRole = profile?.role || 'student'; // اگر نقشی نداشت، به طور پیش‌فرض دانشجو در نظر گرفته می‌شود
+    const userRole = profile?.role || 'student';
+    
+    if (userRole === 'super_admin') return redirect('/en/admin');
+    if (userRole === 'teacher') return redirect('/en/teacher');
+    return redirect('/en/dashboard');
+  }
 
-    // قانون ۱: ورود به بخش ادمین فقط برای super_admin
+  if (user && isProtectedRoute) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    const userRole = profile?.role || 'student';
+
+    // Admin access
     if (pathname.startsWith('/en/admin') && userRole !== 'super_admin') {
-      const url = request.nextUrl.clone();
-      // بر اساس نقش به داشبورد مناسب هدایتش می‌کنیم
-      url.pathname = userRole === 'teacher' ? '/en/teacher' : '/en/dashboard';
-      return NextResponse.redirect(url);
+      return redirect(userRole === 'teacher' ? '/en/teacher' : '/en/dashboard');
     }
 
-    // قانون ۲: ورود به بخش اساتید فقط برای teacher (یا super_admin)
+    // Teacher access
     if (pathname.startsWith('/en/teacher') && userRole !== 'teacher' && userRole !== 'super_admin') {
-      const url = request.nextUrl.clone();
-      url.pathname = '/en/dashboard';
-      return NextResponse.redirect(url);
+      return redirect('/en/dashboard');
     }
 
-    // قانون ۳ (اختیاری): جلوگیری از ورود ادمین و استاد به داشبورد معمولی دانشجویان
-    // اگر می‌خواهید ادمین هم نتواند پنل دانشجو را ببیند (یا برعکس او را به پنل ادمین هدایت کنید)
+    // Students shouldn't see admin/teacher, and admins/teachers shouldn't see student dashboard
     if (pathname.startsWith('/en/dashboard')) {
-        if(userRole === 'super_admin') {
-             const url = request.nextUrl.clone();
-             url.pathname = '/en/admin';
-             return NextResponse.redirect(url);
-        }
-        if(userRole === 'teacher') {
-             const url = request.nextUrl.clone();
-             url.pathname = '/en/teacher';
-             return NextResponse.redirect(url);
-        }
+      if (userRole === 'super_admin') {
+        return redirect('/en/admin');
+      }
+      if (userRole === 'teacher') {
+        return redirect('/en/teacher');
+      }
     }
   }
 
   return response;
 }
 
-// ۴. تنظیم اینکه این میدلور روی کدام مسیرها اجرا شود
 export const config = {
   matcher: [
-    /*
-     * روی تمام مسیرها اجرا شود به جز:
-     * - _next/static (فایل‌های ثابت)
-     * - _next/image (تصاویر بهینه‌شده)
-     * - favicon.ico (آیکون مرورگر)
-     * - مسیرهای API (چون خود API باید امنیتش را چک کند)
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
