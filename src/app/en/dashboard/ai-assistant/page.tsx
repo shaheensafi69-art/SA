@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
+import Link from "next/link";
 
-// تایپ برای پیام‌های چت در رابط کاربری
 type Message = {
   id: string;
   role: "user" | "ai";
@@ -17,11 +17,21 @@ export default function AIAssistantPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [studentName, setStudentName] = useState("");
+  const [showEmojiPanel, setShowEmojiPanel] = useState(false);
   
-  // رفرنس برای اسکرول خودکار به پایین چت
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // واکشی تاریخچه چت از دیتابیس
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
+
   useEffect(() => {
     const fetchChatHistory = async () => {
       const supabase = createClient();
@@ -30,7 +40,6 @@ export default function AIAssistantPage() {
       if (!session?.user) return;
       const userId = session.user.id;
 
-      // دریافت نام کاربر برای شخصی‌سازی پیام‌ها
       const { data: profile } = await supabase
         .from("profiles")
         .select("first_name")
@@ -39,7 +48,6 @@ export default function AIAssistantPage() {
       
       if (profile) setStudentName(profile.first_name);
 
-      // دریافت تاریخچه چت از جدول ai_chat_history
       const { data: history } = await supabase
         .from("ai_chat_history")
         .select("*")
@@ -47,7 +55,6 @@ export default function AIAssistantPage() {
         .order("created_at", { ascending: true });
 
       if (history && history.length > 0) {
-        // تبدیل فرمت دیتابیس به فرمت رابط کاربری
         const formattedMessages: Message[] = [];
         history.forEach((chat) => {
           formattedMessages.push({
@@ -68,25 +75,20 @@ export default function AIAssistantPage() {
         setMessages(formattedMessages);
       }
       setIsLoadingHistory(false);
+      setTimeout(scrollToBottom, 100);
     };
 
     fetchChatHistory();
   }, []);
 
-  // اسکرول خودکار به آخرین پیام
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
-
-  // ارسال پیام جدید
   const handleSendMessage = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!inputValue.trim() || isTyping) return;
 
     const userText = inputValue.trim();
-    setInputValue(""); // پاک کردن باکس متن
+    setInputValue("");
+    setShowEmojiPanel(false);
 
-    // 1. اضافه کردن موقت پیام کاربر به صفحه
     const tempUserId = `temp-user-${Date.now()}`;
     setMessages(prev => [...prev, { id: tempUserId, role: "user", content: userText, created_at: new Date().toISOString() }]);
     setIsTyping(true);
@@ -98,9 +100,6 @@ export default function AIAssistantPage() {
     if (!userId) return;
 
     try {
-      // =====================================================================
-      // ⚠️ فراخوانی API امن سرور برای صحبت با هوش مصنوعی
-      // =====================================================================
       const aiResponseCall = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -111,7 +110,6 @@ export default function AIAssistantPage() {
       
       const { message: realAIResponse } = await aiResponseCall.json();
 
-      // 2. ذخیره کامل در دیتابیس
       const { data: savedChat, error } = await supabase
         .from("ai_chat_history")
         .insert({
@@ -124,9 +122,7 @@ export default function AIAssistantPage() {
 
       if (error) throw error;
 
-      // 3. جایگزین کردن پیام‌های موقت با دیتای واقعی و اضافه کردن جواب هوش مصنوعی
       setMessages(prev => {
-        // حذف پیام موقت کاربر
         const filtered = prev.filter(m => m.id !== tempUserId);
         return [
           ...filtered,
@@ -137,7 +133,6 @@ export default function AIAssistantPage() {
 
     } catch (error) {
       console.error("Error sending message:", error);
-      // نمایش پیام خطای موقت در رابط کاربری برای اطلاع دانشجو
       setMessages(prev => [
         ...prev,
         { id: `error-${Date.now()}`, role: "ai", content: "Connection error. Please try again.", created_at: new Date().toISOString() }
@@ -147,7 +142,10 @@ export default function AIAssistantPage() {
     }
   };
 
-  // پیشنهادهای آماده برای شروع چت
+  const formatMessageTime = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   const suggestedPrompts = [
     "Explain Stripe Treasury BaaS integration.",
     "Review my latest Trading Journal entry.",
@@ -156,166 +154,181 @@ export default function AIAssistantPage() {
   ];
 
   return (
-    <div className="flex flex-col h-screen w-full relative">
+    <div className="relative w-full h-full flex flex-col bg-[#030305] font-sans overflow-hidden select-none">
       
-      {/* ================= Header (تراز با سایدبار) ================= */}
-      <header className="h-24 px-8 md:px-12 flex justify-between items-center animate-[fadeIn_0.5s_ease-out] border-b border-white/5 shrink-0 bg-[#050505]/80 backdrop-blur-md z-20 relative">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(234,179,8,0.3)]">
-            <svg className="w-7 h-7 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+      {/* ================= افکت‌های نوری آمبیانس و هوشمند پس‌زمینه ================= */}
+      <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-indigo-600/10 rounded-full blur-[160px] pointer-events-none z-0"></div>
+      <div className="absolute bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none z-0"></div>
+      
+      {/* 🌟 برندینگ واترمارک اختصاصی در قلب صفحه چت 🌟 */}
+      <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none opacity-[0.02] grayscale scale-125">
+         <img src="/logo-without-b.png" alt="watermark" className="w-full max-w-xl object-contain blur-[1px]" />
+      </div>
+
+      {/* ================= هدر پرمیوم دستیار صوتی/متنی هوش مصنوعی ================= */}
+      <header className="h-16 sm:h-20 px-4 sm:px-6 flex justify-between items-center bg-[#050508]/80 backdrop-blur-3xl border-b border-white/5 relative z-20 shrink-0 shadow-2xl">
+        <div className="flex items-center gap-3">
+          <Link href="/en/dashboard" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 hover:text-indigo-400 active:scale-95 transition-all">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
+          </Link>
+          
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 rounded-[0.8rem] flex items-center justify-center text-white text-base shadow-[0_4px_15px_rgba(99,102,241,0.3)] font-black border border-white/10 animate-pulse">
+              🤖
+            </div>
+            <div>
+              <h2 className="text-sm sm:text-base font-black text-white tracking-tight leading-tight">
+                Safi AI Assistant
+              </h2>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(168,85,247,0.8)]"></span>
+                <span className="text-[9px] text-purple-400 font-bold uppercase tracking-widest">Quantum Core Live</span>
+              </div>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-              Safi <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">AI Assistant</span>
-            </h1>
-            <p className="text-neutral-500 mt-1 text-sm hidden md:block">Your personal 24/7 financial & tech tutor.</p>
-          </div>
+        </div>
+
+        <div onClick={() => setMessages([])} className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-neutral-400 text-[10px] font-black uppercase tracking-widest hover:text-red-400 hover:bg-red-500/10 cursor-pointer transition-all">
+          Clear Chat
         </div>
       </header>
 
-      {/* ================= Chat Area ================= */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-8 custom-scrollbar scroll-smooth">
-        <div className="max-w-4xl mx-auto flex flex-col gap-6">
-          
+      {/* ================= خط زمانی اسکرول چت (پیام‌ها) ================= */}
+      <div 
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 space-y-4 custom-scrollbar relative z-10 scroll-smooth"
+      >
+        <div className="max-w-4xl mx-auto flex flex-col gap-4">
           {isLoadingHistory ? (
-            <div className="flex justify-center items-center h-40">
-               <div className="flex gap-2">
-                 <div className="w-3 h-3 bg-yellow-500 rounded-full animate-bounce"></div>
-                 <div className="w-3 h-3 bg-yellow-500 rounded-full animate-bounce [animation-delay:-.3s]"></div>
-                 <div className="w-3 h-3 bg-yellow-500 rounded-full animate-bounce [animation-delay:-.5s]"></div>
-               </div>
+            <div className="flex flex-col justify-center items-center h-[60vh] gap-3">
+              <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-neutral-500 text-[9px] font-black uppercase tracking-widest">Waking up Neural Networks...</p>
             </div>
           ) : messages.length === 0 ? (
-            // ================= حالت خالی (خوش‌آمدگویی و پیشنهادها) =================
-            <div className="flex flex-col items-center justify-center text-center mt-10 md:mt-20 animate-[fadeIn_0.5s_ease-out]">
-              <div className="w-24 h-24 bg-gradient-to-br from-neutral-800 to-black border border-white/10 rounded-full flex items-center justify-center mb-6 shadow-2xl relative">
-                <div className="absolute inset-0 bg-yellow-500/20 blur-[30px] rounded-full"></div>
-                <img src="/logo-without-b.png" alt="Safi AI" className="w-14 h-14 object-contain relative z-10 drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]" />
-              </div>
-              <h2 className="text-3xl font-extrabold text-white mb-3">How can I help you, {studentName}?</h2>
-              <p className="text-neutral-400 mb-10 max-w-lg">I am here to help you code, analyze markets, build your e-commerce store, and answer any questions.</p>
+            
+            // ================= حالت اتمسفریک خالی (Suggested State) =================
+            <div className="flex flex-col items-center justify-center text-center py-10 md:py-16 animate-[fadeIn_0.5s_ease-out]">
+              <div className="w-20 h-24 text-6xl mb-4 drop-shadow-[0_0_20px_rgba(99,102,241,0.3)]">⚡</div>
+              <h3 className="text-xl md:text-2xl font-black text-white">How can I assist you, {studentName || "Trader"}?</h3>
+              <p className="text-neutral-500 text-xs mt-2 max-w-sm font-medium leading-relaxed">Ask anything about trading architectures, full-stack systems, or e-commerce models.</p>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl mt-10">
                 {suggestedPrompts.map((prompt, idx) => (
                   <button 
                     key={idx}
-                    onClick={() => {
-                      setInputValue(prompt);
-                      setTimeout(() => document.getElementById("ai-chat-input")?.focus(), 100);
-                    }}
-                    className="p-4 bg-neutral-900/40 border border-white/5 rounded-2xl text-sm font-medium text-neutral-300 hover:bg-neutral-800 hover:border-yellow-500/30 hover:text-white transition-all text-left group"
+                    onClick={() => setInputValue(prompt)}
+                    className="p-4 bg-[#0d0d12]/60 backdrop-blur-md border border-white/5 rounded-2xl text-xs font-bold text-neutral-400 hover:bg-neutral-900 hover:border-indigo-500/30 hover:text-white transition-all text-left flex flex-col justify-between group shadow-xl"
                   >
-                    <span className="block text-yellow-500 mb-1 group-hover:translate-x-1 transition-transform">→</span>
+                    <span className="text-indigo-400 mb-2 group-hover:translate-x-1 transition-transform">👉</span>
                     {prompt}
                   </button>
                 ))}
               </div>
             </div>
           ) : (
-            // ================= لیست پیام‌ها =================
-            <>
-              <div className="flex justify-center mb-8">
-                <span className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs font-bold text-neutral-500 uppercase tracking-widest">
-                  Chat History Loaded
-                </span>
-              </div>
+            
+            // ================= تایم‌لاین چت فعال =================
+            messages.map((msg) => {
+              const isMe = msg.role === "user";
 
-              {messages.map((msg) => (
-                <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-[fadeIn_0.3s_ease-out]`}>
-                  <div className={`flex gap-4 max-w-[85%] md:max-w-[75%] ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
-                    
-                    {/* آواتار */}
-                    <div className="shrink-0 mt-1">
-                      {msg.role === "ai" ? (
-                        <div className="w-10 h-10 bg-gradient-to-br from-neutral-800 to-black border border-yellow-500/30 rounded-xl flex items-center justify-center shadow-lg">
-                           <img src="/logo-without-b.png" alt="Safi AI" className="w-6 h-6 object-contain" />
-                        </div>
-                      ) : (
-                        <div className="w-10 h-10 bg-neutral-800 border border-white/10 rounded-xl flex items-center justify-center text-sm font-bold text-neutral-400">
-                           {studentName.charAt(0) || "U"}
-                        </div>
-                      )}
+              return (
+                <div key={msg.id} className={`flex w-full ${isMe ? "justify-end" : "justify-start"} items-end gap-2 animate-[fadeInUp_0.2s_ease-out]`}>
+                  
+                  {!isMe && (
+                    <div className="w-8 h-8 rounded-xl bg-neutral-900 border border-white/10 shrink-0 overflow-hidden flex items-center justify-center shadow-md">
+                      <img src="/logo-without-b.png" alt="AI" className="w-5 h-5 object-contain" />
                     </div>
+                  )}
 
-                    {/* حباب پیام */}
-                    <div 
-                      className={`p-5 rounded-2xl text-[15px] leading-relaxed shadow-lg ${
-                        msg.role === "user" 
-                          ? "bg-yellow-500 text-black rounded-tr-sm font-medium" 
-                          : "bg-neutral-900/80 border border-white/5 text-neutral-200 rounded-tl-sm backdrop-blur-xl"
-                      }`}
-                    >
-                      {msg.content}
-                      <span className={`block text-[10px] mt-3 font-bold opacity-60 ${msg.role === "user" ? "text-right text-black" : "text-left text-neutral-500"}`}>
-                        {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
+                  <div className="flex flex-col max-w-[85%] sm:max-w-[70%]">
+                    <div className={`relative px-4 py-3 shadow-2xl transition-all duration-300 text-[13px] sm:text-sm ${
+                      isMe 
+                        ? "bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-2xl rounded-br-none border border-white/10 shadow-[0_4px_20px_rgba(79,70,229,0.15)] font-medium" 
+                        : "bg-[#14141c]/90 backdrop-blur-xl border border-white/5 text-neutral-200 rounded-2xl rounded-tl-none leading-relaxed"
+                    }`}>
+                      <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                      
+                      <div className={`flex items-center gap-1.5 mt-2 text-[9px] font-black tracking-tighter ${isMe ? "text-blue-200/60 justify-end" : "text-neutral-500 justify-start"}`}>
+                        <span>{formatMessageTime(msg.created_at)}</span>
+                      </div>
                     </div>
                   </div>
+
                 </div>
-              ))}
-            </>
+              );
+            })
           )}
 
-          {/* انیمیشن در حال تایپ... */}
+          {/* انیمیشن لودینگ و تایپ هوش مصنوعی */}
           {isTyping && (
-            <div className="flex justify-start animate-[fadeIn_0.3s_ease-out]">
-              <div className="flex gap-4 max-w-[75%]">
-                <div className="shrink-0 mt-1">
-                  <div className="w-10 h-10 bg-gradient-to-br from-neutral-800 to-black border border-yellow-500/30 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(234,179,8,0.2)]">
-                     <img src="/logo-without-b.png" alt="Safi AI" className="w-6 h-6 object-contain animate-pulse" />
-                  </div>
-                </div>
-                <div className="p-5 rounded-2xl rounded-tl-sm bg-neutral-900/80 border border-white/5 backdrop-blur-xl flex items-center gap-1.5">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce [animation-delay:-.2s]"></div>
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce [animation-delay:-.4s]"></div>
-                </div>
+            <div className="flex justify-start items-end gap-2 animate-[fadeIn_0.2s_ease-out]">
+              <div className="w-8 h-8 rounded-xl bg-neutral-900 border border-white/10 shrink-0 flex items-center justify-center shadow-md">
+                <img src="/logo-without-b.png" alt="AI" className="w-5 h-5 object-contain animate-spin" />
+              </div>
+              <div className="px-4 py-3.5 bg-[#14141c]/90 border border-white/5 rounded-2xl rounded-tl-none flex items-center gap-1">
+                <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce"></div>
+                <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-delay:-.2s]"></div>
+                <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-delay:-.4s]"></div>
               </div>
             </div>
           )}
-          
-          <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} className="h-2" />
         </div>
       </div>
 
-      {/* ================= Input Area ================= */}
-      <div className="p-6 md:p-8 bg-gradient-to-t from-[#050505] via-[#050505]/95 to-transparent shrink-0">
-        <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto relative group">
-          {/* افکت نوری پشت باکس تکست */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-yellow-600/0 via-yellow-500/10 to-yellow-600/0 rounded-2xl blur-md opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
+      {/* ================= باکس تایپ و کامپوزر چت (Composer) ================= */}
+      <div className="p-4 bg-[#050508]/95 backdrop-blur-3xl border-t border-white/5 relative z-20 shrink-0 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+        <div className="max-w-4xl mx-auto flex flex-col gap-2">
           
-          <div className="relative flex items-end bg-neutral-900/80 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl transition-all focus-within:border-yellow-500/50 focus-within:shadow-[0_0_30px_rgba(234,179,8,0.1)]">
-            <textarea
-              id="ai-chat-input"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage();
-                }
-              }}
-              placeholder="Message Safi AI..."
-              className="w-full max-h-48 min-h-[60px] bg-transparent text-white p-5 resize-none focus:outline-none custom-scrollbar text-[15px]"
-              rows={1}
-            />
+          <form onSubmit={handleSendMessage} className="flex items-center gap-2.5 bg-[#0d0d13] border border-white/10 p-1.5 sm:p-2 rounded-2xl group transition-all focus-within:border-indigo-500/50">
             
-            <div className="p-3 shrink-0">
-              <button 
-                type="submit"
-                disabled={!inputValue.trim() || isTyping}
-                className="w-12 h-12 bg-yellow-500 hover:bg-yellow-400 text-black rounded-xl flex items-center justify-center transition-all disabled:opacity-30 disabled:hover:bg-yellow-500 hover:scale-105"
-              >
-                <svg className="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 19V5m0 0l-7 7m7-7l7 7"></path></svg>
-              </button>
-            </div>
-          </div>
-          <p className="text-center text-[11px] text-neutral-600 font-medium mt-3">
-            Safi AI can make mistakes. Consider verifying important financial or code information.
-          </p>
-        </form>
-      </div>
+            <button 
+              type="button" 
+              onClick={() => setShowEmojiPanel(!showEmojiPanel)}
+              className={`w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-xl transition-all ${showEmojiPanel ? "bg-indigo-500/20 text-indigo-400" : "text-neutral-500 hover:text-white"}`}
+            >
+              {showEmojiPanel ? " Keyboard " : "😀"}
+            </button>
 
+            <div className="flex-1 relative">
+              <input 
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Ask anything from Safi AI..."
+                className="w-full bg-transparent px-1 py-2 text-white text-[13px] sm:text-sm focus:outline-none placeholder-neutral-600 font-medium"
+              />
+            </div>
+
+            <button 
+              type="submit" 
+              disabled={!inputValue.trim() || isTyping}
+              className="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-fuchsia-600 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all disabled:opacity-20 disabled:hover:scale-100 shadow-[0_4px_12px_rgba(99,102,241,0.3)]"
+            >
+              <svg className="w-4 h-4 transform rotate-45 -translate-x-0.5 translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+              </svg>
+            </button>
+
+          </form>
+
+          {/* پنل اموجی‌ها */}
+          {showEmojiPanel && (
+            <div className="p-3 bg-black/40 border border-white/5 rounded-2xl flex flex-wrap justify-center gap-2 text-xl animate-[fadeIn_0.2s_ease-out]">
+              {["🔥", "🚀", "💻", "📈", "📊", "🎯", "💰", "💎", "💡", "🧠", "👍", "🙌", "🎉", "👑"].map(emoji => (
+                <span 
+                  key={emoji} 
+                  onClick={() => setInputValue(prev => prev + emoji)}
+                  className="cursor-pointer hover:scale-125 transition-transform p-1 select-none active:scale-90"
+                >
+                  {emoji}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+      
     </div>
   );
 }
