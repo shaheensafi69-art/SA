@@ -21,6 +21,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "Safi Academy",
+  applicationName: "Safi Academy",
   description: "The premium educational platform for modern skills.",
   manifest: "/manifest.json",
   appleWebApp: {
