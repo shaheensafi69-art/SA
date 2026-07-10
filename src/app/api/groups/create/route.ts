@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { v4 as uuidv4 } from "uuid";
+// @ts-ignore: Cannot find module 'uuid' or its corresponding type declarations.
+import { v4 as uuidv4 } from "uuid"; 
 
 export async function POST(req: Request) {
   try {
