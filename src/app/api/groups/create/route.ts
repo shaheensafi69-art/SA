@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-// @ts-ignore: Cannot find module 'uuid' or its corresponding type declarations.
-import { v4 as uuidv4 } from "uuid"; 
 
 export async function POST(req: Request) {
   try {
@@ -16,29 +14,23 @@ export async function POST(req: Request) {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // ۱. تولید آیدی واحد (Unified ID) برای کل اکوسیستم کلاس (ویدیو + چت)
-    const unifiedClassId = uuidv4();
+    // 🔥 استفاده از متد بومی و استاندارد بدون نیاز به هیچ پکیج خارجی 🔥
+    const unifiedClassId = crypto.randomUUID();
 
-    /* 
-      ۲. اتصال به Agora Chat REST API (در اینجا پیاده‌سازی منطقی آن قرار دارد)
-      در محیط پروداکشن، شما با استفاده از App Token آگورا، یک درخواست به سرور آگورا می‌فرستید 
-      تا گروه چت ساخته شود و Agora Chat Group ID را دریافت کنید.
-      مثال: 
-      const agoraGroup = await fetch(`https://{org_name}.chat.agora.io/{app_name}/chatgroups`, { ... })
-      const agoraChatGroupId = agoraGroup.data.groupid;
+    /* ۲. اتصال به Agora Chat REST API 
     */
-    const agoraChatGroupId = `agora_temp_${Date.now()}`; // این مقدار بعداً با آیدی واقعی آگورا جایگزین می‌شود
+    const agoraChatGroupId = `agora_temp_${Date.now()}`; 
 
     // ۳. ذخیره آیدی واحد در دیتابیس (جدول class_groups)
     const { data: newClass, error } = await supabase
       .from("class_groups")
       .insert({
-        id: unifiedClassId, // این آیدی، همان Channel Name برای Agora Video خواهد بود
+        id: unifiedClassId, 
         course_id: courseId,
         teacher_id: teacherId,
         class_name: className,
         schedule_info: scheduleInfo,
-        agora_chat_id: agoraChatGroupId, // فیلد جدید در دیتابیس برای اتصال چت آگورا به این کلاس
+        agora_chat_id: agoraChatGroupId, 
         is_active: true
       })
       .select()
