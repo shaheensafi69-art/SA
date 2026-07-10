@@ -3,7 +3,10 @@
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+
+// 🔥 ایمپورت مستقیم آگورا به جای ایمپورت داینامیک 🔥
+import AC from "agora-chat";
 
 type Profile = {
   id: string;
@@ -24,10 +27,12 @@ type Message = {
 type GroupDetails = {
   id: string;
   class_name: string;
+  agora_chat_id?: string;
 };
 
 export default function GroupChatPage() {
   const params = useParams();
+  const router = useRouter();
   const groupId = params.id as string;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -35,11 +40,12 @@ export default function GroupChatPage() {
   const [newMessage, setNewMessage] = useState("");
   const [groupDetails, setGroupDetails] = useState<GroupDetails | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [currentUserProfile, setCurrentUserProfile] = useState<Profile | null>(null);
   
-  // استیت‌های قابلیت‌های پرمیوم
   const [showEmojiPanel, setShowEmojiPanel] = useState(false);
   const [replyingTo, setReplyingTo] = useState<{ senderName: string; snippet: string } | null>(null);
 
+  const agoraClientRef = useRef<any>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -57,25 +63,33 @@ export default function GroupChatPage() {
     const initChat = async () => {
       const supabase = createClient();
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      setCurrentUserId(session.user.id);
+      
+      if (!session?.user) {
+        router.push("/en/login");
+        return;
+      }
+      
+      const userId = session.user.id;
+      setCurrentUserId(userId);
 
-      // دریافت اطلاعات گروه
+      const { data: myProfile } = await supabase
+        .from("profiles")
+        .select("id, first_name, last_name, avatar_url")
+        .eq("id", userId)
+        .single();
+      if (myProfile) setCurrentUserProfile(myProfile);
+
       const { data: groupData } = await supabase
         .from("class_groups")
-        .select("id, class_name")
+        .select("id, class_name, agora_chat_id")
         .eq("id", groupId)
         .single();
       
       if (groupData) setGroupDetails(groupData);
 
-      // دریافت تاریخچه پیام‌ها
       const { data: msgData } = await supabase
         .from("class_messages")
-        .select(`
-          *,
-          profiles!sender_id (id, first_name, last_name, avatar_url)
-        `)
+        .select(`*, profiles!sender_id (id, first_name, last_name, avatar_url)`)
         .eq("class_group_id", groupId)
         .order("created_at", { ascending: true });
 
@@ -89,53 +103,118 @@ export default function GroupChatPage() {
       setIsLoading(false);
       setTimeout(scrollToBottom, 100);
 
-      // اتصال ریل‌تایم
-      const channel = supabase
-        .channel(`room_${groupId}`)
-        .on(
-          'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'class_messages', filter: `class_group_id=eq.${groupId}` },
-          async (payload) => {
-            const { data: senderProfile } = await supabase
-              .from("profiles")
-              .select("id, first_name, last_name, avatar_url")
-              .eq("id", payload.new.sender_id)
-              .single();
+      // 🔥 راه‌اندازی امن آگورا چت با استفاده از Static Import 🔥
+      try {
+        // اطمینان از اینکه در محیط مرورگر (کلاینت) هستیم
+        if (typeof window !== "undefined") {
+          const appKey = process.env.NEXT_PUBLIC_AGORA_APP_KEY || "YOUR_ORG_NAME#YOUR_APP_NAME";
+          
+          if (!agoraClientRef.current) {
+            // استفاده مستقیم از AC (Agora Chat)
+            const conn = new AC.connection({
+              appKey: appKey,
+              isHttpDNS: true,
+            });
+            
+            agoraClientRef.current = conn;
 
-            const newMsg: Message = {
-              ...(payload.new as Message),
-              profiles: senderProfile || null
-            };
+            conn.addEventHandler("connection_events", {
+              onConnected: () => console.log("⚡ Connected to Agora Secured Network"),
+              onTextMessage: (message: any) => {
+                if (message.to === groupId || message.to === groupData?.agora_chat_id) {
+                  const incomingMsg: Message = {
+                    id: message.id,
+                    class_group_id: groupId,
+                    sender_id: message.from,
+                    message_text: message.msg,
+                    created_at: new Date().toISOString(),
+                    profiles: {
+                      id: message.from,
+                      first_name: message.ext?.firstName || "Student",
+                      last_name: message.ext?.lastName || "",
+                      avatar_url: message.ext?.avatarUrl || null,
+                    }
+                  };
+                  setMessages((prev) => [...prev, incomingMsg]);
+                }
+              }
+            });
 
-            setMessages((prev) => [...prev, newMsg]);
+            const tokenRes = await fetch('/api/agora/chat-token', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId: userId })
+            });
+            
+            const tokenData = await tokenRes.json();
+
+            if (tokenRes.ok) {
+              await conn.open({
+                user: userId,
+                agoraToken: tokenData.token,
+              });
+            }
           }
-        )
-        .subscribe();
-
-      return () => {
-        supabase.removeChannel(channel);
-      };
+        }
+      } catch (err) {
+        console.error("Agora Engine Init Failed:", err);
+      }
     };
 
     if (groupId) initChat();
-  }, [groupId]);
 
-  // هندلر ارسال پیام با پشتیبانی از ریپلای
+    return () => {
+      if (agoraClientRef.current) {
+        agoraClientRef.current.close();
+        agoraClientRef.current = null;
+      }
+    };
+  }, [groupId, router]);
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || !currentUserId) return;
 
     let finalMessageText = newMessage.trim();
     
-    // اگر کاربر در حال ریپلای است، آن را با یک ساختار خاص در متن پیام ذخیره می‌کنیم
     if (replyingTo) {
-      // Format: [REPLY:SenderName|MessageSnippet] Actual Message
       finalMessageText = `[REPLY:${replyingTo.senderName}|${replyingTo.snippet}] ${finalMessageText}`;
     }
 
     setNewMessage(""); 
     setShowEmojiPanel(false);
     setReplyingTo(null);
+
+    const tempId = `temp_${Date.now()}`;
+    const newLocalMsg: Message = {
+      id: tempId,
+      class_group_id: groupId,
+      sender_id: currentUserId,
+      message_text: finalMessageText,
+      created_at: new Date().toISOString(),
+      profiles: currentUserProfile
+    };
+    setMessages((prev) => [...prev, newLocalMsg]);
+
+    // 🔥 ارسال پیام با استفاده از Static Import 🔥
+    if (agoraClientRef.current) {
+      try {
+        const msg = AC.message.create({
+          type: "txt",
+          msg: finalMessageText,
+          to: groupDetails?.agora_chat_id || groupId,
+          chatType: "groupChat",
+          ext: {
+            firstName: currentUserProfile?.first_name || "",
+            lastName: currentUserProfile?.last_name || "",
+            avatarUrl: currentUserProfile?.avatar_url || ""
+          }
+        });
+        await agoraClientRef.current.send(msg);
+      } catch (err) {
+        console.error("Failed to route via Agora:", err);
+      }
+    }
 
     const supabase = createClient();
     const { error } = await supabase
@@ -147,17 +226,15 @@ export default function GroupChatPage() {
       });
 
     if (error) {
-      console.error("Failed to send:", error);
+      console.error("Failed to save to database:", error);
     }
   };
 
-  // فعال کردن حالت ریپلای
   const handleReplyClick = (msg: Message) => {
     const senderName = msg.sender_id === currentUserId 
       ? "You" 
       : `${msg.profiles?.first_name || 'User'} ${msg.profiles?.last_name || ''}`.trim();
     
-    // پاک کردن تگ ریپلای از پیام اصلی اگر خودِ پیام هم ریپلای بود
     let cleanText = msg.message_text;
     const replyMatch = cleanText.match(/^\[REPLY:([^|]+)\|(.*?)\]\s*([\s\S]*)$/);
     if (replyMatch) cleanText = replyMatch[3];
@@ -172,7 +249,6 @@ export default function GroupChatPage() {
   };
 
   return (
-    // 🔥 کلاس fixed و h-screen در اینجا حذف شد و از h-full relative استفاده کردیم تا چت در دسکتاپ دقیقاً کنار سایدبار بنشیند 🔥
     <div className="relative w-full h-full flex flex-col bg-[#030305] font-sans overflow-hidden select-none">
       
       {/* ================= افکت‌های نوری آمبیانس و بک‌گراند ================= */}
@@ -201,23 +277,20 @@ export default function GroupChatPage() {
               </h2>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(99,102,241,0.8)]"></span>
-                <span className="text-[9px] text-indigo-400 font-bold uppercase tracking-widest">Live Secured</span>
+                <span className="text-[9px] text-indigo-400 font-bold uppercase tracking-widest">Agora Secured</span>
               </div>
             </div>
           </div>
         </div>
 
-        <button onClick={() => alert("Connecting to Agora...")} className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl border border-white/10 transition-all text-[10px] uppercase tracking-widest hover:text-indigo-400">
+        <Link href={`/en/dashboard/live-classes/${groupId}`} className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl border border-white/10 transition-all text-[10px] uppercase tracking-widest hover:text-indigo-400">
            <svg className="w-4 h-4 animate-pulse text-indigo-400" fill="currentColor" viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
            <span className="hidden sm:inline">Join Room</span>
-        </button>
+        </Link>
       </header>
 
       {/* ================= بخش اسکرول پیام‌ها ================= */}
-      <div 
-        ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 space-y-3 custom-scrollbar relative z-10 scroll-smooth"
-      >
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 space-y-3 custom-scrollbar relative z-10 scroll-smooth">
         <div className="max-w-4xl mx-auto flex flex-col gap-3">
           {isLoading ? (
             <div className="flex flex-col justify-center items-center h-[60vh] gap-3">
@@ -234,7 +307,6 @@ export default function GroupChatPage() {
               const isMe = msg.sender_id === currentUserId;
               const showAvatar = index === 0 || messages[index - 1].sender_id !== msg.sender_id;
 
-              // پردازش متن برای بررسی ریپلای بودن
               let replySender = "";
               let replySnippet = "";
               let actualText = msg.message_text;
@@ -249,7 +321,6 @@ export default function GroupChatPage() {
               return (
                 <div key={msg.id} className={`flex w-full group/message ${isMe ? "justify-end" : "justify-start"} items-end gap-2 animate-[fadeInUp_0.2s_ease-out]`}>
                   
-                  {/* دکمه ریپلای مخفی (Hover Action) */}
                   {isMe && (
                     <button onClick={() => handleReplyClick(msg)} className="opacity-0 group-hover/message:opacity-100 transition-opacity p-2 text-neutral-500 hover:text-white mb-2 cursor-pointer">
                       <svg className="w-4 h-4 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
@@ -262,7 +333,7 @@ export default function GroupChatPage() {
                         msg.profiles?.avatar_url ? (
                           <img src={msg.profiles.avatar_url} alt="" className="w-full h-full object-cover" />
                         ) : (
-                          <span className="text-[11px] font-black text-indigo-400">{msg.profiles?.first_name?.charAt(0)}</span>
+                          <span className="text-[11px] font-black text-indigo-400">{msg.profiles?.first_name?.charAt(0) || "U"}</span>
                         )
                       ) : null}
                     </div>
@@ -281,7 +352,6 @@ export default function GroupChatPage() {
                         : "bg-[#16161e]/90 backdrop-blur-xl border border-white/5 text-neutral-100 rounded-2xl rounded-bl-none"
                     }`}>
                       
-                      {/* اگر پیام ریپلای بود، باکس ریپلای را نشان بده */}
                       {replyMatch && (
                         <div className={`mb-2 pl-2.5 border-l-2 rounded-r-md py-1 px-2 ${isMe ? "border-white/50 bg-black/10" : "border-indigo-500 bg-white/5"}`}>
                           <p className={`text-[10px] font-black mb-0.5 ${isMe ? "text-white" : "text-indigo-400"}`}>{replySender}</p>
@@ -298,7 +368,6 @@ export default function GroupChatPage() {
                     </div>
                   </div>
 
-                  {/* دکمه ریپلای مخفی (Hover Action) */}
                   {!isMe && (
                     <button onClick={() => handleReplyClick(msg)} className="opacity-0 group-hover/message:opacity-100 transition-opacity p-2 text-neutral-500 hover:text-white mb-2 cursor-pointer">
                       <svg className="w-4 h-4 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
@@ -317,7 +386,6 @@ export default function GroupChatPage() {
       <div className="p-3 sm:p-5 bg-[#050508]/95 backdrop-blur-3xl border-t border-white/5 relative z-20 shrink-0 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
         <div className="max-w-4xl mx-auto flex flex-col gap-2">
           
-          {/* نمایش حالت ریپلای فعال در کامپوزر */}
           {replyingTo && (
             <div className="flex items-center justify-between bg-indigo-500/10 border border-indigo-500/20 px-4 py-2 rounded-xl animate-[fadeIn_0.2s_ease-out]">
               <div className="flex items-center gap-3 overflow-hidden">
@@ -334,7 +402,6 @@ export default function GroupChatPage() {
           )}
 
           <form onSubmit={handleSendMessage} className="flex items-center gap-2 sm:gap-3 bg-[#0d0d12] border border-white/10 p-1.5 sm:p-2 rounded-2xl">
-            
             <button 
               type="button" 
               onClick={() => setShowEmojiPanel(!showEmojiPanel)}
@@ -366,10 +433,8 @@ export default function GroupChatPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
               </svg>
             </button>
-
           </form>
 
-          {/* پنل اموجی */}
           {showEmojiPanel && (
             <div className="mt-2 p-3 bg-black/40 border border-white/5 rounded-2xl flex flex-wrap justify-center gap-2 sm:gap-3 text-xl sm:text-2xl animate-[fadeIn_0.2s_ease-out]">
               {["🔥", "🚀", "📈", "🎯", "💰", "💎", "👑", "👍", "👏", "🙌", "🎉", "📚", "💡", "🧠"].map(emoji => (
