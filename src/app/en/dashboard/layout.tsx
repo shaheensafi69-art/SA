@@ -14,9 +14,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // تشخیص هوشمند اینکه آیا کاربر داخل صفحه چت گروهی است یا خیر
-  // اگر مسیر شامل groups/ باشد و بعد از آن یک آیدی وجود داشته باشد، این متغیر true می‌شود
-  const isChatRoute = pathname.includes('/dashboard/groups/') && pathname.split('/').length > 4;
+  // 🔥 تشخیص هوشمند: بررسی می‌کند که آیا کاربر در چت گروهی یا چت هوش مصنوعی است 🔥
+  const isGroupChatRoute = pathname.includes('/dashboard/groups/') && pathname.split('/').length > 4;
+  const isAIRoute = pathname.includes('/dashboard/ai-assistant');
+  const isFullScreenRoute = isGroupChatRoute || isAIRoute;
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -159,8 +160,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
          </button>
       </div>
 
-      {/* ================= 3. MOBILE TOP HEADER (مخفی در صفحه چت) ================= */}
-      {!isChatRoute && (
+      {/* ================= 3. MOBILE TOP HEADER (مخفی در صفحات چت) ================= */}
+      {!isFullScreenRoute && (
         <div className="lg:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-5 bg-[#020202]/80 backdrop-blur-2xl border-b border-white/5 z-40">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8">
@@ -177,13 +178,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
 
       {/* ================= 4. MAIN CONTENT ================= */}
-      {/* پدینگ‌های اضافی در موبایل (pt-16 و pb-32) در صفحه چت حذف می‌شوند */}
-      <main className={`flex-1 relative z-10 h-screen overflow-y-auto custom-scrollbar ${isChatRoute ? 'pt-0 pb-0' : 'pt-16 pb-32'} lg:pt-0 lg:pb-0`}>
+      {/* پدینگ‌های اضافی در موبایل (pt-16 و pb-32) در صفحات چت حذف می‌شوند */}
+      <main className={`flex-1 relative z-10 h-screen overflow-y-auto custom-scrollbar ${isFullScreenRoute ? 'pt-0 pb-0' : 'pt-16 pb-32'} lg:pt-0 lg:pb-0`}>
         {children}
       </main>
 
-      {/* ================= 5. FLOATING MOBILE BOTTOM NAV (مخفی در صفحه چت) ================= */}
-      {!isChatRoute && (
+      {/* ================= 5. FLOATING MOBILE BOTTOM NAV (مخفی در صفحات چت) ================= */}
+      {!isFullScreenRoute && (
         <div className="lg:hidden fixed bottom-6 left-6 right-6 h-[72px] bg-neutral-950/80 backdrop-blur-3xl border border-white/10 z-50 px-3 rounded-full flex justify-around items-center shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_20px_rgba(234,179,8,0.05)]">
           {[
             { name: "Overview", path: "/en/dashboard", icon: "📊" },
