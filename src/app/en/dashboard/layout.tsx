@@ -14,10 +14,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // 🔥 تشخیص هوشمند: بررسی می‌کند که آیا کاربر در چت گروهی یا چت هوش مصنوعی است 🔥
+  // 🔥 تشخیص هوشمند تمام صفحات فول‌اسکرین (چت هوش مصنوعی، چت گروهی و اتاق کلاس زنده) 🔥
   const isGroupChatRoute = pathname.includes('/dashboard/groups/') && pathname.split('/').length > 4;
   const isAIRoute = pathname.includes('/dashboard/ai-assistant');
-  const isFullScreenRoute = isGroupChatRoute || isAIRoute;
+  const isLiveMeetRoute = pathname.includes('/dashboard/live-classes/') && pathname.split('/').length > 4;
+  
+  // ترکیب هر سه مسیر برای پنهان‌سازی هدر و فوتر در موبایل
+  const isFullScreenRoute = isGroupChatRoute || isAIRoute || isLiveMeetRoute;
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -160,7 +163,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
          </button>
       </div>
 
-      {/* ================= 3. MOBILE TOP HEADER (مخفی در صفحات چت) ================= */}
+      {/* ================= 3. MOBILE TOP HEADER (مخفی در صفحات چت و کلاس زنده) ================= */}
       {!isFullScreenRoute && (
         <div className="lg:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-5 bg-[#020202]/80 backdrop-blur-2xl border-b border-white/5 z-40">
           <div className="flex items-center gap-3">
@@ -171,19 +174,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
           
           <button className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-yellow-400 transition-colors relative">
-             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-             <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_5px_red]"></span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+              <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_5px_red]"></span>
           </button>
         </div>
       )}
 
       {/* ================= 4. MAIN CONTENT ================= */}
-      {/* پدینگ‌های اضافی در موبایل (pt-16 و pb-32) در صفحات چت حذف می‌شوند */}
+      {/* پدینگ‌های اضافی در موبایل (pt-16 و pb-32) در تمامی صفحات تمام‌صفحه حذف می‌شوند */}
       <main className={`flex-1 relative z-10 h-screen overflow-y-auto custom-scrollbar ${isFullScreenRoute ? 'pt-0 pb-0' : 'pt-16 pb-32'} lg:pt-0 lg:pb-0`}>
         {children}
       </main>
 
-      {/* ================= 5. FLOATING MOBILE BOTTOM NAV (مخفی در صفحات چت) ================= */}
+      {/* ================= 5. FLOATING MOBILE BOTTOM NAV (مخفی در صفحات چت و کلاس زنده) ================= */}
       {!isFullScreenRoute && (
         <div className="lg:hidden fixed bottom-6 left-6 right-6 h-[72px] bg-neutral-950/80 backdrop-blur-3xl border border-white/10 z-50 px-3 rounded-full flex justify-around items-center shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_20px_rgba(234,179,8,0.05)]">
           {[
