@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 
 type ClassGroup = {
@@ -15,11 +15,24 @@ type ClassGroup = {
 };
 
 export default function TeacherOverview() {
-  const [instructor, setInstructor] = useState({ first_name: "Instructor", avatar: "" });
-  const [classes, setClasses] = useState<ClassGroup[]>([]);
-  const [stats, setStats] = useState({ totalStudents: 0, totalClasses: 0, pendingAssignments: 45 });
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  
+  const [instructor, setInstructor] = useState({
+    first_name: "",
+    last_name: "",
+    avatar: "",
+    email: "",
+    wallet: 0
+  });
+
+  const [stats, setStats] = useState({
+    totalStudents: 0,
+    totalClasses: 0,
+    pendingAssignments: 12,
+  });
+
+  const [classes, setClasses] = useState<ClassGroup[]>([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -31,28 +44,31 @@ export default function TeacherOverview() {
       const userId = session.user.id;
 
       try {
-        // ۱. دریافت اطلاعات پروفایل استاد
+        // ۱. دریافت پروفایل استاد
         const { data: profile } = await supabase
           .from("profiles")
-          .select("first_name, avatar_url")
+          .select("first_name, last_name, avatar_url, email, wallet_balance")
           .eq("id", userId)
           .single();
-          
+
         if (profile) {
           setInstructor({
             first_name: profile.first_name || "Instructor",
+            last_name: profile.last_name || "",
             avatar: profile.avatar_url || "",
+            email: profile.email || session.user.email || "",
+            wallet: profile.wallet_balance || 0
           });
         }
 
-        // ۲. دریافت کلاس‌های این استاد همراه با تعداد شاگردان
+        // ۲. دریافت کلاس‌های استاد
         const { data: classData, error } = await supabase
           .from("class_groups")
           .select(`id, class_name, schedule_info, is_active, start_date, class_students(student_id)`)
           .eq("teacher_id", userId)
-          .order("is_active", { ascending: false }) // کلاس‌های لایو در صدر قرار می‌گیرند
+          .order("is_active", { ascending: false })
           .order("start_date", { ascending: true })
-          .limit(6); // نمایش حداکثر ۶ کلاس در داشبورد اصلی
+          .limit(4); // برای طراحی مینیمال، ۴ کلاس آخر نمایش داده می‌شود
 
         if (error) throw error;
 
@@ -60,7 +76,7 @@ export default function TeacherOverview() {
           let totalStudentsCount = 0;
           const formattedClasses = classData.map((cls: any) => {
             const studentsCount = cls.class_students ? cls.class_students.length : 0;
-            totalStudentsCount += studentsCount; // جمع کل شاگردان
+            totalStudentsCount += studentsCount;
             return {
               ...cls,
               enrolled_count: studentsCount
@@ -69,11 +85,10 @@ export default function TeacherOverview() {
 
           setClasses(formattedClasses);
           
-          // بروزرسانی آمار واقعی بالای صفحه
           setStats({
             totalStudents: totalStudentsCount,
             totalClasses: classData.length,
-            pendingAssignments: 12 // فعلاً عدد نمایشی تا جدول تکالیف ساخته شود
+            pendingAssignments: 12 
           });
         }
       } catch (error) {
@@ -84,145 +99,180 @@ export default function TeacherOverview() {
     };
 
     fetchDashboardData();
-  }, []);
+  }, [router]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-[80vh] flex flex-col items-center justify-center">
+         <div className="w-12 h-12 border-4 border-fuchsia-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full relative min-h-screen bg-[#020202] font-sans pb-12 overflow-hidden">
+    <div className="w-full relative overflow-hidden bg-transparent font-sans">
       
       {/* ================= BACKGROUND EFFECTS ================= */}
-      <div className="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute top-[40%] left-[-10%] w-[30vw] h-[30vw] bg-fuchsia-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] bg-fuchsia-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+      <div className="absolute top-[40%] left-[-10%] w-[30vw] h-[30vw] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
 
-      {/* ================= HEADER ================= */}
-      <header className="h-24 px-8 md:px-12 flex justify-between items-center animate-[fadeIn_0.5s_ease-out] border-b border-white/5 bg-[#050505]/80 backdrop-blur-xl sticky top-0 z-30">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-            Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-indigo-500">{isLoading ? "..." : instructor.first_name}</span>!
-          </h1>
-          <p className="text-neutral-500 mt-1 text-sm hidden md:block">Here is your live command center and upcoming schedule.</p>
-        </div>
+      <div className="px-6 md:px-12 pt-8 pb-32 max-w-7xl mx-auto relative z-10 space-y-8">
         
-        <div className="flex items-center gap-4">
-          <Link href="/en/teacher/live-classes" className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-fuchsia-600 hover:from-indigo-500 hover:to-fuchsia-500 text-white font-extrabold text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:scale-105 hidden sm:flex items-center gap-2">
-            <span>🔴</span> Go to Studio
-          </Link>
+        {/* ================= 1. PREMIUM PROFILE BOX ================= */}
+        <div className="relative w-full bg-gradient-to-br from-neutral-900/90 to-black border border-white/10 rounded-[2.5rem] p-6 md:p-10 overflow-hidden shadow-2xl animate-[fadeIn_0.4s_ease-out] group">
+          {/* افکت نوری پس زمینه باکس پروفایل */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-fuchsia-500/10 rounded-full blur-[80px] group-hover:bg-fuchsia-500/20 transition-all duration-700 pointer-events-none"></div>
           
-          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.2)] bg-neutral-800 flex items-center justify-center shrink-0">
-            {instructor.avatar ? (
-              <img src={instructor.avatar} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-lg font-bold text-indigo-400">{instructor.first_name.charAt(0) || "T"}</span>
-            )}
-          </div>
-        </div>
-      </header>
-
-      {/* ================= MAIN CONTENT ================= */}
-      <div className="px-8 md:px-12 pt-8 max-w-7xl mx-auto relative z-10 animate-[fadeIn_0.5s_ease-out]">
-        
-        {/* ================= STATS CARDS ================= */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-gradient-to-br from-neutral-900/80 to-neutral-950 p-6 rounded-3xl border border-white/5 flex flex-col shadow-xl hover:-translate-y-1 transition-transform group relative overflow-hidden">
-            <div className="absolute -right-4 -top-4 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
-            <div className="w-12 h-12 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-inner">👥</div>
-            <p className="text-neutral-500 text-[10px] font-bold uppercase tracking-widest mb-1">Total Students</p>
-            <h3 className="text-3xl font-black text-white">{isLoading ? "-" : stats.totalStudents}</h3>
-          </div>
-          
-          <div className="bg-gradient-to-br from-neutral-900/80 to-neutral-950 p-6 rounded-3xl border border-white/5 flex flex-col shadow-xl hover:-translate-y-1 transition-transform group relative overflow-hidden">
-            <div className="absolute -right-4 -top-4 w-24 h-24 bg-fuchsia-500/10 rounded-full blur-2xl group-hover:bg-fuchsia-500/20 transition-all"></div>
-            <div className="w-12 h-12 bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-400 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-inner">🔴</div>
-            <p className="text-neutral-500 text-[10px] font-bold uppercase tracking-widest mb-1">Active Classrooms</p>
-            <h3 className="text-3xl font-black text-white">{isLoading ? "-" : stats.totalClasses}</h3>
-          </div>
-
-          <div className="bg-gradient-to-br from-neutral-900/80 to-neutral-950 p-6 rounded-3xl border border-white/5 flex flex-col shadow-xl hover:-translate-y-1 transition-transform group relative overflow-hidden">
-            <div className="absolute -right-4 -top-4 w-24 h-24 bg-yellow-500/10 rounded-full blur-2xl group-hover:bg-yellow-500/20 transition-all"></div>
-            <div className="w-12 h-12 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-inner">📝</div>
-            <p className="text-neutral-500 text-[10px] font-bold uppercase tracking-widest mb-1">Assignments to Review</p>
-            <h3 className="text-3xl font-black text-white">{isLoading ? "-" : stats.pendingAssignments}</h3>
-          </div>
-        </div>
-
-        {/* ================= DYNAMIC LIVE CLASSES SECTION ================= */}
-        <div className="mb-6 flex justify-between items-end">
-          <div>
-            <h2 className="text-xl font-extrabold text-white flex items-center gap-3">
-              My Live Classes Hub
-            </h2>
-            <p className="text-neutral-500 text-xs mt-1">Manage your active broadcasts and upcoming sessions.</p>
-          </div>
-          <Link href="/en/teacher/live-classes" className="text-indigo-400 hover:text-indigo-300 text-xs font-bold uppercase tracking-widest transition-colors hidden sm:block">
-            View All →
-          </Link>
-        </div>
-
-        {isLoading ? (
-          <div className="w-full h-64 bg-neutral-900/40 border border-white/5 rounded-3xl flex items-center justify-center">
-             <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        ) : classes.length === 0 ? (
-          <div className="bg-gradient-to-b from-neutral-900/50 to-black border border-white/5 rounded-3xl p-12 text-center shadow-2xl">
-            <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">📅</div>
-            <h3 className="text-xl font-bold text-white mb-2">No Classes Assigned Yet</h3>
-            <p className="text-neutral-400 text-sm max-w-md mx-auto mb-8">You haven't been assigned to any live classes yet. Check back later or contact the administration.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {classes.map((room) => (
-              <div 
-                key={room.id} 
-                className={`relative overflow-hidden rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 shadow-xl group hover:-translate-y-1 ${
-                  room.is_active 
-                    ? "bg-gradient-to-br from-red-950/40 via-neutral-900 to-black border border-red-500/40 hover:border-red-500" 
-                    : "bg-gradient-to-br from-indigo-950/20 via-neutral-900/80 to-black border border-white/5 hover:border-indigo-500/40"
-                }`}
-              >
-                {/* افکت نوری پس‌زمینه کارت */}
-                {room.is_active && <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-2xl"></div>}
-
-                <div className="relative z-10 mb-8">
-                  <div className="flex justify-between items-start mb-5">
-                    {room.is_active ? (
-                      <span className="bg-red-500 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-md animate-pulse flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-black rounded-full animate-ping"></span> Live Now
-                      </span>
-                    ) : (
-                      <span className="bg-white/10 text-neutral-300 border border-white/10 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg">
-                        Standby
-                      </span>
-                    )}
-                    <span className="text-xl bg-white/5 w-10 h-10 flex items-center justify-center rounded-full border border-white/5">{room.is_active ? "🎙️" : "📅"}</span>
-                  </div>
-                  
-                  <h3 className="text-xl sm:text-2xl font-black text-white mb-3 leading-tight">{room.class_name}</h3>
-                  
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex items-center gap-2 text-xs font-bold text-neutral-300 bg-black/50 px-3 py-2 rounded-xl border border-white/5">
-                      <span className="text-indigo-400">🕒</span> {room.schedule_info}
-                    </div>
-                    <div className="flex items-center gap-2 text-xs font-bold text-neutral-300 bg-black/50 px-3 py-2 rounded-xl border border-white/5">
-                      <span className="text-fuchsia-400">👥</span> {room.enrolled_count} Students
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="relative z-10 mt-auto pt-6 border-t border-white/5">
-                  <Link 
-                    href={`/en/teacher/live-classes/${room.id}`} 
-                    className={`w-full font-extrabold py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all ${
-                      room.is_active 
-                        ? "bg-red-600 hover:bg-red-500 text-white shadow-[0_10px_25px_rgba(220,38,38,0.4)] group-hover:scale-[1.02]" 
-                        : "bg-white/10 hover:bg-indigo-600 text-white hover:shadow-[0_10px_25px_rgba(79,70,229,0.3)]"
-                    }`}
-                  >
-                    {room.is_active ? "Enter Live Studio" : "Prepare Room"}
-                  </Link>
-                </div>
+          <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
+            {/* آواتار استاد */}
+            <div className="w-24 h-24 md:w-28 md:h-28 rounded-[2rem] bg-neutral-800 border-2 border-fuchsia-500/30 p-1.5 shrink-0 shadow-[0_0_30px_rgba(217,70,239,0.15)] group-hover:scale-105 transition-transform duration-500">
+              <div className="w-full h-full rounded-[1.5rem] overflow-hidden bg-neutral-900 flex items-center justify-center">
+                {instructor.avatar ? (
+                  <img src={instructor.avatar} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-3xl font-black text-fuchsia-500">{instructor.first_name.charAt(0)}</span>
+                )}
               </div>
-            ))}
+            </div>
+            
+            {/* اطلاعات استاد */}
+            <div className="flex-1 pt-2">
+              <div className="inline-block px-3 py-1 bg-fuchsia-500/10 border border-fuchsia-500/20 rounded-lg text-fuchsia-400 text-[10px] font-black uppercase tracking-widest mb-3">
+                Academy Instructor
+              </div>
+              <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight mb-1">
+                {instructor.first_name} {instructor.last_name}
+              </h2>
+              <p className="text-sm text-neutral-400 font-medium">{instructor.email}</p>
+            </div>
+
+            {/* کیف پول (نمایش جذاب) */}
+            <div className="mt-4 md:mt-0 bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col items-center justify-center min-w-[140px] backdrop-blur-md hover:bg-white/10 transition-colors cursor-default">
+              <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">Wallet Balance</span>
+              <span className="text-2xl font-black text-green-400 drop-shadow-[0_0_10px_rgba(74,222,128,0.3)]">${instructor.wallet}</span>
+            </div>
           </div>
-        )}
+        </div>
+
+        {/* ================= 2. COLORFUL STATS GRID ================= */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-6">
+          
+          {/* باکس دانشجویان (نیلی/بنفش) */}
+          <div className="bg-gradient-to-br from-indigo-900/20 to-black border border-indigo-500/20 p-6 md:p-8 rounded-[2rem] flex items-center gap-6 hover:-translate-y-1.5 transition-all duration-300 shadow-[0_10px_30px_rgba(79,70,229,0.05)] hover:shadow-[0_15px_40px_rgba(79,70,229,0.15)] group cursor-default">
+            <div className="w-16 h-16 bg-indigo-500/10 rounded-[1.5rem] flex items-center justify-center text-3xl group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-500">👥</div>
+            <div>
+              <p className="text-indigo-400/70 text-[10px] font-black uppercase tracking-widest mb-1">Total Students</p>
+              <h3 className="text-3xl font-black text-white">{stats.totalStudents}</h3>
+            </div>
+          </div>
+
+          {/* باکس کلاس‌های فعال (فوشیا) */}
+          <div className="bg-gradient-to-br from-fuchsia-900/20 to-black border border-fuchsia-500/20 p-6 md:p-8 rounded-[2rem] flex items-center gap-6 hover:-translate-y-1.5 transition-all duration-300 shadow-[0_10px_30px_rgba(217,70,239,0.05)] hover:shadow-[0_15px_40px_rgba(217,70,239,0.15)] group cursor-default">
+            <div className="w-16 h-16 bg-fuchsia-500/10 rounded-[1.5rem] flex items-center justify-center text-3xl group-hover:scale-110 group-hover:bg-fuchsia-500/20 transition-all duration-500">🔴</div>
+            <div>
+              <p className="text-fuchsia-400/70 text-[10px] font-black uppercase tracking-widest mb-1">Live Classes</p>
+              <h3 className="text-3xl font-black text-white">{stats.totalClasses}</h3>
+            </div>
+          </div>
+
+          {/* باکس تکالیف (رز) */}
+          <div className="bg-gradient-to-br from-rose-900/20 to-black border border-rose-500/20 p-6 md:p-8 rounded-[2rem] flex items-center gap-6 hover:-translate-y-1.5 transition-all duration-300 shadow-[0_10px_30px_rgba(225,29,72,0.05)] hover:shadow-[0_15px_40px_rgba(225,29,72,0.15)] group cursor-default sm:col-span-2 md:col-span-1">
+            <div className="w-16 h-16 bg-rose-500/10 rounded-[1.5rem] flex items-center justify-center text-3xl group-hover:scale-110 group-hover:bg-rose-500/20 transition-all duration-500">📝</div>
+            <div>
+              <p className="text-rose-400/70 text-[10px] font-black uppercase tracking-widest mb-1">Assignments</p>
+              <h3 className="text-3xl font-black text-white">{stats.pendingAssignments}</h3>
+            </div>
+          </div>
+
+        </div>
+
+        {/* ================= 3. BOTTOM SECTIONS ================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* بخش چپ: کلاس‌های لایو */}
+          <section className="lg:col-span-2">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-black text-white tracking-wide">Live Command Center</h2>
+              <Link href="/en/teacher/live-classes" className="text-fuchsia-400 hover:text-fuchsia-300 text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-1">
+                View All →
+              </Link>
+            </div>
+            
+            {classes.length === 0 ? (
+              <div className="bg-neutral-900/40 p-8 rounded-[2.5rem] border border-white/5 flex flex-col items-center justify-center text-center h-[220px]">
+                <p className="text-neutral-400 font-bold mb-5">No classes are scheduled yet.</p>
+                <Link href="/en/teacher/courses" className="px-8 py-3.5 bg-fuchsia-600 text-white font-black uppercase tracking-widest text-[10px] rounded-xl hover:bg-fuchsia-500 transition-colors shadow-[0_0_20px_rgba(217,70,239,0.3)] hover:scale-105">
+                  Manage Courses
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {classes.map((room) => (
+                  <div key={room.id} className={`p-5 rounded-[1.5rem] border flex flex-col justify-between transition-all duration-300 ${
+                    room.is_active 
+                      ? "bg-gradient-to-br from-rose-950/40 to-black border-rose-500/30 hover:border-rose-500/60" 
+                      : "bg-white/5 border-white/5 hover:bg-white/10"
+                  }`}>
+                    <div>
+                      <div className="flex justify-between items-start mb-3">
+                        {room.is_active ? (
+                          <span className="bg-rose-500/20 text-rose-400 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md animate-pulse">Live Now</span>
+                        ) : (
+                          <span className="bg-white/10 text-neutral-400 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">Standby</span>
+                        )}
+                      </div>
+                      <h3 className="text-base font-bold text-white mb-3 line-clamp-1">{room.class_name}</h3>
+                      <p className="text-[10px] text-neutral-400 font-bold flex items-center gap-2 mb-1"><span className="text-fuchsia-400 text-sm">🕒</span> {room.schedule_info}</p>
+                      <p className="text-[10px] text-neutral-400 font-bold flex items-center gap-2"><span className="text-purple-400 text-sm">👥</span> {room.enrolled_count} Enrolled</p>
+                    </div>
+                    <Link href={`/en/teacher/live-classes/${room.id}`} className={`mt-4 py-2.5 rounded-lg text-center text-[10px] font-black uppercase tracking-widest transition-all ${
+                      room.is_active ? "bg-red-600 text-white hover:bg-red-500 shadow-[0_0_15px_rgba(220,38,38,0.4)]" : "bg-white/10 text-white hover:bg-fuchsia-600"
+                    }`}>
+                      {room.is_active ? "Enter Studio" : "Prepare Room"}
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* بخش راست: ابزارهای استاد */}
+          <section className="lg:col-span-1 flex flex-col gap-6">
+            <div className="flex items-center justify-between mb-0">
+              <h2 className="text-lg font-black text-white tracking-wide">Instructor Tools</h2>
+            </div>
+            
+            {/* ابزار AI */}
+            <Link href="/en/teacher/ai-assistant" className="rounded-[2rem] border border-fuchsia-500/20 bg-gradient-to-br from-fuchsia-900/20 to-black p-6 relative overflow-hidden group hover:border-fuchsia-500/50 transition-all duration-300 shadow-lg hover:-translate-y-1 flex-1 min-h-[140px]">
+               <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-fuchsia-500/10 rounded-full blur-[40px] group-hover:bg-fuchsia-500/20 transition-all"></div>
+               <div className="relative z-10 flex flex-col justify-between h-full">
+                 <div className="flex items-center gap-4">
+                   <div className="w-12 h-12 bg-fuchsia-500/10 text-fuchsia-400 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🤖</div>
+                   <div>
+                     <h3 className="font-black text-white">AI Teaching Assistant</h3>
+                     <p className="text-[10px] text-fuchsia-200/60 mt-0.5">Generate quizzes & grading</p>
+                   </div>
+                 </div>
+               </div>
+            </Link>
+
+            {/* گروه های دانشجویان */}
+            <Link href="/en/teacher/groups" className="rounded-[2rem] border border-purple-500/20 bg-gradient-to-br from-purple-900/20 to-black p-6 relative overflow-hidden group hover:border-purple-500/50 transition-all duration-300 shadow-lg hover:-translate-y-1 flex-1 min-h-[140px]">
+               <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-purple-500/10 rounded-full blur-[40px] group-hover:bg-purple-500/20 transition-all"></div>
+               <div className="relative z-10 flex flex-col justify-between h-full">
+                 <div className="flex items-center gap-4">
+                   <div className="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">💬</div>
+                   <div>
+                     <h3 className="font-black text-white">Class Discussions</h3>
+                     <p className="text-[10px] text-purple-200/60 mt-0.5">Manage student queries</p>
+                   </div>
+                 </div>
+               </div>
+            </Link>
+
+          </section>
+
+        </div>
       </div>
     </div>
   );

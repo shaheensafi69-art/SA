@@ -1,17 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
 
 export default function TeacherLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname() || "";
   const router = useRouter();
+  const pathname = usePathname() || "";
   
-  const [instructor, setInstructor] = useState({ first_name: "Instructor", avatar: "" });
+  const [isReady, setIsReady] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // 🔥 تشخیص هوشمند تمام صفحات فول‌اسکرین اساتید (چت هوش مصنوعی، گروه‌ها و کلاس زنده) 🔥
+  const isGroupChatRoute = pathname.includes('/teacher/groups/') && pathname.split('/').length > 4;
+  const isAIRoute = pathname.includes('/teacher/ai-assistant');
+  const isLiveMeetRoute = pathname.includes('/teacher/live-classes/') && pathname.split('/').length > 4;
+  
+  // ترکیب هر سه مسیر برای پنهان‌سازی هدر و فوتر در موبایل
+  const isFullScreenRoute = isGroupChatRoute || isAIRoute || isLiveMeetRoute;
+
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
@@ -19,258 +29,236 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
   useEffect(() => {
     const supabase = createClient();
     
-    const fetchUser = async () => {
+    const fetchProfile = async () => {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (user && !userError) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("first_name, avatar_url")
+          .select("first_name, last_name, avatar_url, wallet_balance")
           .eq("id", user.id)
           .single();
-        if (profile) {
-          setInstructor({
-            first_name: profile.first_name || "Instructor",
-            avatar: profile.avatar_url || ""
-          });
-        }
+        if (profile) setUserProfile(profile);
+        setIsReady(true);
       } else {
         router.replace("/en/login");
       }
     };
     
-    fetchUser();
-
-    
+    fetchProfile();
   }, [router]);
 
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/en/login");
+    router.replace("/en/login");
   };
 
-  // دسته‌بندی منوها برای طراحی حرفه‌ای‌تر
-  const menuGroups = [
-    {
-      title: "Main Hub",
-      items: [
-        { name: "Overview", path: "/en/teacher", icon: "📊" },
-        { name: "My Courses", path: "/en/teacher/courses", icon: "📚" },
-        { name: "Live Classes", path: "/en/teacher/live-classes", icon: "🔴" },
-        { name: "My Students", path: "/en/teacher/students", icon: "👥" },
-      ]
-    },
-    {
-      title: "Academic & Review",
-      items: [
-        { name: "Assignments", path: "/en/teacher/assignments", icon: "📝" },
-        { name: "Exams & Quizzes", path: "/en/teacher/quizzes", icon: "🎯" },
-        { name: "Trading Journal", path: "/en/teacher/trading-journal", icon: "📈" },
-      ]
-    },
-    {
-      title: "System Tools",
-      items: [
-        { name: "AI Assistant", path: "/en/teacher/ai-assistant", icon: "🤖" },
-        { name: "Support Tickets", path: "/en/teacher/support", icon: "🎧" },
-        { name: "Settings", path: "/en/teacher/settings", icon: "⚙️" },
-      ]
-    }
+  const menuItems = [
+    { name: "Overview", path: "/en/teacher", icon: "📊" },
+    { name: "My Courses", path: "/en/teacher/courses", icon: "📚" },
+    { name: "Live Classes", path: "/en/teacher/live-classes", icon: "🔴" },
+    { name: "My Students", path: "/en/teacher/students", icon: "👥" },
+    { name: "Assignments", path: "/en/teacher/assignments", icon: "📝" },
+    { name: "Exams & Quizzes", path: "/en/teacher/quizzes", icon: "🎯" },
+    { name: "Trading Journal", path: "/en/teacher/trading-journal", icon: "📈" },
+    { name: "AI Assistant", path: "/en/teacher/ai-assistant", icon: "🤖" },
+    { name: "Support Tickets", path: "/en/teacher/support", icon: "🎧" },
+    { name: "Settings", path: "/en/teacher/settings", icon: "⚙️" },
   ];
 
-  return (
-    <div className="flex flex-col lg:flex-row h-screen bg-[#020202] text-white overflow-hidden font-sans">
-      {/* Mobile Top Header (Just Logo) */}
-      <div className="lg:hidden w-full flex items-center p-4 bg-[#080808] border-b border-white/5 relative z-40">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 flex items-center justify-center">
-            <img src="/logo-without-b.png" alt="Safi Academy" className="w-full h-full object-contain drop-shadow-2xl" />
-          </div>
-          <span className="font-extrabold text-sm tracking-widest text-white uppercase">Safi Academy</span>
-        </div>
+  const getMenuColor = (name: string) => {
+    switch(name) {
+      case "Overview": return "from-blue-500/20 to-blue-500/5 text-blue-400 border-blue-500/30";
+      case "My Courses": return "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/30";
+      case "Live Classes": return "from-red-500/20 to-red-500/5 text-red-400 border-red-500/30";
+      case "My Students": return "from-indigo-500/20 to-indigo-500/5 text-indigo-400 border-indigo-500/30";
+      case "Assignments": return "from-orange-500/20 to-orange-500/5 text-orange-400 border-orange-500/30";
+      case "Exams & Quizzes": return "from-purple-500/20 to-purple-500/5 text-purple-400 border-purple-500/30";
+      case "Trading Journal": return "from-cyan-500/20 to-cyan-500/5 text-cyan-400 border-cyan-500/30";
+      case "AI Assistant": return "from-fuchsia-500/20 to-fuchsia-500/5 text-fuchsia-400 border-fuchsia-500/30";
+      case "Support Tickets": return "from-teal-500/20 to-teal-500/5 text-teal-400 border-teal-500/30";
+      case "Settings": return "from-slate-500/20 to-slate-500/5 text-slate-400 border-slate-500/30";
+      default: return "from-neutral-500/20 to-neutral-500/5 text-neutral-400 border-neutral-500/30";
+    }
+  };
+
+  if (!isReady) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#020202] text-white">
+         <div className="w-16 h-16 border-4 border-fuchsia-500 border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_20px_rgba(217,70,239,0.3)]"></div>
+         <span className="text-fuchsia-500 font-bold uppercase tracking-widest text-sm animate-pulse">Loading Panel...</span>
       </div>
-      
-      {/* ================= Sidebar اساتید ================= */}
-      <aside className={`fixed lg:relative inset-y-0 left-0 transform ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 transition-transform duration-300 ease-in-out w-[260px] bg-[#080808] border-r border-white/5 flex flex-col shrink-0 z-50`}>
-        
-        {/* افکت نوری پس‌زمینه سایدبار */}
-        <div className="absolute top-0 left-0 w-full h-40 bg-fuchsia-600/5 blur-[50px] pointer-events-none"></div>
+    );
+  }
 
-        {/* لوگو */}
-        <div className="h-24 flex items-center px-6 border-b border-white/5 relative z-10">
-          <Link href="/en/teacher" className="flex items-center gap-3 group">
-            <div className="w-16 h-16 flex items-center justify-center group-hover:scale-105 transition-transform">
-      <img src="/logo-without-b.png" alt="Safi Academy" className="w-full h-full object-contain drop-shadow-2xl" />
-   </div>
-            <div>
-              <h1 className="font-extrabold text-sm tracking-widest text-white uppercase">Safi Academy</h1>
-              <p className="text-[9px] text-fuchsia-400 font-black uppercase tracking-[0.2em] mt-0.5">Instructor Panel</p>
-            </div>
-          </Link>
+  return (
+    <div className="flex h-screen bg-[#020202] text-white font-sans overflow-hidden relative">
+      
+      {/* هاله‌های نوری اختصاصی اساتید */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-fuchsia-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[30vw] h-[30vw] bg-purple-600/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
+
+      {/* ================= 1. DESKTOP SIDEBAR ================= */}
+      <aside className="hidden lg:flex w-[280px] bg-[#050505]/80 backdrop-blur-3xl border-r border-white/5 flex-col relative z-20 shrink-0">
+        <div className="h-24 px-8 flex items-center gap-4 border-b border-white/5 shrink-0">
+           <Link href="/en/teacher" className="flex items-center gap-4 group">
+             <div className="w-12 h-12 bg-gradient-to-br from-fuchsia-500 to-purple-600 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(217,70,239,0.3)] group-hover:scale-105 transition-transform">
+               <img src="/logo-without-b.png" alt="Safi Academy" className="w-7 h-7 object-contain drop-shadow-2xl" />
+             </div>
+             <div>
+               <h2 className="text-sm font-black text-white tracking-widest uppercase">Safi Academy</h2>
+               <p className="text-[9px] text-fuchsia-400 font-bold uppercase tracking-[0.2em] mt-0.5">Instructor Portal</p>
+             </div>
+           </Link>
         </div>
 
-        {/* منوهای مجاز */}
-        <nav className="flex-1 px-4 py-6 overflow-y-auto custom-scrollbar relative z-10 space-y-6">
-          {menuGroups.map((group, index) => (
-            <div key={index}>
-              <p className="px-3 text-[10px] font-bold text-neutral-600 uppercase tracking-[0.15em] mb-3">
-                {group.title}
-              </p>
-              <ul className="space-y-1">
-                {group.items.map((item) => {
-                  // تشخیص هوشمند مسیر: اگر در صفحه اصلی است فقط تطابق دقیق، اگر زیرمجموعه است تطابق نسبی
-                  const isActive = item.path === "/en/teacher" 
-                    ? pathname === "/en/teacher" 
-                    : pathname.startsWith(item.path);
-
-                  return (
-                    <li key={item.path}>
-                      <Link 
-                        href={item.path}
-                        className={`flex items-center gap-3.5 px-3 py-3 rounded-xl transition-all duration-300 font-bold text-sm relative overflow-hidden group ${
-                          isActive 
-                            ? "text-white shadow-lg" 
-                            : "text-neutral-400 hover:text-white hover:bg-white/5"
-                        }`}
-                      >
-                        {/* پس‌زمینه اکتیو (گرادیانت لاکچری) */}
-                        {isActive && (
-                          <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-600/90 to-purple-600/90 opacity-100"></div>
-                        )}
-                        
-                        {/* خط نشانگر کنار آیتم اکتیو */}
-                        {isActive && (
-                          <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-white rounded-r-full shadow-[0_0_10px_white]"></div>
-                        )}
-
-                        <span className={`relative z-10 text-lg transition-transform ${isActive ? "scale-110" : "group-hover:scale-110"}`}>
-                          {item.icon}
-                        </span>
-                        <span className="relative z-10 tracking-wide">{item.name}</span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
+        <nav className="flex-1 overflow-y-auto p-5 space-y-1.5 custom-scrollbar">
+          {menuItems.map((item) => {
+            const isActive = item.path === "/en/teacher" ? pathname === "/en/teacher" : pathname.startsWith(item.path);
+            return (
+              <Link 
+                key={item.path} 
+                href={item.path} 
+                className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm transition-all duration-300 relative overflow-hidden group ${
+                  isActive ? "text-white shadow-[0_10px_20px_rgba(217,70,239,0.15)] scale-[1.02]" : "text-neutral-400 hover:bg-white/5 hover:text-white"
+                }`}
+              >
+                {isActive && <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-500 to-purple-600 opacity-100"></div>}
+                <span className={`relative z-10 text-xl transition-transform ${isActive ? "" : "group-hover:scale-110"}`}>{item.icon}</span>
+                <span className="relative z-10 tracking-wide">{item.name}</span>
+                {isActive && item.name === "Live Classes" && <span className="absolute right-4 w-2 h-2 rounded-full bg-red-600 animate-pulse border border-white/50 z-10"></span>}
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* پروفایل و خروج */}
-        <div className="p-4 border-t border-white/5 bg-neutral-950/40 relative z-10">
+        <div className="p-5 border-t border-white/5 bg-black/40 shrink-0">
           <div className="bg-white/5 border border-white/10 p-3 rounded-2xl flex items-center justify-between hover:bg-white/10 transition-colors">
             <div className="flex items-center gap-3 overflow-hidden">
-              <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-fuchsia-500/30 shadow-[0_0_10px_rgba(192,38,211,0.2)] bg-neutral-900 flex items-center justify-center">
-                {instructor.avatar ? (
-                  <img src={instructor.avatar} alt="Instructor" className="w-full h-full object-cover" />
+              <div className="w-10 h-10 rounded-xl border border-fuchsia-500/30 overflow-hidden shrink-0 bg-neutral-900 flex items-center justify-center">
+                {userProfile?.avatar_url ? (
+                  <img src={userProfile.avatar_url} alt="Instructor" className="w-full h-full object-cover" />
                 ) : (
-                  <span className="font-bold text-fuchsia-400">{instructor.first_name.charAt(0) || "I"}</span>
+                  <span className="text-fuchsia-500 font-bold">{userProfile?.first_name?.charAt(0) || "I"}</span>
                 )}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-bold text-white truncate">{instructor.first_name}</p>
-                <button onClick={handleLogout} className="text-[10px] text-red-400 hover:text-red-300 uppercase tracking-widest transition-colors font-bold text-left flex items-center gap-1 mt-0.5">
-                  Sign Out <span className="text-xs">→</span>
-                </button>
+                <p className="text-xs font-bold text-white truncate">{userProfile?.first_name} {userProfile?.last_name}</p>
+                <p className="text-[10px] text-green-400 font-bold mt-0.5">${userProfile?.wallet_balance || "0.00"}</p>
               </div>
             </div>
           </div>
+          <button onClick={handleLogout} className="mt-3 flex items-center justify-center gap-2 px-4 py-3 text-red-400 bg-red-500/10 hover:bg-red-500/20 hover:text-red-300 rounded-xl text-xs font-bold transition-all w-full border border-red-500/20">
+             Sign Out Account
+          </button>
         </div>
       </aside>
 
-      {/* ================= محتوای اصلی (پاس داده شده از pages) ================= */}
-      <main className="flex-1 h-screen overflow-y-auto custom-scrollbar relative bg-[#020202] pb-20 lg:pb-0">
+      {/* ================= 2. DESKTOP FLOATING NOTIFICATION ================= */}
+      <div className="hidden lg:flex absolute top-6 right-10 z-50">
+         <button className="w-12 h-12 bg-neutral-900/60 backdrop-blur-md border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-fuchsia-400 hover:border-fuchsia-500/30 transition-all relative group shadow-lg">
+           <svg className="w-5 h-5 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+           <span className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_5px_red]"></span>
+         </button>
+      </div>
+
+      {/* ================= 3. MOBILE TOP HEADER ================= */}
+      {!isFullScreenRoute && (
+        <div className="lg:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-5 bg-[#020202]/80 backdrop-blur-2xl border-b border-white/5 z-40">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8">
+              <img src="/logo-without-b.png" alt="Safi Academy" className="w-full h-full object-contain filter drop-shadow-[0_0_5px_rgba(217,70,239,0.5)]" />
+            </div>
+            <span className="font-black text-xs tracking-widest text-white uppercase">Safi Academy</span>
+          </div>
+          
+          <button className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-fuchsia-400 transition-colors relative">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+              <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_5px_red]"></span>
+          </button>
+        </div>
+      )}
+
+      {/* ================= 4. MAIN CONTENT ================= */}
+      {/* پدینگ‌های موبایل با توجه به وضعیت فول اسکرین تنظیم می‌شوند */}
+      <main className={`flex-1 relative z-10 h-screen overflow-y-auto custom-scrollbar ${isFullScreenRoute ? 'pt-0 pb-0' : 'pt-16 pb-32'} lg:pt-0 lg:pb-0`}>
         {children}
       </main>
 
-      {/* Mobile Bottom Navigation */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#080808] border-t border-white/10 z-50 px-2 py-2 flex justify-between items-center backdrop-blur-xl">
-        <Link href="/en/teacher" className={`flex flex-col items-center p-2 rounded-xl transition-colors ${pathname === "/en/teacher" ? "text-fuchsia-400" : "text-neutral-500"}`}>
-          <span className="text-xl mb-1">📊</span>
-          <span className="text-[10px] font-bold">Overview</span>
-        </Link>
-        <Link href="/en/teacher/courses" className={`flex flex-col items-center p-2 rounded-xl transition-colors ${pathname === "/en/teacher/courses" ? "text-fuchsia-400" : "text-neutral-500"}`}>
-          <span className="text-xl mb-1">📚</span>
-          <span className="text-[10px] font-bold">Courses</span>
-        </Link>
-        <Link href="/en/teacher/live-classes" className={`flex flex-col items-center p-2 rounded-xl transition-colors ${pathname === "/en/teacher/live-classes" ? "text-fuchsia-400" : "text-neutral-500"}`}>
-          <span className="text-xl mb-1">🔴</span>
-          <span className="text-[10px] font-bold">Live</span>
-        </Link>
-        <button onClick={() => setIsMobileMenuOpen(true)} className="flex flex-col items-center p-2 rounded-xl transition-colors text-neutral-500">
-          <span className="text-xl mb-1">⚙️</span>
-          <span className="text-[10px] font-bold">Menu</span>
-        </button>
-      </div>
+      {/* ================= 5. FLOATING MOBILE BOTTOM NAV ================= */}
+      {!isFullScreenRoute && (
+        <div className="lg:hidden fixed bottom-6 left-6 right-6 h-[72px] bg-neutral-950/80 backdrop-blur-3xl border border-white/10 z-50 px-3 rounded-full flex justify-around items-center shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_20px_rgba(217,70,239,0.05)]">
+          {[
+            { name: "Overview", path: "/en/teacher", icon: "📊" },
+            { name: "Courses", path: "/en/teacher/courses", icon: "📚" },
+            { name: "Live", path: "/en/teacher/live-classes", icon: "🔴" },
+          ].map((item) => {
+            const isActive = item.path === "/en/teacher" ? pathname === "/en/teacher" : pathname.startsWith(item.path);
+            return (
+              <Link key={item.path} href={item.path} className="relative flex flex-col items-center justify-center w-16 h-full group">
+                {isActive && <div className="absolute inset-0 bg-gradient-to-t from-fuchsia-500/15 to-transparent rounded-full opacity-100 transition-opacity duration-300"></div>}
+                <span className={`text-xl transition-all duration-500 ease-out z-10 ${isActive ? "-translate-y-2 scale-110 drop-shadow-[0_0_8px_rgba(217,70,239,0.5)]" : "text-neutral-500 group-hover:-translate-y-1 group-hover:text-neutral-300"}`}>{item.icon}</span>
+                <span className={`absolute bottom-2 text-[9px] font-black tracking-widest uppercase transition-all duration-500 z-10 ${isActive ? "text-fuchsia-400 opacity-100 translate-y-0" : "text-neutral-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0"}`}>{item.name}</span>
+                {isActive && <div className="absolute bottom-1 w-1 h-1 rounded-full bg-fuchsia-400 shadow-[0_0_5px_#d946ef]"></div>}
+              </Link>
+            );
+          })}
+          <button onClick={() => setIsMobileMenuOpen(true)} className="relative flex flex-col items-center justify-center w-16 h-full group">
+            <span className="text-xl transition-all duration-500 ease-out z-10 text-neutral-500 group-hover:-translate-y-1 group-hover:text-neutral-300">⚙️</span>
+            <span className="absolute bottom-2 text-[9px] font-black tracking-widest uppercase transition-all duration-500 z-10 text-neutral-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0">More</span>
+          </button>
+        </div>
+      )}
 
-      {/* Mobile Menu Modal (Full Screen) */}
+      {/* ================= 6. COLORFUL FULL SCREEN MOBILE MENU (Drawer) ================= */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-[#020202] z-[100] flex flex-col animate-[fadeIn_0.2s_ease-out] lg:hidden">
-          <div className="p-4 border-b border-white/5 flex justify-between items-center bg-black/50">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8">
-                <img src="/logo-without-b.png" alt="Safi Academy" className="w-full h-full object-contain" />
-              </div>
-              <span className="font-bold text-white uppercase text-sm tracking-widest">Menu</span>
-            </div>
-            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-white bg-white/5 rounded-full">
-              <X size={20} />
+        <div className="fixed inset-0 bg-[#020202]/95 backdrop-blur-3xl z-[100] flex flex-col animate-[fadeIn_0.2s_ease-out] lg:hidden">
+          <div className="h-16 px-5 border-b border-white/5 flex justify-between items-center bg-black/40 shrink-0">
+            <span className="font-black text-white uppercase tracking-widest text-xs">Instructor Menu</span>
+            <button onClick={() => setIsMobileMenuOpen(false)} className="w-8 h-8 flex items-center justify-center text-neutral-400 hover:text-white bg-white/5 rounded-full border border-white/10 transition-colors">
+              <X size={16} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-24">
-            {menuGroups.map((group, index) => (
-              <div key={index}>
-                <p className="px-2 text-[10px] font-bold text-neutral-500 uppercase tracking-[0.15em] mb-2">
-                  {group.title}
-                </p>
-                <ul className="space-y-2">
-                  {group.items.map((item) => {
-                    const isActive = item.path === "/en/teacher" 
-                      ? pathname === "/en/teacher" 
-                      : pathname.startsWith(item.path);
-                    return (
-                      <li key={item.path}>
-                        <Link 
-                          href={item.path}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className={`flex items-center gap-4 px-4 py-4 rounded-xl font-bold transition-all ${
-                            isActive 
-                              ? "bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/20" 
-                              : "text-neutral-300 bg-white/5"
-                          }`}
-                        >
-                          <span className="text-2xl">{item.icon}</span>
-                          <span className="text-sm">{item.name}</span>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))}
+          
+          <div className="flex-1 overflow-y-auto p-5 custom-scrollbar">
+            <div className="grid grid-cols-2 gap-3">
+              {menuItems.map((item) => {
+                const isActive = item.path === "/en/teacher" ? pathname === "/en/teacher" : pathname.startsWith(item.path);
+                const colorClasses = getMenuColor(item.name);
+                
+                return (
+                  <Link
+                    key={item.path}
+                    href={item.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex flex-col items-center justify-center gap-3 p-5 rounded-[1.5rem] font-bold transition-all border bg-gradient-to-br hover:scale-105 active:scale-95 ${colorClasses} ${
+                      isActive ? "ring-2 ring-white/20 shadow-xl opacity-100" : "opacity-80 hover:opacity-100"
+                    }`}
+                  >
+                    <span className="text-3xl drop-shadow-md">{item.icon}</span>
+                    <span className="text-[10px] tracking-widest uppercase text-center line-clamp-1">{item.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
             
-            <div className="mt-8 pt-4 border-t border-white/10">
-              <div className="flex items-center gap-3 mb-6 bg-white/5 p-4 rounded-2xl">
-                <div className="w-12 h-12 rounded-xl overflow-hidden border border-fuchsia-500/30 bg-neutral-900 flex items-center justify-center">
-                  {instructor.avatar ? (
-                    <img src={instructor.avatar} alt="Instructor" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="font-bold text-fuchsia-400 text-lg">{instructor.first_name.charAt(0) || "I"}</span>
-                  )}
+            <div className="mt-8 pt-6 border-t border-white/10">
+               {userProfile && (
+                <div className="flex items-center gap-4 mb-6 bg-white/[0.02] border border-white/5 p-4 rounded-3xl">
+                  <img src={userProfile.avatar_url || "https://i.pravatar.cc/150"} alt="User" className="w-12 h-12 rounded-xl border border-fuchsia-500 object-cover" />
+                  <div className="flex-1 overflow-hidden">
+                    <p className="text-sm font-bold text-white truncate">{userProfile.first_name} {userProfile.last_name}</p>
+                    <p className="text-xs text-green-400 font-bold mt-1">${userProfile.wallet_balance || "0.00"}</p>
+                  </div>
                 </div>
-                <div className="flex-1 overflow-hidden">
-                  <p className="text-sm font-bold text-white truncate">{instructor.first_name}</p>
-                  <p className="text-[10px] text-fuchsia-400 font-bold uppercase tracking-widest">Instructor</p>
-                </div>
-              </div>
-              <button onClick={handleLogout} className="flex items-center justify-center gap-2 px-4 py-4 text-red-400 bg-red-500/10 rounded-xl font-bold transition-all w-full border border-red-500/20">
-                Sign Out
+              )}
+              <button onClick={handleLogout} className="flex items-center justify-center gap-2 px-4 py-4 text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-2xl font-bold transition-all w-full border border-red-500/20 shadow-lg">
+                Sign Out Account
               </button>
             </div>
           </div>
         </div>
       )}
-
 
     </div>
   );
