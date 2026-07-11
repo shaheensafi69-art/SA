@@ -25,9 +25,12 @@ export async function POST(req: Request) {
     const role = RtcRole.PUBLISHER;
     const expirationTimeInSeconds = 3600 * 4; // اعتبار ۴ ساعته برای کلاس
     const currentTimestamp = Math.floor(Date.now() / 1000);
+    
+    // متغیر زمان انقضا
     const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
 
     // 🔥 ساخت توکن ویدیویی بر اساس آیدی رشته‌ای (String UID) سوپابیس 🔥
+    // ارسال دقیق هر دو پارامتر زمان انقضا برای جلوگیری از ارور
     const token = RtcTokenBuilder.buildTokenWithUserAccount(
       appId,
       appCertificate,
