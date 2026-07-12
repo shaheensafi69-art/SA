@@ -6,7 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { loadStripe } from "@stripe/stripe-js";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
-import { Heart, CreditCard, Landmark, ArrowLeft, Copy, CheckCircle2, ShieldCheck, ArrowRight, MessageSquareQuote } from "lucide-react";
+import { Heart, CreditCard, Landmark, ArrowLeft, Copy, CheckCircle2, ShieldCheck, ArrowRight, MessageSquareQuote, GraduationCap } from "lucide-react";
 
 // کلید پابلیک استرایپ
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_live_51TVYvgHSGmJUtsTTaP8jCiE3bR6KDKQaVT5Wm0R7CQkQAu1t7W9vkIOaEAZ5tKKJuB4hfA8TlMNDvDhP7RBFfsSe00SXyYj3NU");
@@ -76,12 +76,11 @@ const BANK_ACCOUNTS = [
 
 export default function EnglishDonatePage() {
   const [amount, setAmount] = useState<number | "">("");
-  const [note, setNote] = useState(""); // استیت برای متن یادداشت
+  const [note, setNote] = useState(""); 
   const [activeTab, setActiveTab] = useState("stripe");
   const [activeBank, setActiveBank] = useState(0);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   
-  // استیت‌های مربوط به فرم تعبیه شده استرایپ
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [campaign, setCampaign] = useState({ goal: 100000, raised: 0 });
@@ -103,29 +102,29 @@ export default function EnglishDonatePage() {
     setTimeout(() => setCopiedField(null), 2000);
   };
 
-  // گرفتن سکرت کد از سرور برای لود کردن فرم استرایپ
   const initStripeCheckout = async () => {
-    if (!amount || amount < 5) return alert("Minimum donation is $5");
-    setIsProcessing(true);
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount, note }), // ارسال مبلغ و یادداشت به بک‌اند
-      });
-      const data = await response.json();
-      
-      if (data.clientSecret) {
-        setClientSecret(data.clientSecret); // این باعث لود شدن فرم استرایپ میشود
-      } else {
-        console.error("Failed to get Stripe Client Secret.");
-      }
-    } catch (error) {
-      console.error("Payment setup error:", error);
-    } finally {
+  if (!amount || amount < 5) return alert("Minimum donation is $5");
+  setIsProcessing(true);
+  try {
+    const response = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount, note }),
+    });
+    
+    const data = await response.json();
+
+    if (data.clientSecret) {
+      setClientSecret(data.clientSecret);
+    } else {
+      alert(`Backend Error: ${data.error || 'Unknown error'}`);
       setIsProcessing(false);
     }
-  };
+  } catch (error) {
+    console.error("Network or Frontend error:", error);
+    setIsProcessing(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#050508] text-white font-sans selection:bg-yellow-500/30 overflow-hidden" dir="ltr">
@@ -146,17 +145,28 @@ export default function EnglishDonatePage() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 md:px-12 pt-40 pb-32">
         
-        {/* HERO SECTION */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-black uppercase tracking-widest mb-6 shadow-inner">
-            <Heart size={14} className="fill-emerald-500/50" /> Support the Vision
+        {/* ================= HERO SECTION (UPDATED FOR HIGH IMPACT) ================= */}
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest mb-8 shadow-inner animate-[fadeInDown_0.5s_ease-out]">
+            <Heart size={14} className="fill-red-500/50" /> Education is a Human Right
           </div>
-          <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight mb-6 leading-tight">
-            Fund the Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">Innovation.</span>
+          
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight mb-8 leading-[1.1]">
+            Defy the Darkness. <br className="hidden md:block"/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 drop-shadow-lg">Empower Afghan Women.</span>
           </h1>
-          <p className="text-neutral-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Your contribution helps Safi Academy provide scholarships, build scalable infrastructures, and empower students globally. Choose your preferred secure payment method below.
-          </p>
+          
+          <div className="max-w-3xl mx-auto space-y-6 text-neutral-400 text-sm sm:text-base leading-relaxed font-medium">
+            <p>
+              Right now, millions of girls and women in Afghanistan are systematically denied their fundamental right to education. School doors are locked, universities are restricted, and dreams are put on hold. But the human drive to learn, innovate, and lead cannot be extinguished by decrees.
+            </p>
+            <p>
+              <strong className="text-white">Safi Academy</strong> serves as a borderless, digital lifeline. We provide fully-funded scholarships, advanced tech infrastructure, and a secure learning ecosystem to those trapped behind these barriers. 
+            </p>
+            <p className="text-yellow-500/90 font-bold border-l-2 border-yellow-500 pl-4 py-1 text-left italic">
+              "Your contribution is more than a donation; it is an act of defiance against ignorance. Help us break the chains, fund the future, and prove that education knows no borders."
+            </p>
+          </div>
         </div>
 
         {/* CAMPAIGN PROGRESS */}
@@ -200,10 +210,8 @@ export default function EnglishDonatePage() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-8 lg:col-start-3 bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-8 sm:p-12 shadow-2xl">
               <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3"><ShieldCheck className="text-emerald-500"/> Secure Online Donation</h3>
               
-              {/* اگر فرم استرایپ هنوز ساخته نشده، فیلدهای ورود اطلاعات را نشان بده */}
               {!clientSecret ? (
                 <>
-                  {/* Select Amount */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                     {PRESET_AMOUNTS.map((preset) => (
                       <button key={preset} onClick={() => setAmount(preset)} className={`py-4 rounded-2xl font-black text-lg transition-all border ${amount === preset ? "bg-yellow-500 text-black border-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.3)] scale-105" : "bg-white/[0.03] text-white border-white/10 hover:border-yellow-500/50 hover:bg-white/[0.06]"}`}>
@@ -223,13 +231,12 @@ export default function EnglishDonatePage() {
                     />
                   </div>
 
-                  {/* Note / Message Field */}
                   <div className="relative mb-10">
                     <div className="absolute left-6 top-5 text-neutral-500">
                       <MessageSquareQuote size={20} />
                     </div>
                     <textarea 
-                      placeholder="Why are you making this donation? (Optional)" 
+                      placeholder="Leave a message of support for the students... (Optional)" 
                       value={note}
                       onChange={(e) => setNote(e.target.value)}
                       rows={3}
@@ -246,10 +253,8 @@ export default function EnglishDonatePage() {
                   </button>
                 </>
               ) : (
-                /* اگر کلاینت سکرت آماده است، فرم خود استرایپ را نمایش بده */
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full">
                   <div className="bg-white rounded-3xl p-4 sm:p-6 mb-6">
-                    {/* رندر کردن فرم تعبیه شده استرایپ */}
                     <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
                       <EmbeddedCheckout />
                     </EmbeddedCheckoutProvider>
@@ -324,9 +329,10 @@ export default function EnglishDonatePage() {
                   ))}
                 </div>
                 
-                <div className="mt-8 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
-                  <p className="text-xs text-yellow-500/80 font-bold leading-relaxed text-center">
-                    Please ensure the exact details are copied. Bank transfers may take 1-3 business days to reflect.
+                <div className="mt-8 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-start gap-3">
+                  <GraduationCap className="text-yellow-500 shrink-0 mt-0.5" size={18} />
+                  <p className="text-xs text-yellow-500/90 font-bold leading-relaxed text-left">
+                    Please ensure the exact details are copied. Bank transfers may take 1-3 business days to reflect on the campaign progress. Thank you for your support.
                   </p>
                 </div>
               </div>

@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2026-06-24.dahlia' as any,
-});
+// راه‌اندازی استرایپ
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 export async function POST(req: Request) {
   try {
@@ -15,9 +14,9 @@ export async function POST(req: Request) {
 
     const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://safiacademy.vercel.app").replace(/\/$/, "");
 
-    // ساخت سشن پرداخت در حالت تعبیه‌شده
+    // ساخت سشن پرداخت در حالت تعبیه‌شده (اصلاح ارور ورژن جدید استرایپ)
     const session = await stripe.checkout.sessions.create({
-      ui_mode: 'embedded' as any, // Fix: Type '"embedded"' is not assignable to type 'UiMode'.
+      ui_mode: 'embedded_page' as any, // 🔥 کلمه جدیدی که استرایپ درخواست کرده بود
       payment_method_types: ['card'],
       line_items: [
         {
@@ -33,16 +32,17 @@ export async function POST(req: Request) {
         },
       ],
       mode: 'payment',
-      // انتقال متادیتا به بخش اصلی سشن جهت دسترسی آسان و بدون ارور در وب‌هوک
+      // ذخیره پیام کاربر برای ارسال به تلگرام و داشبورد استرایپ
       metadata: {
         donation_note: note || 'No note provided',
       },
+      // در حالت Embedded فقط باید return_url داشته باشیم
       return_url: `${baseUrl}/en/donate/success?session_id={CHECKOUT_SESSION_ID}`,
     });
 
     return NextResponse.json({ clientSecret: session.client_secret });
   } catch (error: any) {
-    console.error("Stripe Checkout Error:", error);
+    console.error("Stripe Checkout Error:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
