@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Search, MapPin, Calendar, GraduationCap, Globe, Building2, ArrowRight } from "lucide-react";
+import { Search, MapPin, Calendar, GraduationCap, Globe, Building2, ArrowRight, ChevronDown } from "lucide-react";
 import { createClient } from "@/utils/supabase/client"; 
 
 type Scholarship = {
@@ -19,7 +19,6 @@ type Scholarship = {
   cover_image: string;
 };
 
-// 🔥 ثابت شده روی زبان انگلیسی برای این پوشه
 const CURRENT_LANG = "en"; 
 
 export default function EnglishScholarshipsPage() {
@@ -27,8 +26,11 @@ export default function EnglishScholarshipsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeContinent, setActiveContinent] = useState("All");
   const [isLoading, setIsLoading] = useState(true);
+  
+  // State for mobile dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // دکمه‌های قاره‌ها
   const continents = [
     { name: "All", icon: "🌍" },
     { name: "Europe", icon: "🇪🇺" },
@@ -46,7 +48,7 @@ export default function EnglishScholarshipsPage() {
         const { data, error } = await supabase
           .from("scholarships")
           .select("id, title, slug, continent, country, university, degree_level, deadline, description, cover_image")
-          .eq("language", CURRENT_LANG) // 🔥 فیلتر سمت سرور فقط برای زبان انگلیسی
+          .eq("language", CURRENT_LANG)
           .eq("is_active", true)
           .order("created_at", { ascending: false });
           
@@ -62,7 +64,17 @@ export default function EnglishScholarshipsPage() {
     fetchScholarships();
   }, []);
 
-  // سیستم فیلتر کلاینت ساید برای جستجو و قاره‌ها
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const filteredScholarships = useMemo(() => {
     return scholarships.filter((item) => {
       const matchesSearch = 
@@ -81,10 +93,12 @@ export default function EnglishScholarshipsPage() {
     return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
+  const activeContinentData = continents.find(c => c.name === activeContinent) || continents[0];
+
   return (
     <div className="min-h-screen bg-[#050508] text-white font-sans selection:bg-yellow-500/30 overflow-hidden" dir="ltr">
       
-      {/* ================= BACKGROUND EFFECTS ================= */}
+      {/* Background Effects */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-yellow-600/5 rounded-full blur-[150px]"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-amber-600/5 rounded-full blur-[150px]"></div>
@@ -93,7 +107,7 @@ export default function EnglishScholarshipsPage() {
 
       <div className="relative z-10">
         
-        {/* ================= HERO SECTION ================= */}
+        {/* HERO SECTION */}
         <section className="pt-40 pb-10 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[10px] sm:text-xs font-black uppercase tracking-widest mb-6 animate-[fadeInDown_0.5s_ease-out] shadow-inner">
             <Globe className="w-4 h-4" /> Global Academic Opportunities
@@ -115,7 +129,7 @@ export default function EnglishScholarshipsPage() {
               <Search className="text-yellow-500 ml-3 sm:ml-4 mr-2" size={20} />
               <input 
                 type="text" 
-                placeholder="Search by country, university, or keyword..." 
+                placeholder="Search by country, university..." 
                 className="bg-transparent border-none outline-none w-full text-white placeholder:text-neutral-600 px-2 py-2.5 sm:py-3 text-xs sm:text-sm font-medium"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -125,14 +139,16 @@ export default function EnglishScholarshipsPage() {
         </section>
 
         {/* ================= CONTINENT FILTERS ================= */}
-        <section className="pb-12 px-4 sm:px-6 max-w-7xl mx-auto flex justify-center">
-          <div className="w-full sm:w-auto overflow-x-auto pb-4 custom-scrollbar">
-            <div className="flex items-center sm:justify-center gap-2 sm:gap-3 bg-white/5 p-2 rounded-full border border-white/10 backdrop-blur-md min-w-max mx-auto px-2 shadow-inner">
+        <section className="pb-12 px-4 sm:px-6 max-w-7xl mx-auto">
+          
+          {/* Desktop Version (Pills) */}
+          <div className="hidden sm:flex justify-center w-full">
+            <div className="flex items-center justify-center gap-3 bg-white/5 p-2 rounded-full border border-white/10 backdrop-blur-md min-w-max shadow-inner">
               {continents.map((continent) => (
                 <button
                   key={continent.name}
                   onClick={() => setActiveContinent(continent.name)}
-                  className={`relative flex items-center gap-2 px-5 sm:px-6 py-2.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${
+                  className={`relative flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${
                     activeContinent === continent.name 
                       ? "text-black" 
                       : "text-neutral-400 hover:text-white"
@@ -141,12 +157,56 @@ export default function EnglishScholarshipsPage() {
                   {activeContinent === continent.name && (
                     <motion.div layoutId="engScholarshipTab" className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-full -z-10 shadow-[0_0_20px_rgba(234,179,8,0.4)]" />
                   )}
-                  <span className="relative z-10 text-sm sm:text-base">{continent.icon}</span> 
+                  <span className="relative z-10 text-base">{continent.icon}</span> 
                   <span className="relative z-10">{continent.name}</span>
                 </button>
               ))}
             </div>
           </div>
+
+          {/* Mobile Version (Dropdown) */}
+          <div className="sm:hidden relative w-full" ref={dropdownRef}>
+            <button 
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="w-full flex items-center justify-between bg-white/[0.05] border border-white/10 rounded-2xl p-4 text-white font-bold uppercase tracking-widest text-xs"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-lg">{activeContinentData.icon}</span>
+                <span>Region: {activeContinentData.name}</span>
+              </div>
+              <ChevronDown size={16} className={`text-yellow-500 transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            <AnimatePresence>
+              {isDropdownOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute top-full left-0 right-0 mt-2 bg-[#0a0a0f] border border-white/10 rounded-2xl overflow-hidden shadow-2xl z-50"
+                >
+                  {continents.map((continent) => (
+                    <button
+                      key={continent.name}
+                      onClick={() => {
+                        setActiveContinent(continent.name);
+                        setIsDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 p-4 text-xs font-bold uppercase tracking-widest transition-colors ${
+                        activeContinent === continent.name 
+                          ? "bg-yellow-500/10 text-yellow-500 border-l-2 border-yellow-500" 
+                          : "text-neutral-400 hover:bg-white/5 hover:text-white"
+                      }`}
+                    >
+                      <span className="text-lg">{continent.icon}</span>
+                      {continent.name}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
         </section>
 
         {/* ================= SCHOLARSHIPS GRID OR LOADING ================= */}
@@ -162,11 +222,11 @@ export default function EnglishScholarshipsPage() {
               {filteredScholarships.length === 0 ? (
                 <motion.div 
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  className="text-center py-24 bg-[#0a0a0e] border border-white/5 rounded-[2rem] sm:rounded-[3rem] mx-2 sm:mx-0 shadow-inner flex flex-col items-center gap-6"
+                  className="text-center py-24 bg-[#0a0a0e] border border-white/5 rounded-[2rem] sm:rounded-[3rem] shadow-inner flex flex-col items-center gap-6"
                 >
                   <Globe className="w-16 h-16 text-neutral-700" />
                   <h3 className="text-lg sm:text-xl font-bold text-white">No Scholarships Found</h3>
-                  <p className="text-neutral-500 text-xs sm:text-sm px-4">We couldn't find any active opportunities matching your criteria in English.</p>
+                  <p className="text-neutral-500 text-xs sm:text-sm px-4">We couldn't find any active opportunities matching your criteria.</p>
                 </motion.div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
@@ -189,14 +249,13 @@ export default function EnglishScholarshipsPage() {
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 filter grayscale-[10%] group-hover:grayscale-0" 
                         />
                         
-                        {/* Tags */}
                         <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
-                          <span className="bg-black/70 backdrop-blur-md border border-white/10 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-lg">
+                          <span className="bg-black/70 backdrop-blur-md border border-white/10 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-lg">
                             <MapPin size={12} className="text-yellow-500" /> {item.country}
                           </span>
                         </div>
                         <div className="absolute top-4 right-4 z-20">
-                          <span className="bg-gradient-to-r from-yellow-500 to-amber-500 text-black text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-[0_0_15px_rgba(234,179,8,0.4)]">
+                          <span className="bg-gradient-to-r from-yellow-500 to-amber-500 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-[0_0_15px_rgba(234,179,8,0.4)]">
                             {item.continent}
                           </span>
                         </div>
@@ -227,7 +286,6 @@ export default function EnglishScholarshipsPage() {
                           </div>
                         </div>
 
-                        {/* 🔥 هدایت به صفحه اسلاگ داخلی */}
                         <Link 
                           href={`/${CURRENT_LANG}/scholarships/${item.slug}`} 
                           className="w-full py-4 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center gap-2 text-[10px] sm:text-xs font-black uppercase tracking-widest text-white hover:bg-white/10 transition-all shadow-lg group/btn"
