@@ -14,14 +14,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // 🔥 تشخیص هوشمند تمام صفحات فول‌اسکرین (چت هوش مصنوعی، چت گروهی و اتاق کلاس زنده) 🔥
-  const isGroupChatRoute = pathname.includes('/dashboard/groups/') && pathname.split('/').length > 4;
-  const isAIRoute = pathname.includes('/dashboard/ai-assistant');
-  const isLiveMeetRoute = pathname.includes('/dashboard/live-classes/') && pathname.split('/').length > 4;
+  // 🔥 فقط صفحه هوش مصنوعی به صورت فول‌اسکرین در موبایل رندر می‌شود (روت‌های مرده حذف شدند)
+  const isFullScreenRoute = pathname.includes('/dashboard/ai-assistant');
   
-  // ترکیب هر سه مسیر برای پنهان‌سازی هدر و فوتر در موبایل
-  const isFullScreenRoute = isGroupChatRoute || isAIRoute || isLiveMeetRoute;
-
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
@@ -56,7 +51,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const menuItems = [
     { name: "Overview", path: "/en/dashboard", icon: "📊" },
     { name: "My Courses", path: "/en/dashboard/courses", icon: "📚" },
-    { name: "Live Classes", path: "/en/dashboard/live-classes", icon: "🔴" },
+    { name: "Live Campus", path: "/en/dashboard/live-classes", icon: "🔴" }, // تغییر نام به لایو کمپس جهت پرستیژ بیشتر
     { name: "Assignments", path: "/en/dashboard/assignments", icon: "📝" },
     { name: "Exams & Quizzes", path: "/en/dashboard/quizzes", icon: "🎯" },
     { name: "Trading Journal", path: "/en/dashboard/trading-journal", icon: "📈" },
@@ -71,7 +66,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     switch(name) {
       case "Overview": return "from-blue-500/20 to-blue-500/5 text-blue-400 border-blue-500/30";
       case "My Courses": return "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/30";
-      case "Live Classes": return "from-red-500/20 to-red-500/5 text-red-400 border-red-500/30";
+      case "Live Campus": return "from-red-500/20 to-red-500/5 text-red-400 border-red-500/30";
       case "Assignments": return "from-orange-500/20 to-orange-500/5 text-orange-400 border-orange-500/30";
       case "Exams & Quizzes": return "from-purple-500/20 to-purple-500/5 text-purple-400 border-purple-500/30";
       case "Trading Journal": return "from-cyan-500/20 to-cyan-500/5 text-cyan-400 border-cyan-500/30";
@@ -127,7 +122,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 {isActive && <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-500 opacity-100"></div>}
                 <span className={`relative z-10 text-xl transition-transform ${isActive ? "" : "group-hover:scale-110"}`}>{item.icon}</span>
                 <span className="relative z-10 tracking-wide">{item.name}</span>
-                {isActive && item.name === "Live Classes" && <span className="absolute right-4 w-2 h-2 rounded-full bg-red-600 animate-pulse border border-white/50 z-10"></span>}
+                {isActive && item.name === "Live Campus" && <span className="absolute right-4 w-2 h-2 rounded-full bg-red-600 animate-pulse border border-white/50 z-10"></span>}
               </Link>
             );
           })}
@@ -163,7 +158,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
          </button>
       </div>
 
-      {/* ================= 3. MOBILE TOP HEADER (مخفی در صفحات چت و کلاس زنده) ================= */}
+      {/* ================= 3. MOBILE TOP HEADER ================= */}
       {!isFullScreenRoute && (
         <div className="lg:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-5 bg-[#020202]/80 backdrop-blur-2xl border-b border-white/5 z-40">
           <div className="flex items-center gap-3">
@@ -181,12 +176,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
 
       {/* ================= 4. MAIN CONTENT ================= */}
-      {/* پدینگ‌های اضافی در موبایل (pt-16 و pb-32) در تمامی صفحات تمام‌صفحه حذف می‌شوند */}
       <main className={`flex-1 relative z-10 h-screen overflow-y-auto custom-scrollbar ${isFullScreenRoute ? 'pt-0 pb-0' : 'pt-16 pb-32'} lg:pt-0 lg:pb-0`}>
         {children}
       </main>
 
-      {/* ================= 5. FLOATING MOBILE BOTTOM NAV (مخفی در صفحات چت و کلاس زنده) ================= */}
+      {/* ================= 5. FLOATING MOBILE BOTTOM NAV ================= */}
       {!isFullScreenRoute && (
         <div className="lg:hidden fixed bottom-6 left-6 right-6 h-[72px] bg-neutral-950/80 backdrop-blur-3xl border border-white/10 z-50 px-3 rounded-full flex justify-around items-center shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_20px_rgba(234,179,8,0.05)]">
           {[
@@ -211,7 +205,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       )}
 
-      {/* ================= 6. COLORFUL FULL SCREEN MOBILE MENU (Drawer) ================= */}
+      {/* ================= 6. MOBILE MENU TERMINAL (Drawer) ================= */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 bg-[#020202]/95 backdrop-blur-3xl z-[100] flex flex-col animate-[fadeIn_0.2s_ease-out] lg:hidden">
           <div className="h-16 px-5 border-b border-white/5 flex justify-between items-center bg-black/40 shrink-0">

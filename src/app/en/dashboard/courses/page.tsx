@@ -288,7 +288,7 @@ export default function MyCoursesPage() {
                           </div>
                         </div>
 
-                        {/* دکمه هدایت به استودیو زنده کلاس */}
+                        {/* دکمه هدایت به پورتال مرکزی کلاس‌های زنده */}
                         <Link 
                           href="/en/dashboard/live-classes"
                           className={`w-full py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 border ${
@@ -297,7 +297,7 @@ export default function MyCoursesPage() {
                               : "bg-white/5 text-white border-white/10 hover:bg-amber-500 hover:text-black hover:border-amber-500 shadow-lg shadow-black/50"
                           }`}
                         >
-                          {expired ? "Review Live Records ↺" : "Enter Live Studio →"}
+                          {expired ? "Review Live Records ↺" : "Go To Live Campus →"}
                         </Link>
                       </div>
                     </div>

@@ -211,15 +211,32 @@ export default function Header() {
               <span className="text-xs font-black uppercase tracking-wider">{activeLang.code}</span>
               <ChevronDown size={12} className="group-hover/lang:rotate-180 transition-transform text-white/40" />
             </button>
-            <div className="absolute top-[85%] mt-2 p-1.5 bg-[#06060a]/95 backdrop-blur-3xl border border-white/10 rounded-2xl opacity-0 invisible group-hover/lang:opacity-100 group-hover/lang:visible transition-all duration-300 shadow-2xl transform origin-top-right scale-95 group-hover/lang:scale-100 z-50 w-44">
+            <div className="absolute top-[85%] mt-2 p-2 bg-[#06060a]/95 backdrop-blur-3xl border border-white/10 rounded-2xl opacity-0 invisible group-hover/lang:opacity-100 group-hover/lang:visible transition-all duration-300 shadow-2xl transform origin-top-right scale-95 group-hover/lang:scale-100 z-50 w-52 flex flex-col gap-1">
               {languages.map((lang) => (
-                <Link 
-                  key={lang.code} 
-                  href={`/${lang.code}`} 
-                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${activeLang.code === lang.code ? 'bg-white/10 text-white' : 'text-neutral-400 hover:bg-white/5 hover:text-white'}`}
-                >
-                  <span className="text-lg leading-none">{lang.flag}</span> {lang.name}
-                </Link>
+                lang.code === "en" ? (
+                  // زبان فعال (فقط انگلیسی قابل کلیک است)
+                  <Link 
+                    key={lang.code} 
+                    href={`/${lang.code}`} 
+                    className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all bg-white/5 border border-white/5 text-white shadow-inner"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg leading-none">{lang.flag}</span> {lang.name}
+                    </div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+                  </Link>
+                ) : (
+                  // سایر زبان‌ها (غیرفعال با نشانگر SOON)
+                  <div 
+                    key={lang.code}
+                    className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-neutral-600 cursor-not-allowed"
+                  >
+                    <div className="flex items-center gap-3 opacity-40">
+                      <span className="text-lg leading-none">{lang.flag}</span> {lang.name}
+                    </div>
+                    <span className="text-[8px] font-black uppercase tracking-widest bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-2 py-0.5 rounded-md">Soon</span>
+                  </div>
+                )
               ))}
             </div>
           </div>
@@ -331,18 +348,34 @@ export default function Header() {
               )}
             </div>
 
-            {/* بخش انتخاب زبان موبایل */}
+            {/* بخش انتخاب زبان موبایل با نمایش نشانگر SOON */}
             <div className="border-t border-white/5 pt-6">
               <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4 px-2 flex items-center gap-2"><Globe size={13} /> {t.selectLang}</p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {languages.map((lang) => (
-                  <Link
-                    key={lang.code}
-                    href={`/${lang.code}`}
-                    className={`flex items-center gap-3 rounded-xl px-4 py-3 text-xs font-bold transition-all ${activeLang.code === lang.code ? "bg-white/10 text-white border border-white/5" : "text-neutral-400 bg-white/[0.01] hover:bg-white/5"}`}
-                  >
-                    <span className="text-lg leading-none">{lang.flag}</span> {lang.name}
-                  </Link>
+                  lang.code === "en" ? (
+                    <Link
+                      key={lang.code}
+                      href={`/${lang.code}`}
+                      className="flex items-center justify-between rounded-xl px-4 py-3.5 text-xs font-bold transition-all bg-white/5 border border-white/10 text-white shadow-inner"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg leading-none">{lang.flag}</span> {lang.name}
+                      </div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+                    </Link>
+                  ) : (
+                    <div
+                      key={lang.code}
+                      className="flex items-center justify-between rounded-xl px-4 py-3.5 text-xs font-bold bg-white/[0.01] border border-white/5 opacity-60 cursor-not-allowed"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg leading-none">{lang.flag}</span> 
+                        <span className="text-neutral-400">{lang.name}</span>
+                      </div>
+                      <span className="text-[9px] font-black uppercase tracking-widest bg-yellow-500/10 text-yellow-500 px-2 py-0.5 rounded-md">Soon</span>
+                    </div>
+                  )
                 ))}
               </div>
             </div>

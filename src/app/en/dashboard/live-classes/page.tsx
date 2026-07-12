@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
+import { Globe, Video, MessageSquare, ExternalLink, Calendar, User, Clock } from "lucide-react";
 
 type ClassGroup = {
   id: string;
@@ -10,6 +10,8 @@ type ClassGroup = {
   schedule_info: string;
   is_active: boolean;
   start_date: string;
+  meeting_link: string | null; // لینک مستقیم مایکروسافت تیمز
+  signal_group_link: string | null; // لینک مستقیم گروه سیگنال
   teacher: { first_name: string; last_name: string } | null;
 };
 
@@ -26,11 +28,11 @@ export default function LiveClassesDashboard() {
     const supabase = createClient();
 
     try {
-      // دریافت کلاس‌ها همراه با مشخصات استاد
+      // دریافت کلاس‌ها همراه با مشخصات استاد و لینک‌های ارتباطی از دیتابیس
       const { data, error } = await supabase
         .from("class_groups")
         .select(`
-          id, class_name, schedule_info, is_active, start_date,
+          id, class_name, schedule_info, is_active, start_date, meeting_link, signal_group_link,
           teacher:profiles!teacher_id(first_name, last_name)
         `)
         .order("is_active", { ascending: false })
@@ -56,7 +58,7 @@ export default function LiveClassesDashboard() {
   const generalClasses = classes.filter((c) => !c.is_active);
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-6 sm:p-10 relative overflow-hidden">
+    <div className="min-h-screen bg-[#020202] text-white p-6 sm:p-10 relative overflow-hidden" dir="ltr">
       
       {/* ================= BACKGROUND EFFECTS ================= */}
       <div className="absolute top-[-10%] right-[-10%] w-[35vw] h-[35vw] bg-indigo-600/10 rounded-full blur-[130px] pointer-events-none"></div>
@@ -67,14 +69,14 @@ export default function LiveClassesDashboard() {
         {/* ================= HEADER ================= */}
         <header className="rounded-[2rem] border border-white/5 bg-neutral-950/40 p-8 backdrop-blur-3xl shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.35em] text-indigo-400 mb-2">Safi Academy Studio</p>
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight">Live & Scheduled <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">Classrooms</span></h1>
-            <p className="text-neutral-400 text-sm mt-2 max-w-xl">Access ongoing live trading rooms, join class discussion groups, and review archived sessions.</p>
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-indigo-400 mb-2">Safi Academy Headquarters</p>
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight">Live Campus & <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">Hubs</span></h1>
+            <p className="text-neutral-400 text-sm mt-2 max-w-xl">Launch your official Microsoft Teams corporate lecture rooms and sync with your secure Signal encrypted operations networks natively.</p>
           </div>
           <div className="flex bg-white/5 border border-white/10 p-4 rounded-2xl items-center gap-4">
              <div className="w-12 h-12 bg-indigo-500/20 text-indigo-400 flex items-center justify-center rounded-xl text-xl">🎓</div>
              <div>
-                <p className="text-xs text-neutral-500 font-bold uppercase tracking-widest">Total Classes</p>
+                <p className="text-xs text-neutral-500 font-bold uppercase tracking-widest">Active Channels</p>
                 <p className="text-2xl font-black">{isLoading ? "-" : classes.length}</p>
              </div>
           </div>
@@ -94,34 +96,60 @@ export default function LiveClassesDashboard() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
                 </span>
-                Live Broadcasts ({liveSessions.length})
+                Live Transmissions ({liveSessions.length})
               </h2>
 
               {liveSessions.length === 0 ? (
                 <div className="rounded-3xl border border-white/5 bg-white/[0.01] p-10 text-center text-neutral-500 text-sm backdrop-blur-sm">
-                  There are no live broadcasts running at this exact moment.
+                  There are no live broadcasts running at this exact moment. Check your curriculum schedule.
                 </div>
               ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {liveSessions.map((room) => (
-                    <div key={room.id} className="relative rounded-3xl border border-red-500/30 bg-gradient-to-br from-red-950/20 via-black to-black p-6 shadow-[0_15px_40px_rgba(239,68,68,0.1)] flex flex-col h-full">
+                    <div key={room.id} className="relative rounded-3xl border border-red-500/30 bg-gradient-to-br from-red-950/20 via-black to-black p-6 shadow-[0_15px_40px_rgba(239,68,68,0.1)] flex flex-col h-full group">
                       <div className="flex justify-between items-start mb-4">
                         <span className="bg-red-500 text-black text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md shadow-md animate-pulse">Live Now</span>
                       </div>
                       
-                      <h3 className="text-lg font-bold text-white">{room.class_name}</h3>
-                      <p className="text-xs text-neutral-400 mt-2 font-medium">Instructor: {room.teacher ? `${room.teacher.first_name} ${room.teacher.last_name}` : "Faculty Member"}</p>
-                      <p className="text-xs text-neutral-500 mt-2">🕒 {room.schedule_info}</p>
+                      <h3 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors">{room.class_name}</h3>
+                      <p className="text-xs text-neutral-400 mt-2 font-medium flex items-center gap-1.5">
+                        <User size={14} className="text-neutral-600" /> Instructor: {room.teacher ? `${room.teacher.first_name} ${room.teacher.last_name}` : "Faculty Member"}
+                      </p>
+                      <p className="text-xs text-neutral-500 mt-2 flex items-center gap-1.5">
+                        <Clock size={14} className="text-neutral-600" /> {room.schedule_info}
+                      </p>
                       
-                      {/* دکمه‌های اکشن برای کلاس لایو */}
-                      <div className="mt-auto pt-6 flex gap-2">
-                        <Link href={`/en/dashboard/live-classes/${room.id}`} className="flex-1 bg-red-600 hover:bg-red-500 text-white text-xs font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-500/20">
-                          <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
-                          Join Studio
-                        </Link>
-                        <Link href={`/en/dashboard/live-classes/${room.id}`} className="bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold py-3 px-4 rounded-xl flex items-center justify-center transition-all">
-                          💬 Group
-                        </Link>
+                      {/* دکمه‌های اکشن برای هدایت به پلتفرم‌های مربوطه */}
+                      <div className="mt-auto pt-6 flex flex-col gap-2.5">
+                        {room.meeting_link ? (
+                          <a 
+                            href={room.meeting_link} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="w-full bg-red-600 hover:bg-red-500 text-white text-xs font-black uppercase tracking-widest py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-500/20"
+                          >
+                            <Video size={14} /> Join Teams Lecture <ExternalLink size={12} className="opacity-50" />
+                          </a>
+                        ) : (
+                          <button disabled className="w-full bg-neutral-900 border border-white/5 text-neutral-600 text-xs font-black uppercase tracking-widest py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 cursor-not-allowed">
+                            Teams Room Processing
+                          </button>
+                        )}
+
+                        {room.signal_group_link ? (
+                          <a 
+                            href={room.signal_group_link} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-black uppercase tracking-widest py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all"
+                          >
+                            <MessageSquare size={14} className="text-indigo-400" /> Signal Operations <ExternalLink size={12} className="opacity-30" />
+                          </a>
+                        ) : (
+                          <span className="w-full text-center text-[10px] text-neutral-600 font-bold uppercase tracking-widest py-2">
+                            Signal Sync Pending
+                          </span>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -132,33 +160,45 @@ export default function LiveClassesDashboard() {
             {/* ================= SCHEDULED / ARCHIVED CLASSES SECTION ================= */}
             <div>
               <h2 className="text-xl font-extrabold text-neutral-300 mb-6 flex items-center gap-2">
-                <span>📚</span> Scheduled & Previous Classes ({generalClasses.length})
+                <span>📚</span> Scheduled & Standby Channels ({generalClasses.length})
               </h2>
 
               {generalClasses.length === 0 ? (
                 <div className="rounded-3xl border border-white/5 p-10 text-center text-neutral-600 text-sm">
-                  No previous or scheduled classrooms found.
+                  No upcoming or standby nodes found in this sector.
                 </div>
               ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {generalClasses.map((room) => (
-                    <div key={room.id} className="rounded-3xl border border-white/5 bg-white/5 p-6 hover:border-indigo-500/30 transition-all duration-300 flex flex-col h-full">
+                    <div key={room.id} className="rounded-3xl border border-white/5 bg-white/5 p-6 hover:border-indigo-500/30 transition-all duration-300 flex flex-col h-full group">
                       <div className="flex justify-between items-start mb-4">
                         <span className="bg-white/5 border border-white/10 text-neutral-400 text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md">Standby</span>
                       </div>
                       
-                      <h3 className="text-lg font-bold text-white">{room.class_name}</h3>
-                      <p className="text-xs text-neutral-400 mt-2">Instructor: {room.teacher ? `${room.teacher.first_name} ${room.teacher.last_name}` : "Faculty Member"}</p>
-                      <p className="text-xs text-neutral-500 mt-2">📅 {room.schedule_info}</p>
+                      <h3 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors">{room.class_name}</h3>
+                      <p className="text-xs text-neutral-400 mt-2 flex items-center gap-1.5">
+                        <User size={14} className="text-neutral-600" /> Instructor: {room.teacher ? `${room.teacher.first_name} ${room.teacher.last_name}` : "Faculty Member"}
+                      </p>
+                      <p className="text-xs text-neutral-500 mt-2 flex items-center gap-1.5">
+                        <Calendar size={14} className="text-neutral-600" /> {room.schedule_info}
+                      </p>
                       
-                      {/* دکمه‌های اکشن برای کلاس‌های عادی */}
-                      <div className="mt-auto pt-6 flex gap-2">
-                        <Link href={`/en/dashboard/live-classes/${room.id}`} className="flex-1 bg-indigo-600/90 hover:bg-indigo-500 text-white text-xs font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all">
-                          💬 Open Group Chat
-                        </Link>
-                        <Link href={`/en/dashboard/live-classes/${room.id}`} className="bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 text-xs font-bold py-3 px-4 rounded-xl flex items-center justify-center transition-all title='View Recordings'">
-                          📼
-                        </Link>
+                      {/* لایه‌ی هدایت امن برای وضعیت استندبای */}
+                      <div className="mt-auto pt-6 flex flex-col gap-2">
+                        {room.signal_group_link ? (
+                          <a 
+                            href={room.signal_group_link} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="w-full py-3.5 bg-indigo-600/10 hover:bg-indigo-600/20 border border-indigo-500/20 text-indigo-400 hover:text-white rounded-xl flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest transition-all"
+                          >
+                            <MessageSquare size={14} /> Open Signal Hub
+                          </a>
+                        ) : (
+                          <button disabled className="w-full py-3.5 bg-white/[0.02] border border-white/5 text-neutral-600 rounded-xl text-xs font-black uppercase tracking-widest cursor-not-allowed">
+                            Channel Locked
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
