@@ -1,9 +1,22 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Building2, ExternalLink } from "lucide-react";
+import { ArrowRight, Building2, ExternalLink, Award, BookOpen } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
 
-// دیتای تیم با رنگ‌بندی اختصاصی و نام دقیق عکس‌ها بر اساس فایل‌های شما
+// آپدیت تایپ برای دریافت آرایه‌ای از کورس‌ها
+type TeacherInfo = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  bio: string;
+  achievements: string;
+  avatar_url: string;
+  teacher_info_courses: { courses: { title: string } }[] | null;
+};
+
+// دیتای تیم با رنگ‌بندی اختصاصی
 const teamMembers = [
   {
     name: "Shaheen Safi",
@@ -57,7 +70,7 @@ const teamMembers = [
   }
 ];
 
-// دیتای اکوسیستم شرکت‌ها بر اساس مسیرها و لینک‌های داده شده
+// دیتای اکوسیستم شرکت‌ها
 const ecosystemCompanies = [
   {
     name: "Safi International Capital LTD",
@@ -116,8 +129,42 @@ const ecosystemCompanies = [
 ];
 
 export default function AboutPage() {
+  const [teachers, setTeachers] = useState<TeacherInfo[]>([]);
+  const [isLoadingTeachers, setIsLoadingTeachers] = useState(true);
+
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      setIsLoadingTeachers(true);
+      const supabase = createClient();
+      try {
+        // 🔥 کوئری حرفه‌ای با استفاده از جدول واسط
+        const { data, error } = await supabase
+          .from("teacher_info")
+          .select(`
+            id, first_name, last_name, bio, achievements, avatar_url,
+            teacher_info_courses (
+              courses ( title )
+            )
+          `)
+          .order("created_at", { ascending: true });
+        
+        if (error) throw error;
+
+        if (data) {
+          setTeachers(data as unknown as TeacherInfo[]);
+        }
+      } catch (err) {
+        console.error("Error fetching teachers:", err);
+      } finally {
+        setIsLoadingTeachers(false);
+      }
+    };
+
+    fetchTeachers();
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#050508] text-white font-sans selection:bg-yellow-500/30 overflow-hidden">
+    <div className="min-h-screen bg-[#050508] text-white font-sans selection:bg-yellow-500/30 overflow-hidden" dir="ltr">
       
       {/* ================= BACKGROUND EFFECTS ================= */}
       <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-yellow-600/5 rounded-full blur-[150px] pointer-events-none z-0"></div>
@@ -149,7 +196,6 @@ export default function AboutPage() {
           <p className="text-neutral-500 text-xs sm:text-sm font-bold tracking-widest uppercase text-center max-w-2xl">The Visionaries, Engineers, and Strategists Behind The Safi Ecosystem</p>
         </div>
 
-        {/* Grid for Leaders - SQUARE IMAGES FIXED SIZE */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {teamMembers.map((member, index) => (
             <Link 
@@ -158,10 +204,8 @@ export default function AboutPage() {
               className={`group relative bg-[#0a0a0e] border border-white/5 rounded-[2rem] p-6 flex flex-col items-center text-center transition-all duration-500 hover:-translate-y-2 ${member.shadowClass} overflow-hidden`}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              {/* Background Glow on Hover */}
               <div className={`absolute inset-0 opacity-0 transition-opacity duration-700 pointer-events-none blur-3xl ${member.glowClass} group-hover:opacity-100`}></div>
 
-              {/* Square Avatar Container (Fixed Dimensions) */}
               <div className="relative w-48 h-48 sm:w-64 sm:h-64 mb-6 z-10 shrink-0 mx-auto">
                 <div className={`w-full h-full rounded-2xl p-1.5 border border-dashed ${member.borderClass} group-hover:border-solid transition-all duration-500 overflow-hidden bg-neutral-900`}>
                   <img 
@@ -181,7 +225,6 @@ export default function AboutPage() {
                   {member.role}
                 </p>
                 
-                {/* View Profile Button */}
                 <div className="mt-auto flex items-center justify-center gap-2 text-xs font-bold text-neutral-400 uppercase tracking-widest group-hover:text-white transition-colors bg-white/5 w-full py-3 rounded-xl border border-white/5 group-hover:border-white/20">
                   Read Full Bio <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
                 </div>
@@ -189,6 +232,84 @@ export default function AboutPage() {
             </Link>
           ))}
         </div>
+      </section>
+
+      {/* ================= DYNAMIC TEACHERS SECTION ================= */}
+      <section className="relative py-24 px-4 md:px-12 max-w-7xl mx-auto z-10 bg-[#07070a]/50 border-y border-white/5 mt-10">
+        <div className="flex flex-col items-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-black text-white tracking-wider uppercase mb-4 text-center">Academy Faculty</h2>
+          <div className="w-24 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-600 rounded-full mb-6"></div>
+          <p className="text-neutral-500 text-xs sm:text-sm font-bold tracking-widest uppercase text-center max-w-2xl">Learn from industry leaders, elite traders, and expert engineers.</p>
+        </div>
+
+        {isLoadingTeachers ? (
+          <div className="flex justify-center py-20">
+            <div className="w-12 h-12 border-4 border-fuchsia-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : teachers.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-neutral-500 font-bold">The faculty database is currently being updated.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {teachers.map((teacher) => (
+              <div key={teacher.id} className="group bg-[#0a0a0e] border border-purple-500/10 hover:border-purple-500/30 rounded-[2.5rem] p-8 flex flex-col md:flex-row gap-8 items-center md:items-start transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(168,85,247,0.1)] relative overflow-hidden h-full">
+                
+                {/* Glow Effect */}
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-fuchsia-500/10 rounded-full blur-[60px] pointer-events-none group-hover:bg-fuchsia-500/20 transition-all"></div>
+
+                {/* Avatar */}
+                <div className="w-32 h-32 md:w-40 md:h-40 shrink-0 rounded-[2rem] bg-gradient-to-br from-neutral-800 to-black border border-white/10 overflow-hidden shadow-xl p-1 relative z-10 group-hover:scale-105 transition-transform duration-500 mx-auto md:mx-0">
+                  <img 
+                    src={teacher.avatar_url || `https://ui-avatars.com/api/?name=${teacher.first_name}+${teacher.last_name}&background=random`} 
+                    alt={teacher.first_name} 
+                    className="w-full h-full object-cover rounded-[1.5rem]"
+                  />
+                </div>
+
+                {/* Info & Badges Section */}
+                <div className="flex flex-col flex-1 text-center md:text-left relative z-10 h-full">
+                  
+                  {/* Name and Bio */}
+                  <h3 className="text-2xl font-black text-white mb-2">{teacher.first_name} {teacher.last_name}</h3>
+                  <p className="text-xs text-neutral-400 font-medium leading-relaxed mb-4 line-clamp-3">
+                    {teacher.bio}
+                  </p>
+
+                  {/* Achievements */}
+                  {teacher.achievements && (
+                    <div className="bg-black/40 border border-white/5 p-4 rounded-2xl mb-5">
+                      <div className="flex items-center justify-center md:justify-start gap-2 mb-2 text-fuchsia-400">
+                        <Award size={14} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Key Achievements</span>
+                      </div>
+                      <p className="text-xs text-neutral-300 leading-relaxed italic">
+                        "{teacher.achievements}"
+                      </p>
+                    </div>
+                  )}
+
+                  {/* 🔥 رندر کردن داینامیک لیست کورس‌ها (به پایین منتقل شد) */}
+                  <div className="mt-auto flex flex-wrap items-center justify-center md:justify-start gap-2 pt-4 border-t border-white/5">
+                    {teacher.teacher_info_courses && teacher.teacher_info_courses.length > 0 ? (
+                      teacher.teacher_info_courses.map((item, idx) => (
+                        <span key={idx} className="inline-block px-3 py-1 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-md text-[9px] font-black uppercase tracking-widest">
+                          {item.courses?.title || "Expert"}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="inline-block px-3 py-1 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-md text-[9px] font-black uppercase tracking-widest">
+                        Faculty Expert
+                      </span>
+                    )}
+                  </div>
+                  
+                </div>
+
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* ================= THE SAFI ECOSYSTEM (COMPANIES GRID) ================= */}
@@ -232,11 +353,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ================= THE SAFI BOOK (Detailed Information Section) ================= */}
+      {/* ================= THE SAFI BOOK ================= */}
       <section className="relative py-32 px-6 md:px-12 bg-gradient-to-b from-[#050508] via-[#08080a] to-[#020202] z-10 border-t border-white/5 mt-10">
         <div className="max-w-4xl mx-auto">
           
-          {/* Huge Logo Watermark */}
           <div className="flex justify-center mb-16 relative">
             <div className="absolute inset-0 bg-yellow-500/20 blur-[100px] rounded-full"></div>
             <img 
@@ -246,7 +366,6 @@ export default function AboutPage() {
             />
           </div>
 
-          {/* Book-like Content */}
           <div className="prose prose-invert prose-yellow max-w-none text-center sm:text-left">
             
             <h2 className="text-3xl sm:text-5xl font-black text-white text-center mb-12 tracking-tight">
@@ -255,7 +374,6 @@ export default function AboutPage() {
 
             <div className="space-y-12 text-neutral-400 text-sm sm:text-base leading-loose font-medium">
               
-              {/* Introduction & Corporate Registration */}
               <div className="bg-white/[0.02] p-8 sm:p-12 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden">
                 <div className="absolute -top-20 -right-20 w-64 h-64 bg-yellow-500/5 rounded-full blur-[80px]"></div>
                 

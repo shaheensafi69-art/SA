@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
+import { CheckCircle2, ClipboardCheck, FileCheck, ArrowRight, Video, MessageSquare, ExternalLink, Loader2 } from "lucide-react";
 
-// تعریف تایپ‌های دقیق بر اساس دیتابیس شما
 type ClassGroupForAttendance = {
   id: string;
   class_name: string;
-  meeting_link: string | null; // اجازه می‌دهیم لینک خالی باشد
+  meeting_link: string | null; 
+  signal_group_link: string | null; // اضافه شدن لینک سیگنال به هاب حاضری
   already_signed: boolean;
 };
 
@@ -31,7 +32,6 @@ export default function StudentHubPage() {
   const [todayClasses, setTodayClasses] = useState<ClassGroupForAttendance[]>([]);
   const [filter, setFilter] = useState<"pending" | "submitted" | "graded">("pending");
   
-  // استیت‌های مدیریتی
   const [signingId, setSigningId] = useState<string | null>(null);
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<{ [key: string]: File | null }>({});
@@ -49,12 +49,9 @@ export default function StudentHubPage() {
     const userId = session.user.id;
 
     try {
-      // ==========================================================
-      // ۱. دریافت اطلاعات حاضری (Attendance) متصل به دیتابیس واقعی
-      // ==========================================================
       const todayDate = new Date().toISOString().split('T')[0];
 
-      // الف) دریافت لاگ‌های حاضری "امروز" برای این "شاگرد"
+      // ۱. دریافت لاگ‌های حاضری امروز
       const { data: myLogs } = await supabase
         .from("attendance_logs")
         .select("class_group_id")
@@ -63,7 +60,7 @@ export default function StudentHubPage() {
       
       const signedClassIds = myLogs?.map(log => log.class_group_id) || [];
 
-      // ب) دریافت کلاس‌های ثبت‌نام شده شاگرد
+      // ۲. دریافت کلاس‌های ثبت‌نام شده شاگرد همراه با لینک‌های Teams و Signal
       const { data: enrollments } = await supabase
         .from("class_students")
         .select(`
@@ -71,7 +68,8 @@ export default function StudentHubPage() {
           class_groups (
             id,
             class_name,
-            meeting_link
+            meeting_link,
+            signal_group_link
           )
         `)
         .eq("student_id", userId);
@@ -82,16 +80,15 @@ export default function StudentHubPage() {
           return {
             id: cg?.id,
             class_name: cg?.class_name || "Unknown Class",
-            meeting_link: cg?.meeting_link || null, // جلوگیری از باگ null
+            meeting_link: cg?.meeting_link || null,
+            signal_group_link: cg?.signal_group_link || null,
             already_signed: signedClassIds.includes(cg?.id),
           };
         });
         setTodayClasses(formattedClasses);
       }
 
-      // ==========================================================
-      // ۲. دریافت اطلاعات تکالیف (Assignments) متصل به دیتابیس
-      // ==========================================================
+      // ۳. دریافت اطلاعات تکالیف متصل به دوره‌های فعال
       const { data: assignmentEnrollments } = await supabase
         .from("enrollments")
         .select("course_id, courses(title)")
@@ -140,14 +137,11 @@ export default function StudentHubPage() {
       }
     } catch (error) { 
       console.error("Database Error:", error); 
-    } finally { 
+    } bits: {
       setIsLoading(false); 
     }
   };
 
-  // ==========================================================
-  // قابلیت امضاء حاضری و ثبت در جدول attendance_logs (با سیستم خطایاب هوشمند)
-  // ==========================================================
   const handleSignAttendance = async (classGroupId: string) => {
     setSigningId(classGroupId);
     const supabase = createClient();
@@ -160,30 +154,19 @@ export default function StudentHubPage() {
           class_group_id: classGroupId,
           student_id: session?.user?.id,
           status: "present",
-          // ارسال کامل تاریخ و زمان برای جلوگیری از ارورهای تایپ دیتابیس
           session_date: new Date().toISOString() 
         });
 
-      // اگر دیتابیس ارور داد، دقیقاً متن ارور را به ما نشان بده!
-      if (error) {
-        console.error("Supabase Database Error:", error);
-        alert(`Database Error: ${error.message}`);
-        throw error;
-      }
+      if (error) throw error;
 
-      // آپدیت UI بدون نیاز به رفرش
       setTodayClasses(prev => prev.map(c => c.id === classGroupId ? {...c, already_signed: true} : c));
-      
-    } catch (error) { 
-      console.log("Attendance signature failed.", error);
+    } catch (error: any) { 
+      alert(`Database Error: ${error.message}`);
     } finally { 
       setSigningId(null); 
     }
   };
 
-  // ==========================================================
-  // قابلیت انتخاب و آپلود فایل تکلیف
-  // ==========================================================
   const handleFileSelect = (assignmentId: string, file: File | null) => {
     setSelectedFile(prev => ({ ...prev, [assignmentId]: file }));
   };
@@ -226,7 +209,7 @@ export default function StudentHubPage() {
 
   const getStatusStyle = (status: AssignmentItem["status"]) => {
     switch (status) {
-      case "overdue": return "bg-red-500/10 text-red-400 border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.15)] animate-pulse";
+      case "overdue": return "bg-red-500/10 text-red-400 border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.15)]";
       case "submitted": return "bg-blue-500/10 text-blue-400 border border-blue-500/20";
       case "graded": return "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]";
       default: return "bg-amber-500/10 text-amber-400 border border-amber-500/20";
@@ -234,57 +217,65 @@ export default function StudentHubPage() {
   };
 
   return (
-    <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-10">
+    <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-10" dir="ltr">
       
-      {/* ================= Header ================= */}
+      {/* Header */}
       <header className="px-6 md:px-12 pt-8 md:pt-12 flex flex-col gap-2 relative z-10 mb-10">
         <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight">
           Student <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">Hub</span>
         </h1>
-        <p className="text-neutral-500 text-sm md:text-base font-medium max-w-xl">Sign today's attendance, submit homework, and track your academic progress.</p>
+        <p className="text-neutral-500 text-sm md:text-base font-medium max-w-xl">Sign today's attendance, submit homework, and track your academic progress smoothly.</p>
       </header>
 
       <div className="px-6 md:px-12 max-w-7xl mx-auto relative z-10 space-y-10">
         
-        {/* ================= 1. ATTENDANCE SECTION (PREMIUM LOOK) ================= */}
-        <section className="relative w-full bg-neutral-900/40 border border-white/5 rounded-[2.5rem] p-6 md:p-8 backdrop-blur-2xl shadow-2xl overflow-hidden animate-[fadeIn_0.4s_ease-out]">
+        {/* ================= 1. ATTENDANCE SECTION ================= */}
+        <section className="relative w-full bg-neutral-900/40 border border-white/5 rounded-[2.5rem] p-6 md:p-8 backdrop-blur-2xl shadow-2xl overflow-hidden">
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-600/10 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div className="flex items-center gap-4 mb-6 relative z-10">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl shadow-[0_0_15px_rgba(16,185,129,0.1)]">✅</div>
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl">✅</div>
             <h2 className="text-2xl font-black text-white tracking-tight">Today's Check-in</h2>
           </div>
 
           {isLoading ? (
-            <div className="h-20 bg-white/5 rounded-2xl animate-pulse"></div>
+            <div className="flex items-center justify-center py-6">
+              <Loader2 className="w-8 h-8 border-indigo-500 animate-spin text-indigo-500" />
+            </div>
           ) : todayClasses.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
               {todayClasses.map(cls => (
-                <div key={cls.id} className="bg-black/40 border border-white/5 rounded-3xl p-5 flex items-center justify-between gap-4 hover:border-emerald-500/30 transition-all group">
+                <div key={cls.id} className="bg-black/40 border border-white/5 rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-emerald-500/30 transition-all group">
                   <div className="overflow-hidden flex-1">
-                    <p className="text-white font-extrabold truncate">{cls.class_name}</p>
+                    <p className="text-white font-extrabold text-base truncate">{cls.class_name}</p>
                     
-                    {/* 🔥 فیکس ارور Link - بررسی وجود لینک در دیتابیس */}
-                    {cls.meeting_link ? (
-                      <Link href={cls.meeting_link} target="_blank" className="text-xs text-neutral-500 hover:text-emerald-400 truncate block mt-1 transition-colors">
-                        Join Meeting Group 🔗
-                      </Link>
-                    ) : (
-                      <span className="text-xs text-neutral-600 truncate block mt-1">No meeting link provided</span>
-                    )}
+                    {/* لینک‌های هوشمند مایکروسافت تیمز و سیگنال کلاسی */}
+                    <div className="flex flex-wrap items-center gap-3 mt-2">
+                      {cls.meeting_link ? (
+                        <a href={cls.meeting_link} target="_blank" rel="noopener noreferrer" className="text-xs text-neutral-400 hover:text-red-400 flex items-center gap-1 transition-colors">
+                          <Video size={12} /> Teams Room <ExternalLink size={10} />
+                        </a>
+                      ) : <span className="text-[10px] text-neutral-600">Teams Locked</span>}
+
+                      {cls.signal_group_link ? (
+                        <a href={cls.signal_group_link} target="_blank" rel="noopener noreferrer" className="text-xs text-neutral-400 hover:text-indigo-400 flex items-center gap-1 transition-colors">
+                          <MessageSquare size={12} /> Signal Chat <ExternalLink size={10} />
+                        </a>
+                      ) : <span className="text-[10px] text-neutral-600">Signal Syncing</span>}
+                    </div>
                   </div>
 
                   {cls.already_signed ? (
-                    <div className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500/10 text-emerald-400 rounded-2xl text-xs font-black uppercase tracking-widest shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                      <span>✓</span> Signed
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500/10 text-emerald-400 rounded-2xl text-xs font-black uppercase tracking-widest border border-emerald-500/20 shadow-lg">
+                      <CheckCircle2 size={14} /> Signed
                     </div>
                   ) : (
                     <button 
                       onClick={() => handleSignAttendance(cls.id)}
                       disabled={signingId === cls.id}
-                      className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-[0_5px_15px_rgba(16,185,129,0.3)] disabled:opacity-50 shrink-0"
+                      className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg disabled:opacity-50 shrink-0 flex items-center gap-2"
                     >
-                      {signingId === cls.id ? "..." : "Sign Now"}
+                      <ClipboardCheck size={14} /> {signingId === cls.id ? "Signing..." : "Sign Now"}
                     </button>
                   )}
                 </div>
@@ -302,8 +293,7 @@ export default function StudentHubPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <h2 className="text-2xl font-black text-white tracking-tight">Homework & Projects</h2>
             
-            {/* تب‌های فیلتر کپسولی موبایل‌پسند */}
-            <div className="flex items-center gap-1.5 bg-neutral-900/80 p-1.5 rounded-[1.5rem] border border-white/5 overflow-x-auto custom-scrollbar shadow-inner w-full md:w-auto">
+            <div className="flex items-center gap-1.5 bg-neutral-900/80 p-1.5 rounded-[1.5rem] border border-white/5 overflow-x-auto shadow-inner w-full md:w-auto">
               {(["pending", "submitted", "graded"] as const).map(tabId => (
                 <button
                   key={tabId}
@@ -319,15 +309,15 @@ export default function StudentHubPage() {
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6"><div className="h-48 bg-white/5 rounded-[2.5rem] animate-pulse"></div></div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="h-48 bg-white/5 rounded-[2.5rem] animate-pulse"></div>
+            </div>
           ) : filteredAssignments.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {filteredAssignments.map((task) => (
                 <div key={task.id} className="relative group bg-neutral-900/40 border border-white/5 rounded-[2.5rem] p-6 md:p-8 backdrop-blur-2xl transition-all duration-300 hover:border-yellow-500/30 hover:-translate-y-2 shadow-xl flex flex-col gap-6">
-                  {/* افکت نوری بک‌لایت زمان هاور */}
                   <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   
-                  {/* ردیف بالا: نام کورس و وضعیت */}
                   <div className="flex items-center justify-between gap-4 relative z-10">
                     <span className="px-3.5 py-1.5 bg-black/40 border border-white/5 rounded-lg text-[10px] font-black uppercase tracking-widest text-neutral-400 truncate">
                       {task.course_name}
@@ -337,7 +327,6 @@ export default function StudentHubPage() {
                     </span>
                   </div>
 
-                  {/* عنوان و توضیحات */}
                   <div className="relative z-10 flex-1">
                     <h3 className="text-xl md:text-2xl font-black text-white mb-3 leading-tight group-hover:text-yellow-400 transition-colors">{task.title}</h3>
                     <p className="text-neutral-400 text-sm leading-relaxed line-clamp-3 mb-6">{task.description}</p>
@@ -347,7 +336,6 @@ export default function StudentHubPage() {
                     </div>
                   </div>
 
-                  {/* بخش تعاملی (آپلود / نمره) */}
                   <div className="relative z-10 pt-6 border-t border-white/5 mt-auto">
                     {(task.status === "pending" || task.status === "overdue") && (
                       <div className="space-y-4">
@@ -361,9 +349,9 @@ export default function StudentHubPage() {
                         <button 
                           onClick={() => handleSubmitAssignment(task.id)}
                           disabled={!selectedFile[task.id] || uploadingId === task.id}
-                          className="w-full py-4 flex items-center justify-center gap-3 bg-gradient-to-r from-yellow-400 to-amber-600 text-black rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-lg disabled:opacity-50 disabled:hover:scale-100"
+                          className="w-full py-4 flex items-center justify-center gap-3 bg-gradient-to-r from-yellow-400 to-amber-600 text-black rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-lg disabled:opacity-50"
                         >
-                          {uploadingId === task.id ? "Uploading File..." : "Submit Assignment 🚀"}
+                          <FileCheck size={14} /> {uploadingId === task.id ? "Uploading File..." : "Submit Assignment 🚀"}
                         </button>
                       </div>
                     )}
@@ -398,7 +386,7 @@ export default function StudentHubPage() {
         </section>
       </div>
 
-      {/* افکت نوری پس‌زمینه کل صفحه (Global Glow) */}
+      {/* Background Glows */}
       <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-yellow-600/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
       <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-amber-600/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
     </div>

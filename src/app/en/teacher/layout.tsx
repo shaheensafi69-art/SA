@@ -14,13 +14,12 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // 🔥 تشخیص هوشمند تمام صفحات فول‌اسکرین اساتید (چت هوش مصنوعی، گروه‌ها و کلاس زنده) 🔥
+  // 🔥 تشخیص هوشمند صفحات فول‌اسکرین اساتید (گروه‌ها و کلاس زنده)
   const isGroupChatRoute = pathname.includes('/teacher/groups/') && pathname.split('/').length > 4;
-  const isAIRoute = pathname.includes('/teacher/ai-assistant');
   const isLiveMeetRoute = pathname.includes('/teacher/live-classes/') && pathname.split('/').length > 4;
   
-  // ترکیب هر سه مسیر برای پنهان‌سازی هدر و فوتر در موبایل
-  const isFullScreenRoute = isGroupChatRoute || isAIRoute || isLiveMeetRoute;
+  // ترکیب مسیرها برای پنهان‌سازی هدر و فوتر در موبایل
+  const isFullScreenRoute = isGroupChatRoute || isLiveMeetRoute;
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -61,8 +60,6 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
     { name: "Assignments", path: "/en/teacher/assignments", icon: "📝" },
     { name: "Exams & Quizzes", path: "/en/teacher/quizzes", icon: "🎯" },
     { name: "Trading Journal", path: "/en/teacher/trading-journal", icon: "📈" },
-    { name: "AI Assistant", path: "/en/teacher/ai-assistant", icon: "🤖" },
-    { name: "Support Tickets", path: "/en/teacher/support", icon: "🎧" },
     { name: "Settings", path: "/en/teacher/settings", icon: "⚙️" },
   ];
 
@@ -75,8 +72,6 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
       case "Assignments": return "from-orange-500/20 to-orange-500/5 text-orange-400 border-orange-500/30";
       case "Exams & Quizzes": return "from-purple-500/20 to-purple-500/5 text-purple-400 border-purple-500/30";
       case "Trading Journal": return "from-cyan-500/20 to-cyan-500/5 text-cyan-400 border-cyan-500/30";
-      case "AI Assistant": return "from-fuchsia-500/20 to-fuchsia-500/5 text-fuchsia-400 border-fuchsia-500/30";
-      case "Support Tickets": return "from-teal-500/20 to-teal-500/5 text-teal-400 border-teal-500/30";
       case "Settings": return "from-slate-500/20 to-slate-500/5 text-slate-400 border-slate-500/30";
       default: return "from-neutral-500/20 to-neutral-500/5 text-neutral-400 border-neutral-500/30";
     }
@@ -102,8 +97,10 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
       <aside className="hidden lg:flex w-[280px] bg-[#050505]/80 backdrop-blur-3xl border-r border-white/5 flex-col relative z-20 shrink-0">
         <div className="h-24 px-8 flex items-center gap-4 border-b border-white/5 shrink-0">
            <Link href="/en/teacher" className="flex items-center gap-4 group">
-             <div className="w-12 h-12 bg-gradient-to-br from-fuchsia-500 to-purple-600 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(217,70,239,0.3)] group-hover:scale-105 transition-transform">
-               <img src="/logo-without-b.png" alt="Safi Academy" className="w-7 h-7 object-contain drop-shadow-2xl" />
+             {/* دیزاین جدید لوگو با نور مخفی */}
+             <div className="relative flex items-center justify-center group-hover:scale-105 transition-transform">
+               <div className="absolute inset-0 bg-fuchsia-500/20 blur-[15px] rounded-full scale-150"></div>
+               <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-12 h-12 object-contain drop-shadow-[0_0_10px_rgba(217,70,239,0.5)]" />
              </div>
              <div>
                <h2 className="text-sm font-black text-white tracking-widest uppercase">Safi Academy</h2>
@@ -165,11 +162,10 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
       {/* ================= 3. MOBILE TOP HEADER ================= */}
       {!isFullScreenRoute && (
         <div className="lg:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-5 bg-[#020202]/80 backdrop-blur-2xl border-b border-white/5 z-40">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8">
-              <img src="/logo-without-b.png" alt="Safi Academy" className="w-full h-full object-contain filter drop-shadow-[0_0_5px_rgba(217,70,239,0.5)]" />
-            </div>
-            <span className="font-black text-xs tracking-widest text-white uppercase">Safi Academy</span>
+          <div className="flex items-center gap-3 relative">
+            <div className="absolute inset-0 bg-fuchsia-500/20 blur-[12px] rounded-full scale-150"></div>
+            <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-9 h-9 object-contain filter drop-shadow-[0_0_8px_rgba(217,70,239,0.5)]" />
+            <span className="relative z-10 font-black text-xs tracking-widest text-white uppercase">Safi Academy</span>
           </div>
           
           <button className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-fuchsia-400 transition-colors relative">

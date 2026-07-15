@@ -1,179 +1,201 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Video, MessageCircle, Clock, Calendar, Users, MonitorPlay, Loader2, Layers, Activity, ArrowLeft, Settings2 } from "lucide-react";
 
-type ClassGroup = {
+type LiveClass = {
   id: string;
   class_name: string;
-  schedule_info: string;
+  class_days: string | null;
+  class_time: string | null;
+  meeting_link: string | null;
+  signal_group_link: string | null;
   is_active: boolean;
-  start_date: string;
-  enrolled_count: number;
+  student_count: number;
+  thumbnail_url: string | null;
+  category: string | null;
 };
 
-export default function TeacherLiveClasses() {
-  const [classes, setClasses] = useState<ClassGroup[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function TeacherLiveClassesPage() {
   const router = useRouter();
+  const [classGroups, setClassGroups] = useState<LiveClass[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchMyClasses();
+    fetchLiveClasses();
   }, []);
 
-  const fetchMyClasses = async () => {
+  const fetchLiveClasses = async () => {
     setIsLoading(true);
     const supabase = createClient();
-    
-    // شناسایی استاد
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return router.push("/en/login");
+    
+    if (!session?.user) {
+      router.push("/en/login");
+      return;
+    }
+
+    const teacherId = session.user.id;
 
     try {
-      // فقط کلاس‌هایی که teacher_id آن‌ها برابر با آیدی این استاد است خوانده می‌شود
-      const { data, error } = await supabase
+      // 🔥 لود کاملاً داینامیک کلاس‌های لایو استاد همراه با عکس کورس و تعداد شاگردان
+      const { data: classesData, error: classesError } = await supabase
         .from("class_groups")
-        .select(`id, class_name, schedule_info, is_active, start_date, class_students(student_id)`)
-        .eq("teacher_id", session.user.id)
-        .order("is_active", { ascending: false })
-        .order("start_date", { ascending: true });
+        .select(`
+          id, 
+          class_name, 
+          class_days,
+          class_time,
+          meeting_link,
+          signal_group_link,
+          is_active, 
+          class_students(student_id),
+          courses (thumbnail_url, category)
+        `)
+        .eq("teacher_id", teacherId)
+        .order("is_active", { ascending: false }); // ابتدا کلاس‌های فعال را نشان بده
 
-      if (error) throw error;
+      if (classesError) throw classesError;
 
-      if (data) {
-        const formatted = data.map((cls: any) => ({
-          ...cls,
-          enrolled_count: cls.class_students ? cls.class_students.length : 0
-        }));
-        setClasses(formatted);
+      if (classesData) {
+        const formattedClasses = classesData.map((cls: any) => {
+          const courseData = Array.isArray(cls.courses) ? cls.courses[0] : cls.courses;
+          return {
+            id: cls.id,
+            class_name: cls.class_name,
+            class_days: cls.class_days || "Not Set",
+            class_time: cls.class_time || "Not Set",
+            meeting_link: cls.meeting_link,
+            signal_group_link: cls.signal_group_link,
+            is_active: cls.is_active,
+            student_count: cls.class_students ? cls.class_students.length : 0,
+            thumbnail_url: courseData?.thumbnail_url || null,
+            category: courseData?.category || "Live Cohort"
+          };
+        });
+        setClassGroups(formattedClasses);
       }
+
     } catch (error) {
-      console.error("Error loading teacher classes:", error);
+      console.error("Error syncing live classes:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const activeClasses = classes.filter(c => c.is_active);
-  const upcomingClasses = classes.filter(c => !c.is_active);
-
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-6 sm:p-10 relative overflow-hidden font-sans">
-      {/* افکت‌های نوری پس‌زمینه */}
-      <div className="absolute top-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-fuchsia-600/10 rounded-full blur-[140px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] left-[-10%] w-[30vw] h-[30vw] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-
-      <div className="max-w-6xl mx-auto space-y-10 relative z-10 animate-[fadeIn_0.5s_ease-out]">
+    <div className="min-h-screen bg-[#020202] text-white animate-[fadeIn_0.5s_ease-out] relative overflow-hidden pb-32" dir="ltr">
+      
+      {/* ================= BACKGROUND AMBIENT GLOWS ================= */}
+      <div className="fixed top-[-10%] left-[-10%] w-[60vw] h-[60vw] bg-fuchsia-600/5 rounded-full blur-[160px] pointer-events-none z-0"></div>
+      <div className="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/5 rounded-full blur-[160px] pointer-events-none z-0"></div>
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-8 sm:pt-12 space-y-10 sm:space-y-16">
         
-        {/* ================= Header ================= */}
-        <header className="rounded-[2rem] border border-white/5 bg-neutral-950/60 p-8 md:p-10 backdrop-blur-3xl shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-          <div className="flex items-center gap-5">
-            <div className="w-14 h-14 bg-gradient-to-br from-fuchsia-500 to-purple-600 rounded-2xl flex items-center justify-center text-2xl shadow-[0_0_25px_rgba(192,38,211,0.3)]">
-               👨‍🏫
+        {/* ================= HEADER SECTION ================= */}
+        <header className="flex flex-col lg:flex-row justify-between lg:items-center gap-6 bg-[#0a0a0f]/80 p-6 sm:p-10 rounded-[2.5rem] border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden">
+          <div className="flex items-start sm:items-center gap-5 relative z-10">
+            <div className="w-16 h-16 bg-gradient-to-br from-purple-500/20 to-fuchsia-500/5 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 shadow-inner shrink-0">
+              <Activity size={32} className="animate-pulse" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.35em] text-fuchsia-400 mb-1">Instructor Portal</p>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight">My Broadcasting <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">Studio</span></h1>
+              <Link href="/en/teacher/courses" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+                <ArrowLeft size={12} /> Dashboard
+              </Link>
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight mb-2">
+                Live <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-500">Streaming</span>
+              </h1>
+              <p className="text-xs sm:text-base text-neutral-400 font-medium max-w-md leading-relaxed tracking-wide">
+                Launch live lectures, manage active channels, and connect with your cohorts instantly.
+              </p>
             </div>
-          </div>
-          <div className="bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-center flex-shrink-0 min-w-[120px]">
-             <p className="text-3xl font-black text-white leading-none mb-1">{isLoading ? "-" : classes.length}</p>
-             <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Total Classes</p>
           </div>
         </header>
 
+        {/* ================= LIVE CLASSES GRID ================= */}
         {isLoading ? (
-          <div className="flex justify-center py-32">
-            <div className="w-10 h-10 border-4 border-fuchsia-500 border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(192,38,211,0.5)]"></div>
+          <div className="flex flex-col items-center justify-center py-32 space-y-6">
+            <Loader2 className="w-12 h-12 text-purple-500 animate-spin" />
+            <p className="text-neutral-500 text-xs font-black uppercase tracking-[0.3em] animate-pulse">Connecting Live Streams...</p>
+          </div>
+        ) : classGroups.length === 0 ? (
+          <div className="text-center py-24 sm:py-40 bg-white/[0.01] border border-dashed border-white/10 rounded-[3rem] backdrop-blur-md mx-2 sm:mx-0 shadow-2xl">
+            <MonitorPlay size={64} className="text-neutral-700 mx-auto mb-6" />
+            <h3 className="text-2xl font-black text-white mb-4">No Live Broadcasts</h3>
+            <p className="text-neutral-400 text-sm max-w-xs mx-auto leading-relaxed">You haven't scheduled any live cohorts yet. Go to your courses to initialize a class.</p>
           </div>
         ) : (
-          <div className="space-y-12">
-            
-            {/* ================= Active Sessions ================= */}
-            <div>
-              <h2 className="text-xl font-extrabold flex items-center gap-3 mb-6 text-white">
-                <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                </span>
-                Active Sessions
-              </h2>
-              
-              {activeClasses.length === 0 ? (
-                 <div className="rounded-[2rem] border border-dashed border-white/10 bg-white/[0.01] p-10 text-center text-neutral-500 text-sm backdrop-blur-sm">
-                   You have no active broadcasts running at this exact moment.
-                 </div>
-              ) : (
-                <div className="grid gap-6 sm:grid-cols-2">
-                  {activeClasses.map((room) => (
-                    <div key={room.id} className="group rounded-[2rem] border border-red-500/40 bg-gradient-to-br from-red-950/30 to-black p-6 sm:p-8 flex flex-col justify-between shadow-[0_15px_40px_rgba(239,68,68,0.15)] hover:border-red-500 transition-all duration-300 hover:-translate-y-1">
-                       <div className="mb-8">
-                         <div className="flex justify-between items-start mb-4">
-                           <span className="bg-red-500 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-md animate-pulse">Live Now</span>
-                           <span className="text-xl bg-white/5 w-10 h-10 flex items-center justify-center rounded-full text-red-400">🎙️</span>
-                         </div>
-                         <h3 className="text-xl font-bold text-white mb-2">{room.class_name}</h3>
-                         <div className="flex items-center gap-2 text-xs font-medium text-neutral-400 bg-black/40 inline-flex px-3 py-1.5 rounded-lg border border-white/5">
-                           <span>👥</span> {room.enrolled_count} Students Waiting
-                         </div>
-                       </div>
-                       
-                       <Link href={`/en/teacher/live-classes/${room.id}`} className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-extrabold py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_10px_25px_rgba(220,38,38,0.4)] group-hover:scale-[1.02]">
-                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                         Return to Studio
-                       </Link>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
+            {classGroups.map((cls) => (
+              <div key={cls.id} className={`bg-[#0a0a0f] border rounded-[2.5rem] overflow-hidden group transition-all duration-500 shadow-2xl flex flex-col hover:-translate-y-2 relative ${cls.is_active ? 'border-purple-500/30 hover:shadow-[0_30px_60px_rgba(168,85,247,0.15)]' : 'border-white/5 hover:border-white/10'}`}>
+                
+                {/* Image & Status Badges */}
+                <div className="h-48 sm:h-56 bg-neutral-900 relative overflow-hidden shrink-0 border-b border-white/5">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/40 to-transparent z-10"></div>
+                  
+                  {cls.thumbnail_url ? (
+                    <img src={cls.thumbnail_url} alt={cls.class_name} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000 ease-out" />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-neutral-800 to-black opacity-30">
+                      <Layers size={48} className="text-neutral-500" />
                     </div>
-                  ))}
+                  )}
+                  
+                  <div className="absolute top-5 left-5 right-5 z-20 flex justify-between items-start">
+                    <span className="backdrop-blur-xl bg-black/50 text-neutral-300 text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-3.5 py-2 rounded-xl border border-white/10 shadow-2xl">
+                      {cls.category}
+                    </span>
+                    
+                    <span className={`backdrop-blur-xl text-[10px] sm:text-[11px] font-black uppercase tracking-widest px-3.5 py-2 rounded-xl border flex items-center gap-2 shadow-2xl ${cls.is_active ? 'bg-rose-500/10 text-rose-400 border-rose-500/30 shadow-[0_0_20px_rgba(225,29,72,0.4)]' : 'bg-black/60 text-neutral-400 border-white/10'}`}>
+                      {cls.is_active && <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_#f43f5e]"></span>}
+                      {cls.is_active ? "LIVE NOW" : "Standby"}
+                    </span>
+                  </div>
                 </div>
-              )}
-            </div>
 
-            {/* ================= Upcoming & Scheduled ================= */}
-            <div>
-              <h2 className="text-xl font-extrabold text-neutral-300 mb-6 flex items-center gap-3">
-                <span className="text-fuchsia-500">📅</span> Upcoming & Scheduled
-              </h2>
-              
-              {upcomingClasses.length === 0 ? (
-                 <div className="rounded-[2rem] border border-white/5 bg-white/5 p-10 text-center text-neutral-500 text-sm">
-                   No upcoming classes found in your schedule.
-                 </div>
-              ) : (
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {upcomingClasses.map((room) => (
-                    <div key={room.id} className="group rounded-[2rem] border border-white/5 bg-neutral-900/40 p-6 hover:border-fuchsia-500/40 hover:bg-neutral-900/80 transition-all duration-300 flex flex-col justify-between h-full backdrop-blur-sm">
-                      <div>
-                        <div className="flex justify-between items-start mb-4">
-                           <span className="bg-white/5 border border-white/10 text-neutral-400 text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md">Standby</span>
-                           <span className="text-neutral-600 group-hover:text-fuchsia-400 transition-colors">→</span>
-                        </div>
-                        <h3 className="text-lg font-bold text-white mb-4 group-hover:text-fuchsia-300 transition-colors">{room.class_name}</h3>
-                        
-                        <div className="space-y-3 mb-8">
-                          <div className="flex justify-between items-center bg-black/40 p-3 rounded-xl border border-white/5">
-                            <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Schedule</span>
-                            <span className="text-xs font-medium text-white">{room.schedule_info}</span>
-                          </div>
-                          <div className="flex justify-between items-center bg-black/40 p-3 rounded-xl border border-white/5">
-                            <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Enrolled</span>
-                            <span className="text-xs font-medium text-white bg-fuchsia-500/20 text-fuchsia-300 px-2 py-0.5 rounded">{room.enrolled_count} Students</span>
-                          </div>
-                        </div>
+                {/* Content Section */}
+                <div className="p-6 sm:p-8 flex flex-col flex-1 relative z-20 bg-[#0a0a0f]">
+                  <h3 className="text-xl sm:text-2xl font-black text-white group-hover:text-purple-400 transition-colors duration-300 line-clamp-2 mb-6 leading-tight tracking-tight">
+                    {cls.class_name}
+                  </h3>
+                  
+                  {/* Timings & Rosters */}
+                  <div className="space-y-3 mb-8 flex-1">
+                    <div className="flex items-center justify-between gap-3 bg-white/[0.02] p-4 rounded-2xl border border-white/5 group-hover:bg-white/[0.04] transition-colors">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <Calendar size={16} className="text-purple-500 shrink-0"/> 
+                        <span className="text-[11px] sm:text-xs font-black text-neutral-300 uppercase tracking-widest truncate">{cls.class_days}</span>
                       </div>
-
-                      <Link href={`/en/teacher/live-classes/${room.id}`} className="mt-auto block w-full text-center bg-white/5 hover:bg-fuchsia-600 border border-white/10 hover:border-fuchsia-500 text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-md">
-                        Prepare Room
-                      </Link>
+                      <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-lg text-[10px] font-black uppercase tracking-widest shrink-0 shadow-inner">
+                        <Clock size={12} /> {cls.class_time}
+                      </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
 
+                    <div className="flex items-center gap-3.5 text-neutral-300 text-xs sm:text-sm font-bold bg-white/[0.02] px-4 py-4 rounded-2xl border border-white/5">
+                      <Users size={18} className="text-purple-500 shrink-0"/> 
+                      <span><strong className="text-white text-lg">{cls.student_count}</strong> Active Enrolled Students</span>
+                    </div>
+                  </div>
+                  
+                  {/* 🔥 دکمه اختصاصی برای رفتن به صفحه مدیریت کلاس 🔥 */}
+                  <div className="mt-auto border-t border-white/5 pt-6 flex flex-col gap-3">
+                    <Link 
+                      href={`/en/teacher/live-classes/${cls.id}`}
+                      className="w-full bg-gradient-to-r from-purple-600/10 to-fuchsia-600/10 hover:from-purple-600/20 hover:to-fuchsia-600/20 border border-purple-500/20 hover:border-fuchsia-500/40 text-white font-black uppercase tracking-[0.2em] text-[11px] sm:text-xs py-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg active:scale-[0.98]"
+                    >
+                      <Settings2 size={16} className="text-fuchsia-400" /> Manage Class
+                    </Link>
+                  </div>
+                </div>
+
+              </div>
+            ))}
           </div>
         )}
+
       </div>
     </div>
   );
