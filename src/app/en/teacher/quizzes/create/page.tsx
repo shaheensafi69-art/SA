@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Loader2, FileQuestion, HelpCircle, Target, Layers, AlertCircle, Save, Award, Plus, Trash2, CheckCircle2, ListOrdered } from "lucide-react";
+import { ArrowLeft, Loader2, FileQuestion, Target, Layers, AlertCircle, Save, Award, Plus, Trash2, ListOrdered, FileText } from "lucide-react";
 
 type ClassOption = {
   id: string;
@@ -14,11 +14,6 @@ type ClassOption = {
 
 type QuestionForm = {
   question_text: string;
-  option_a: string;
-  option_b: string;
-  option_c: string;
-  option_d: string;
-  correct_option: string;
   points: number;
 };
 
@@ -34,13 +29,14 @@ export default function CreateDynamicQuizPage() {
   const [quizConfig, setQuizConfig] = useState({
     class_group_id: "",
     title: "",
-    passing_score: 50,
-    is_active: false, // کلید On/Off آزمون
+    passing_score: 70,
+    is_active: false,
+    quiz_type: "regular" // 'regular' or 'chance'
   });
 
-  // استیت آرایه سوالات داینامیک (پیش‌فرض با یک سوال خالی شروع می‌شود)
+  // استیت آرایه سوالات تشریحی (فقط متن سوال و بارم)
   const [questions, setQuestions] = useState<QuestionForm[]>([{
-    question_text: "", option_a: "", option_b: "", option_c: "", option_d: "", correct_option: "A", points: 1
+    question_text: "", points: 10
   }]);
 
   useEffect(() => {
@@ -78,11 +74,10 @@ export default function CreateDynamicQuizPage() {
     }
   };
 
-  // توابع مدیریت سوالات داینامیک
   const addQuestionBlock = () => {
     setQuestions([
       ...questions, 
-      { question_text: "", option_a: "", option_b: "", option_c: "", option_d: "", correct_option: "A", points: 1 }
+      { question_text: "", points: 10 }
     ]);
   };
 
@@ -108,35 +103,43 @@ export default function CreateDynamicQuizPage() {
       if (!quizConfig.class_group_id) throw new Error("Please select a target classroom.");
       if (!quizConfig.title) throw new Error("Quiz title is required.");
       if (questions.length === 0) throw new Error("Please add at least one question.");
+      
+      // بررسی اینکه آیا متنی برای سوالات وارد شده است یا خیر
+      for (const q of questions) {
+        if (!q.question_text.trim()) {
+          throw new Error("All questions must have text. Please remove empty blocks.");
+        }
+      }
 
       const selectedClass = classes.find(c => c.id === quizConfig.class_group_id);
       if (!selectedClass) throw new Error("Invalid class configuration.");
 
-      // مرحله ۱: ساخت کوییز در دیتابیس
+      // مرحله ۱: ساخت کوییز
       const { data: newQuiz, error: quizError } = await supabase
         .from("quizzes")
         .insert({
           class_group_id: quizConfig.class_group_id,
           course_id: selectedClass.course_id,
           title: quizConfig.title.trim(),
-          passing_score: quizConfig.passing_score || 50,
+          passing_score: quizConfig.passing_score || 70,
           is_active: quizConfig.is_active,
+          quiz_type: quizConfig.quiz_type
         })
         .select("id")
         .single();
 
       if (quizError) throw quizError;
 
-      // مرحله ۲: آماده‌سازی و ارسال (Bulk Insert) تمام سوالات
+      // مرحله ۲: ثبت سوالات (فیلدهای بلااستفاده با مقدار پیش‌فرض پر می‌شوند)
       const questionsToInsert = questions.map(q => ({
         quiz_id: newQuiz.id,
         question_text: q.question_text.trim(),
-        option_a: q.option_a.trim(),
-        option_b: q.option_b.trim(),
-        option_c: q.option_c.trim(),
-        option_d: q.option_d.trim(),
-        correct_option: q.correct_option,
-        points: q.points || 1,
+        option_a: 'Descriptive',
+        option_b: 'Descriptive',
+        option_c: 'Descriptive',
+        option_d: 'Descriptive',
+        correct_option: 'A', // فیلد بی‌اثر در سوالات تشریحی
+        points: q.points || 10,
       }));
 
       const { error: qError } = await supabase
@@ -144,17 +147,15 @@ export default function CreateDynamicQuizPage() {
         .insert(questionsToInsert);
 
       if (qError) {
-        // در صورت خطا در ثبت سوالات، خود کوییز را هم پاک می‌کنیم تا دیتای ناقص نماند
         await supabase.from("quizzes").delete().eq("id", newQuiz.id);
         throw new Error("Failed to save questions. Quiz creation aborted.");
       }
 
-      // هدایت با پیام موفقیت
-      alert(`Quiz deployed successfully with ${questions.length} questions!`);
+      alert(`Descriptive Exam deployed successfully with ${questions.length} questions!`);
       router.push("/en/teacher/quizzes");
       
     } catch (err: any) {
-      setErrorMsg(err.message || "Failed to deploy the new quiz.");
+      setErrorMsg(err.message || "Failed to deploy the new exam.");
       setIsSubmitting(false);
     }
   };
@@ -162,30 +163,33 @@ export default function CreateDynamicQuizPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#020202] flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
+        <Loader2 className="w-12 h-12 text-fuchsia-500 animate-spin" />
       </div>
     );
   }
+
+  // محاسبه مجموع بارم کل امتحان
+  const totalPoints = questions.reduce((acc, curr) => acc + (curr.points || 0), 0);
 
   return (
     <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32" dir="ltr">
       
       {/* Background Deep Glows */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-      <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+      <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-fuchsia-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+      <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
       <div className="relative z-10 max-w-5xl mx-auto space-y-8 animate-[fadeIn_0.4s_ease-out]">
         
         {/* ================= HEADER ================= */}
         <header className="flex flex-col md:flex-row justify-between md:items-center gap-6 bg-[#0a0a0f]/80 p-6 sm:p-8 rounded-[2rem] border border-white/5 backdrop-blur-2xl shadow-xl">
           <div>
-            <Link href="/en/teacher/quizzes" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-indigo-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+            <Link href="/en/teacher/quizzes" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
               <ArrowLeft size={14} /> Back to Exam Hub
             </Link>
             <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white mb-2">
-              Exam <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">Builder</span>
+              Deploy <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-indigo-500">Assessment</span>
             </h1>
-            <p className="text-xs sm:text-sm text-neutral-400 font-medium">Configure your exam settings and compile the question bank dynamically.</p>
+            <p className="text-xs sm:text-sm text-neutral-400 font-medium">Configure settings and build descriptive question papers.</p>
           </div>
         </header>
 
@@ -201,15 +205,15 @@ export default function CreateDynamicQuizPage() {
           {/* ================= SECTION 1: QUIZ SETTINGS ================= */}
           <div className="bg-neutral-900/50 border border-white/5 rounded-[2.5rem] p-6 sm:p-10 backdrop-blur-xl shadow-2xl space-y-8">
             
-            <div className="flex items-center justify-between border-b border-white/5 pb-4">
-              <h3 className="text-xl font-black text-indigo-400 flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
+              <h3 className="text-xl font-black text-fuchsia-400 flex items-center gap-2">
                 <Target size={22} /> Assessment Configuration
               </h3>
               
               {/* TOGGLE: On/Off System */}
-              <div className="flex items-center gap-3 bg-white/[0.02] px-4 py-2 rounded-2xl border border-white/5">
+              <div className="flex items-center gap-3 bg-white/[0.02] px-4 py-2 rounded-2xl border border-white/5 w-fit">
                 <span className={`text-[10px] font-black uppercase tracking-widest ${quizConfig.is_active ? 'text-emerald-400' : 'text-neutral-500'}`}>
-                  {quizConfig.is_active ? "Live Status: ONLINE" : "Live Status: OFFLINE"}
+                  {quizConfig.is_active ? "Status: ONLINE" : "Status: OFFLINE"}
                 </span>
                 <button 
                   type="button" 
@@ -228,7 +232,7 @@ export default function CreateDynamicQuizPage() {
                   <Layers size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                   <select 
                     required value={quizConfig.class_group_id} onChange={(e) => setQuizConfig({...quizConfig, class_group_id: e.target.value})}
-                    className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-indigo-500/50 appearance-none shadow-inner cursor-pointer"
+                    className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 appearance-none shadow-inner cursor-pointer"
                   >
                     {classes.map(c => <option key={c.id} value={c.id}>{c.class_name}</option>)}
                   </select>
@@ -236,37 +240,63 @@ export default function CreateDynamicQuizPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Quiz Title *</label>
-                <div className="relative">
-                  <FileQuestion size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
-                  <input 
-                    required type="text" placeholder="e.g. Final Semester Evaluation"
-                    value={quizConfig.title} onChange={(e) => setQuizConfig({...quizConfig, title: e.target.value})}
-                    className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-indigo-500/50 shadow-inner" 
-                  />
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Exam Type *</label>
+                <div className="relative flex bg-black/60 border border-white/10 rounded-2xl p-1.5 shadow-inner">
+                  <button
+                    type="button"
+                    onClick={() => setQuizConfig({...quizConfig, quiz_type: 'regular'})}
+                    className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${quizConfig.quiz_type === 'regular' ? 'bg-fuchsia-500/20 text-fuchsia-400 border border-fuchsia-500/30' : 'text-neutral-500 hover:text-white'}`}
+                  >
+                    Regular Exam
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setQuizConfig({...quizConfig, quiz_type: 'chance'})}
+                    className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${quizConfig.quiz_type === 'chance' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'text-neutral-500 hover:text-white'}`}
+                  >
+                    Chance (Retake)
+                  </button>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-2 w-full md:w-1/2">
-              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Passing Threshold Score *</label>
-              <div className="relative">
-                <Award size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500" />
-                <input 
-                  required type="number" min="1" max="1000"
-                  value={quizConfig.passing_score} onChange={(e) => setQuizConfig({...quizConfig, passing_score: Number(e.target.value)})}
-                  className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-emerald-400 text-lg font-black focus:outline-none focus:border-indigo-500/50 shadow-inner" 
-                />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Paper Title *</label>
+                <div className="relative">
+                  <FileQuestion size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
+                  <input 
+                    required type="text" placeholder="e.g. Mid-Term Evaluation"
+                    value={quizConfig.title} onChange={(e) => setQuizConfig({...quizConfig, title: e.target.value})}
+                    className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 shadow-inner" 
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Passing Threshold Score (%) *</label>
+                <div className="relative">
+                  <Award size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500" />
+                  <input 
+                    required type="number" min="1" max="100"
+                    value={quizConfig.passing_score} onChange={(e) => setQuizConfig({...quizConfig, passing_score: Number(e.target.value)})}
+                    className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-emerald-400 text-lg font-black focus:outline-none focus:border-fuchsia-500/50 shadow-inner" 
+                  />
+                </div>
               </div>
             </div>
           </div>
 
           {/* ================= SECTION 2: DYNAMIC QUESTION BUILDER ================= */}
           <div className="space-y-6">
-            <h3 className="text-2xl font-black text-white flex items-center gap-3">
-              <ListOrdered size={26} className="text-indigo-400" /> Question Bank Setup
-              <span className="bg-indigo-500/20 text-indigo-400 text-xs px-3 py-1 rounded-full">{questions.length} Items</span>
-            </h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <h3 className="text-xl sm:text-2xl font-black text-white flex items-center gap-3">
+                <FileText size={26} className="text-indigo-400" /> Descriptive Questions
+              </h3>
+              <div className="bg-black/50 border border-white/10 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                Total Exam Points: <span className="text-indigo-400 text-sm">{totalPoints}</span>
+              </div>
+            </div>
 
             {questions.map((q, idx) => (
               <div key={idx} className="bg-[#0a0a0f]/90 border border-white/10 rounded-[2rem] p-6 sm:p-8 shadow-2xl relative group transition-all duration-300 focus-within:border-indigo-500/50 hover:shadow-[0_20px_40px_rgba(99,102,241,0.05)]">
@@ -277,7 +307,7 @@ export default function CreateDynamicQuizPage() {
                     <div className="w-8 h-8 rounded-full bg-indigo-500 text-white font-black flex items-center justify-center text-sm shadow-[0_0_15px_rgba(99,102,241,0.4)]">
                       {idx + 1}
                     </div>
-                    <h4 className="text-sm font-black text-neutral-300 uppercase tracking-widest">Question Block</h4>
+                    <h4 className="text-sm font-black text-neutral-300 uppercase tracking-widest">Question Text</h4>
                   </div>
                   
                   <button 
@@ -292,52 +322,23 @@ export default function CreateDynamicQuizPage() {
                 </div>
 
                 {/* Form Fields for the Question */}
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <textarea 
-                    required placeholder="Type your question prompt here..." rows={2}
+                    required placeholder="Type your descriptive question here..." rows={3}
                     value={q.question_text} onChange={(e) => updateQuestion(idx, 'question_text', e.target.value)}
-                    className="w-full bg-black/50 border border-white/10 rounded-2xl p-5 text-white text-base font-medium focus:outline-none focus:border-indigo-500/50 resize-none shadow-inner custom-scrollbar"
+                    className="w-full bg-black/50 border border-white/10 rounded-2xl p-5 text-white text-base font-medium focus:outline-none focus:border-indigo-500/50 resize-y shadow-inner custom-scrollbar"
                   />
 
-                  {/* 4 Options Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white/[0.01] p-5 rounded-2xl border border-white/5">
-                    {['a', 'b', 'c', 'd'].map((optName) => (
-                      <div key={optName} className="relative flex items-center">
-                        <span className="absolute left-4 text-[10px] font-black uppercase text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-md">{optName}</span>
-                        <input 
-                          required type="text" placeholder={`Option ${optName.toUpperCase()}`}
-                          value={(q as any)[`option_${optName}`]} onChange={(e) => updateQuestion(idx, `option_${optName}` as keyof QuestionForm, e.target.value)}
-                          className="w-full bg-black border border-white/5 rounded-xl py-4 pl-14 pr-4 text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 shadow-sm"
-                        />
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Grading config for this specific question */}
-                  <div className="flex flex-col sm:flex-row gap-5 items-end bg-indigo-500/5 border border-indigo-500/10 p-5 rounded-2xl">
-                    <div className="w-full sm:flex-1">
-                      <label className="text-[10px] font-black text-indigo-400 uppercase tracking-widest ml-1">Correct Answer</label>
-                      <select 
-                        value={q.correct_option} onChange={(e) => updateQuestion(idx, 'correct_option', e.target.value)}
-                        className="w-full mt-2 bg-black border border-indigo-500/20 rounded-xl px-4 py-3.5 text-white text-sm font-bold focus:outline-none appearance-none cursor-pointer"
-                      >
-                        <option value="A">Choice A is Correct</option>
-                        <option value="B">Choice B is Correct</option>
-                        <option value="C">Choice C is Correct</option>
-                        <option value="D">Choice D is Correct</option>
-                      </select>
-                    </div>
-                    
-                    <div className="w-full sm:w-1/3">
-                      <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Points Value</label>
+                  <div className="flex justify-end">
+                    <div className="w-32">
+                      <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 block mb-2 text-right">Points Value</label>
                       <input 
                         required type="number" min="1" max="100"
                         value={q.points} onChange={(e) => updateQuestion(idx, 'points', Number(e.target.value))}
-                        className="w-full mt-2 bg-black border border-white/10 rounded-xl px-4 py-3.5 text-center text-amber-400 text-sm font-black focus:outline-none"
+                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-center text-amber-400 text-sm font-black focus:outline-none focus:border-indigo-500/50"
                       />
                     </div>
                   </div>
-
                 </div>
               </div>
             ))}
@@ -346,21 +347,21 @@ export default function CreateDynamicQuizPage() {
             <button 
               type="button" 
               onClick={addQuestionBlock}
-              className="w-full py-6 bg-white/[0.02] hover:bg-white/[0.05] border border-dashed border-white/20 hover:border-indigo-500/50 text-neutral-400 hover:text-indigo-400 rounded-[2rem] font-black uppercase tracking-[0.2em] text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.99]"
+              className="w-full py-6 bg-white/[0.02] hover:bg-white/[0.05] border border-dashed border-white/20 hover:border-indigo-500/50 text-neutral-400 hover:text-indigo-400 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 transition-all active:scale-[0.99]"
             >
-              <Plus size={20} /> Append New Question Block
+              <Plus size={20} /> Add Another Question
             </button>
           </div>
 
           {/* ================= FINAL SUBMIT ================= */}
-          <div className="pt-8 flex justify-center border-t border-white/5">
+          <div className="pt-8 flex justify-center border-t border-white/5 sticky bottom-24 sm:bottom-6 z-40">
             <button 
               type="submit" 
               disabled={isSubmitting || classes.length === 0} 
-              className="w-full max-w-xl py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black uppercase tracking-[0.2em] text-sm rounded-[2rem] transition-all shadow-[0_15px_40px_rgba(99,102,241,0.4)] hover:shadow-[0_20px_50px_rgba(99,102,241,0.6)] disabled:opacity-50 flex items-center justify-center gap-3 active:scale-[0.95]"
+              className="w-full max-w-xl py-5 bg-gradient-to-r from-fuchsia-600 to-indigo-600 hover:from-fuchsia-500 hover:to-indigo-500 text-white font-black uppercase tracking-[0.2em] text-sm rounded-[2rem] transition-all shadow-[0_15px_40px_rgba(217,70,239,0.4)] hover:shadow-[0_20px_50px_rgba(217,70,239,0.6)] disabled:opacity-50 flex items-center justify-center gap-3 active:scale-[0.95]"
             >
               {isSubmitting ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
-              {isSubmitting ? "Compiling Exam..." : "Save & Compile Exam"}
+              {isSubmitting ? "Compiling Exam..." : "Deploy Descriptive Exam"}
             </button>
           </div>
 

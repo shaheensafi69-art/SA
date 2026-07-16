@@ -4,17 +4,12 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Loader2, Plus, Trash2, HelpCircle, Save, CheckCircle2, ListOrdered, Target, AlertCircle } from "lucide-react";
+import { ArrowLeft, Loader2, Plus, Trash2, HelpCircle, Save, ListOrdered, AlertCircle, FileText } from "lucide-react";
 
 type Question = {
   id: string;
   quiz_id: string;
   question_text: string;
-  option_a: string;
-  option_b: string;
-  option_c: string;
-  option_d: string;
-  correct_option: string;
   points: number;
 };
 
@@ -30,15 +25,10 @@ export default function ManageQuizQuestionsPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [quizTitle, setQuizTitle] = useState("");
 
-  // استیت برای فرم ثبت سوال جدید
+  // استیت فرم ثبت سوال تشریحی
   const [newQ, setNewQ] = useState({
     question_text: "",
-    option_a: "",
-    option_b: "",
-    option_c: "",
-    option_d: "",
-    correct_option: "A",
-    points: 1
+    points: 10
   });
 
   useEffect(() => {
@@ -52,7 +42,7 @@ export default function ManageQuizQuestionsPage() {
     const supabase = createClient();
 
     try {
-      // ۱. واکشی اطلاعات خود کوییز (برای نمایش عنوان)
+      // ۱. واکشی اطلاعات آزمون
       const { data: quizData, error: quizError } = await supabase
         .from("quizzes")
         .select("title")
@@ -62,10 +52,10 @@ export default function ManageQuizQuestionsPage() {
       if (quizError) throw quizError;
       if (quizData) setQuizTitle(quizData.title);
 
-      // ۲. واکشی لیست سوالات فعلی این کوییز
+      // ۲. واکشی لیست سوالات (فقط متن سوال و بارم نیاز است)
       const { data: questionsData, error: qError } = await supabase
         .from("quiz_questions")
-        .select("*")
+        .select("id, quiz_id, question_text, points")
         .eq("quiz_id", quizId)
         .order("created_at", { ascending: true });
 
@@ -82,16 +72,33 @@ export default function ManageQuizQuestionsPage() {
 
   const handleAddQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!newQ.question_text.trim()) {
+      setErrorMsg("Question text cannot be empty.");
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMsg(null);
 
     const supabase = createClient();
 
     try {
+      // ثبت سوال جدید با پر کردن مقادیر پیش‌فرض برای فیلدهای چندگزینه‌ای
+      const payload = {
+        quiz_id: quizId,
+        question_text: newQ.question_text.trim(),
+        points: newQ.points,
+        option_a: 'Descriptive',
+        option_b: 'Descriptive',
+        option_c: 'Descriptive',
+        option_d: 'Descriptive',
+        correct_option: 'A'
+      };
+
       const { data, error } = await supabase
         .from("quiz_questions")
-        .insert([{ ...newQ, quiz_id: quizId }])
-        .select()
+        .insert([payload])
+        .select("id, quiz_id, question_text, points")
         .single();
 
       if (error) throw error;
@@ -99,11 +106,8 @@ export default function ManageQuizQuestionsPage() {
       if (data) {
         // آپدیت لیست سوالات در لحظه
         setQuestions([...questions, data]);
-        
-        // خالی کردن فرم برای ثبت سوال بعدی
-        setNewQ({ 
-          question_text: "", option_a: "", option_b: "", option_c: "", option_d: "", correct_option: "A", points: 1 
-        });
+        // ریست فرم
+        setNewQ({ question_text: "", points: 10 });
       }
     } catch (error: any) {
       setErrorMsg(error.message || "Failed to add question.");
@@ -123,13 +127,14 @@ export default function ManageQuizQuestionsPage() {
         .eq("id", id);
 
       if (error) throw error;
-
-      // آپدیت رابط کاربری با حذف سوال
       setQuestions(questions.filter(q => q.id !== id));
     } catch (error: any) {
       alert("Failed to delete question: " + error.message);
     }
   };
+
+  // محاسبه مجموع بارم سوالات ثبت شده
+  const totalPoints = questions.reduce((acc, curr) => acc + (curr.points || 0), 0);
 
   if (isLoading) {
     return (
@@ -141,7 +146,7 @@ export default function ManageQuizQuestionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-24" dir="ltr">
+    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32" dir="ltr">
       
       {/* Background Ambient Glows */}
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
@@ -158,11 +163,16 @@ export default function ManageQuizQuestionsPage() {
             <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white mb-2">
               {quizTitle} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">Bank</span>
             </h1>
-            <p className="text-xs sm:text-sm text-neutral-400 font-medium">Manage and compile your exam's question inventory.</p>
+            <p className="text-xs sm:text-sm text-neutral-400 font-medium">Manage and compile descriptive questions for this assessment.</p>
           </div>
           
-          <div className="px-5 py-3 rounded-2xl border text-xs font-black uppercase tracking-widest flex items-center gap-2 bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-lg shrink-0">
-            <ListOrdered size={16} /> Total: {questions.length} Questions
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+            <div className="px-5 py-3 rounded-2xl border text-xs font-black uppercase tracking-widest flex items-center gap-2 bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-lg">
+              <ListOrdered size={16} /> {questions.length} Questions
+            </div>
+            <div className="px-5 py-3 rounded-2xl border text-xs font-black uppercase tracking-widest flex items-center gap-2 bg-white/5 text-neutral-300 border-white/10 shadow-lg">
+              Total Points: <span className={totalPoints > 100 ? "text-red-400" : "text-white"}>{totalPoints}</span>
+            </div>
           </div>
         </header>
 
@@ -173,67 +183,37 @@ export default function ManageQuizQuestionsPage() {
           </div>
         )}
 
-        {/* ================= FORM: ADD NEW QUESTION ================= */}
+        {/* ================= FORM: ADD NEW DESCRIPTIVE QUESTION ================= */}
         <div className="bg-indigo-500/5 border border-indigo-500/20 p-6 sm:p-8 rounded-[2.5rem] shadow-xl backdrop-blur-xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[50px] pointer-events-none"></div>
           
           <h3 className="text-lg sm:text-xl font-black mb-6 flex items-center gap-2 text-indigo-400 border-b border-indigo-500/20 pb-4">
-            <Plus size={22} /> Append New Question
+            <Plus size={22} /> Add Descriptive Question
           </h3>
           
           <form onSubmit={handleAddQuestion} className="space-y-6 relative z-10">
-            
             <div className="space-y-2">
               <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Question Prompt *</label>
               <textarea 
-                required placeholder="Type the question text clearly here..." rows={3}
+                required placeholder="Type the descriptive question clearly here..." rows={4}
                 value={newQ.question_text} onChange={e => setNewQ({...newQ, question_text: e.target.value})}
-                className="w-full bg-black/60 border border-white/10 rounded-2xl p-5 text-white text-base font-medium focus:outline-none focus:border-indigo-500/50 resize-none shadow-inner custom-scrollbar"
+                className="w-full bg-black/60 border border-white/10 rounded-2xl p-5 text-white text-base font-medium focus:outline-none focus:border-indigo-500/50 resize-y shadow-inner custom-scrollbar"
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Multiple Choice Options *</label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white/[0.01] p-5 rounded-2xl border border-white/5">
-                {['a', 'b', 'c', 'd'].map((opt) => (
-                  <div key={opt} className="relative flex items-center">
-                    <span className="absolute left-4 text-[10px] font-black uppercase text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-md">{opt}</span>
-                    <input 
-                      required type="text" placeholder={`Enter text for option ${opt.toUpperCase()}`}
-                      value={(newQ as any)[`option_${opt}`]} onChange={e => setNewQ({...newQ, [`option_${opt}`]: e.target.value})}
-                      className="w-full bg-black border border-white/5 rounded-xl py-4 pl-14 pr-4 text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 shadow-sm"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-5 items-end bg-black/40 border border-white/5 p-5 rounded-2xl">
-              <div className="flex-1 w-full">
-                <label className="text-[10px] font-black text-indigo-400 uppercase tracking-widest ml-1">Correct Answer *</label>
-                <select 
-                  value={newQ.correct_option} onChange={e => setNewQ({...newQ, correct_option: e.target.value})}
-                  className="w-full bg-black border border-indigo-500/20 rounded-xl px-4 py-3.5 mt-2 outline-none text-white font-bold cursor-pointer"
-                >
-                  <option value="A">Option A is Correct</option>
-                  <option value="B">Option B is Correct</option>
-                  <option value="C">Option C is Correct</option>
-                  <option value="D">Option D is Correct</option>
-                </select>
-              </div>
-
-              <div className="w-full md:w-1/3">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Score Points *</label>
+            <div className="flex flex-col sm:flex-row gap-5 items-end justify-between">
+              <div className="w-full sm:w-1/3">
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Assigned Points *</label>
                 <input 
                   required type="number" min="1" max="100"
                   value={newQ.points} onChange={e => setNewQ({...newQ, points: Number(e.target.value)})}
-                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-3.5 mt-2 text-center text-amber-400 text-sm font-black focus:outline-none"
+                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-3.5 mt-2 text-center text-amber-400 text-sm font-black focus:outline-none focus:border-indigo-500/50"
                 />
               </div>
 
               <button 
                 type="submit" disabled={isSubmitting}
-                className="w-full md:w-auto px-8 py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95 shrink-0"
+                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-[0_10px_30px_rgba(99,102,241,0.3)] flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95 shrink-0"
               >
                 {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save Question
               </button>
@@ -254,41 +234,27 @@ export default function ManageQuizQuestionsPage() {
           ) : (
             <div className="space-y-4">
               {questions.map((q, index) => (
-                <div key={q.id} className="bg-[#0a0a0f] border border-white/5 p-6 sm:p-8 rounded-[1.5rem] flex flex-col sm:flex-row justify-between items-start gap-6 group hover:border-white/10 transition-colors shadow-lg">
+                <div key={q.id} className="bg-[#0a0a0f] border border-white/5 p-5 sm:p-6 rounded-[1.5rem] flex flex-col sm:flex-row justify-between items-start gap-4 group hover:border-white/10 transition-colors shadow-lg">
                   
-                  <div className="space-y-4 flex-1 w-full">
-                    <div className="flex gap-4 items-start">
-                      <div className="w-8 h-8 rounded-full bg-indigo-500/10 text-indigo-400 font-black flex items-center justify-center text-sm shrink-0 mt-0.5 border border-indigo-500/20">
-                        {index + 1}
-                      </div>
-                      <p className="text-base font-black text-white leading-relaxed">{q.question_text}</p>
+                  <div className="flex gap-4 items-start flex-1 min-w-0">
+                    <div className="w-8 h-8 rounded-full bg-indigo-500/10 text-indigo-400 font-black flex items-center justify-center text-sm shrink-0 mt-1 border border-indigo-500/20">
+                      {index + 1}
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 pl-0 sm:pl-12">
-                      {['A', 'B', 'C', 'D'].map((opt) => {
-                        const isCorrect = q.correct_option === opt;
-                        return (
-                          <div key={opt} className={`flex items-center gap-3 p-3 rounded-xl border ${isCorrect ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-white/[0.01] border-white/5'}`}>
-                            <span className={`text-[10px] font-black uppercase px-2 py-1 rounded border ${isCorrect ? 'bg-emerald-500 text-white border-transparent' : 'bg-white/5 text-neutral-500 border-white/10'}`}>
-                              {opt}
-                            </span>
-                            <p className={`text-xs sm:text-sm font-medium ${isCorrect ? 'text-emerald-400 font-bold' : 'text-neutral-300'}`}>
-                              {(q as any)[`option_${opt.toLowerCase()}`]}
-                            </p>
-                            {isCorrect && <CheckCircle2 size={14} className="text-emerald-500 ml-auto shrink-0" />}
-                          </div>
-                        );
-                      })}
+                    <div className="space-y-2 w-full">
+                      <p className="text-sm sm:text-base font-bold text-white leading-relaxed">{q.question_text}</p>
+                      <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest flex items-center gap-1.5">
+                        <FileText size={12}/> Descriptive Type
+                      </p>
                     </div>
                   </div>
 
-                  <div className="flex flex-row sm:flex-col items-center gap-3 shrink-0 self-end sm:self-start w-full sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-white/5">
-                    <div className="flex-1 sm:flex-none text-center px-4 py-2 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                  <div className="flex flex-row sm:flex-col items-center gap-3 shrink-0 self-end sm:self-start w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-white/5">
+                    <div className="flex-1 sm:flex-none text-center px-4 py-2 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
                       {q.points} Points
                     </div>
                     <button 
                       onClick={() => handleDeleteQuestion(q.id)} 
-                      className="p-3 bg-red-500/5 hover:bg-red-500/20 text-red-500/70 hover:text-red-400 rounded-xl transition-all border border-red-500/10 active:scale-95 flex items-center justify-center gap-2 text-xs font-bold sm:w-full"
+                      className="p-3 sm:px-4 sm:py-2 bg-red-500/5 hover:bg-red-500/20 text-red-500/70 hover:text-red-400 rounded-xl transition-all border border-red-500/10 active:scale-95 flex items-center justify-center gap-2 text-xs font-bold sm:w-full"
                     >
                       <Trash2 size={14}/> <span className="sm:hidden">Delete</span>
                     </button>

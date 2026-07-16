@@ -60,6 +60,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
     { name: "Assignments", path: "/en/teacher/assignments", icon: "📝" },
     { name: "Exams & Quizzes", path: "/en/teacher/quizzes", icon: "🎯" },
     { name: "Trading Journal", path: "/en/teacher/trading-journal", icon: "📈" },
+    { name: "Achievements", path: "/en/teacher/achievements", icon: "🏆" }, // منوی جدید اضافه شد
     { name: "Settings", path: "/en/teacher/settings", icon: "⚙️" },
   ];
 
@@ -72,6 +73,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
       case "Assignments": return "from-orange-500/20 to-orange-500/5 text-orange-400 border-orange-500/30";
       case "Exams & Quizzes": return "from-purple-500/20 to-purple-500/5 text-purple-400 border-purple-500/30";
       case "Trading Journal": return "from-cyan-500/20 to-cyan-500/5 text-cyan-400 border-cyan-500/30";
+      case "Achievements": return "from-amber-500/20 to-amber-500/5 text-amber-400 border-amber-500/30"; // رنگ اختصاصی منوی جدید
       case "Settings": return "from-slate-500/20 to-slate-500/5 text-slate-400 border-slate-500/30";
       default: return "from-neutral-500/20 to-neutral-500/5 text-neutral-400 border-neutral-500/30";
     }
