@@ -100,11 +100,11 @@ export default function Header() {
         if (session?.user) {
           const { data: profile } = await supabase
             .from("profiles")
-            .select("first_name, last_name, avatar_url")
+            .select("first_name, last_name, avatar_url, role") // اضافه شدن فیلد role
             .eq("id", session.user.id)
             .single();
 
-          setUserProfile(profile || { first_name: "Student", avatar_url: null });
+          setUserProfile(profile || { first_name: "Student", avatar_url: null, role: "student" });
         } else {
           setUserProfile(null);
         }
@@ -125,7 +125,19 @@ export default function Header() {
     router.push(`/${currentLocale}/login`);
   };
 
-  if (pathname.includes("/dashboard")) return null;
+  // تابع تعیین مسیر داشبورد بر اساس نقش کاربر
+  const getDashboardRoute = () => {
+    if (!userProfile) return `/${activeLang.code}/login`;
+    if (userProfile.role === "super_admin" || userProfile.role === "admin") {
+      return `/${activeLang.code}/admin`;
+    }
+    if (userProfile.role === "teacher") {
+      return `/${activeLang.code}/teacher`;
+    }
+    return `/${activeLang.code}/dashboard`; // مسیر پیش‌فرض (شاگردان)
+  };
+
+  if (pathname.includes("/dashboard") || pathname.includes("/admin") || pathname.includes("/teacher")) return null;
 
   return (
     <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-50 w-[96%] lg:w-[98%] max-w-[2000px] transition-all duration-700" dir={isRTL ? "rtl" : "ltr"}>
@@ -248,7 +260,7 @@ export default function Header() {
             ) : userProfile ? (
               <>
                 <Link 
-                  href={`/${activeLang.code}/dashboard`} 
+                  href={getDashboardRoute()} 
                   className="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest text-black bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 shadow-[0_0_25px_rgba(234,179,8,0.25)] hover:scale-[1.01] transition-all duration-300 flex items-center gap-2 border border-yellow-400/20"
                 >
                   <LayoutDashboard size={15} /> {t.dashboard}
@@ -267,7 +279,8 @@ export default function Header() {
                         <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">{t.signedInAs}</p>
                         <p className="text-xs font-black text-white truncate">{userProfile.first_name}</p>
                     </div>
-                    <Link href={`/${activeLang.code}/dashboard/profile`} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-neutral-400 hover:bg-white/5 hover:text-white transition-colors">
+                    {/* لینک‌های پروفایل در دراپ‌داون (می‌توانید آنها را هم داینامیک کنید، فعلاً با داشبورد کاربر ست شده) */}
+                    <Link href={`${getDashboardRoute()}/profile`} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-neutral-400 hover:bg-white/5 hover:text-white transition-colors">
                         <Settings size={14} /> {t.editProfile}
                     </Link>
                     <button onClick={handleLogout} className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors">
@@ -306,7 +319,7 @@ export default function Header() {
           </button>
         </div>
 
-        {/* ================= منوی موبایل (کاملاً بومی‌سازی شده و داینامیک) ================= */}
+        {/* ================= منوی موبایل ================= */}
         <div className={`absolute inset-x-0 top-full mt-4 rounded-3xl border border-white/10 bg-[#06060a]/95 backdrop-blur-3xl shadow-2xl transition-all duration-300 ease-in-out xl:hidden overflow-hidden origin-top ${mobileMenuOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-95 pointer-events-none"}`}>
           <div className="max-h-[80vh] overflow-y-auto custom-scrollbar p-6 flex flex-col gap-6">
             
@@ -337,7 +350,7 @@ export default function Header() {
                        <p className="text-sm font-black text-white">{userProfile.first_name}</p>
                      </div>
                   </div>
-                  <Link href={`/${activeLang.code}/dashboard`} className="flex items-center justify-center gap-2 rounded-xl bg-yellow-500/10 border border-yellow-500/20 px-4 py-3.5 text-xs font-black uppercase tracking-widest text-yellow-500"><LayoutDashboard size={16} /> {t.dashboard}</Link>
+                  <Link href={getDashboardRoute()} className="flex items-center justify-center gap-2 rounded-xl bg-yellow-500/10 border border-yellow-500/20 px-4 py-3.5 text-xs font-black uppercase tracking-widest text-yellow-500"><LayoutDashboard size={16} /> {t.dashboard}</Link>
                   <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 rounded-xl border border-red-500/10 bg-red-500/5 px-4 py-3.5 text-xs font-black uppercase tracking-widest text-red-400"><LogOut size={16} /> {t.signOut}</button>
                 </>
               ) : (
