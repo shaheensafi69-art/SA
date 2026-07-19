@@ -57,16 +57,6 @@ const teamMembers = [
     textClass: "text-rose-500",
     glowClass: "group-hover:bg-rose-500/10",
     shadowClass: "group-hover:shadow-[0_0_40px_rgba(225,29,72,0.15)]",
-  },
-  {
-    name: "Husnafar Shadab Zafer",
-    role: "HEAD OF DATABASE MANAGEMENT",
-    slug: "husnafar",
-    image: "/team/Husnafar Shadab Zafer.jpeg",
-    borderClass: "border-purple-500",
-    textClass: "text-purple-500",
-    glowClass: "group-hover:bg-purple-500/10",
-    shadowClass: "group-hover:shadow-[0_0_40px_rgba(168,85,247,0.15)]",
   }
 ];
 
