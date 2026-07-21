@@ -54,26 +54,28 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
 
   const menuItems = [
     { name: "Overview", path: "/en/teacher", icon: "📊" },
+    { name: "Announcements", path: "/en/teacher/announcements", icon: "📢" }, // تب جدید اطلاعیه‌ها
     { name: "My Courses", path: "/en/teacher/courses", icon: "📚" },
     { name: "Live Classes", path: "/en/teacher/live-classes", icon: "🔴" },
     { name: "My Students", path: "/en/teacher/students", icon: "👥" },
     { name: "Assignments", path: "/en/teacher/assignments", icon: "📝" },
     { name: "Exams & Quizzes", path: "/en/teacher/quizzes", icon: "🎯" },
     { name: "Trading Journal", path: "/en/teacher/trading-journal", icon: "📈" },
-    { name: "Achievements", path: "/en/teacher/achievements", icon: "🏆" }, // منوی جدید اضافه شد
+    { name: "Achievements", path: "/en/teacher/achievements", icon: "🏆" },
     { name: "Settings", path: "/en/teacher/settings", icon: "⚙️" },
   ];
 
   const getMenuColor = (name: string) => {
     switch(name) {
       case "Overview": return "from-blue-500/20 to-blue-500/5 text-blue-400 border-blue-500/30";
+      case "Announcements": return "from-indigo-500/20 to-indigo-500/5 text-indigo-400 border-indigo-500/30"; // رنگ اختصاصی اعلانات
       case "My Courses": return "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/30";
       case "Live Classes": return "from-red-500/20 to-red-500/5 text-red-400 border-red-500/30";
-      case "My Students": return "from-indigo-500/20 to-indigo-500/5 text-indigo-400 border-indigo-500/30";
+      case "My Students": return "from-fuchsia-500/20 to-fuchsia-500/5 text-fuchsia-400 border-fuchsia-500/30";
       case "Assignments": return "from-orange-500/20 to-orange-500/5 text-orange-400 border-orange-500/30";
       case "Exams & Quizzes": return "from-purple-500/20 to-purple-500/5 text-purple-400 border-purple-500/30";
       case "Trading Journal": return "from-cyan-500/20 to-cyan-500/5 text-cyan-400 border-cyan-500/30";
-      case "Achievements": return "from-amber-500/20 to-amber-500/5 text-amber-400 border-amber-500/30"; // رنگ اختصاصی منوی جدید
+      case "Achievements": return "from-amber-500/20 to-amber-500/5 text-amber-400 border-amber-500/30";
       case "Settings": return "from-slate-500/20 to-slate-500/5 text-slate-400 border-slate-500/30";
       default: return "from-neutral-500/20 to-neutral-500/5 text-neutral-400 border-neutral-500/30";
     }
@@ -99,7 +101,6 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
       <aside className="hidden lg:flex w-[280px] bg-[#050505]/80 backdrop-blur-3xl border-r border-white/5 flex-col relative z-20 shrink-0">
         <div className="h-24 px-8 flex items-center gap-4 border-b border-white/5 shrink-0">
            <Link href="/en/teacher" className="flex items-center gap-4 group">
-             {/* دیزاین جدید لوگو با نور مخفی */}
              <div className="relative flex items-center justify-center group-hover:scale-105 transition-transform">
                <div className="absolute inset-0 bg-fuchsia-500/20 blur-[15px] rounded-full scale-150"></div>
                <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-12 h-12 object-contain drop-shadow-[0_0_10px_rgba(217,70,239,0.5)]" />
@@ -126,6 +127,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
                 <span className={`relative z-10 text-xl transition-transform ${isActive ? "" : "group-hover:scale-110"}`}>{item.icon}</span>
                 <span className="relative z-10 tracking-wide">{item.name}</span>
                 {isActive && item.name === "Live Classes" && <span className="absolute right-4 w-2 h-2 rounded-full bg-red-600 animate-pulse border border-white/50 z-10"></span>}
+                {item.name === "Announcements" && <span className="absolute right-4 w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)] z-10"></span>}
               </Link>
             );
           })}
@@ -155,10 +157,10 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
 
       {/* ================= 2. DESKTOP FLOATING NOTIFICATION ================= */}
       <div className="hidden lg:flex absolute top-6 right-10 z-50">
-         <button className="w-12 h-12 bg-neutral-900/60 backdrop-blur-md border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-fuchsia-400 hover:border-fuchsia-500/30 transition-all relative group shadow-lg">
+         <Link href="/en/teacher/announcements" className="w-12 h-12 bg-neutral-900/60 backdrop-blur-md border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-fuchsia-400 hover:border-fuchsia-500/30 transition-all relative group shadow-lg">
            <svg className="w-5 h-5 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
            <span className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_5px_red]"></span>
-         </button>
+         </Link>
       </div>
 
       {/* ================= 3. MOBILE TOP HEADER ================= */}
@@ -170,15 +172,14 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
             <span className="relative z-10 font-black text-xs tracking-widest text-white uppercase">Safi Academy</span>
           </div>
           
-          <button className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-fuchsia-400 transition-colors relative">
+          <Link href="/en/teacher/announcements" className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-fuchsia-400 transition-colors relative">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
               <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_5px_red]"></span>
-          </button>
+          </Link>
         </div>
       )}
 
       {/* ================= 4. MAIN CONTENT ================= */}
-      {/* پدینگ‌های موبایل با توجه به وضعیت فول اسکرین تنظیم می‌شوند */}
       <main className={`flex-1 relative z-10 h-screen overflow-y-auto custom-scrollbar ${isFullScreenRoute ? 'pt-0 pb-0' : 'pt-16 pb-32'} lg:pt-0 lg:pb-0`}>
         {children}
       </main>
@@ -229,12 +230,13 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
                     key={item.path}
                     href={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex flex-col items-center justify-center gap-3 p-5 rounded-[1.5rem] font-bold transition-all border bg-gradient-to-br hover:scale-105 active:scale-95 ${colorClasses} ${
+                    className={`relative flex flex-col items-center justify-center gap-3 p-5 rounded-[1.5rem] font-bold transition-all border bg-gradient-to-br hover:scale-105 active:scale-95 ${colorClasses} ${
                       isActive ? "ring-2 ring-white/20 shadow-xl opacity-100" : "opacity-80 hover:opacity-100"
                     }`}
                   >
                     <span className="text-3xl drop-shadow-md">{item.icon}</span>
                     <span className="text-[10px] tracking-widest uppercase text-center line-clamp-1">{item.name}</span>
+                    {item.name === "Announcements" && <div className="absolute top-3 right-3 w-2 h-2 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_8px_#6366f1]"></div>}
                   </Link>
                 );
               })}

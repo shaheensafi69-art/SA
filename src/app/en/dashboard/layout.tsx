@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // 🔥 فقط صفحه هوش مصنوعی به صورت فول‌اسکرین در موبایل رندر می‌شود (روت‌های مرده حذف شدند)
+  // 🔥 فقط صفحه هوش مصنوعی به صورت فول‌اسکرین در موبایل رندر می‌شود (فعلاً غیرفعال است)
   const isFullScreenRoute = pathname.includes('/dashboard/ai-assistant');
   
   useEffect(() => {
@@ -50,14 +50,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const menuItems = [
     { name: "Overview", path: "/en/dashboard", icon: "📊" },
+    { name: "Announcements", path: "/en/dashboard/announcements", icon: "📢" }, // تب جدید اطلاعیه‌ها
     { name: "My Courses", path: "/en/dashboard/courses", icon: "📚" },
-    { name: "Live Campus", path: "/en/dashboard/live-classes", icon: "🔴" }, // تغییر نام به لایو کمپس جهت پرستیژ بیشتر
+    { name: "Live Campus", path: "/en/dashboard/live-classes", icon: "🔴" }, 
     { name: "Assignments", path: "/en/dashboard/assignments", icon: "📝" },
     { name: "Exams & Quizzes", path: "/en/dashboard/quizzes", icon: "🎯" },
     { name: "Trading Journal", path: "/en/dashboard/trading-journal", icon: "📈" },
     { name: "Wallet & Referral", path: "/en/dashboard/wallet", icon: "💰" },
     { name: "Achievements", path: "/en/dashboard/achievements", icon: "🏆" },
-    { name: "AI Assistant", path: "/en/dashboard/ai-assistant", icon: "🤖" },
+    { name: "AI Assistant", path: "#", icon: "🤖", disabled: true }, // هوش مصنوعی غیرفعال شد
     { name: "Support Tickets", path: "/en/dashboard/support", icon: "🎧" },
     { name: "Settings", path: "/en/dashboard/settings", icon: "⚙️" },
   ];
@@ -65,6 +66,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const getMenuColor = (name: string) => {
     switch(name) {
       case "Overview": return "from-blue-500/20 to-blue-500/5 text-blue-400 border-blue-500/30";
+      case "Announcements": return "from-indigo-500/20 to-indigo-500/5 text-indigo-400 border-indigo-500/30";
       case "My Courses": return "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/30";
       case "Live Campus": return "from-red-500/20 to-red-500/5 text-red-400 border-red-500/30";
       case "Assignments": return "from-orange-500/20 to-orange-500/5 text-orange-400 border-orange-500/30";
@@ -96,10 +98,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* ================= 1. DESKTOP SIDEBAR ================= */}
       <aside className="hidden lg:flex w-[280px] bg-[#050505]/80 backdrop-blur-3xl border-r border-white/5 flex-col relative z-20 shrink-0">
+        
+        {/* دیزاین جدید لوگو (بدون باکس، همراه با بک‌لایت درخشان) */}
         <div className="h-24 px-8 flex items-center gap-4 border-b border-white/5 shrink-0">
            <Link href="/en/dashboard" className="flex items-center gap-4 group">
-             <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(234,179,8,0.3)] group-hover:scale-105 transition-transform">
-               <img src="/logo-without-b.png" alt="Safi Academy" className="w-7 h-7 object-contain drop-shadow-2xl" />
+             <div className="relative w-12 h-12 flex items-center justify-center">
+               <div className="absolute inset-0 bg-yellow-500/20 blur-[15px] rounded-full group-hover:bg-yellow-500/40 group-hover:blur-[20px] transition-all duration-300"></div>
+               <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-9 h-9 object-contain drop-shadow-[0_0_10px_rgba(234,179,8,0.8)] group-hover:scale-110 transition-transform duration-300" />
              </div>
              <div>
                <h2 className="text-sm font-black text-white tracking-widest uppercase">Safi Academy</h2>
@@ -110,6 +115,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <nav className="flex-1 overflow-y-auto p-5 space-y-1.5 custom-scrollbar">
           {menuItems.map((item) => {
+            // هندل کردن دکمه‌های غیرفعال (Coming Soon)
+            if (item.disabled) {
+              return (
+                <div key={item.name} className="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm transition-all duration-300 relative overflow-hidden group text-neutral-500 opacity-60 cursor-not-allowed">
+                  <span className="relative z-10 text-xl grayscale">{item.icon}</span>
+                  <span className="relative z-10 tracking-wide">{item.name}</span>
+                  <span className="absolute right-4 text-[8px] font-black uppercase tracking-widest bg-yellow-500/10 text-yellow-500 px-2 py-0.5 rounded border border-yellow-500/20 shadow-[0_0_10px_rgba(234,179,8,0.2)]">Soon</span>
+                </div>
+              );
+            }
+
+            // لینک‌های معمولی
             const isActive = item.path === "/en/dashboard" ? pathname === "/en/dashboard" : pathname.startsWith(item.path);
             return (
               <Link 
@@ -123,6 +140,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <span className={`relative z-10 text-xl transition-transform ${isActive ? "" : "group-hover:scale-110"}`}>{item.icon}</span>
                 <span className="relative z-10 tracking-wide">{item.name}</span>
                 {isActive && item.name === "Live Campus" && <span className="absolute right-4 w-2 h-2 rounded-full bg-red-600 animate-pulse border border-white/50 z-10"></span>}
+                {item.name === "Announcements" && <span className="absolute right-4 w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)] z-10"></span>}
               </Link>
             );
           })}
@@ -140,7 +158,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-white truncate">{userProfile?.first_name} {userProfile?.last_name}</p>
-                <p className="text-[10px] text-green-400 font-bold mt-0.5">${userProfile?.wallet_balance || "0.00"}</p>
+                <p className="text-[10px] text-emerald-400 font-bold mt-0.5">${userProfile?.wallet_balance || "0.00"}</p>
               </div>
             </div>
           </div>
@@ -152,26 +170,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* ================= 2. DESKTOP FLOATING NOTIFICATION ================= */}
       <div className="hidden lg:flex absolute top-6 right-10 z-50">
-         <button className="w-12 h-12 bg-neutral-900/60 backdrop-blur-md border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-yellow-400 hover:border-yellow-500/30 transition-all relative group shadow-lg">
+         <Link href="/en/dashboard/announcements" className="w-12 h-12 bg-neutral-900/60 backdrop-blur-md border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-yellow-400 hover:border-yellow-500/30 transition-all relative group shadow-lg">
            <svg className="w-5 h-5 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-           <span className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_5px_red]"></span>
-         </button>
+           <span className="absolute top-3 right-3 w-2 h-2 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_5px_#6366f1]"></span>
+         </Link>
       </div>
 
       {/* ================= 3. MOBILE TOP HEADER ================= */}
       {!isFullScreenRoute && (
         <div className="lg:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-5 bg-[#020202]/80 backdrop-blur-2xl border-b border-white/5 z-40">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8">
-              <img src="/logo-without-b.png" alt="Safi Academy" className="w-full h-full object-contain filter drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]" />
+            <div className="relative w-8 h-8 flex items-center justify-center">
+              <div className="absolute inset-0 bg-yellow-500/20 blur-[10px] rounded-full"></div>
+              <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-full h-full object-contain filter drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]" />
             </div>
             <span className="font-black text-xs tracking-widest text-white uppercase">Safi Academy</span>
           </div>
           
-          <button className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-yellow-400 transition-colors relative">
+          <Link href="/en/dashboard/announcements" className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-yellow-400 transition-colors relative">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-              <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_5px_red]"></span>
-          </button>
+              <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_5px_#6366f1]"></span>
+          </Link>
         </div>
       )}
 
@@ -218,20 +237,33 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex-1 overflow-y-auto p-5 custom-scrollbar">
             <div className="grid grid-cols-2 gap-3">
               {menuItems.map((item) => {
-                const isActive = pathname === item.path || pathname.startsWith(`${item.path}/`);
+                const isActive = item.path !== "#" && (pathname === item.path || pathname.startsWith(`${item.path}/`));
                 const colorClasses = getMenuColor(item.name);
                 
+                // رندر دکمه‌های غیرفعال (هوش مصنوعی) در موبایل
+                if (item.disabled) {
+                  return (
+                    <div key={item.name} className={`relative flex flex-col items-center justify-center gap-3 p-5 rounded-[1.5rem] font-bold border bg-gradient-to-br opacity-50 cursor-not-allowed ${colorClasses} grayscale`}>
+                      <span className="text-3xl drop-shadow-md">{item.icon}</span>
+                      <span className="text-[10px] tracking-widest uppercase text-center line-clamp-1">{item.name}</span>
+                      <div className="absolute top-2 right-2 bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest">Soon</div>
+                    </div>
+                  );
+                }
+
+                // رندر لینک‌های معمولی در موبایل
                 return (
                   <Link
                     key={item.path}
                     href={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex flex-col items-center justify-center gap-3 p-5 rounded-[1.5rem] font-bold transition-all border bg-gradient-to-br hover:scale-105 active:scale-95 ${colorClasses} ${
+                    className={`relative flex flex-col items-center justify-center gap-3 p-5 rounded-[1.5rem] font-bold transition-all border bg-gradient-to-br hover:scale-105 active:scale-95 ${colorClasses} ${
                       isActive ? "ring-2 ring-white/20 shadow-xl opacity-100" : "opacity-80 hover:opacity-100"
                     }`}
                   >
                     <span className="text-3xl drop-shadow-md">{item.icon}</span>
                     <span className="text-[10px] tracking-widest uppercase text-center line-clamp-1">{item.name}</span>
+                    {item.name === "Announcements" && <div className="absolute top-3 right-3 w-2 h-2 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_8px_#6366f1]"></div>}
                   </Link>
                 );
               })}
@@ -243,7 +275,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <img src={userProfile.avatar_url || "https://i.pravatar.cc/150"} alt="User" className="w-12 h-12 rounded-xl border border-yellow-500 object-cover" />
                   <div className="flex-1 overflow-hidden">
                     <p className="text-sm font-bold text-white truncate">{userProfile.first_name} {userProfile.last_name}</p>
-                    <p className="text-xs text-green-400 font-bold mt-1">${userProfile.wallet_balance || "0.00"}</p>
+                    <p className="text-xs text-emerald-400 font-bold mt-1">${userProfile.wallet_balance || "0.00"}</p>
                   </div>
                 </div>
               )}
