@@ -25,11 +25,15 @@ export default function EnglishScholarshipsPage() {
   const [scholarships, setScholarships] = useState<Scholarship[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeContinent, setActiveContinent] = useState("All");
+  const [activeDegree, setActiveDegree] = useState("All");
   const [isLoading, setIsLoading] = useState(true);
   
-  // State for mobile dropdown
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  // State for mobile dropdowns
+  const [isContinentDropdownOpen, setIsContinentDropdownOpen] = useState(false);
+  const [isDegreeDropdownOpen, setIsDegreeDropdownOpen] = useState(false);
+  
+  const continentDropdownRef = useRef<HTMLDivElement>(null);
+  const degreeDropdownRef = useRef<HTMLDivElement>(null);
 
   const continents = [
     { name: "All", icon: "🌍" },
@@ -37,6 +41,13 @@ export default function EnglishScholarshipsPage() {
     { name: "America", icon: "🌎" },
     { name: "Asia", icon: "🌏" },
     { name: "Oceania", icon: "🇦🇺" }
+  ];
+
+  const degrees = [
+    { name: "All", label: "All Degrees" },
+    { name: "Bachelor", label: "Bachelor" },
+    { name: "Master", label: "Master" },
+    { name: "PhD", label: "PhD" }
   ];
 
   useEffect(() => {
@@ -64,11 +75,14 @@ export default function EnglishScholarshipsPage() {
     fetchScholarships();
   }, []);
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
+      if (continentDropdownRef.current && !continentDropdownRef.current.contains(event.target as Node)) {
+        setIsContinentDropdownOpen(false);
+      }
+      if (degreeDropdownRef.current && !degreeDropdownRef.current.contains(event.target as Node)) {
+        setIsDegreeDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -84,9 +98,13 @@ export default function EnglishScholarshipsPage() {
       
       const matchesContinent = activeContinent === "All" || item.continent === activeContinent;
       
-      return matchesSearch && matchesContinent;
+      // Flexible matching for degree level (case-insensitive check)
+      const matchesDegree = activeDegree === "All" || 
+        item.degree_level?.toLowerCase().includes(activeDegree.toLowerCase());
+      
+      return matchesSearch && matchesContinent && matchesDegree;
     });
-  }, [scholarships, searchQuery, activeContinent]);
+  }, [scholarships, searchQuery, activeContinent, activeDegree]);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "Rolling Deadline";
@@ -94,6 +112,7 @@ export default function EnglishScholarshipsPage() {
   };
 
   const activeContinentData = continents.find(c => c.name === activeContinent) || continents[0];
+  const activeDegreeData = degrees.find(d => d.name === activeDegree) || degrees[0];
 
   return (
     <div className="min-h-screen bg-[#050508] text-white font-sans selection:bg-yellow-500/30 overflow-hidden" dir="ltr">
@@ -138,73 +157,147 @@ export default function EnglishScholarshipsPage() {
           </div>
         </section>
 
-        {/* ================= CONTINENT FILTERS ================= */}
-        <section className="pb-12 px-4 sm:px-6 max-w-7xl mx-auto">
+        {/* ================= FILTERS SECTION (Continent & Degree Level) ================= */}
+        <section className="pb-12 px-4 sm:px-6 max-w-7xl mx-auto space-y-6">
           
-          {/* Desktop Version (Pills) */}
-          <div className="hidden sm:flex justify-center w-full">
-            <div className="flex items-center justify-center gap-3 bg-white/5 p-2 rounded-full border border-white/10 backdrop-blur-md min-w-max shadow-inner">
-              {continents.map((continent) => (
-                <button
-                  key={continent.name}
-                  onClick={() => setActiveContinent(continent.name)}
-                  className={`relative flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${
-                    activeContinent === continent.name 
-                      ? "text-black" 
-                      : "text-neutral-400 hover:text-white"
-                  }`}
-                >
-                  {activeContinent === continent.name && (
-                    <motion.div layoutId="engScholarshipTab" className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-full -z-10 shadow-[0_0_20px_rgba(234,179,8,0.4)]" />
-                  )}
-                  <span className="relative z-10 text-base">{continent.icon}</span> 
-                  <span className="relative z-10">{continent.name}</span>
-                </button>
-              ))}
+          {/* 1. CONTINENT FILTERS */}
+          <div className="flex flex-col items-center">
+            <p className="text-neutral-500 text-[10px] font-bold uppercase tracking-widest mb-3">Filter by Region</p>
+            
+            {/* Desktop Version (Pills) */}
+            <div className="hidden sm:flex justify-center w-full">
+              <div className="flex items-center justify-center gap-3 bg-white/5 p-2 rounded-full border border-white/10 backdrop-blur-md min-w-max shadow-inner">
+                {continents.map((continent) => (
+                  <button
+                    key={continent.name}
+                    onClick={() => setActiveContinent(continent.name)}
+                    className={`relative flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${
+                      activeContinent === continent.name 
+                        ? "text-black" 
+                        : "text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    {activeContinent === continent.name && (
+                      <motion.div layoutId="engScholarshipTab" className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-full -z-10 shadow-[0_0_20px_rgba(234,179,8,0.4)]" />
+                    )}
+                    <span className="relative z-10 text-base">{continent.icon}</span> 
+                    <span className="relative z-10">{continent.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Mobile Version (Dropdown) */}
+            <div className="sm:hidden relative w-full" ref={continentDropdownRef}>
+              <button 
+                onClick={() => setIsContinentDropdownOpen(!isContinentDropdownOpen)}
+                className="w-full flex items-center justify-between bg-white/[0.05] border border-white/10 rounded-2xl p-4 text-white font-bold uppercase tracking-widest text-xs"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">{activeContinentData.icon}</span>
+                  <span>Region: {activeContinentData.name}</span>
+                </div>
+                <ChevronDown size={16} className={`text-yellow-500 transition-transform duration-300 ${isContinentDropdownOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              <AnimatePresence>
+                {isContinentDropdownOpen && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute top-full left-0 right-0 mt-2 bg-[#0a0a0f] border border-white/10 rounded-2xl overflow-hidden shadow-2xl z-50"
+                  >
+                    {continents.map((continent) => (
+                      <button
+                        key={continent.name}
+                        onClick={() => {
+                          setActiveContinent(continent.name);
+                          setIsContinentDropdownOpen(false);
+                        }}
+                        className={`w-full flex items-center gap-3 p-4 text-xs font-bold uppercase tracking-widest transition-colors ${
+                          activeContinent === continent.name 
+                            ? "bg-yellow-500/10 text-yellow-500 border-l-2 border-yellow-500" 
+                            : "text-neutral-400 hover:bg-white/5 hover:text-white"
+                        }`}
+                      >
+                        <span className="text-lg">{continent.icon}</span>
+                        {continent.name}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
-          {/* Mobile Version (Dropdown) */}
-          <div className="sm:hidden relative w-full" ref={dropdownRef}>
-            <button 
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="w-full flex items-center justify-between bg-white/[0.05] border border-white/10 rounded-2xl p-4 text-white font-bold uppercase tracking-widest text-xs"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-lg">{activeContinentData.icon}</span>
-                <span>Region: {activeContinentData.name}</span>
+          {/* 2. DEGREE LEVEL FILTERS */}
+          <div className="flex flex-col items-center pt-2">
+            <p className="text-neutral-500 text-[10px] font-bold uppercase tracking-widest mb-3">Filter by Degree Level</p>
+            
+            {/* Desktop Version (Pills) */}
+            <div className="hidden sm:flex justify-center w-full">
+              <div className="flex items-center justify-center gap-3 bg-white/5 p-2 rounded-full border border-white/10 backdrop-blur-md min-w-max shadow-inner">
+                {degrees.map((deg) => (
+                  <button
+                    key={deg.name}
+                    onClick={() => setActiveDegree(deg.name)}
+                    className={`relative flex items-center gap-2 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${
+                      activeDegree === deg.name 
+                        ? "text-black" 
+                        : "text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    {activeDegree === deg.name && (
+                      <motion.div layoutId="engDegreeTab" className="absolute inset-0 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full -z-10 shadow-[0_0_15px_rgba(234,179,8,0.3)]" />
+                    )}
+                    <span className="relative z-10">{deg.label}</span>
+                  </button>
+                ))}
               </div>
-              <ChevronDown size={16} className={`text-yellow-500 transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`} />
-            </button>
+            </div>
 
-            <AnimatePresence>
-              {isDropdownOpen && (
-                <motion.div 
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute top-full left-0 right-0 mt-2 bg-[#0a0a0f] border border-white/10 rounded-2xl overflow-hidden shadow-2xl z-50"
-                >
-                  {continents.map((continent) => (
-                    <button
-                      key={continent.name}
-                      onClick={() => {
-                        setActiveContinent(continent.name);
-                        setIsDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center gap-3 p-4 text-xs font-bold uppercase tracking-widest transition-colors ${
-                        activeContinent === continent.name 
-                          ? "bg-yellow-500/10 text-yellow-500 border-l-2 border-yellow-500" 
-                          : "text-neutral-400 hover:bg-white/5 hover:text-white"
-                      }`}
-                    >
-                      <span className="text-lg">{continent.icon}</span>
-                      {continent.name}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Mobile Version (Dropdown) */}
+            <div className="sm:hidden relative w-full" ref={degreeDropdownRef}>
+              <button 
+                onClick={() => setIsDegreeDropdownOpen(!isDegreeDropdownOpen)}
+                className="w-full flex items-center justify-between bg-white/[0.05] border border-white/10 rounded-2xl p-4 text-white font-bold uppercase tracking-widest text-xs"
+              >
+                <div className="flex items-center gap-3">
+                  <GraduationCap size={16} className="text-yellow-500" />
+                  <span>Degree: {activeDegreeData.label}</span>
+                </div>
+                <ChevronDown size={16} className={`text-yellow-500 transition-transform duration-300 ${isDegreeDropdownOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              <AnimatePresence>
+                {isDegreeDropdownOpen && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute top-full left-0 right-0 mt-2 bg-[#0a0a0f] border border-white/10 rounded-2xl overflow-hidden shadow-2xl z-50"
+                  >
+                    {degrees.map((deg) => (
+                      <button
+                        key={deg.name}
+                        onClick={() => {
+                          setActiveDegree(deg.name);
+                          setIsDegreeDropdownOpen(false);
+                        }}
+                        className={`w-full flex items-center gap-3 p-4 text-xs font-bold uppercase tracking-widest transition-colors ${
+                          activeDegree === deg.name 
+                            ? "bg-yellow-500/10 text-yellow-500 border-l-2 border-yellow-500" 
+                            : "text-neutral-400 hover:bg-white/5 hover:text-white"
+                        }`}
+                      >
+                        {deg.label}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
         </section>
