@@ -3,7 +3,10 @@
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { LineChart, Loader2, Search, ArrowUpRight, ArrowDownRight, Eye, X, Save, AlertCircle, ShieldAlert, Star, MessageSquare, Image, Landmark } from "lucide-react";
+import { LineChart, Loader2, Search, ArrowUpRight, ArrowDownRight, Eye, X, Save, ShieldAlert, Star, MessageSquare, Image, Landmark } from "lucide-react";
+
+// شناسه ثابت کورس فارکس (فقط اساتید این دوره می‌توانند به ژورنال دسترسی داشته باشند)
+const FOREX_COURSE_ID = "d9fa8678-76b4-4705-b579-7860407d43e8";
 
 type TradingJournal = {
   id: string;
@@ -36,6 +39,7 @@ export default function TeacherTradingJournalDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [journals, setJournals] = useState<TradingJournal[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [hasAccess, setHasAccess] = useState(false); // کنترل دسترسی استاد
 
   // مدیریت مودال بررسی ژورنال
   const [selectedJournal, setSelectedJournal] = useState<TradingJournal | null>(null);
@@ -44,10 +48,10 @@ export default function TeacherTradingJournalDashboard() {
   const [isSubmittingGrade, setIsSubmittingGrade] = useState(false);
 
   useEffect(() => {
-    fetchStudentsJournals();
+    checkAccessAndFetchJournals();
   }, []);
 
-  const fetchStudentsJournals = async () => {
+  const checkAccessAndFetchJournals = async () => {
     setIsLoading(true);
     const supabase = createClient();
 
@@ -58,18 +62,24 @@ export default function TeacherTradingJournalDashboard() {
     }
 
     try {
-      const { data: classGroups } = await supabase
+      // 🔒 مرحله ۱: آیا این استاد اصلا کلاسی برای دوره "فارکس" دارد؟
+      const { data: forexClassGroups } = await supabase
         .from("class_groups")
         .select("id")
-        .eq("teacher_id", session.user.id);
+        .eq("teacher_id", session.user.id)
+        .eq("course_id", FOREX_COURSE_ID); // فیلتر اختصاصی دوره فارکس
 
-      if (!classGroups || classGroups.length === 0) {
-        setJournals([]);
+      if (!forexClassGroups || forexClassGroups.length === 0) {
+        // اگر کلاسی برای فارکس نداشت، دسترسی به صفحه ჟورنال‌ها رد می‌شود
+        setHasAccess(false);
+        setIsLoading(false);
         return;
       }
 
-      const classIds = classGroups.map(cg => cg.id);
+      setHasAccess(true);
+      const classIds = forexClassGroups.map(cg => cg.id);
 
+      // 🔓 مرحله ۲: گرفتن لیست شاگردانی که در کلاس‌های فارکس این استاد هستند
       const { data: classStudents } = await supabase
         .from("class_students")
         .select("student_id")
@@ -77,11 +87,13 @@ export default function TeacherTradingJournalDashboard() {
 
       if (!classStudents || classStudents.length === 0) {
         setJournals([]);
+        setIsLoading(false);
         return;
       }
 
       const studentIds = Array.from(new Set(classStudents.map(cs => cs.student_id)));
 
+      // 🔓 مرحله ۳: واکشی پروفایل و ژورنال‌های این شاگردان خاص
       const { data: profiles } = await supabase
         .from("profiles")
         .select("id, first_name, last_name, email, avatar_url")
@@ -149,7 +161,6 @@ export default function TeacherTradingJournalDashboard() {
       ));
 
       setSelectedJournal(null);
-      alert("Journal evaluated successfully!");
     } catch (err: any) {
       alert("Evaluation failed: " + err.message);
     } finally {
@@ -162,7 +173,7 @@ export default function TeacherTradingJournalDashboard() {
     return journals.filter(j => 
       j.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
       j.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      j.setup_strategy.toLowerCase().includes(searchQuery.toLowerCase())
+      j.setup_strategy?.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [journals, searchQuery]);
 
@@ -175,6 +186,34 @@ export default function TeacherTradingJournalDashboard() {
     );
   }
 
+  // ============================================================================
+  // UI 1: اگر استاد کلاسی برای دوره فارکس نداشت (عدم دسترسی)
+  // ============================================================================
+  if (!hasAccess) {
+    return (
+      <div className="w-full relative overflow-hidden bg-[#020202] font-sans h-screen flex flex-col items-center justify-center px-4">
+        <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[150px] pointer-events-none"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-fuchsia-600/5 rounded-full blur-[150px] pointer-events-none"></div>
+
+        <div className="bg-[#0a0a0f]/80 p-10 md:p-16 rounded-[3rem] border border-white/5 backdrop-blur-3xl shadow-2xl flex flex-col items-center justify-center text-center max-w-2xl relative z-10 animate-[fadeInUp_0.5s_ease-out]">
+          <div className="w-24 h-24 bg-purple-500/10 border border-purple-500/20 rounded-3xl flex items-center justify-center text-purple-500 mb-8 shadow-[inset_0_0_20px_rgba(168,85,247,0.2)]">
+            <LineChart size={40} />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">Access Restricted</h2>
+          <p className="text-neutral-400 text-sm md:text-base leading-relaxed mb-6 max-w-md">
+            The Trading Journal Audit system is exclusively available for instructors actively teaching the <strong className="text-purple-400">Financial Markets & Forex Trading</strong> masterclass.
+          </p>
+          <p className="text-neutral-600 text-xs font-bold uppercase tracking-widest">
+            You do not have any active groups assigned for this specific course.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // ============================================================================
+  // UI 2: داشبورد اصلی ژورنال برای اساتید مجاز
+  // ============================================================================
   return (
     <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-24" dir="ltr">
       
@@ -231,7 +270,7 @@ export default function TeacherTradingJournalDashboard() {
                     <td colSpan={7} className="p-12 sm:p-20 text-center">
                       <div className="flex flex-col items-center justify-center space-y-4 opacity-40">
                         <ShieldAlert size={40} className="text-neutral-600 sm:w-12 sm:h-12" />
-                        <p className="text-neutral-400 text-xs sm:text-sm font-bold whitespace-normal max-w-[250px] sm:max-w-none mx-auto">No trading journals reported or matching current filter.</p>
+                        <p className="text-neutral-400 text-xs sm:text-sm font-bold whitespace-normal max-w-[250px] sm:max-w-none mx-auto">No trading journals reported by your students yet.</p>
                       </div>
                     </td>
                   </tr>
@@ -274,16 +313,20 @@ export default function TeacherTradingJournalDashboard() {
 
                         {/* Lot & R&R */}
                         <td className="p-4 sm:p-6 font-mono text-[11px] sm:text-xs">
-                          <p className="text-neutral-300">Size: <strong className="text-white">{journal.lot_size} Lots</strong></p>
-                          <p className="text-neutral-500 mt-0.5">R&R Factor: <strong className="text-purple-400">{journal.rr_multiple}R</strong></p>
+                          <p className="text-neutral-300">Size: <strong className="text-white">{journal.lot_size || "-"} Lots</strong></p>
+                          <p className="text-neutral-500 mt-0.5">R&R Factor: <strong className="text-purple-400">{journal.rr_multiple || "-"}R</strong></p>
                         </td>
 
                         {/* PnL USD */}
                         <td className="p-4 sm:p-6 text-center font-mono font-black text-xs sm:text-sm">
-                          <span className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg sm:rounded-xl border ${isWin ? 'bg-emerald-500/5 text-emerald-400 border-emerald-500/10' : 'bg-rose-500/5 text-rose-400 border-rose-500/10'}`}>
-                            {isWin ? <ArrowUpRight size={12} className="sm:w-3.5 sm:h-3.5"/> : <ArrowDownRight size={12} className="sm:w-3.5 sm:h-3.5" />}
-                            {isWin ? `+$${journal.profit_loss_usd}` : `-$${Math.abs(journal.profit_loss_usd)}`}
-                          </span>
+                          {journal.profit_loss_usd !== null && journal.profit_loss_usd !== undefined ? (
+                            <span className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg sm:rounded-xl border ${isWin ? 'bg-emerald-500/5 text-emerald-400 border-emerald-500/10' : 'bg-rose-500/5 text-rose-400 border-rose-500/10'}`}>
+                              {isWin ? <ArrowUpRight size={12} className="sm:w-3.5 sm:h-3.5"/> : <ArrowDownRight size={12} className="sm:w-3.5 sm:h-3.5" />}
+                              {isWin ? `+$${journal.profit_loss_usd}` : `-$${Math.abs(journal.profit_loss_usd)}`}
+                            </span>
+                          ) : (
+                            <span className="text-neutral-500 italic text-[10px]">Open Trade</span>
+                          )}
                         </td>
 
                         {/* Status */}
@@ -317,7 +360,7 @@ export default function TeacherTradingJournalDashboard() {
       {/* ==================== AUDIT JOURNAL REPORT MODAL ======================== */}
       {/* ========================================================================= */}
       {selectedJournal && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 animate-[slideInUp_0.2s_ease-out] sm:animate-[fadeIn_0.2s_ease-out]">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6 animate-[slideInUp_0.2s_ease-out] sm:animate-[fadeIn_0.2s_ease-out]">
           <div className="absolute inset-0 bg-[#020202]/95 backdrop-blur-md" onClick={() => setSelectedJournal(null)}></div>
           
           <div className="relative w-full max-w-5xl bg-[#0a0a0f] border border-white/10 rounded-t-[2rem] sm:rounded-[2.5rem] shadow-[0_-10px_80px_rgba(0,0,0,0.8)] sm:shadow-[0_40px_80px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[92vh]">
@@ -345,19 +388,19 @@ export default function TeacherTradingJournalDashboard() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 bg-black/40 border border-white/5 p-4 sm:p-5 rounded-2xl">
                 <div>
                   <p className="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest font-black">Entry Metric</p>
-                  <p className="text-xs sm:text-sm font-bold font-mono text-white mt-0.5">${selectedJournal.entry_price}</p>
+                  <p className="text-xs sm:text-sm font-bold font-mono text-white mt-0.5">${selectedJournal.entry_price || "-"}</p>
                 </div>
                 <div>
                   <p className="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest font-black">Exit Metric</p>
-                  <p className="text-xs sm:text-sm font-bold font-mono text-white mt-0.5">${selectedJournal.exit_price}</p>
+                  <p className="text-xs sm:text-sm font-bold font-mono text-white mt-0.5">${selectedJournal.exit_price || "-"}</p>
                 </div>
                 <div>
                   <p className="text-[9px] sm:text-[10px] text-rose-400 uppercase tracking-widest font-black">Stop Loss (SL)</p>
-                  <p className="text-xs sm:text-sm font-bold font-mono text-rose-400 mt-0.5">${selectedJournal.stop_loss}</p>
+                  <p className="text-xs sm:text-sm font-bold font-mono text-rose-400 mt-0.5">${selectedJournal.stop_loss || "-"}</p>
                 </div>
                 <div>
                   <p className="text-[9px] sm:text-[10px] text-emerald-400 uppercase tracking-widest font-black">Take Profit (TP)</p>
-                  <p className="text-xs sm:text-sm font-bold font-mono text-emerald-400 mt-0.5">${selectedJournal.take_profit}</p>
+                  <p className="text-xs sm:text-sm font-bold font-mono text-emerald-400 mt-0.5">${selectedJournal.take_profit || "-"}</p>
                 </div>
               </div>
 
@@ -413,7 +456,6 @@ export default function TeacherTradingJournalDashboard() {
                 <div className="space-y-1.5">
                   <label className="text-[9px] sm:text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1"><MessageSquare size={12}/> Academic Audit Feedback</label>
                   
-                  {/* MOBILE FIX: Changed to flex-col on mobile, flex-row on desktop */}
                   <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
                     <textarea 
                       rows={2} placeholder="Provide tactical strategy feedback..."

@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { LockKeyhole } from "lucide-react";
+import Link from "next/link";
 
-// تایپ اسکریپت حرفه‌ای منطبق بر اکسل ژورنال
+// تایپ اسکریپت حرفه‌ای منطبق بر دیتابیس
 type JournalEntry = {
   id: string;
   trade_date: string;
@@ -23,18 +25,21 @@ type JournalEntry = {
   created_at: string;
 };
 
+// شناسه ثابت کورس فارکس
+const FOREX_COURSE_ID = "d9fa8678-76b4-4705-b579-7860407d43e8";
+
 export default function TradingJournalPage() {
   const [isLoading, setIsLoading] = useState(true);
+  const [hasAccess, setHasAccess] = useState(false); // استیت کنترل دسترسی
+  
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [filter, setFilter] = useState<"all" | "win" | "loss" | "open">("all");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // استیت آپلود عکس چارت
   const [chartFile, setChartFile] = useState<File | null>(null);
   
-  // استیت فرم پیشرفته ترید
   const [formData, setFormData] = useState({
     trade_date: new Date().toISOString().split('T')[0],
     symbol: "",
@@ -59,10 +64,10 @@ export default function TradingJournalPage() {
   });
 
   useEffect(() => {
-    fetchJournal();
+    checkAccessAndFetchJournal();
   }, []);
 
-  const fetchJournal = async () => {
+  const checkAccessAndFetchJournal = async () => {
     setIsLoading(true);
     const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
@@ -70,6 +75,25 @@ export default function TradingJournalPage() {
     if (!session?.user) return;
 
     try {
+      // 🔒 مرحله ۱: بررسی دسترسی (آیا شاگرد در دوره فارکس ثبت‌نام کرده است؟)
+      const { data: enrollmentData } = await supabase
+        .from("enrollments")
+        .select("id")
+        .eq("student_id", session.user.id)
+        .eq("course_id", FOREX_COURSE_ID)
+        .maybeSingle();
+
+      if (!enrollmentData) {
+        // اگر ثبت‌نام نکرده بود، دسترسی رد می‌شود
+        setHasAccess(false);
+        setIsLoading(false);
+        return;
+      }
+
+      // اگر ثبت‌نام کرده بود، دسترسی تایید می‌شود
+      setHasAccess(true);
+
+      // 🔓 مرحله ۲: واکشی اطلاعات ژورنال
       const { data, error } = await supabase
         .from("trading_journals")
         .select("*")
@@ -120,7 +144,6 @@ export default function TradingJournalPage() {
     try {
       let uploadedChartUrl = null;
 
-      // آپلود فایل عکس در صورت وجود
       if (chartFile) {
         const fileExt = chartFile.name.split('.').pop();
         const fileName = `${session.user.id}-${Date.now()}.${fileExt}`;
@@ -155,7 +178,7 @@ export default function TradingJournalPage() {
           rr_multiple: formData.rr_multiple ? parseFloat(formData.rr_multiple) : null,
           emotions: formData.emotions || null,
           analysis_notes: formData.analysis_notes || null,
-          chart_image_url: uploadedChartUrl, // ثبت لینک عکس در دیتابیس
+          chart_image_url: uploadedChartUrl, 
         });
 
       if (error) {
@@ -170,8 +193,8 @@ export default function TradingJournalPage() {
         entry_price: "", stop_loss: "", take_profit: "", exit_price: "",
         profit_loss_usd: "", rr_multiple: "", emotions: "", analysis_notes: "",
       });
-      setChartFile(null); // ریست کردن عکس
-      fetchJournal();
+      setChartFile(null);
+      checkAccessAndFetchJournal(); // ریفرش اطلاعات
     } catch (error) {
       console.error("Failed to add trade");
     } finally {
@@ -187,8 +210,44 @@ export default function TradingJournalPage() {
     return true; 
   });
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#020202]">
+        <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // ============================================================================
+  // UI 1: اگر کاربر دسترسی نداشت (بدون ثبت‌نام در دوره فارکس)
+  // ============================================================================
+  if (!hasAccess) {
+    return (
+      <div className="w-full relative overflow-hidden bg-[#020202] font-sans h-screen flex flex-col items-center justify-center px-4">
+        <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-red-600/10 rounded-full blur-[150px] pointer-events-none"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-yellow-600/5 rounded-full blur-[150px] pointer-events-none"></div>
+
+        <div className="bg-[#0a0a0f]/80 p-10 md:p-16 rounded-[3rem] border border-white/5 backdrop-blur-3xl shadow-2xl flex flex-col items-center justify-center text-center max-w-2xl relative z-10 animate-[fadeInUp_0.5s_ease-out]">
+          <div className="w-24 h-24 bg-red-500/10 border border-red-500/20 rounded-3xl flex items-center justify-center text-red-500 mb-8 shadow-[inset_0_0_20px_rgba(239,68,68,0.2)]">
+            <LockKeyhole size={40} />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">Access Restricted</h2>
+          <p className="text-neutral-400 text-sm md:text-base leading-relaxed mb-10 max-w-md">
+            The Professional Trading Journal is an exclusive tool reserved strictly for students enrolled in the <strong className="text-yellow-500">Financial Markets & Forex Trading</strong> masterclass.
+          </p>
+          <Link href="/en/dashboard/courses" className="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-black uppercase tracking-widest text-xs rounded-2xl hover:scale-105 transition-all shadow-[0_10px_30px_rgba(245,158,11,0.3)]">
+            Explore Courses
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // ============================================================================
+  // UI 2: اگر کاربر دسترسی داشت (ژورنال اصلی)
+  // ============================================================================
   return (
-    <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-10">
+    <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-10 min-h-screen">
       
       {/* Global Glows */}
       <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-emerald-600/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
@@ -221,7 +280,7 @@ export default function TradingJournalPage() {
           {/* Vertical Stats */}
           <div className="flex flex-col gap-4">
             
-            {/* Net PNL (Special Highlight) */}
+            {/* Net PNL */}
             <div className={`p-6 rounded-[2rem] border backdrop-blur-xl flex flex-col justify-between shadow-2xl relative overflow-hidden group ${
               stats.totalProfitLoss >= 0 ? "bg-emerald-900/20 border-emerald-500/30" : "bg-red-900/20 border-red-500/30"
             }`}>
@@ -231,7 +290,7 @@ export default function TradingJournalPage() {
                 <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[9px] font-black text-neutral-300 uppercase tracking-widest">Net PnL (USD)</span>
               </div>
               <h3 className={`text-4xl font-black relative z-10 tracking-tight ${stats.totalProfitLoss >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                {isLoading ? "-" : `${stats.totalProfitLoss >= 0 ? "+" : ""}$${stats.totalProfitLoss.toFixed(2)}`}
+                {stats.totalProfitLoss >= 0 ? "+" : ""}${stats.totalProfitLoss.toFixed(2)}
               </h3>
             </div>
 
@@ -239,7 +298,7 @@ export default function TradingJournalPage() {
               <div className="w-12 h-12 bg-white/5 rounded-[1rem] flex items-center justify-center text-xl text-white border border-white/10 shrink-0">📊</div>
               <div>
                 <p className="text-neutral-500 text-[9px] font-black uppercase tracking-widest mb-0.5">Total Entries</p>
-                <h3 className="text-2xl font-black text-white leading-none">{isLoading ? "-" : stats.totalTrades}</h3>
+                <h3 className="text-2xl font-black text-white leading-none">{stats.totalTrades}</h3>
               </div>
             </div>
 
@@ -247,7 +306,7 @@ export default function TradingJournalPage() {
               <div className="w-12 h-12 bg-amber-500/10 rounded-[1rem] flex items-center justify-center text-xl text-amber-500 border border-amber-500/20 shrink-0">🎯</div>
               <div>
                 <p className="text-amber-500/80 text-[9px] font-black uppercase tracking-widest mb-0.5">Win Rate</p>
-                <h3 className="text-2xl font-black text-white leading-none">{isLoading ? "-" : `${stats.winRate}%`}</h3>
+                <h3 className="text-2xl font-black text-white leading-none">{stats.winRate}%</h3>
               </div>
             </div>
           </div>
@@ -281,11 +340,7 @@ export default function TradingJournalPage() {
 
         {/* ================= Right Content: Trade Cards ================= */}
         <div className="flex-1 w-full">
-          {isLoading ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map(i => <div key={i} className="h-32 bg-neutral-900/40 rounded-[2rem] border border-white/5 animate-pulse"></div>)}
-            </div>
-          ) : filteredEntries.length > 0 ? (
+          {filteredEntries.length > 0 ? (
             <div className="space-y-5">
               {filteredEntries.map((entry) => {
                 const isOpen = entry.profit_loss_usd === null || entry.profit_loss_usd === undefined;
@@ -321,7 +376,6 @@ export default function TradingJournalPage() {
                         <div className="flex flex-wrap items-center gap-2 mt-1.5">
                           <span className="text-[10px] text-neutral-500 font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5">{entry.trade_date}</span>
                           {entry.setup_strategy && <span className="text-[10px] text-amber-500/80 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/10 truncate max-w-[80px]">{entry.setup_strategy}</span>}
-                          {/* دکمه مشاهده چارت */}
                           {entry.chart_image_url && (
                             <a href={entry.chart_image_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-400 font-bold bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20 flex items-center gap-1 hover:bg-blue-500/20 transition-colors">
                               🖼️ Chart
@@ -388,14 +442,13 @@ export default function TradingJournalPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* ================= MODAL: ADD NEW TRADE (Super App Glass Modal) ========== */}
+      {/* ================= MODAL: ADD NEW TRADE ================= */}
       {/* ========================================================================= */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 animate-[fadeIn_0.2s_ease-out]">
           <div className="absolute inset-0 bg-[#020202]/90 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}></div>
           
           <div className="relative w-full max-w-2xl bg-gradient-to-b from-neutral-900/95 to-black border border-white/10 rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col max-h-[90vh]">
-            {/* Header Modal */}
             <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-white/[0.02] shrink-0 relative z-10">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-amber-500/10 blur-[50px] pointer-events-none"></div>
               <div>
@@ -407,11 +460,9 @@ export default function TradingJournalPage() {
               </button>
             </div>
 
-            {/* Scrollable Form Body */}
             <div className="p-8 overflow-y-auto custom-scrollbar flex-1 relative z-10">
               <form id="tradeForm" onSubmit={handleAddTrade} className="space-y-8">
                 
-                {/* Section 1: Basic Info */}
                 <div>
                   <h4 className="text-xs font-black text-white uppercase tracking-widest border-l-2 border-amber-500 pl-3 mb-4">Core Info</h4>
                   <div className="grid grid-cols-2 gap-4">
@@ -437,7 +488,6 @@ export default function TradingJournalPage() {
                   </div>
                 </div>
 
-                {/* Section 2: Execution */}
                 <div>
                   <h4 className="text-xs font-black text-white uppercase tracking-widest border-l-2 border-amber-500 pl-3 mb-4">Execution</h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -460,7 +510,6 @@ export default function TradingJournalPage() {
                   </div>
                 </div>
 
-                {/* Section 3: Results (Optional for open trades) */}
                 <div className="p-5 bg-white/[0.02] border border-white/5 rounded-[2rem]">
                   <h4 className="text-xs font-black text-white uppercase tracking-widest border-l-2 border-emerald-500 pl-3 mb-4">Results (Leave blank if open)</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -479,7 +528,6 @@ export default function TradingJournalPage() {
                   </div>
                 </div>
 
-                {/* Section 4: Psychology & Chart */}
                 <div className="grid grid-cols-1 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Chart Screenshot (Optional)</label>
@@ -504,7 +552,6 @@ export default function TradingJournalPage() {
               </form>
             </div>
 
-            {/* Footer Modal (Submit Button) */}
             <div className="p-6 border-t border-white/5 bg-black/80 shrink-0">
                <button 
                 type="submit" 

@@ -5,7 +5,13 @@ const locales = ['en', 'fr', 'ps', 'ur', 'fa', 'de'];
 const defaultLocale = 'en';
 
 export async function middleware(request: NextRequest) {
-  // ۱. ایجاد Response برای مدیریت کوکی‌ها
+  const { pathname } = request.nextUrl;
+
+  // 🚫 فیلتر مهم: اگر درخواست مربوط به API بود، فوراً از میدل‌ویر رد شود و هیچ کاری نکند
+  if (pathname.startsWith('/api')) {
+    return NextResponse.next();
+  }
+
   let response = NextResponse.next({
     request: { headers: request.headers },
   });
@@ -17,7 +23,6 @@ export async function middleware(request: NextRequest) {
       cookies: {
         getAll() { return request.cookies.getAll(); },
         setAll(cookiesToSet) {
-          // این بخش حیاتی است: کوکی‌ها را در درخواست و پاسخ ست می‌کند
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           response = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
@@ -28,12 +33,8 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // ۲. دریافت سشن کاربر (این متد به طور خودکار توکن را رفرش می‌کند)
   const { data: { user } } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
-
-  // ۳. مدیریت زبان
   if (pathname === '/') {
     return NextResponse.redirect(new URL(`/${defaultLocale}`, request.url));
   }
@@ -48,17 +49,13 @@ export async function middleware(request: NextRequest) {
 
   const currentLocale = pathname.split('/')[1] || defaultLocale;
 
-  // ۴. تعریف مسیرها
   const isAuthPage = pathname.includes('/login') || pathname.includes('/register');
   const isAdminRoute = pathname.includes('/admin');
   const isTeacherRoute = pathname.includes('/teacher');
   const isStudentRoute = pathname.includes('/dashboard');
   const isProtectedRoute = isAdminRoute || isTeacherRoute || isStudentRoute;
 
-  // ۵. لاگیک ریدایرکت (فقط در صورت نیاز به دیتابیس کوئری می‌زنیم)
   if (isProtectedRoute || isAuthPage) {
-    
-    // اگر کاربر لاگین بود نقش‌اش را بگیریم
     let userRole = 'student';
     if (user) {
       const { data: profile } = await supabase
@@ -75,7 +72,6 @@ export async function middleware(request: NextRequest) {
       return `/${currentLocale}/dashboard`;
     };
 
-    // هدایت‌ها
     if (!user && isProtectedRoute) {
       return NextResponse.redirect(new URL(`/${currentLocale}/login`, request.url));
     }
@@ -102,6 +98,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/.*|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json)$).*)',
   ],
 };

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Loader2, Copy, CheckCircle2, TrendingUp, Gift, CreditCard, History, Users, LockKeyhole, UserPlus } from "lucide-react";
+import { Loader2, Copy, CheckCircle2, Gift, CreditCard, History, Users, LockKeyhole, UserPlus } from "lucide-react";
 
 type Transaction = {
   id: string;
@@ -23,15 +23,13 @@ type Referral = {
 
 export default function WalletPage() {
   const [isLoading, setIsLoading] = useState(true);
-  // تغییر به referrals تا به عنوان پیش‌فرض باز شود
   const [activeTab, setActiveTab] = useState<"transactions" | "referrals">("referrals");
   
   const [wallet, setWallet] = useState({
     balance: 0,
     referralCode: "Generating...",
     totalRewards: 0,
-    discountRate: 0,
-    invitedBy: "" // اسم شخصی که این شاگرد را دعوت کرده است
+    invitedBy: "" 
   });
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -50,18 +48,25 @@ export default function WalletPage() {
       const userId = session.user.id;
 
       try {
-        // دریافت اطلاعات پروفایل همراه با نام معرف (referred_by)
         const { data: profile } = await supabase
           .from("profiles")
-          .select(`
-            wallet_balance, 
-            referral_code, 
-            first_name, 
-            referral_discount_rate,
-            referrer:profiles!referred_by(first_name, last_name)
-          `)
+          .select("wallet_balance, referral_code, referred_by")
           .eq("id", userId)
           .single();
+
+        let invitedByName = "";
+
+        if (profile?.referred_by) {
+          const { data: referrerData } = await supabase
+            .from("profiles")
+            .select("first_name, last_name")
+            .eq("id", profile.referred_by)
+            .single();
+            
+          if (referrerData) {
+            invitedByName = `${referrerData.first_name} ${referrerData.last_name}`;
+          }
+        }
 
         const { data: txData } = await supabase
           .from("transactions")
@@ -69,14 +74,14 @@ export default function WalletPage() {
           .eq("student_id", userId)
           .order("created_at", { ascending: false });
 
-        const { data: refData } = await supabase
+        const { data: backupRefData } = await supabase
           .from("referrals")
           .select(`
             id, 
             reward_amount, 
             is_paid, 
             created_at,
-            profiles!referred_student_id(first_name, last_name)
+            referred_student_id
           `)
           .eq("referrer_id", userId)
           .order("created_at", { ascending: false });
@@ -85,29 +90,39 @@ export default function WalletPage() {
           let totalRefRewards = 0;
           const formattedRefs: Referral[] = [];
 
-          if (refData) {
-            refData.forEach((ref: any) => {
+          if (backupRefData && backupRefData.length > 0) {
+            const studentIds = backupRefData.map((ref: any) => ref.referred_student_id).filter(Boolean);
+            
+            let profilesMap: Record<string, string> = {};
+            if (studentIds.length > 0) {
+               const { data: profilesData } = await supabase
+                 .from("profiles")
+                 .select("id, first_name, last_name")
+                 .in("id", studentIds);
+                 
+               if (profilesData) {
+                 profilesData.forEach(p => {
+                   profilesMap[p.id] = `${p.first_name} ${p.last_name}`;
+                 });
+               }
+            }
+
+            backupRefData.forEach((ref: any) => {
               totalRefRewards += ref.reward_amount || 0;
-              const referredProfile = Array.isArray(ref.profiles) ? ref.profiles[0] : ref.profiles;
               formattedRefs.push({
                 id: ref.id,
                 reward_amount: ref.reward_amount,
                 is_paid: ref.is_paid,
                 created_at: ref.created_at,
-                referred_name: referredProfile ? `${referredProfile.first_name} ${referredProfile.last_name}` : "Unknown Student"
+                referred_name: profilesMap[ref.referred_student_id] || "Unknown Student"
               });
             });
           }
-
-          // فرمت‌بندی نام شخصی که کاربر را دعوت کرده است
-          const referrerProfile = Array.isArray(profile.referrer) ? profile.referrer[0] : profile.referrer;
-          const invitedByName = referrerProfile ? `${referrerProfile.first_name} ${referrerProfile.last_name}` : "";
 
           setWallet({
             balance: profile.wallet_balance || 0,
             referralCode: profile.referral_code || "SAFI-...",
             totalRewards: totalRefRewards,
-            discountRate: profile.referral_discount_rate || 0,
             invitedBy: invitedByName
           });
 
@@ -140,7 +155,6 @@ export default function WalletPage() {
   return (
     <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-20 min-h-screen">
       
-      {/* Background Ambience */}
       <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-emerald-600/10 rounded-full blur-[150px] pointer-events-none z-0 animate-pulse"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-amber-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
@@ -155,13 +169,12 @@ export default function WalletPage() {
               Wallet & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Assets</span>
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-xl leading-relaxed">
-              Manage your digital funds, track transactions, and earn exclusive tuition discounts by expanding the Safi network.
+              Manage your digital funds, track transactions, and earn instant cash bonuses by expanding the Safi network.
             </p>
           </div>
 
-          {/* نمایش اسم شخصی که دعوت کرده است (اگر وجود داشته باشد) */}
           {!isLoading && wallet.invitedBy && (
-            <div className="relative z-10 flex items-center gap-4 bg-white/5 border border-white/10 p-4 rounded-2xl">
+            <div className="relative z-10 flex items-center gap-4 bg-white/5 border border-white/10 p-4 rounded-2xl shadow-inner">
               <div className="w-12 h-12 bg-indigo-500/20 text-indigo-400 flex items-center justify-center rounded-xl">
                 <UserPlus size={20} />
               </div>
@@ -238,18 +251,10 @@ export default function WalletPage() {
                   <div className="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-2xl flex items-center justify-center mb-4 border border-amber-500/20 shadow-inner">
                     <Gift size={24} />
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-black text-white mb-2">Expand & Earn</h3>
-                  <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed max-w-[250px]">
-                    Share your unique link or code. Invite friends and unlock up to <strong className="text-amber-500 font-bold">40% lifetime discount</strong> on all courses.
+                  <h3 className="text-xl sm:text-2xl font-black text-white mb-2">Invite & Earn $5</h3>
+                  <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed max-w-[280px]">
+                    Share your unique link. When your friends register and <strong className="text-amber-500 font-bold">enroll in their first course</strong>, you will instantly receive a $5 cash bonus in your wallet!
                   </p>
-                </div>
-                
-                <div className="flex flex-col items-end">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1">Current Tier</span>
-                  <div className="bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-                     <TrendingUp size={14} className="text-amber-500" />
-                     <span className="text-amber-500 font-black text-sm">{wallet.discountRate}% OFF</span>
-                  </div>
                 </div>
               </div>
 
@@ -286,9 +291,9 @@ export default function WalletPage() {
               <div className="mt-8 flex items-center justify-between border-t border-white/5 pt-6 relative z-10">
                 <div className="flex items-center gap-2">
                    <Users size={16} className="text-neutral-500" />
-                   <span className="text-[10px] text-neutral-500 font-black uppercase tracking-widest">Network Rewards</span>
+                   <span className="text-[10px] text-neutral-500 font-black uppercase tracking-widest">Total Cash Earned</span>
                 </div>
-                <span className="text-amber-400 font-black text-2xl font-mono">${isLoading ? "-" : wallet.totalRewards.toFixed(2)}</span>
+                <span className="text-emerald-400 font-black text-2xl font-mono">${isLoading ? "-" : wallet.totalRewards.toFixed(2)}</span>
               </div>
             </div>
 
@@ -297,7 +302,6 @@ export default function WalletPage() {
           {/* ================= RIGHT COLUMN: LISTS ================= */}
           <div className="flex-1 w-full flex flex-col gap-6">
             
-            {/* Tabs */}
             <div className="flex items-center gap-2 bg-[#0a0a0f]/80 p-2 rounded-[1.5rem] border border-white/5 shadow-inner w-full sm:w-fit backdrop-blur-xl">
               <button
                 onClick={() => setActiveTab("referrals")}
@@ -317,7 +321,6 @@ export default function WalletPage() {
               </button>
             </div>
 
-            {/* List Content */}
             <div className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-4 sm:p-8 min-h-[600px] backdrop-blur-3xl shadow-xl">
               {isLoading ? (
                 <div className="space-y-4">
@@ -325,7 +328,6 @@ export default function WalletPage() {
                 </div>
               ) : activeTab === "transactions" ? (
                 
-                // Transactions List
                 transactions.length > 0 ? (
                   <div className="space-y-3">
                     {transactions.map(tx => (
@@ -371,7 +373,6 @@ export default function WalletPage() {
 
               ) : (
 
-                // Referrals List
                 referrals.length > 0 ? (
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                     {referrals.map(ref => (
@@ -386,9 +387,11 @@ export default function WalletPage() {
                           </div>
                         </div>
                         <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 border-white/5 pt-3 sm:pt-0">
-                          <p className="font-black text-emerald-400 font-mono text-lg">+${ref.reward_amount.toFixed(2)}</p>
-                          <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md mt-1 inline-block ${ref.is_paid ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}`}>
-                            {ref.is_paid ? 'Reward Paid' : 'Pending'}
+                          <p className={`font-black font-mono text-lg ${ref.is_paid ? 'text-emerald-400' : 'text-neutral-500'}`}>
+                            ${ref.reward_amount.toFixed(2)}
+                          </p>
+                          <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md mt-1 inline-block ${ref.is_paid ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-white/5 text-neutral-400 border border-white/10'}`}>
+                            {ref.is_paid ? 'Reward Paid' : 'Awaiting Enrollment'}
                           </span>
                         </div>
                       </div>
@@ -400,7 +403,7 @@ export default function WalletPage() {
                        <Users className="w-10 h-10 text-amber-600/50" />
                     </div>
                     <p className="text-xl font-black text-white mb-2">Network is Empty</p>
-                    <p className="text-neutral-500 text-sm max-w-sm">Share your unique link with friends to expand your network and start earning tuition discounts.</p>
+                    <p className="text-neutral-500 text-sm max-w-sm">Share your unique link with friends to expand your network and earn cash bonuses.</p>
                   </div>
                 )
               )}
