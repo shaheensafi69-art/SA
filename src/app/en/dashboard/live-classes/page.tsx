@@ -10,8 +10,8 @@ type ClassGroup = {
   schedule_info: string;
   is_active: boolean;
   start_date: string;
-  meeting_link: string | null; // لینک مستقیم مایکروسافت تیمز
-  signal_group_link: string | null; // لینک مستقیم گروه سیگنال
+  meeting_link: string | null; 
+  signal_group_link: string | null; 
   teacher: { first_name: string; last_name: string } | null;
 };
 
@@ -28,13 +28,22 @@ export default function LiveClassesDashboard() {
     const supabase = createClient();
 
     try {
-      // دریافت کلاس‌ها همراه با مشخصات استاد و لینک‌های ارتباطی از دیتابیس
+      // دریافت اطلاعات کاربر فعلی
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
+      
+      const userId = session.user.id;
+
+      // دریافت کلاس‌هایی که این شاگرد مشخصاً در آن‌ها ثبت‌نام شده است
+      // با استفاده از Inner Join روی جدول class_students
       const { data, error } = await supabase
         .from("class_groups")
         .select(`
           id, class_name, schedule_info, is_active, start_date, meeting_link, signal_group_link,
-          teacher:profiles!teacher_id(first_name, last_name)
+          teacher:profiles!teacher_id(first_name, last_name),
+          class_students!inner(student_id) 
         `)
+        .eq("class_students.student_id", userId) // 👈 شرط فیلتر فقط برای این شاگرد
         .order("is_active", { ascending: false })
         .order("start_date", { ascending: false });
 
@@ -42,13 +51,19 @@ export default function LiveClassesDashboard() {
 
       if (data) {
         const formatted = data.map((cls: any) => ({
-          ...cls,
+          id: cls.id,
+          class_name: cls.class_name,
+          schedule_info: cls.schedule_info,
+          is_active: cls.is_active,
+          start_date: cls.start_date,
+          meeting_link: cls.meeting_link,
+          signal_group_link: cls.signal_group_link,
           teacher: Array.isArray(cls.teacher) ? cls.teacher[0] : cls.teacher
         }));
         setClasses(formatted as ClassGroup[]);
       }
     } catch (error) {
-      console.error("Error loading classes:", error);
+      console.error("Error loading enrolled classes:", error);
     } finally {
       setIsLoading(false);
     }
@@ -76,7 +91,7 @@ export default function LiveClassesDashboard() {
           <div className="flex bg-white/5 border border-white/10 p-4 rounded-2xl items-center gap-4">
              <div className="w-12 h-12 bg-indigo-500/20 text-indigo-400 flex items-center justify-center rounded-xl text-xl">🎓</div>
              <div>
-                <p className="text-xs text-neutral-500 font-bold uppercase tracking-widest">Active Channels</p>
+                <p className="text-xs text-neutral-500 font-bold uppercase tracking-widest">Enrolled Channels</p>
                 <p className="text-2xl font-black">{isLoading ? "-" : classes.length}</p>
              </div>
           </div>
@@ -101,7 +116,7 @@ export default function LiveClassesDashboard() {
 
               {liveSessions.length === 0 ? (
                 <div className="rounded-3xl border border-white/5 bg-white/[0.01] p-10 text-center text-neutral-500 text-sm backdrop-blur-sm">
-                  There are no live broadcasts running at this exact moment. Check your curriculum schedule.
+                  There are no live broadcasts running for your enrolled courses at this exact moment.
                 </div>
               ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -119,7 +134,6 @@ export default function LiveClassesDashboard() {
                         <Clock size={14} className="text-neutral-600" /> {room.schedule_info}
                       </p>
                       
-                      {/* دکمه‌های اکشن برای هدایت به پلتفرم‌های مربوطه */}
                       <div className="mt-auto pt-6 flex flex-col gap-2.5">
                         {room.meeting_link ? (
                           <a 
@@ -165,7 +179,7 @@ export default function LiveClassesDashboard() {
 
               {generalClasses.length === 0 ? (
                 <div className="rounded-3xl border border-white/5 p-10 text-center text-neutral-600 text-sm">
-                  No upcoming or standby nodes found in this sector.
+                  You are not enrolled in any upcoming or standby classes at the moment.
                 </div>
               ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -183,7 +197,6 @@ export default function LiveClassesDashboard() {
                         <Calendar size={14} className="text-neutral-600" /> {room.schedule_info}
                       </p>
                       
-                      {/* لایه‌ی هدایت امن برای وضعیت استندبای */}
                       <div className="mt-auto pt-6 flex flex-col gap-2">
                         {room.signal_group_link ? (
                           <a 

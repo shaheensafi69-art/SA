@@ -98,6 +98,7 @@ function RegisterFormContent() {
         }
       }
 
+      // ۵. ثبت اطلاعات تکمیلی در جدول profiles 
       const { error: profileError } = await supabase.from('profiles').upsert({
         id: userId,
         first_name: firstName,
@@ -109,7 +110,8 @@ function RegisterFormContent() {
         email: email,
         avatar_url: avatar_url,
         bio: bio || "",
-        role: 'student' 
+        role: 'student',
+        referred_by: validReferrerId // 👈 این خط اضافه می‌شود!
       });
 
       if (profileError) throw profileError;

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Loader2, Copy, CheckCircle2, TrendingUp, Gift, CreditCard, History, Users, LockKeyhole } from "lucide-react";
+import { Loader2, Copy, CheckCircle2, TrendingUp, Gift, CreditCard, History, Users, LockKeyhole, UserPlus } from "lucide-react";
 
 type Transaction = {
   id: string;
@@ -23,19 +23,20 @@ type Referral = {
 
 export default function WalletPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"transactions" | "referrals">("transactions");
+  // تغییر به referrals تا به عنوان پیش‌فرض باز شود
+  const [activeTab, setActiveTab] = useState<"transactions" | "referrals">("referrals");
   
   const [wallet, setWallet] = useState({
     balance: 0,
     referralCode: "Generating...",
     totalRewards: 0,
-    discountRate: 0 
+    discountRate: 0,
+    invitedBy: "" // اسم شخصی که این شاگرد را دعوت کرده است
   });
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [referrals, setReferrals] = useState<Referral[]>([]);
   
-  // استیت‌های مجزا برای کپی لینک و کد
   const [isLinkCopied, setIsLinkCopied] = useState(false);
   const [isCodeCopied, setIsCodeCopied] = useState(false);
 
@@ -49,9 +50,16 @@ export default function WalletPage() {
       const userId = session.user.id;
 
       try {
+        // دریافت اطلاعات پروفایل همراه با نام معرف (referred_by)
         const { data: profile } = await supabase
           .from("profiles")
-          .select("wallet_balance, referral_code, first_name, referral_discount_rate")
+          .select(`
+            wallet_balance, 
+            referral_code, 
+            first_name, 
+            referral_discount_rate,
+            referrer:profiles!referred_by(first_name, last_name)
+          `)
           .eq("id", userId)
           .single();
 
@@ -91,11 +99,16 @@ export default function WalletPage() {
             });
           }
 
+          // فرمت‌بندی نام شخصی که کاربر را دعوت کرده است
+          const referrerProfile = Array.isArray(profile.referrer) ? profile.referrer[0] : profile.referrer;
+          const invitedByName = referrerProfile ? `${referrerProfile.first_name} ${referrerProfile.last_name}` : "";
+
           setWallet({
             balance: profile.wallet_balance || 0,
             referralCode: profile.referral_code || "SAFI-...",
             totalRewards: totalRefRewards,
-            discountRate: profile.referral_discount_rate || 0
+            discountRate: profile.referral_discount_rate || 0,
+            invitedBy: invitedByName
           });
 
           setTransactions(txData || []);
@@ -134,8 +147,9 @@ export default function WalletPage() {
       <div className="max-w-[1600px] mx-auto space-y-8 animate-[fadeIn_0.4s_ease-out] relative z-10 px-4 sm:px-6 md:px-10 pt-8">
         
         {/* ================= HEADER ================= */}
-        <header className="bg-[#0a0a0f]/80 p-6 sm:p-10 rounded-[2.5rem] border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden">
+        <header className="bg-[#0a0a0f]/80 p-6 sm:p-10 rounded-[2.5rem] border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px] pointer-events-none"></div>
+          
           <div className="relative z-10">
             <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-3">
               Wallet & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Assets</span>
@@ -144,6 +158,19 @@ export default function WalletPage() {
               Manage your digital funds, track transactions, and earn exclusive tuition discounts by expanding the Safi network.
             </p>
           </div>
+
+          {/* نمایش اسم شخصی که دعوت کرده است (اگر وجود داشته باشد) */}
+          {!isLoading && wallet.invitedBy && (
+            <div className="relative z-10 flex items-center gap-4 bg-white/5 border border-white/10 p-4 rounded-2xl">
+              <div className="w-12 h-12 bg-indigo-500/20 text-indigo-400 flex items-center justify-center rounded-xl">
+                <UserPlus size={20} />
+              </div>
+              <div>
+                <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest">Invited By</p>
+                <p className="text-sm font-bold text-white mt-1">{wallet.invitedBy}</p>
+              </div>
+            </div>
+          )}
         </header>
 
         {/* ================= MAIN LAYOUT ================= */}
@@ -179,7 +206,6 @@ export default function WalletPage() {
                 </h2>
               </div>
 
-              {/* دکمه‌های کامینگ سون */}
               <div className="flex gap-3 relative z-10">
                 <div className="flex-1 relative group/btn cursor-not-allowed">
                    <div className="absolute inset-0 bg-white/5 rounded-2xl blur-md"></div>
@@ -218,7 +244,6 @@ export default function WalletPage() {
                   </p>
                 </div>
                 
-                {/* نمایش وضعیت تخفیف */}
                 <div className="flex flex-col items-end">
                   <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1">Current Tier</span>
                   <div className="bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
@@ -229,8 +254,6 @@ export default function WalletPage() {
               </div>
 
               <div className="flex flex-col gap-4 relative z-10">
-                
-                {/* کپی کد ریفرال */}
                 <div className="bg-black/60 border border-white/5 p-4 rounded-2xl flex flex-col gap-3">
                   <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest px-1">Your Referral Code</p>
                   <div className="flex items-center gap-3">
@@ -245,7 +268,6 @@ export default function WalletPage() {
                   </div>
                 </div>
 
-                {/* کپی لینک ریفرال */}
                 <div className="bg-black/60 border border-white/5 p-4 rounded-2xl flex flex-col gap-3">
                   <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest px-1">Your Master Link</p>
                   <div className="flex items-center gap-3">
@@ -259,7 +281,6 @@ export default function WalletPage() {
                     </button>
                   </div>
                 </div>
-
               </div>
               
               <div className="mt-8 flex items-center justify-between border-t border-white/5 pt-6 relative z-10">
@@ -279,20 +300,20 @@ export default function WalletPage() {
             {/* Tabs */}
             <div className="flex items-center gap-2 bg-[#0a0a0f]/80 p-2 rounded-[1.5rem] border border-white/5 shadow-inner w-full sm:w-fit backdrop-blur-xl">
               <button
-                onClick={() => setActiveTab("transactions")}
-                className={`flex-1 sm:flex-none px-6 sm:px-8 py-3.5 rounded-[1.2rem] text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
-                  activeTab === "transactions" ? "bg-white/10 text-white shadow-md border border-white/10" : "text-neutral-500 hover:text-neutral-300 hover:bg-white/5"
-                }`}
-              >
-                <History size={16} /> Transactions
-              </button>
-              <button
                 onClick={() => setActiveTab("referrals")}
                 className={`flex-1 sm:flex-none px-6 sm:px-8 py-3.5 rounded-[1.2rem] text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
                   activeTab === "referrals" ? "bg-amber-500/10 text-amber-500 shadow-md border border-amber-500/20" : "text-neutral-500 hover:text-neutral-300 hover:bg-white/5"
                 }`}
               >
                 <Users size={16} /> Network
+              </button>
+              <button
+                onClick={() => setActiveTab("transactions")}
+                className={`flex-1 sm:flex-none px-6 sm:px-8 py-3.5 rounded-[1.2rem] text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
+                  activeTab === "transactions" ? "bg-white/10 text-white shadow-md border border-white/10" : "text-neutral-500 hover:text-neutral-300 hover:bg-white/5"
+                }`}
+              >
+                <History size={16} /> Transactions
               </button>
             </div>
 
