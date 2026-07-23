@@ -21,7 +21,9 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() { return request.cookies.getAll(); },
+        getAll() { 
+          return request.cookies.getAll(); 
+        },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           response = NextResponse.next({ request });
@@ -33,7 +35,9 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  // 🔒 استفاده از getSession به جای getUser برای جلوگیری از لاگ‌آوت شدن ناخواسته و حفظ پایداری نشست
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user ?? null;
 
   if (pathname === '/') {
     return NextResponse.redirect(new URL(`/${defaultLocale}`, request.url));
@@ -98,9 +102,6 @@ export async function middleware(request: NextRequest) {
       if (isStudentRoute && (userRole === 'super_admin' || userRole === 'admin' || userRole === 'teacher')) {
         return NextResponse.redirect(new URL(getCorrectDashboardRoot(), request.url));
       }
-
-      // ✅ نکته کلیدی: اگر کاربر لاگین بود و حق دسترسی داشت،
-      // هیچ ریدایرکتی انجام نمیدهیم تا بگذاریم به مسیر خودش (مثلاً /admin/classes) برود.
     }
   }
 
