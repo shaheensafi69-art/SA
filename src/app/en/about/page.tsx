@@ -1,11 +1,163 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef } from "react";
 import Link from "next/link";
-import { ArrowRight, Building2, ExternalLink, Award, BookOpen } from "lucide-react";
+import { ArrowRight, Building2, ExternalLink, Award, BookOpen, ArrowUpRight } from "lucide-react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
+import { cn } from "@/lib/utils";
 
-// آپدیت تایپ برای دریافت آرایه‌ای از کورس‌ها
+// ==========================================
+// 3D TILT CARD COMPONENT
+// ==========================================
+export interface Interactive3DCardProps {
+  title: string;
+  subtitle: string;
+  imageUrl: string;
+  actionText: string;
+  href: string;
+  onActionClick?: () => void;
+  className?: string;
+  badge?: string;
+  borderClass?: string;
+  textClass?: string;
+}
+
+export const Interactive3DCard = forwardRef<HTMLDivElement, Interactive3DCardProps>(
+  (
+    { title, subtitle, imageUrl, actionText, href, onActionClick, className, badge, borderClass = "border-border/30", textClass = "text-white" },
+    ref
+  ) => {
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+
+    const springConfig = { damping: 15, stiffness: 150 };
+    const springX = useSpring(mouseX, springConfig);
+    const springY = useSpring(mouseY, springConfig);
+
+    const rotateX = useTransform(springY, [-0.5, 0.5], ["10.5deg", "-10.5deg"]);
+    const rotateY = useTransform(springX, [-0.5, 0.5], ["-10.5deg", "10.5deg"]);
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const { width, height, left, top } = rect;
+      const mouseXVal = e.clientX - left;
+      const mouseYVal = e.clientY - top;
+      const xPct = mouseXVal / width - 0.5;
+      const yPct = mouseYVal / height - 0.5;
+      mouseX.set(xPct);
+      mouseY.set(yPct);
+    };
+
+    const handleMouseLeave = () => {
+      mouseX.set(0);
+      mouseY.set(0);
+    };
+
+    return (
+      <motion.div
+        ref={ref}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          rotateX,
+          rotateY,
+          transformStyle: "preserve-3d",
+          perspective: "1000px",
+        }}
+        className={cn(
+          "relative h-[32rem] w-full rounded-[2.5rem] bg-[#0a0a0e] shadow-2xl border transition-colors duration-300 overflow-hidden group",
+          borderClass,
+          className
+        )}
+      >
+        <div
+          style={{
+            transform: "translateZ(50px)",
+            transformStyle: "preserve-3d",
+          }}
+          className="absolute inset-4 grid h-[calc(100%-2rem)] w-[calc(100%-2rem)] grid-rows-[1fr_auto] rounded-2xl"
+        >
+          {/* Background Image */}
+          <img
+            src={imageUrl}
+            alt={`${title}, ${subtitle}`}
+            className="absolute inset-0 h-full w-full rounded-2xl object-cover filter grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${title.replace(" ", "+")}&background=random&size=512`;
+            }}
+          />
+          
+          {/* Darkening overlay for contrast */}
+          <div className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-b from-black/30 via-black/40 to-black/90" />
+
+          {/* Badge if present */}
+          {badge && (
+            <div className="absolute top-4 left-4 z-20">
+              <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-black uppercase tracking-widest text-yellow-400">
+                {badge}
+              </span>
+            </div>
+          )}
+
+          {/* Card Content (Header & Footer) */}
+          <div className="relative flex flex-col justify-between rounded-2xl p-6 text-white z-10">
+            
+            {/* Header section with link */}
+            <div className="flex items-start justify-end">
+              <motion.a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, rotate: "2.5deg" }}
+                whileTap={{ scale: 0.9 }}
+                aria-label={`Learn more about ${title}`}
+                style={{ transform: "translateZ(60px)" }}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md ring-1 ring-inset ring-white/30 transition-colors hover:bg-white/30"
+              >
+                <ArrowUpRight className="h-5 w-5 text-white" />
+              </motion.a>
+            </div>
+
+            {/* Bottom info & action */}
+            <div className="space-y-4">
+              <motion.div style={{ transform: "translateZ(40px)" }}>
+                <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">
+                  {title}
+                </h3>
+                <p className={cn("text-xs font-black uppercase tracking-[0.2em]", textClass)}>
+                  {subtitle}
+                </p>
+              </motion.div>
+
+              <motion.div style={{ transform: "translateZ(40px)" }}>
+                <Link
+                  href={href}
+                  onClick={(e) => {
+                    if (onActionClick) {
+                      e.preventDefault();
+                      onActionClick();
+                    }
+                  }}
+                  className="flex items-center justify-center w-full rounded-xl py-3 text-center text-xs font-black uppercase tracking-widest text-black bg-white transition-all duration-300 hover:bg-yellow-400 hover:shadow-[0_0_20px_rgba(234,179,8,0.4)]"
+                >
+                  {actionText} <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </motion.div>
+            </div>
+
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+);
+Interactive3DCard.displayName = "Interactive3DCard";
+
+
+// ==========================================
+// TYPES & DATA
+// ==========================================
 type TeacherInfo = {
   id: string;
   first_name: string;
@@ -16,108 +168,95 @@ type TeacherInfo = {
   teacher_info_courses: { courses: { title: string } }[] | null;
 };
 
-// دیتای تیم با رنگ‌بندی اختصاصی
 const teamMembers = [
   {
     name: "Shaheen Safi",
     role: "FOUNDER & CHIEF EXECUTIVE OFFICER",
     slug: "shaheen-safi",
     image: "/team/shaheen.jpeg",
-    borderClass: "border-yellow-500",
+    borderClass: "border-yellow-500/30 hover:border-yellow-500",
     textClass: "text-yellow-500",
-    glowClass: "group-hover:bg-yellow-500/10",
-    shadowClass: "group-hover:shadow-[0_0_40px_rgba(234,179,8,0.15)]",
   },
   {
     name: "Mujtaba Rahmani",
     role: "CHIEF OPERATING OFFICER & CISO",
     slug: "mujtaba-rahmani",
     image: "/team/mujtaba.jpeg",
-    borderClass: "border-blue-500",
+    borderClass: "border-blue-500/30 hover:border-blue-500",
     textClass: "text-blue-500",
-    glowClass: "group-hover:bg-blue-500/10",
-    shadowClass: "group-hover:shadow-[0_0_40px_rgba(59,130,246,0.15)]",
   },
   {
     name: "Sahel Salem",
     role: "CO FOUNDER & LEADER ECOSYSTEM PARTNERSHIPS",
     slug: "sahel-salem",
     image: "/team/sahel.jpeg",
-    borderClass: "border-emerald-500",
+    borderClass: "border-emerald-500/30 hover:border-emerald-500",
     textClass: "text-emerald-500",
-    glowClass: "group-hover:bg-emerald-500/10",
-    shadowClass: "group-hover:shadow-[0_0_40px_rgba(16,185,129,0.15)]",
   },
   {
     name: "Shirin Gol Ahmadi",
     role: "CHIEF CREATIVE OFFICER & AI LEAD",
     slug: "shirin-gol-ahmadi",
     image: "/team/shirin.jpeg",
-    borderClass: "border-rose-500",
+    borderClass: "border-rose-500/30 hover:border-rose-500",
     textClass: "text-rose-500",
-    glowClass: "group-hover:bg-rose-500/10",
-    shadowClass: "group-hover:shadow-[0_0_40px_rgba(225,29,72,0.15)]",
   }
 ];
 
-// دیتای اکوسیستم شرکت‌ها
 const ecosystemCompanies = [
   {
     name: "Safi International Capital LTD",
     url: "https://safiinternationalcapitalltd.site",
     logo: "/company/Safi International Capital LTD.png",
     description: "The global financial and corporate backbone of the Safi Ecosystem, officially registered in the United Kingdom.",
-    color: "from-yellow-500/20 to-transparent",
     borderHover: "group-hover:border-yellow-500/50",
-    textGlow: "group-hover:text-yellow-400"
+    textGlow: "text-yellow-500"
   },
   {
     name: "SafiPay",
     url: "https://safipay.net",
     logo: "/company/SafiPay.png",
     description: "A professional fintech application for international account creation and secure multi-currency transactions.",
-    color: "from-blue-500/20 to-transparent",
     borderHover: "group-hover:border-blue-500/50",
-    textGlow: "group-hover:text-blue-400"
+    textGlow: "text-blue-500"
   },
   {
     name: "Safi TopUp",
     url: "https://www.safitopup.site/en",
     logo: "/company/Safi TopUp.jpg",
     description: "Global mobile credit transfers, digital gift cards, and utility payments seamlessly connecting over 150 countries.",
-    color: "from-emerald-500/20 to-transparent",
     borderHover: "group-hover:border-emerald-500/50",
-    textGlow: "group-hover:text-emerald-400"
+    textGlow: "text-emerald-500"
   },
   {
     name: "SafiPro",
     url: "https://www.safipro.site/",
     logo: "/company/SafiPro.jpeg",
     description: "Premium lifestyle, apparel, and modern design products delivered with uncompromising quality to a global audience.",
-    color: "from-rose-500/20 to-transparent",
     borderHover: "group-hover:border-rose-500/50",
-    textGlow: "group-hover:text-rose-400"
+    textGlow: "text-rose-500"
   },
   {
     name: "Safi AI",
     url: "https://www.safiai.site/",
     logo: "/company/Safi Ai.png",
     description: "The advanced artificial intelligence core powering our ecosystem with intelligent, real-time corporate assistance.",
-    color: "from-fuchsia-500/20 to-transparent",
     borderHover: "group-hover:border-fuchsia-500/50",
-    textGlow: "group-hover:text-fuchsia-400"
+    textGlow: "text-fuchsia-500"
   },
   {
     name: "Shaheen Safi Blog",
     url: "https://shaheensafi.blog/",
     logo: "/company/shaheenblog.png",
     description: "Exclusive insights, articles, and architectural fintech strategies directly from the founder, Shaheen Safi.",
-    color: "from-amber-500/20 to-transparent",
     borderHover: "group-hover:border-amber-500/50",
-    textGlow: "group-hover:text-amber-400"
+    textGlow: "text-amber-500"
   }
 ];
 
+// ==========================================
+// ABOUT PAGE COMPONENT
+// ==========================================
 export default function AboutPage() {
   const [teachers, setTeachers] = useState<TeacherInfo[]>([]);
   const [isLoadingTeachers, setIsLoadingTeachers] = useState(true);
@@ -127,7 +266,6 @@ export default function AboutPage() {
       setIsLoadingTeachers(true);
       const supabase = createClient();
       try {
-        // 🔥 کوئری حرفه‌ای با استفاده از جدول واسط
         const { data, error } = await supabase
           .from("teacher_info")
           .select(`
@@ -139,7 +277,6 @@ export default function AboutPage() {
           .order("created_at", { ascending: true });
         
         if (error) throw error;
-
         if (data) {
           setTeachers(data as unknown as TeacherInfo[]);
         }
@@ -178,7 +315,7 @@ export default function AboutPage() {
         </p>
       </section>
 
-      {/* ================= LEADERSHIP / FOUNDERS SECTION ================= */}
+      {/* ================= LEADERSHIP / FOUNDERS SECTION (3D CARDS INTEGRATION) ================= */}
       <section className="relative py-20 px-4 md:px-12 max-w-7xl mx-auto z-10">
         <div className="flex flex-col items-center mb-16 animate-[fadeIn_1s_ease-out]">
           <h2 className="text-3xl md:text-5xl font-black text-white tracking-wider uppercase mb-4 text-center">Executive Board</h2>
@@ -186,40 +323,19 @@ export default function AboutPage() {
           <p className="text-neutral-500 text-xs sm:text-sm font-bold tracking-widest uppercase text-center max-w-2xl">The Visionaries, Engineers, and Strategists Behind The Safi Ecosystem</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {teamMembers.map((member, index) => (
-            <Link 
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+          {teamMembers.map((member) => (
+            <Interactive3DCard
               key={member.slug}
-              href={`/en/founder/${member.slug}`} 
-              className={`group relative bg-[#0a0a0e] border border-white/5 rounded-[2rem] p-6 flex flex-col items-center text-center transition-all duration-500 hover:-translate-y-2 ${member.shadowClass} overflow-hidden`}
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <div className={`absolute inset-0 opacity-0 transition-opacity duration-700 pointer-events-none blur-3xl ${member.glowClass} group-hover:opacity-100`}></div>
-
-              <div className="relative w-48 h-48 sm:w-64 sm:h-64 mb-6 z-10 shrink-0 mx-auto">
-                <div className={`w-full h-full rounded-2xl p-1.5 border border-dashed ${member.borderClass} group-hover:border-solid transition-all duration-500 overflow-hidden bg-neutral-900`}>
-                  <img 
-                    src={member.image} 
-                    alt={member.name} 
-                    className="w-full h-full rounded-xl object-cover filter grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${member.name.replace(" ", "+")}&background=random&size=512`;
-                    }}
-                  />
-                </div>
-              </div>
-              
-              <div className="relative z-10 w-full flex flex-col items-center flex-1">
-                <h3 className="text-2xl sm:text-3xl font-black text-white mb-2 tracking-wide group-hover:scale-105 transition-transform duration-300">{member.name}</h3>
-                <p className={`text-[10px] sm:text-xs font-black uppercase tracking-[0.15em] mb-8 leading-relaxed w-full ${member.textClass}`}>
-                  {member.role}
-                </p>
-                
-                <div className="mt-auto flex items-center justify-center gap-2 text-xs font-bold text-neutral-400 uppercase tracking-widest group-hover:text-white transition-colors bg-white/5 w-full py-3 rounded-xl border border-white/5 group-hover:border-white/20">
-                  Read Full Bio <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
-                </div>
-              </div>
-            </Link>
+              title={member.name}
+              subtitle={member.role}
+              imageUrl={member.image}
+              actionText="Read Full Bio"
+              href={`/en/founder/${member.slug}`}
+              borderClass={member.borderClass}
+              textClass={member.textClass}
+              badge="Executive Board"
+            />
           ))}
         </div>
       </section>
@@ -243,7 +359,7 @@ export default function AboutPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {teachers.map((teacher) => (
-              <div key={teacher.id} className="group bg-[#0a0a0e] border border-purple-500/10 hover:border-purple-500/30 rounded-[2.5rem] p-8 flex flex-col md:flex-row gap-8 items-center md:items-start transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(168,85,247,0.1)] relative overflow-hidden h-full">
+              <div key={teacher.id} className="group bg-[#0a0a0e] border border-purple-500/15 hover:border-purple-500/40 rounded-[2.5rem] p-8 flex flex-col md:flex-row gap-8 items-center md:items-start transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(168,85,247,0.1)] relative overflow-hidden h-full">
                 
                 {/* Glow Effect */}
                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-fuchsia-500/10 rounded-full blur-[60px] pointer-events-none group-hover:bg-fuchsia-500/20 transition-all"></div>
@@ -260,13 +376,11 @@ export default function AboutPage() {
                 {/* Info & Badges Section */}
                 <div className="flex flex-col flex-1 text-center md:text-left relative z-10 h-full">
                   
-                  {/* Name and Bio */}
                   <h3 className="text-2xl font-black text-white mb-2">{teacher.first_name} {teacher.last_name}</h3>
                   <p className="text-xs text-neutral-400 font-medium leading-relaxed mb-4 line-clamp-3">
                     {teacher.bio}
                   </p>
 
-                  {/* Achievements */}
                   {teacher.achievements && (
                     <div className="bg-black/40 border border-white/5 p-4 rounded-2xl mb-5">
                       <div className="flex items-center justify-center md:justify-start gap-2 mb-2 text-fuchsia-400">
@@ -279,7 +393,6 @@ export default function AboutPage() {
                     </div>
                   )}
 
-                  {/* 🔥 رندر کردن داینامیک لیست کورس‌ها (به پایین منتقل شد) */}
                   <div className="mt-auto flex flex-wrap items-center justify-center md:justify-start gap-2 pt-4 border-t border-white/5">
                     {teacher.teacher_info_courses && teacher.teacher_info_courses.length > 0 ? (
                       teacher.teacher_info_courses.map((item, idx) => (
@@ -319,8 +432,6 @@ export default function AboutPage() {
               rel="noopener noreferrer"
               className={`group relative bg-[#0a0a0f] border border-white/5 rounded-[2rem] p-8 overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl ${company.borderHover} block`}
             >
-              <div className={`absolute top-0 left-0 w-full h-full bg-gradient-to-br ${company.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`}></div>
-              
               <div className="relative z-10 flex flex-col h-full">
                 <div className="w-20 h-20 bg-black rounded-2xl border border-white/10 p-2 mb-6 shadow-lg group-hover:scale-110 transition-transform duration-500 flex items-center justify-center overflow-hidden shrink-0">
                   <img src={company.logo} alt={company.name} className="w-full h-full object-contain" />
