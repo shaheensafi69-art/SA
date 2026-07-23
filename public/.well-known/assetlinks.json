@@ -1,12 +1,8 @@
-[
-  {
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "org.safiacademy.app",
-      "sha256_cert_fingerprints": [
-        "اینجا_باید_کد_SHA256_اپلیکیشن_شما_قرار_بگیرد"
-      ]
-    }
-  }
-]
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "org.safiacademy.twa",
+        "sha256_cert_fingerprints": ["BE:6E:47:CF:A9:97:E3:59:C5:B9:91:73:CC:C6:C3:9F:BF:B2:C0:AC:45:94:7B:CA:78:1C:EB:DD:6E:E1:B1:9C"]
+      }
+    }]
