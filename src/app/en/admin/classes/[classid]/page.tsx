@@ -4,16 +4,17 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { Loader2, ArrowLeft, Users, Clock, CalendarDays, BookOpen, ShieldAlert, Radio, CheckCircle2, User, Mail, Sparkles } from "lucide-react";
+import { Loader2, ArrowLeft, Users, Clock, CalendarDays, BookOpen, ShieldAlert, Radio, CheckCircle2, User, Mail, Sparkles, Plus, LockKeyhole } from "lucide-react";
 
 type ClassDetail = {
   id: string;
+  course_id: string;
   class_name: string;
   is_active: boolean;
   created_at: string;
   start_date: string | null;
-  schedule_time?: string; // (فرض بر اینکه در دیتابیس زمان را ثبت میکنید، وگرنه مقدار پیش‌فرض میگیرد)
-  schedule_days?: string; // روزهای هفته
+  schedule_time?: string; 
+  schedule_days?: string;
   course: { title: string } | null;
   teacher: { id: string; first_name: string; last_name: string; email: string; avatar_url: string | null } | null;
 };
@@ -25,6 +26,7 @@ type EnrolledStudent = {
   email: string;
   avatar_url: string | null;
   joined_at: string;
+  is_paid: boolean;
 };
 
 export default function AdminClassDetailsPage() {
@@ -44,7 +46,6 @@ export default function AdminClassDetailsPage() {
     const supabase = createClient();
 
     try {
-      // 1. واکشی اطلاعات کلاس و استاد
       const { data: clsData, error: clsError } = await supabase
         .from("class_groups")
         .select(`
@@ -64,16 +65,15 @@ export default function AdminClassDetailsPage() {
         ...clsData, 
         teacher: teacherObj, 
         course: courseObj,
-        // اگر این فیلدها در دیتابیس نیستند مقادیر دیفالت میدهیم تا دیزاین شما کامل باشد
         schedule_time: clsData.schedule_time || "18:00 PM - 20:00 PM",
         schedule_days: clsData.schedule_days || "Monday, Wednesday, Friday"
       });
 
-      // 2. واکشی شاگردان کلاس
       const { data: classStudents } = await supabase
         .from("class_students")
-        .select("student_id, created_at")
-        .eq("class_group_id", classId);
+        .select("student_id, created_at, is_paid")
+        .eq("class_group_id", classId)
+        .order('created_at', { ascending: false });
 
       if (classStudents && classStudents.length > 0) {
         const studentIds = classStudents.map(cs => cs.student_id);
@@ -87,16 +87,40 @@ export default function AdminClassDetailsPage() {
             const joinedData = classStudents.find(cs => cs.student_id === profile.id);
             return {
               ...profile,
-              joined_at: joinedData?.created_at || new Date().toISOString()
+              joined_at: joinedData?.created_at || new Date().toISOString(),
+              is_paid: joinedData?.is_paid ?? false
             };
           });
+          
+          formattedStudents.sort((a, b) => (a.is_paid === b.is_paid) ? 0 : a.is_paid ? 1 : -1);
           setStudents(formattedStudents);
         }
+      } else {
+        setStudents([]);
       }
     } catch (error) {
       console.error("Error fetching class details:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const toggleStudentPaymentStatus = async (studentId: string, currentStatus: boolean) => {
+    const supabase = createClient();
+    const newStatus = !currentStatus;
+
+    try {
+      const { error } = await supabase
+        .from("class_students")
+        .update({ is_paid: newStatus })
+        .eq("class_group_id", classId)
+        .eq("student_id", studentId);
+
+      if (error) throw error;
+
+      setStudents(prev => prev.map(s => s.id === studentId ? { ...s, is_paid: newStatus } : s));
+    } catch (error: any) {
+      alert("Failed to update status: " + error.message);
     }
   };
 
@@ -124,13 +148,10 @@ export default function AdminClassDetailsPage() {
 
   return (
     <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir="ltr">
-      
-      {/* Background Ambience */}
       <div className="fixed top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-cyan-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
       <div className="relative z-10 max-w-[1400px] mx-auto space-y-6 sm:space-y-8 animate-[fadeIn_0.4s_ease-out]">
         
-        {/* ================= HEADER & CLASS SUMMARY ================= */}
         <section className="bg-[#0a0a0f]/80 p-6 sm:p-10 rounded-[2.5rem] border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none"></div>
           
@@ -177,17 +198,27 @@ export default function AdminClassDetailsPage() {
           </div>
         </section>
 
-        {/* ================= 2 COLUMN LAYOUT ================= */}
         <div className="grid gap-6 sm:gap-8 grid-cols-1 xl:grid-cols-[1.3fr_0.7fr]">
           
           {/* LEFT: STUDENTS LIST */}
           <div className="space-y-6 sm:space-y-8 flex flex-col">
-            <section className="bg-[#0a0a0f]/80 border border-white/5 p-6 sm:p-8 rounded-[2.5rem] shadow-2xl backdrop-blur-3xl flex-1 flex flex-col">
-              <h3 className="text-xl font-black text-white flex items-center gap-2 mb-6 border-b border-white/5 pb-4">
-                <Users size={22} className="text-cyan-400"/> Student Roster
-              </h3>
+            <section className="bg-[#0a0a0f]/80 border border-white/5 p-6 sm:p-8 rounded-[2.5rem] shadow-2xl backdrop-blur-3xl flex-1 flex flex-col relative">
               
-              <div className="space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6 border-b border-white/5 pb-4">
+                <h3 className="text-xl font-black text-white flex items-center gap-2">
+                  <Users size={22} className="text-cyan-400"/> Student Roster
+                </h3>
+                
+                {/* 👈 دکمه هدایت به صفحه جدید جستجو و افزودن شاگرد */}
+                <Link 
+                  href={`/en/admin/classes/${classId}/add-student`}
+                  className="bg-cyan-500 hover:bg-cyan-400 text-black px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-colors shadow-[0_0_20px_rgba(6,182,212,0.3)]"
+                >
+                  <Plus size={16} /> Enroll New Student
+                </Link>
+              </div>
+              
+              <div className="space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
                 {students.length === 0 ? (
                   <div className="text-center py-16 border border-dashed border-white/5 rounded-3xl bg-black/20 text-neutral-500">
                     <Users size={32} className="mx-auto mb-3 opacity-50"/>
@@ -195,7 +226,7 @@ export default function AdminClassDetailsPage() {
                   </div>
                 ) : (
                   students.map((student) => (
-                    <div key={student.id} className="w-full text-left rounded-2xl border border-white/5 bg-black/40 p-4 sm:p-5 flex items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors">
+                    <div key={student.id} className={`w-full text-left rounded-2xl border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors ${student.is_paid ? 'bg-black/40 border-white/5' : 'bg-red-950/10 border-red-500/20'}`}>
                       <div className="flex items-center gap-4 min-w-0">
                         <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-neutral-900 border border-white/10 shrink-0 flex items-center justify-center">
                           {student.avatar_url ? (
@@ -209,9 +240,24 @@ export default function AdminClassDetailsPage() {
                           <p className="text-[10px] text-neutral-500 font-mono mt-0.5 truncate">{student.email}</p>
                         </div>
                       </div>
-                      <div className="text-right hidden sm:block">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">Joined</p>
-                        <p className="text-xs font-bold text-neutral-300 mt-0.5">{new Date(student.joined_at).toLocaleDateString()}</p>
+                      
+                      <div className="flex items-center justify-between sm:justify-end gap-6 border-t border-white/5 sm:border-t-0 pt-3 sm:pt-0">
+                        <div className="text-left sm:text-right">
+                          <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">Joined</p>
+                          <p className="text-xs font-bold text-neutral-300 mt-0.5 font-mono">{new Date(student.joined_at).toLocaleDateString()}</p>
+                        </div>
+                        
+                        <button
+                          onClick={() => toggleStudentPaymentStatus(student.id, student.is_paid)}
+                          className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all flex items-center gap-1.5 min-w-[90px] justify-center ${
+                            student.is_paid 
+                              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20' 
+                              : 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20 animate-pulse'
+                          }`}
+                        >
+                          {student.is_paid ? <CheckCircle2 size={12}/> : <LockKeyhole size={12}/>}
+                          {student.is_paid ? 'PAID / ACTIVE' : 'PENDING / LOCKED'}
+                        </button>
                       </div>
                     </div>
                   ))
@@ -258,7 +304,6 @@ export default function AdminClassDetailsPage() {
           </div>
 
         </div>
-
       </div>
     </div>
   );

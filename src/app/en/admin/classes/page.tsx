@@ -1,3 +1,4 @@
+// src/app/en/admin/classes/page.tsx
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
@@ -29,7 +30,6 @@ export default function AdminClassesPage() {
     const supabase = createClient();
     
     try {
-      // دریافت لیست کلاس‌ها + استاد + دوره + تعداد شاگردان
       const { data, error } = await supabase
         .from("class_groups")
         .select(`
@@ -61,7 +61,6 @@ export default function AdminClassesPage() {
     }
   };
 
-  // محاسبه اینکه آیا کلاس کمتر از 10 روز پیش ساخته شده است
   const isClassNew = (dateString: string) => {
     const classDate = new Date(dateString).getTime();
     const today = new Date().getTime();
@@ -69,7 +68,6 @@ export default function AdminClassesPage() {
     return diffDays <= 10;
   };
 
-  // فیلتر کردن بر اساس سرچ
   const filteredClasses = useMemo(() => {
     if (!searchQuery) return classes;
     return classes.filter(c => 
@@ -79,7 +77,6 @@ export default function AdminClassesPage() {
     );
   }, [classes, searchQuery]);
 
-  // دسته‌بندی کلاس‌ها بر اساس نام دوره
   const groupedClasses = useMemo(() => {
     const groups: { [key: string]: ClassItem[] } = {};
     filteredClasses.forEach(cls => {
@@ -148,7 +145,6 @@ export default function AdminClassesPage() {
             {Object.keys(groupedClasses).map((courseName, groupIndex) => (
               <section key={courseName} className="animate-[slideUp_0.5s_ease-out_forwards]" style={{ animationDelay: `${groupIndex * 0.1}s`, opacity: 0 }}>
                 
-                {/* Headerِ دوره */}
                 <div className="flex items-center gap-3 mb-6 pl-2 border-b border-white/5 pb-3">
                   <BookOpen size={20} className="text-cyan-400" />
                   <h2 className="text-xl sm:text-2xl font-black text-white tracking-wide">{courseName}</h2>
@@ -157,7 +153,6 @@ export default function AdminClassesPage() {
                   </span>
                 </div>
 
-                {/* گرید کلاس‌های این دوره */}
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {groupedClasses[courseName].map((cls) => {
                     const statusNew = isClassNew(cls.created_at);
@@ -167,10 +162,8 @@ export default function AdminClassesPage() {
                         key={cls.id}
                         className="group flex flex-col bg-[#0a0a0f]/80 border border-white/5 rounded-[2rem] p-6 backdrop-blur-3xl shadow-xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(6,182,212,0.15)] hover:border-cyan-500/30 relative overflow-hidden"
                       >
-                        {/* Glow effect */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-[40px] pointer-events-none group-hover:bg-cyan-500/10 transition-colors"></div>
 
-                        {/* Top Row: Tags */}
                         <div className="flex justify-between items-start mb-5 relative z-10">
                           <span className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border flex items-center gap-1.5 ${
                             cls.is_active 
@@ -181,7 +174,6 @@ export default function AdminClassesPage() {
                             {cls.is_active ? "In Progress" : "Completed"}
                           </span>
                           
-                          {/* برچسب 10 روز اول */}
                           {statusNew && (
                             <span className="px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border bg-amber-500/10 text-amber-400 border-amber-500/20 flex items-center gap-1 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
                               <Sparkles size={10}/> NEW
@@ -189,7 +181,6 @@ export default function AdminClassesPage() {
                           )}
                         </div>
 
-                        {/* Class Details */}
                         <div className="relative z-10 flex-1">
                           <h3 className="text-xl font-black text-white mb-4 line-clamp-1 group-hover:text-cyan-300 transition-colors">
                             {cls.class_name}

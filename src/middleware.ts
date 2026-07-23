@@ -7,8 +7,8 @@ const defaultLocale = 'en';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 🚫 فیلتر مهم: اگر درخواست مربوط به API بود، فوراً از میدل‌ویر رد شود و هیچ کاری نکند
-  if (pathname.startsWith('/api')) {
+  // 🚫 فیلتر مهم: درخواست‌های API و فایل‌های استاتیک باید بدون دستکاری رد شوند
+  if (pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.includes('.')) {
     return NextResponse.next();
   }
 
@@ -49,47 +49,58 @@ export async function middleware(request: NextRequest) {
 
   const currentLocale = pathname.split('/')[1] || defaultLocale;
 
+  // مسیرهای اصلی سیستم (برای بررسی‌های دسترسی)
   const isAuthPage = pathname.includes('/login') || pathname.includes('/register');
   const isAdminRoute = pathname.includes('/admin');
   const isTeacherRoute = pathname.includes('/teacher');
   const isStudentRoute = pathname.includes('/dashboard');
+  
   const isProtectedRoute = isAdminRoute || isTeacherRoute || isStudentRoute;
 
+  // ==========================================
+  // مدیریت دسترسی‌ها (Role-Based Access Control)
+  // ==========================================
   if (isProtectedRoute || isAuthPage) {
-    let userRole = 'student';
+    
+    // اگر کاربر مهمان است و می‌خواهد به صفحات محافظت‌شده برود -> لاگین
+    if (!user && isProtectedRoute) {
+      return NextResponse.redirect(new URL(`/${currentLocale}/login`, request.url));
+    }
+
     if (user) {
+      // گرفتن نقش واقعی کاربر
       const { data: profile } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', user.id)
         .single();
-      userRole = profile?.role || 'student';
-    }
+        
+      const userRole = profile?.role || 'student';
 
-    const getCorrectDashboardUrl = () => {
-      if (userRole === 'super_admin' || userRole === 'admin') return `/${currentLocale}/admin`;
-      if (userRole === 'teacher') return `/${currentLocale}/teacher`;
-      return `/${currentLocale}/dashboard`;
-    };
+      const getCorrectDashboardRoot = () => {
+        if (userRole === 'super_admin' || userRole === 'admin') return `/${currentLocale}/admin`;
+        if (userRole === 'teacher') return `/${currentLocale}/teacher`;
+        return `/${currentLocale}/dashboard`;
+      };
 
-    if (!user && isProtectedRoute) {
-      return NextResponse.redirect(new URL(`/${currentLocale}/login`, request.url));
-    }
+      // اگر لاگین است و می‌خواهد برود صفحه لاگین/رجیستر -> ریدایرکت به پنل اصلی خودش
+      if (isAuthPage) {
+        return NextResponse.redirect(new URL(getCorrectDashboardRoot(), request.url));
+      }
 
-    if (user && isAuthPage) {
-      return NextResponse.redirect(new URL(getCorrectDashboardUrl(), request.url));
-    }
-
-    if (user && isProtectedRoute) {
+      // 🔴 جلوگیری از دسترسی غیرمجاز متقاطع (بدون خراب کردن مسیرهای زیرمجموعه)
       if (isAdminRoute && userRole !== 'super_admin' && userRole !== 'admin') {
-        return NextResponse.redirect(new URL(getCorrectDashboardUrl(), request.url));
+        return NextResponse.redirect(new URL(getCorrectDashboardRoot(), request.url));
       }
       if (isTeacherRoute && userRole !== 'teacher' && userRole !== 'super_admin') {
-        return NextResponse.redirect(new URL(getCorrectDashboardUrl(), request.url));
+        return NextResponse.redirect(new URL(getCorrectDashboardRoot(), request.url));
       }
       if (isStudentRoute && (userRole === 'super_admin' || userRole === 'admin' || userRole === 'teacher')) {
-        return NextResponse.redirect(new URL(getCorrectDashboardUrl(), request.url));
+        return NextResponse.redirect(new URL(getCorrectDashboardRoot(), request.url));
       }
+
+      // ✅ نکته کلیدی: اگر کاربر لاگین بود و حق دسترسی داشت،
+      // هیچ ریدایرکتی انجام نمیدهیم تا بگذاریم به مسیر خودش (مثلاً /admin/classes) برود.
     }
   }
 
