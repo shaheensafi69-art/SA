@@ -38,19 +38,19 @@
     },
     {
       "src": "/screenshot-menu.jpg",
-      "sizes": "1080x2093",
+      "sizes": "1080x2097",
       "type": "image/jpeg",
       "form_factor": "narrow"
     },
     {
       "src": "/screenshot-students.jpg",
-      "sizes": "1080x2093",
+      "sizes": "1080x2097",
       "type": "image/jpeg",
       "form_factor": "narrow"
     },
     {
       "src": "/screenshot-finance.jpg",
-      "sizes": "1080x2093",
+      "sizes": "1080x2097",
       "type": "image/jpeg",
       "form_factor": "narrow"
     }
