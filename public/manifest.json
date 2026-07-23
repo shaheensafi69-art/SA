@@ -25,16 +25,28 @@
   ],
   "screenshots": [
     {
-      "src": "/screenshot-mobile.png",
-      "sizes": "720x1280",
-      "type": "image/png",
+      "src": "/screenshot-dashboard.jpg",
+      "sizes": "1080x2093",
+      "type": "image/jpeg",
       "form_factor": "narrow"
     },
     {
-      "src": "/screenshot-desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
+      "src": "/screenshot-menu.jpg",
+      "sizes": "1080x2093",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot-students.jpg",
+      "sizes": "1080x2093",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot-finance.jpg",
+      "sizes": "1080x2093",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
     }
   ]
 }
