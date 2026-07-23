@@ -1,16 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Inter({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = JetBrains_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const viewport: Viewport = {
   themeColor: "#020202",
@@ -40,10 +29,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="en" className="h-full antialiased">
+      <head>
+        {/* دریافت مستقیم فونت‌ها از گوگل در مرورگر کاربر به جای زمان Build سرور */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link 
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&display=swap" 
+          rel="stylesheet" 
+        />
+        
+        {/* تزریق متغیرهای فونت برای اینکه کدهای Tailwind شما دقیقاً مثل قبل کار کنند */}
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            :root {
+              --font-geist-sans: 'Inter', sans-serif;
+              --font-geist-mono: 'JetBrains Mono', monospace;
+            }
+          `
+        }} />
+      </head>
       <body className="min-h-full flex flex-col bg-neutral-950 text-white">
         {children}
       </body>
