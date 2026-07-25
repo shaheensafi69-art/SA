@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ArrowRight, LogOut, LayoutDashboard, Settings, Mail, Globe, Sparkles, BookOpen, GraduationCap, Building2, HandHeart, X } from "lucide-react";
+import { ChevronDown, ArrowRight, LogOut, LayoutDashboard, Settings, Mail, Globe, Sparkles, BookOpen, GraduationCap, Building2, HandHeart, X, Briefcase, BookMarked, Landmark, Server, Code2 } from "lucide-react";
 
 // لیست زبان‌ها همراه با رنگ‌های پرچم آن‌ها برای ساخت افکت‌های نوری پشت هدر
 const languages = [
@@ -20,40 +20,52 @@ const languages = [
 // دیکشنری ۶ زبانه برای ترجمه داینامیک کل هدر
 const translations: Record<string, any> = {
   en: {
-    home: "Home", courses: "Courses", blog: "Blog", scholarships: "Scholarships", more: "More",
+    home: "Home", learn: "Learn", academy: "Academy", corporate: "Corporate",
+    courses: "Courses", blog: "Blog", scholarships: "Scholarships", 
     partners: "Our Partners", donate: "Donate", about: "About", contact: "Contact",
+    business: "Business Setup", hosting: "Hosting Deals", development: "Development Services",
     dashboard: "Dashboard", signIn: "Sign In", getStarted: "Get Started", signOut: "Sign Out",
     welcome: "Welcome,", selectLang: "Select Language", editProfile: "Edit Profile", signedInAs: "Signed in as"
   },
   fa: {
-    home: "خانه", courses: "کورس‌ها", blog: "بلاگ", scholarships: "بورسیه‌ها", more: "بیشتر",
+    home: "خانه", learn: "آموزش", academy: "آکادمی", corporate: "شرکتی",
+    courses: "کورس‌ها", blog: "بلاگ", scholarships: "بورسیه‌ها",
     partners: "شرکای ما", donate: "کمک مالی", about: "درباره ما", contact: "تماس",
+    business: "ثبت شرکت", hosting: "هاستینگ و سرور", development: "خدمات توسعه نرم‌افزار",
     dashboard: "داشـبورد", signIn: "ورود", getStarted: "شروع کنید", signOut: "خروج",
     welcome: "خوش آمدید،", selectLang: "انتخاب زبان آکادمی", editProfile: "ویرایش پروفایل", signedInAs: "وارد شده با"
   },
   ps: {
-    home: "کورپاڼه", courses: "کورسونه", blog: "بلاګ", scholarships: "بورسیې", more: "نور",
+    home: "کورپاڼه", learn: "زده کړه", academy: "اکاډمۍ", corporate: "شرکتی",
+    courses: "کورسونه", blog: "بلاګ", scholarships: "بورسیې",
     partners: "زموږ شریکان", donate: "مرسته", about: "زموږ په اړه", contact: "اړیکه",
+    business: "د شرکت ثبت", hosting: "د هوسټینګ وړاندیزونه", development: "د سافټویر جوړولو خدمتونه",
     dashboard: "ډشبورډ", signIn: "ننوتل", getStarted: "پیل کړئ", signOut: "وتل",
     welcome: "ښه راغلاست،", selectLang: "د اکاډمۍ ژبه غوره کړئ", editProfile: "پروفایل ایډیټ کړئ", signedInAs: "ننوتل شوی په توګه"
   },
   de: {
-    home: "Startseite", courses: "Kurse", blog: "Blog", scholarships: "Stipendien", more: "Mehr",
+    home: "Startseite", learn: "Lernen", academy: "Akademie", corporate: "Unternehmen",
+    courses: "Kurse", blog: "Blog", scholarships: "Stipendien",
     partners: "Unsere Partner", donate: "Spenden", about: "Über uns", contact: "Kontakt",
+    business: "Unternehmensgründung", hosting: "Hosting-Angebote", development: "Entwicklungsdienste",
     dashboard: "Dashboard", signIn: "Anmelden", getStarted: "Loslegen", signOut: "Abmelden",
     welcome: "Willkommen,", selectLang: "Sprache auswählen", editProfile: "Profil bearbeiten", signedInAs: "Angemeldet als"
   },
   fr: {
-    home: "Accueil", courses: "Cours", blog: "Blog", scholarships: "Bourses", more: "Plus",
+    home: "Accueil", learn: "Apprendre", academy: "Académie", corporate: "Entreprise",
+    courses: "Cours", blog: "Blog", scholarships: "Bourses",
     partners: "Nos Partenaires", donate: "Faire un don", about: "À propos", contact: "Contact",
+    business: "Création d'entreprise", hosting: "Offres d'hébergement", development: "Services de développement",
     dashboard: "Tableau de bord", signIn: "Se connecter", getStarted: "Commencer", signOut: "Se déconnecter",
     welcome: "Bienvenue,", selectLang: "Choisir la langue", editProfile: "Modifier le profil", signedInAs: "Connecté en tant que"
   },
   ur: {
-    home: "ہوم", courses: "کورسز", blog: "بلاگ", scholarships: "اسکالرشپ", more: "مزید",
+    home: "ہوم", learn: "سیکھیں", academy: "اکیڈمی", corporate: "کارپوریٹ",
+    courses: "کورسز", blog: "بلاگ", scholarships: "اسکالرشپ",
     partners: "ہمارے شراکت دار", donate: "عطیہ", about: "ہمارے بارے میں", contact: "رابطہ",
+    business: "بزنس سیٹ اپ", hosting: "ہوسٹنگ ڈیلز", development: "ڈیولپمنٹ سروسز",
     dashboard: "ڈیش بورڈ", signIn: "سائن ان", getStarted: "شروع کریں", signOut: "سائن آؤٹ",
-    welcome: "خوش آمدید،", selectLang: "اکیڈمی کی زبان منتخب کریں", editProfile: "پروفائل میں ترمیم کریں", signedInAs: "سائن ان بطور"
+    welcome: "خوش آمدید،", selectLang: "اکیڈمی کی زبان منتخب کریں", editProfile: "پروفایل میں ترمیم کریں", signedInAs: "سائن ان بطور"
   }
 };
 
@@ -67,18 +79,49 @@ export default function Header() {
 
   const isRTL = useMemo(() => ["fa", "ps", "ur"].includes(currentLocale), [currentLocale]);
 
-  const mainNavLinks = [
-    { name: t.home, path: "", icon: <Sparkles size={14} />, id: "home" },
-    { name: t.courses, path: "/courses", icon: <Globe size={14} />, id: "courses" },
-    { name: t.blog, path: "/blog", icon: <BookOpen size={14} />, id: "blog" },
-    { name: t.scholarships, path: "/scholarships", icon: <GraduationCap size={14} />, id: "scholarships" },
-  ];
-
-  const subNavLinks = [
-    { name: t.partners, path: "/partners", icon: <Building2 size={14} /> },
-    { name: t.donate, path: "/donate", icon: <HandHeart size={14} /> },
-    { name: t.about, path: "/about", icon: <Sparkles size={14} /> },
-    { name: t.contact, path: "/contact", icon: <Mail size={14} /> },
+  // Reorganized navigation links into logical dropdown groups
+  const navGroups = [
+    {
+      id: "home",
+      name: t.home,
+      path: "",
+      icon: <Sparkles size={15} />,
+      isDropdown: false
+    },
+    {
+      id: "learn",
+      name: t.learn,
+      icon: <BookMarked size={15} />,
+      isDropdown: true,
+      items: [
+        { name: t.courses, path: "/courses", icon: <Globe size={14} /> },
+        { name: t.blog, path: "/blog", icon: <BookOpen size={14} /> },
+      ]
+    },
+    {
+      id: "academy",
+      name: t.academy,
+      icon: <Landmark size={15} />,
+      isDropdown: true,
+      items: [
+        { name: t.scholarships, path: "/scholarships", icon: <GraduationCap size={14} /> },
+        { name: t.donate, path: "/donate", icon: <HandHeart size={14} /> },
+        { name: t.about, path: "/about", icon: <Sparkles size={14} /> },
+      ]
+    },
+    {
+      id: "corporate",
+      name: t.corporate,
+      icon: <Building2 size={15} />,
+      isDropdown: true,
+      items: [
+        { name: t.business, path: "/business-formation", icon: <Briefcase size={14} /> },
+        { name: t.hosting, path: "/hosting", icon: <Server size={14} /> },
+        { name: t.development, path: "/development-services", icon: <Code2 size={14} /> }, // Added Development Services link
+        { name: t.partners, path: "/partners", icon: <Building2 size={14} /> },
+        { name: t.contact, path: "/contact", icon: <Mail size={14} /> },
+      ]
+    }
   ];
 
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -100,7 +143,7 @@ export default function Header() {
         if (session?.user) {
           const { data: profile } = await supabase
             .from("profiles")
-            .select("first_name, last_name, avatar_url, role") // اضافه شدن فیلد role
+            .select("first_name, last_name, avatar_url, role") 
             .eq("id", session.user.id)
             .single();
 
@@ -125,7 +168,6 @@ export default function Header() {
     router.push(`/${currentLocale}/login`);
   };
 
-  // تابع تعیین مسیر داشبورد بر اساس نقش کاربر
   const getDashboardRoute = () => {
     if (!userProfile) return `/${activeLang.code}/login`;
     if (userProfile.role === "super_admin" || userProfile.role === "admin") {
@@ -134,7 +176,7 @@ export default function Header() {
     if (userProfile.role === "teacher") {
       return `/${activeLang.code}/teacher`;
     }
-    return `/${activeLang.code}/dashboard`; // مسیر پیش‌فرض (شاگردان)
+    return `/${activeLang.code}/dashboard`; 
   };
 
   if (pathname.includes("/dashboard") || pathname.includes("/admin") || pathname.includes("/teacher")) return null;
@@ -162,61 +204,62 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* ================= منوی لینک‌های وسط (دسکتاپ - کپسول نوری ماورایی) ================= */}
+        {/* ================= منوی لینک‌های وسط (دسکتاپ - کشویی و گروه بندی شده) ================= */}
         <nav 
-          className="hidden xl:flex items-center gap-1 p-1 bg-white/[0.01] border border-white/5 rounded-2xl relative"
+          className="hidden xl:flex items-center gap-1 p-1 bg-white/[0.01] border border-white/5 rounded-2xl relative z-20"
           onMouseLeave={() => setHoveredTab(null)}
         >
-          {mainNavLinks.map((link) => (
-            <Link 
-              key={link.id} 
-              href={`/${activeLang.code}${link.path}`} 
-              onMouseEnter={() => setHoveredTab(link.id)}
-              className="relative flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider text-neutral-400 hover:text-white transition-colors duration-300"
-            >
-              {/* کپسول متحرک هوشمند پشت دکمه‌ها */}
-              {hoveredTab === link.id && (
-                <motion.div 
-                  layoutId="navHoverCapsule"
-                  className="absolute inset-0 bg-white/[0.07] border border-white/5 rounded-xl -z-10 shadow-lg backdrop-blur-md"
-                  transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                />
-              )}
-              {link.icon} {link.name}
-            </Link>
+          {navGroups.map((group) => (
+            group.isDropdown ? (
+              <div 
+                key={group.id}
+                className="relative group/dropdown h-10 flex items-center justify-center"
+                onMouseEnter={() => setHoveredTab(group.id)}
+              >
+                <button className="relative flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider text-neutral-400 group-hover/dropdown:text-white transition-all duration-300">
+                  {hoveredTab === group.id && (
+                    <motion.div layoutId="navHoverCapsule" className="absolute inset-0 bg-white/[0.07] border border-white/5 rounded-xl -z-10 shadow-lg backdrop-blur-md" />
+                  )}
+                  {group.icon} {group.name} <ChevronDown size={14} className="group-hover/dropdown:rotate-180 transition-transform opacity-50" />
+                </button>
+
+                {/* بدنه شیشه‌ای دراپ‌داون */}
+                <div className="absolute top-[85%] mt-2 right-0 w-64 p-2 bg-[#06060a]/90 backdrop-blur-3xl border border-white/10 rounded-2xl opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all duration-300 shadow-2xl transform origin-top-right scale-95 group-hover/dropdown:scale-100 z-50">
+                  {group.items?.map((sub, i) => (
+                    <Link 
+                      key={i} 
+                      href={`/${activeLang.code}${sub.path}`} 
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-neutral-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5 transition-all group/sub"
+                    >
+                      {sub.icon} {sub.name} <ArrowRight size={14} className={`opacity-0 group-hover/sub:opacity-100 transition-all ${isRTL ? 'mr-auto rotate-180 group-hover/sub:-translate-x-1' : 'ml-auto group-hover/sub:translate-x-1'}`} />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <Link 
+                key={group.id} 
+                href={`/${activeLang.code}${group.path}`} 
+                onMouseEnter={() => setHoveredTab(group.id)}
+                className="relative flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider text-neutral-400 hover:text-white transition-colors duration-300"
+              >
+                {hoveredTab === group.id && (
+                  <motion.div 
+                    layoutId="navHoverCapsule"
+                    className="absolute inset-0 bg-white/[0.07] border border-white/5 rounded-xl -z-10 shadow-lg backdrop-blur-md"
+                    transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                  />
+                )}
+                {group.icon} {group.name}
+              </Link>
+            )
           ))}
-
-          {/* دراپ‌داون گروهی "More" با هاور هوشمند */}
-          <div 
-            className="relative group/more h-10 flex items-center justify-center"
-            onMouseEnter={() => setHoveredTab("more")}
-          >
-            <button className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider text-neutral-400 group-hover/more:text-white transition-all duration-300">
-              {hoveredTab === "more" && (
-                <motion.div layoutId="navHoverCapsule" className="absolute inset-0 bg-white/[0.07] border border-white/5 rounded-xl -z-10 shadow-lg backdrop-blur-md" />
-              )}
-              <Building2 size={15} /> {t.more} <ChevronDown size={14} className="group-hover/more:rotate-180 transition-transform opacity-50" />
-            </button>
-
-            {/* بدنه شیشه‌ای دراپ‌داون */}
-            <div className="absolute top-[85%] mt-2 right-0 w-60 p-2 bg-[#06060a]/90 backdrop-blur-3xl border border-white/10 rounded-2xl opacity-0 invisible group-hover/more:opacity-100 group-hover/more:visible transition-all duration-300 shadow-2xl transform origin-top-right scale-95 group-hover/more:scale-100 z-50">
-              {subNavLinks.map((sub, i) => (
-                <Link 
-                  key={i} 
-                  href={`/${activeLang.code}${sub.path}`} 
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-neutral-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5 transition-all group/sub"
-                >
-                  {sub.icon} {sub.name} <ArrowRight size={14} className={`opacity-0 group-hover/sub:opacity-100 transition-all ${isRTL ? 'mr-auto rotate-180 group-hover/sub:-translate-x-1' : 'ml-auto group-hover/sub:translate-x-1'}`} />
-                </Link>
-              ))}
-            </div>
-          </div>
         </nav>
 
         {/* ================= بخش اکشن‌ها و سوئیچر زبان ================= */}
         <div className="flex items-center gap-3 shrink-0 relative z-20">
           
-          {/* سوئیچر زبان (دسکتاپ - کپسول کریستالی) */}
+          {/* سوئیچر زبان (دسکتاپ) */}
           <div className="relative group/lang hidden md:block h-10 flex items-center justify-center">
             <button className="flex items-center gap-2 px-3.5 py-2.5 bg-white/[0.02] border border-white/5 hover:border-white/10 rounded-xl hover:bg-white/[0.06] hover:text-white text-neutral-300 transition-all duration-300 shadow-sm">
               <span className="text-lg leading-none">{activeLang.flag}</span>
@@ -226,7 +269,6 @@ export default function Header() {
             <div className="absolute top-[85%] mt-2 p-2 bg-[#06060a]/95 backdrop-blur-3xl border border-white/10 rounded-2xl opacity-0 invisible group-hover/lang:opacity-100 group-hover/lang:visible transition-all duration-300 shadow-2xl transform origin-top-right scale-95 group-hover/lang:scale-100 z-50 w-52 flex flex-col gap-1">
               {languages.map((lang) => (
                 lang.code === "en" ? (
-                  // زبان فعال (فقط انگلیسی قابل کلیک است)
                   <Link 
                     key={lang.code} 
                     href={`/${lang.code}`} 
@@ -238,7 +280,6 @@ export default function Header() {
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
                   </Link>
                 ) : (
-                  // سایر زبان‌ها (غیرفعال با نشانگر SOON)
                   <div 
                     key={lang.code}
                     className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-neutral-600 cursor-not-allowed"
@@ -279,7 +320,6 @@ export default function Header() {
                         <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">{t.signedInAs}</p>
                         <p className="text-xs font-black text-white truncate">{userProfile.first_name}</p>
                     </div>
-                    {/* لینک‌های پروفایل در دراپ‌داون (می‌توانید آنها را هم داینامیک کنید، فعلاً با داشبورد کاربر ست شده) */}
                     <Link href={`${getDashboardRoute()}/profile`} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-neutral-400 hover:bg-white/5 hover:text-white transition-colors">
                         <Settings size={14} /> {t.editProfile}
                     </Link>
@@ -323,15 +363,35 @@ export default function Header() {
         <div className={`absolute inset-x-0 top-full mt-4 rounded-3xl border border-white/10 bg-[#06060a]/95 backdrop-blur-3xl shadow-2xl transition-all duration-300 ease-in-out xl:hidden overflow-hidden origin-top ${mobileMenuOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-95 pointer-events-none"}`}>
           <div className="max-h-[80vh] overflow-y-auto custom-scrollbar p-6 flex flex-col gap-6">
             
-            <nav className="flex flex-col gap-1.5">
-                {[...mainNavLinks, ...subNavLinks].map((link, index) => (
-                    <Link
-                        key={index}
-                        href={`/${activeLang.code}${link.path}`}
-                        className="flex items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest text-neutral-300 hover:bg-white/5 hover:text-white transition-colors"
-                    >
-                        {link.icon} {link.name} <ArrowRight size={14} className={`opacity-20 ${isRTL ? 'mr-auto rotate-180' : 'ml-auto'}`} />
-                    </Link>
+            <nav className="flex flex-col gap-2">
+                {navGroups.map((group, index) => (
+                  <div key={index} className="flex flex-col">
+                    {group.isDropdown ? (
+                      <>
+                        <div className="flex items-center gap-3.5 px-2 py-2 text-xs font-black uppercase tracking-widest text-neutral-500 opacity-60">
+                          {group.icon} {group.name}
+                        </div>
+                        <div className="flex flex-col pl-4 border-l border-white/10 ml-4 mb-2 mt-1">
+                          {group.items?.map((sub, subIndex) => (
+                            <Link
+                              key={subIndex}
+                              href={`/${activeLang.code}${sub.path}`}
+                              className="flex items-center gap-3.5 rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-neutral-300 hover:bg-white/5 hover:text-white transition-colors"
+                            >
+                                {sub.icon} {sub.name} <ArrowRight size={14} className={`opacity-20 ${isRTL ? 'mr-auto rotate-180' : 'ml-auto'}`} />
+                            </Link>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <Link
+                          href={`/${activeLang.code}${group.path}`}
+                          className="flex items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest text-neutral-300 hover:bg-white/5 hover:text-white transition-colors"
+                      >
+                          {group.icon} {group.name} <ArrowRight size={14} className={`opacity-20 ${isRTL ? 'mr-auto rotate-180' : 'ml-auto'}`} />
+                      </Link>
+                    )}
+                  </div>
                 ))}
             </nav>
 

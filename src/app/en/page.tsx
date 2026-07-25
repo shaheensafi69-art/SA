@@ -1,14 +1,85 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { 
   ArrowRight, ShieldCheck, Globe, Cpu, TrendingUp, ShoppingCart, 
-  CreditCard, Smartphone, Award, Trophy, Star, ChevronRight, 
-  CheckCircle2, Building, Zap, Users, GraduationCap, Flame
+  CreditCard, Smartphone, Award, Trophy, ChevronRight, 
+  CheckCircle2, Building, Zap, Users, GraduationCap, Clock
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
+/* -------------------------------------------------------------------------- */
+/*                           AnimatedNumber Component                         */
+/* -------------------------------------------------------------------------- */
+const AnimatedNumber = ({ value }: { value: number }) => {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => Math.round(latest));
+
+  useEffect(() => {
+    const controls = animate(count, value, {
+      duration: 1.5,
+      ease: "easeOut",
+    });
+    return controls.stop;
+  }, [value, count]);
+
+  return <motion.span>{rounded}</motion.span>;
+};
+
+/* -------------------------------------------------------------------------- */
+/*                           Main Home Component                              */
+/* -------------------------------------------------------------------------- */
 export default function EnglishHome() {
-  // دیتاهای اکوسیستم برای رندر داینامیک
+
+  // ================= LIVE DATABASE STATS =================
+  const [stats, setStats] = useState({
+    students: 0,
+    graduates: 0,
+    teachers: 0,
+    courses: 0
+  });
+  const [isStatsLoading, setIsStatsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLiveStats = async () => {
+      const supabase = createClient();
+      try {
+        const [
+          { count: studentsCount },
+          { count: graduatesCount },
+          { count: teachersCount },
+          { count: coursesCount }
+        ] = await Promise.all([
+          supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student'),
+          supabase.from('graduates').select('*', { count: 'exact', head: true }),
+          supabase.from('teacher_info').select('*', { count: 'exact', head: true }),
+          supabase.from('courses').select('*', { count: 'exact', head: true })
+        ]);
+
+        setStats({
+          students: studentsCount || 0,
+          graduates: graduatesCount || 0,
+          teachers: teachersCount || 0,
+          courses: coursesCount || 0
+        });
+      } catch (error) {
+        console.error("Error fetching academy stats:", error);
+      } finally {
+        setIsStatsLoading(false);
+      }
+    };
+
+    fetchLiveStats();
+  }, []);
+
+  // محاسبه درصد فارغ‌التحصیلان برای چارت گرافیکی
+  const activeStudents = Math.max(0, stats.students - stats.graduates);
+  const gradPercentage = stats.students > 0 ? Math.round((stats.graduates / stats.students) * 100) : 0;
+
+  // ================= STATIC DATA =================
   const ecosystemFeatures = [
     {
       title: "SafiPay Digital Banking",
@@ -120,18 +191,24 @@ export default function EnglishHome() {
           </div>
         </div>
 
-        {/* Hero Image */}
+        {/* Hero Image - فریم قاب عکس با پوشش کامل */}
         <div className="w-full lg:w-[45%] mt-16 lg:mt-0 relative z-10 flex justify-center lg:justify-end animate-[fadeInRight_1.5s_ease-out]">
           <div className="relative w-full max-w-2xl">
              <div className="absolute inset-0 bg-yellow-500/20 blur-[100px] rounded-full animate-pulse"></div>
-             <img 
-               src="/hero.png" 
-               alt="Safi Academy Premium Education" 
-               className="relative z-10 w-full h-auto object-contain rounded-[3rem] shadow-[0_30px_80px_rgba(0,0,0,0.9)] border border-white/5 transform hover:scale-[1.02] transition-transform duration-700 animate-float"
-             />
+             
+             {/* فریم قاب با لبه‌های کاملاً پوشاننده و بدون فاصله داخلی */}
+             <div className="relative z-10 w-full overflow-hidden rounded-[3.2rem] bg-[#0d0d12] shadow-[0_30px_80px_rgba(0,0,0,0.9)] border-2 border-white/15 transform hover:scale-[1.02] transition-transform duration-700 animate-float">
+               
+               <img 
+                 src="/hero.png" 
+                 alt="Safi Academy Premium Education" 
+                 className="w-full h-full object-cover block scale-[1.02]"
+               />
+
+             </div>
              
              {/* Floating Badge */}
-             <div className="absolute -bottom-6 -left-6 bg-black/80 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl z-20 flex items-center gap-4 animate-float" style={{animationDelay: "1s"}}>
+             <div className="absolute -bottom-6 -left-6 bg-black/85 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl z-20 flex items-center gap-4 animate-float" style={{animationDelay: "1s"}}>
                <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center border border-emerald-500/30">
                  <ShieldCheck className="text-emerald-400" />
                </div>
@@ -178,7 +255,7 @@ export default function EnglishHome() {
         </div>
       </section>
 
-      {/* ================= 3. WALL OF FAME TEASER (New Section) ================= */}
+      {/* ================= 3. WALL OF FAME TEASER ================= */}
       <section className="relative z-10 w-full px-6 md:px-12 lg:px-20 py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-amber-900/10 to-transparent"></div>
         <div className="max-w-7xl mx-auto relative z-10 bg-black/60 border border-amber-500/20 rounded-[3rem] p-8 md:p-16 backdrop-blur-2xl shadow-[0_0_100px_rgba(245,158,11,0.1)] flex flex-col md:flex-row items-center justify-between gap-12">
@@ -318,6 +395,102 @@ export default function EnglishHome() {
               Browse Languages
             </Link>
           </div>
+
+        </div>
+      </section>
+
+      {/* ================= 4.5. LIVE ACADEMY STATS (NEW CHART SECTION) ================= */}
+      <section className="relative z-10 w-full px-6 md:px-12 lg:px-20 py-24 bg-[#08080c] border-y border-white/5">
+        <div className="max-w-7xl mx-auto flex flex-col items-center">
+          
+          {isStatsLoading ? (
+             <div className="w-full max-w-2xl h-64 flex flex-col items-center justify-center border border-white/5 rounded-2xl bg-black/50 backdrop-blur-md">
+                <div className="w-10 h-10 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-neutral-500 mt-4 text-sm font-bold animate-pulse">Syncing Database...</p>
+             </div>
+          ) : (
+             <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.6 }}
+               className="w-full max-w-3xl p-6 md:p-8 bg-[#0a0a0f] border border-white/10 rounded-[2rem] shadow-2xl relative overflow-hidden"
+             >
+               {/* Background Glows for Chart */}
+               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px]"></div>
+               <div className="absolute bottom-0 left-0 w-40 h-40 bg-yellow-500/10 rounded-full blur-[60px]"></div>
+               
+               <div className="relative z-10">
+                 {/* Header */}
+                 <div className="flex items-center justify-between mb-8">
+                   <h2 className="text-2xl font-black text-white">Academy Analytics</h2>
+                   <div className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                     <TrendingUp className="w-5 h-5 text-blue-400" />
+                   </div>
+                 </div>
+
+                 {/* Top Stats Overview */}
+                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+                   <div className="flex flex-col bg-white/5 border border-white/10 p-4 rounded-2xl">
+                     <span className="text-[10px] uppercase font-black tracking-widest text-neutral-500 mb-1">Total Enrolled</span>
+                     <span className="text-2xl font-black text-white"><AnimatedNumber value={stats.students} /></span>
+                   </div>
+                   <div className="flex flex-col bg-white/5 border border-white/10 p-4 rounded-2xl">
+                     <span className="text-[10px] uppercase font-black tracking-widest text-neutral-500 mb-1">Graduates</span>
+                     <span className="text-2xl font-black text-yellow-400"><AnimatedNumber value={stats.graduates} /></span>
+                   </div>
+                   <div className="flex flex-col bg-white/5 border border-white/10 p-4 rounded-2xl">
+                     <span className="text-[10px] uppercase font-black tracking-widest text-neutral-500 mb-1">Instructors</span>
+                     <span className="text-2xl font-black text-blue-400"><AnimatedNumber value={stats.teachers} /></span>
+                   </div>
+                   <div className="flex flex-col bg-white/5 border border-white/10 p-4 rounded-2xl">
+                     <span className="text-[10px] uppercase font-black tracking-widest text-neutral-500 mb-1">Live Courses</span>
+                     <span className="text-2xl font-black text-emerald-400"><AnimatedNumber value={stats.courses} /></span>
+                   </div>
+                 </div>
+
+                 {/* Graphical Progress Bar Component */}
+                 <div className="bg-black/40 border border-white/5 p-6 rounded-2xl shadow-inner">
+                   <div className="flex items-center justify-between mb-4">
+                     <div className="flex items-center gap-2">
+                       <Clock className="w-4 h-4 text-neutral-500" />
+                       <span className="text-xs font-bold text-neutral-400 uppercase tracking-widest">Student Progression</span>
+                     </div>
+                     <span className="text-xs font-black text-white bg-white/10 px-3 py-1 rounded-full">{gradPercentage}% Success Rate</span>
+                   </div>
+                   
+                   <div className="w-full h-3 mb-3 overflow-hidden rounded-full bg-white/5 flex">
+                     {/* Active Students Bar */}
+                     <motion.div
+                       className="h-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                       initial={{ width: 0 }}
+                       whileInView={{ width: `${100 - gradPercentage}%` }}
+                       transition={{ duration: 1.5, ease: "easeOut" }}
+                     />
+                     {/* Graduates Bar */}
+                     <motion.div
+                       className="h-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]"
+                       initial={{ width: 0 }}
+                       whileInView={{ width: `${gradPercentage}%` }}
+                       transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                     />
+                   </div>
+                   
+                   {/* Legend */}
+                   <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest mt-4">
+                     <div className="flex items-center gap-2">
+                       <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_5px_rgba(59,130,246,0.5)]"></span>
+                       <span className="text-blue-400">Active Learners</span>
+                     </div>
+                     <div className="flex items-center gap-2">
+                       <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]"></span>
+                       <span className="text-yellow-500">Certified Graduates</span>
+                     </div>
+                   </div>
+                 </div>
+
+               </div>
+             </motion.div>
+          )}
 
         </div>
       </section>

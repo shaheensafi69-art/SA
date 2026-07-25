@@ -102,8 +102,8 @@ export default function ContactPage() {
             </div>
             <div>
               <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mb-2">Digital Support</p>
-              <a href="mailto:safiacademy@hotmail.com" className="text-lg sm:text-xl font-bold text-white hover:text-yellow-500 transition-colors break-all">
-                safiacademy@hotmail.com
+              <a href="mailto:info@safiacademy.org" className="text-lg sm:text-xl font-bold text-white hover:text-yellow-500 transition-colors break-all">
+                info@safiacademy.org
               </a>
               <p className="text-neutral-500 mt-2 text-xs font-medium">We aim to reply within 24 business hours.</p>
             </div>
