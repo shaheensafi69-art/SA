@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import "./globals.css";
+import "./globals.css"; // This import is for side effects, no module or type declarations are expected.
+import PushAlertScript from "@/components/PushAlertScript"; // ایمپورت کامپوننت نوتیفیکیشن
 
 export const viewport: Viewport = {
   themeColor: "#020202",
@@ -31,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <head>
-        {/* دریافت مستقیم فونت‌ها از گوگل در مرورگر کاربر به جای زمان Build سرور */}
+        {/* دریافت مستقیم فونت‌ها از گوگل در مرورگر کاربر */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link 
@@ -39,7 +40,7 @@ export default function RootLayout({
           rel="stylesheet" 
         />
         
-        {/* تزریق متغیرهای فونت برای اینکه کدهای Tailwind شما دقیقاً مثل قبل کار کنند */}
+        {/* تزریق متغیرهای فونت برای Tailwind */}
         <style dangerouslySetInnerHTML={{
           __html: `
             :root {
@@ -50,6 +51,8 @@ export default function RootLayout({
         }} />
       </head>
       <body className="min-h-full flex flex-col bg-neutral-950 text-white">
+        {/* اجرای امن اسکریپت PushAlert در سمت کلاینت */}
+        <PushAlertScript />
         {children}
       </body>
     </html>
