@@ -44,7 +44,7 @@ const VideoPlayer = ({ src }: { src: string }) => {
   };
 
   return (
-    <div className="relative w-full h-[480px] lg:h-[560px] rounded-3xl overflow-hidden border border-white/15 shadow-[0_25px_60px_rgba(0,0,0,0.9)] group bg-black">
+    <div className="relative w-full h-[320px] md:h-[450px] lg:h-[540px] rounded-3xl overflow-hidden border border-white/15 shadow-[0_25px_60px_rgba(0,0,0,0.9)] group bg-black flex items-center justify-center">
       <video 
         ref={videoRef}
         src={src} 
@@ -52,7 +52,7 @@ const VideoPlayer = ({ src }: { src: string }) => {
         loop 
         muted 
         playsInline 
-        className="w-full h-full object-cover block transform group-hover:scale-105 transition-transform duration-700"
+        className="w-full h-full object-contain block transform group-hover:scale-102 transition-transform duration-700"
       />
       <button
         onClick={toggleMute}
@@ -276,7 +276,7 @@ export default function EnglishHome() {
         </div>
       </section>
 
-      {/* ================= 🌟 CAREER ACADEMIES BANNER SECTION ================= */}
+      {/* ================= 🌟 CAREER ACADEMIES BANNER SECTION (با عکس جدید Storyboard) ================= */}
       <section className="relative z-20 w-full px-6 md:px-12 lg:px-20 py-16">
         <div className="w-full">
           <div className="relative w-full rounded-[3.5rem] overflow-hidden border border-white/15 bg-gradient-to-r from-[#0d0d14] via-[#12121c] to-[#0d0d14] shadow-[0_30px_90px_rgba(0,0,0,0.9)] p-8 md:p-16 lg:p-20">
@@ -305,7 +305,7 @@ export default function EnglishHome() {
             <div className="relative w-full rounded-3xl overflow-hidden border border-white/15 shadow-[0_25px_60px_rgba(0,0,0,0.9)] group">
               <img 
                 src="/career-academies-banner.webp" 
-                alt="Skills that start careers" 
+                alt="Storyboard for Safi Academy ad" 
                 className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 block"
             />
           </div>
@@ -315,7 +315,7 @@ export default function EnglishHome() {
       </div>
       </section>
 
-      {/* ================= 🌟 1.5. SAFI VIDEO SHOWCASE 1 (متن در یک طرف و ویدیو اول در طرف دیگر مطابق دیزاین جدید) ================= */}
+      {/* ================= 🌟 1.5. SAFI VIDEO SHOWCASE 1 ================= */}
       <section className="relative z-20 w-full px-6 md:px-12 lg:px-20 py-24">
         <div className="w-full">
           <div className="relative w-full rounded-[3.5rem] overflow-hidden border-2 border-amber-500/30 bg-[#0a0a0f] shadow-[0_30px_90px_rgba(245,158,11,0.15)] p-8 md:p-16 lg:p-20">
@@ -353,7 +353,7 @@ export default function EnglishHome() {
         </div>
       </section>
 
-      {/* ================= 🌟 1.6. SAFI VIDEO SHOWCASE 2 (ویدیوی دوم با همین دیزاین فوق‌العاده) ================= */}
+      {/* ================= 🌟 1.6. SAFI VIDEO SHOWCASE 2 ================= */}
       <section className="relative z-20 w-full px-6 md:px-12 lg:px-20 py-24">
         <div className="w-full">
           <div className="relative w-full rounded-[3.5rem] overflow-hidden border-2 border-yellow-500/30 bg-[#0a0a0f] shadow-[0_30px_90px_rgba(234,179,8,0.15)] p-8 md:p-16 lg:p-20">
