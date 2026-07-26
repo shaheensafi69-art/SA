@@ -89,17 +89,19 @@ export default function AdminAnnouncementsPage() {
 
       // ۲. ارسال پوش نوتیفیکیشن به صورت مستقیم (PushAlert)
       try {
-        await fetch('https://pushalert.co/api/v1/send/all', {
+        const payload = new URLSearchParams({
+          title: form.title.trim(),
+          message: form.messageText.trim(),
+          url: targetUrl
+        });
+
+        await fetch('https://api.pushalert.co/rest/v1/send', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': `api_key=9ee7b804a99eae5f6381e9b6f024746a`
           },
-          body: JSON.stringify({
-            title: form.title.trim(),
-            message: form.messageText.trim(),
-            url: targetUrl // حالا لینک کاملاً داینامیک است!
-          }),
+          body: payload.toString(),
         });
       } catch (pushErr) {
         console.error("Failed to trigger PushAlert:", pushErr);
