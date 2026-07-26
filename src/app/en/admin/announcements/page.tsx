@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, ArrowLeft, Megaphone, Send, Trash2, Users, Target, MessageSquare, AlertCircle, CheckCircle2, Radio, BellRing, UserCheck, GraduationCap } from "lucide-react";
-import { error } from "console";
 
 type AnnouncementItem = {
   id: string;
@@ -62,11 +61,11 @@ export default function AdminAnnouncementsPage() {
     const supabase = createClient();
 
     try {
-      // دریافت آیدی ادمینی که در حال ارسال پیام است
+      // دریافت آیدی ادمین
       const { data: { session } } = await supabase.auth.getSession();
       const adminId = session?.user?.id;
 
-      // ۱. ثبت اعلان در جدول announcements دیتابیس
+      // ۱. ثبت اعلان در جدول دیتابیس
       const { data, error } = await supabase
         .from("announcements")
         .insert({
@@ -80,29 +79,36 @@ export default function AdminAnnouncementsPage() {
 
       if (error) throw error;
 
-      // ۲. ارسال پوش نوتیفیکیشن از طریق PushAlert API
+      // ---- بخش هوشمندسازی لینک بر اساس دیتابیس و Routing سایت ----
+      let targetUrl = "https://safiacademy.org"; 
+      if (form.target_role === "student" || form.target_role === "all") {
+        targetUrl = "https://safiacademy.org/en/dashboard/announcements";
+      } else if (form.target_role === "teacher") {
+        targetUrl = "https://safiacademy.org/en/teacher/announcements";
+      }
+
+      // ۲. ارسال پوش نوتیفیکیشن به صورت مستقیم (PushAlert)
       try {
         await fetch('https://pushalert.co/api/v1/send/all', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `api_key=9ee7b804a99eae5f6381e9b6f024746a` // کلید API شما
+            'Authorization': `api_key=9ee7b804a99eae5f6381e9b6f024746a`
           },
           body: JSON.stringify({
             title: form.title.trim(),
             message: form.messageText.trim(),
-            url: "https://safiacademy.org"
+            url: targetUrl // حالا لینک کاملاً داینامیک است!
           }),
         });
       } catch (pushErr) {
         console.error("Failed to trigger PushAlert:", pushErr);
       }
 
-      // اضافه کردن اعلان جدید به ابتدای لیست صفحه
+      // آپدیت ظاهر سایت
       setAnnouncements(prev => [data, ...prev]);
       setToastMessage({ type: 'success', text: 'Announcement successfully broadcasted & notified!' });
       
-      // ریست کردن فرم
       setForm({ title: "", messageText: "", target_role: "all" });
       setTimeout(() => setToastMessage(null), 3000);
 
@@ -142,14 +148,13 @@ export default function AdminAnnouncementsPage() {
 
   return (
     <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir="ltr">
-      
-      {/* Background Ambience (Rose/Orange) */}
+      {/* Background Ambience */}
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-rose-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
       <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-orange-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
       <div className="relative z-10 max-w-[1600px] mx-auto space-y-6 sm:space-y-8 animate-[fadeIn_0.4s_ease-out]">
         
-        {/* ================= HEADER ================= */}
+        {/* HEADER */}
         <header className="bg-[#0a0a0f]/80 p-6 sm:p-8 rounded-[2.5rem] border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden flex flex-col md:flex-row justify-between md:items-start gap-6">
           <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/5 rounded-full blur-[80px] pointer-events-none"></div>
           
@@ -173,7 +178,7 @@ export default function AdminAnnouncementsPage() {
           </div>
         </header>
 
-        {/* ================= MAIN LAYOUT (Form + List) ================= */}
+        {/* MAIN LAYOUT */}
         <div className="grid gap-6 sm:gap-8 grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] xl:grid-cols-[0.7fr_1.3fr]">
           
           {/* LEFT: BROADCAST FORM */}
@@ -193,8 +198,6 @@ export default function AdminAnnouncementsPage() {
               )}
 
               <form onSubmit={handleBroadcast} className="space-y-6 relative z-10">
-                
-                {/* Target Audience Toggle */}
                 <div className="space-y-3">
                   <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1.5"><Target size={12}/> Target Audience</label>
                   <div className="grid grid-cols-3 gap-2 bg-black/60 border border-white/10 rounded-2xl p-2 shadow-inner">
@@ -228,7 +231,6 @@ export default function AdminAnnouncementsPage() {
                   </div>
                 </div>
 
-                {/* Announcement Title */}
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Transmission Title *</label>
                   <input 
@@ -238,7 +240,6 @@ export default function AdminAnnouncementsPage() {
                   />
                 </div>
 
-                {/* Message Body */}
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Message Content *</label>
                   <textarea 
@@ -275,8 +276,6 @@ export default function AdminAnnouncementsPage() {
                 </div>
               ) : (
                 announcements.map((announcement) => {
-                  
-                  // تعیین استایل Badge بر اساس تارگت
                   const targetStyles = 
                     announcement.target_role === "all" ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
                     announcement.target_role === "student" ? "bg-orange-500/10 text-orange-400 border-orange-500/20" :
@@ -289,7 +288,6 @@ export default function AdminAnnouncementsPage() {
                   return (
                     <div key={announcement.id} className="group w-full text-left rounded-2xl border border-white/5 bg-black/40 p-5 sm:p-6 hover:bg-white/[0.02] hover:border-white/10 transition-all flex flex-col gap-4">
                       
-                      {/* Top Row: Info & Actions */}
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-3">
                           <span className={`px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border flex items-center gap-1.5 ${targetStyles}`}>
@@ -310,7 +308,6 @@ export default function AdminAnnouncementsPage() {
                         </button>
                       </div>
 
-                      {/* Content */}
                       <div>
                         <h4 className="font-black text-white text-lg mb-2 group-hover:text-rose-300 transition-colors">{announcement.title}</h4>
                         <p className="text-sm text-neutral-400 leading-relaxed whitespace-pre-wrap">{announcement.message}</p>
@@ -321,7 +318,6 @@ export default function AdminAnnouncementsPage() {
               )}
             </div>
           </section>
-
         </div>
       </div>
     </div>
