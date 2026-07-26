@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, ArrowLeft, Megaphone, Send, Trash2, Users, Target, MessageSquare, AlertCircle, CheckCircle2, Radio, BellRing, UserCheck, GraduationCap } from "lucide-react";
+import { error } from "console";
 
 type AnnouncementItem = {
   id: string;
@@ -65,6 +66,7 @@ export default function AdminAnnouncementsPage() {
       const { data: { session } } = await supabase.auth.getSession();
       const adminId = session?.user?.id;
 
+      // ۱. ثبت اعلان در جدول announcements دیتابیس
       const { data, error } = await supabase
         .from("announcements")
         .insert({
@@ -78,9 +80,27 @@ export default function AdminAnnouncementsPage() {
 
       if (error) throw error;
 
-      // اضافه کردن اعلان جدید به ابتدای لیست
+      // ۲. ارسال پوش نوتیفیکیشن از طریق PushAlert API
+      try {
+        await fetch('https://pushalert.co/api/v1/send/all', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `api_key=9ee7b804a99eae5f6381e9b6f024746a` // کلید API شما
+          },
+          body: JSON.stringify({
+            title: form.title.trim(),
+            message: form.messageText.trim(),
+            url: "https://safiacademy.org"
+          }),
+        });
+      } catch (pushErr) {
+        console.error("Failed to trigger PushAlert:", pushErr);
+      }
+
+      // اضافه کردن اعلان جدید به ابتدای لیست صفحه
       setAnnouncements(prev => [data, ...prev]);
-      setToastMessage({ type: 'success', text: 'Announcement successfully broadcasted!' });
+      setToastMessage({ type: 'success', text: 'Announcement successfully broadcasted & notified!' });
       
       // ریست کردن فرم
       setForm({ title: "", messageText: "", target_role: "all" });
