@@ -1,13 +1,19 @@
 import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import CourseInstructorSwitcher from "@/components/CourseInstructorSwitcher";
 import CourseRegistrationForm from "@/components/CourseRegistrationForm";
-import { Sparkles, Wallet } from "lucide-react";
+import { Sparkles, Wallet, Tag, BookOpen, GraduationCap, Award } from "lucide-react";
 
-export default async function CourseDetailPage({ params }: { params: { id: string } }) {
+export default async function CourseDetailPage({ 
+  params, 
+  searchParams 
+}: { 
+  params: { id: string },
+  searchParams: { coupon?: string } 
+}) {
   const supabase = await createClient();
   const { id } = await params;
+  const appliedCouponCode = (await searchParams)?.coupon?.trim() || "";
 
   const { data: { session } } = await supabase.auth.getSession();
   
@@ -37,30 +43,57 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
 
   if (error || !course) notFound();
 
-  // محاسبات مالی
+  // بررسی اعتبار کوپن تخفیف از جدول coupons
+  let couponDiscountPercentage = 0;
+  let couponError = "";
+
+  if (appliedCouponCode) {
+    const { data: couponData, error: couponDbError } = await supabase
+      .from("coupons")
+      .select("*")
+      .eq("code", appliedCouponCode)
+      .single();
+
+    if (couponDbError || !couponData) {
+      couponError = "Invalid coupon code.";
+    } else {
+      const isExpired = couponData.expires_at ? new Date(couponData.expires_at) < new Date() : false;
+      const isMaxedOut = couponData.max_uses !== null && couponData.used_count >= couponData.max_uses;
+
+      if (isExpired) {
+        couponError = "This coupon has expired.";
+      } else if (isMaxedOut) {
+        couponError = "This coupon usage limit has been reached.";
+      } else {
+        couponDiscountPercentage = Number(couponData.discount_percentage) || 0;
+      }
+    }
+  }
+
+  // ================= محاسبات مالی پیشرفته =================
   const originalPrice = Number(course.price);
-  const hasDiscount = userDiscountRate > 0;
   
-  const discountedPrice = hasDiscount 
-    ? originalPrice - (originalPrice * (userDiscountRate / 100))
+  const totalDiscountRate = Math.min(100, userDiscountRate + couponDiscountPercentage);
+  
+  const discountedPrice = totalDiscountRate > 0 
+    ? originalPrice - (originalPrice * (totalDiscountRate / 100))
     : originalPrice;
 
-  // مبلغی که قرار است از ولت کسر شود (نمی‌تواند بیشتر از قیمت کورس باشد)
   const walletDeduction = Math.min(userWalletBalance, discountedPrice);
   
-  // مبلغ نهایی قابل پرداخت
   const finalPayableAmount = Math.max(0, discountedPrice - userWalletBalance);
 
+  // اطلاعات مدرسین
   const primaryInstructor = {
     name: course.instructor_name || "Shaheen Safi",
-    bio: course.instructor_bio || "Renowned Fintech Architect and expert educator within the Safi Ecosystem.",
-    imageUrl: course.instructor_image_url,
+    bio: course.instructor_bio || "Shaheen Safi is a visionary entrepreneur and the founder of the Safi Ecosystem, a globally integrated platform designed to bridge the gap between traditional financial systems and the modern digital economy. With a strong academic background in Computer Science from Istanbul Technical University and a CFTe certification from the International Federation of Technical Analysts, he brings a unique fusion of deep technical expertise and professional financial market analysis.",
+    imageUrl: course.instructor_image_url || "/hero.png",
   };
 
   const secondaryInstructor = course.instructor_2_name
     ? {
         name: course.instructor_2_name,
-        bio: course.instructor_2_bio || "Experienced educator and specialist in modern digital instruction.",
+        bio: course.instructor_2_bio || "Experienced educator and specialist in modern digital instruction and tech innovations.",
         imageUrl: course.instructor_2_image_url,
       }
     : null;
@@ -90,19 +123,20 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
           <span>Back to Hub</span>
         </Link>
 
+        {/* هدر دوره */}
         <section className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-neutral-900/95 via-neutral-950/95 to-black/95 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.45)] backdrop-blur-2xl sm:p-10 lg:p-12">
           
-          {hasDiscount && (
+          {totalDiscountRate > 0 && (
             <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-[80px] pointer-events-none"></div>
           )}
 
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between relative z-10">
             <div className="max-w-3xl">
               
-              {hasDiscount && (
+              {totalDiscountRate > 0 && (
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-yellow-400 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
                   <Sparkles size={14} className="animate-pulse" />
-                  Network Bonus Applied: {userDiscountRate}% OFF
+                  Total Discount Applied: {totalDiscountRate}% OFF
                 </div>
               )}
 
@@ -113,7 +147,7 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
               <h1 className="mt-5 text-4xl font-black leading-[1.1] text-white sm:text-5xl lg:text-6xl tracking-tight">
                 {course.title}
               </h1>
-              <p className="mt-5 text-base sm:text-lg leading-relaxed text-neutral-400 font-medium">
+              <p className="mt-5 text-base sm:text-lg leading-relaxed text-neutral-300 font-medium text-justify">
                 A premium learning experience designed to help you build real-world skills with clarity, confidence, and modern tools.
               </p>
             </div>
@@ -121,7 +155,7 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
             <div className="rounded-3xl border border-white/10 bg-black/60 px-6 py-5 text-right shadow-inner flex flex-col justify-center min-w-[200px] backdrop-blur-md">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500 mb-1">Tuition Fee</p>
               
-              {hasDiscount ? (
+              {totalDiscountRate > 0 ? (
                 <div className="flex flex-col items-end">
                   <span className="text-sm font-bold text-neutral-600 line-through decoration-red-500/50 decoration-2">${originalPrice.toFixed(2)}</span>
                   <p className="text-4xl font-black text-amber-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.3)]">${discountedPrice.toFixed(2)}</p>
@@ -154,12 +188,94 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
                   </div>
                 )}
               </div>
-              <div className="p-8 sm:p-12 relative z-20">
-                <h2 className="text-2xl font-black text-white tracking-tight">Curriculum Overview</h2>
-                <p className="mt-5 whitespace-pre-line text-sm sm:text-base leading-relaxed text-neutral-400 font-medium">
-                  {course.description}
-                </p>
+              
+              {/* Curriculum Overview */}
+              <div className="p-8 sm:p-12 relative z-25">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-3 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 shadow-inner">
+                    <BookOpen size={22} />
+                  </div>
+                  <h2 className="text-2xl font-black text-white tracking-tight">Curriculum Overview</h2>
+                </div>
+                
+                <div className="rounded-3xl border border-white/10 bg-black/50 p-6 sm:p-8 shadow-inner backdrop-blur-md">
+                  <p className="whitespace-pre-line text-sm sm:text-base leading-[2] text-neutral-300 font-medium text-justify">
+                    {course.description}
+                  </p>
+                </div>
               </div>
+            </section>
+
+            {/* 🌟 بخش جدید و خفن معرفی استاد به صورت لنداسکیپ (یک طرف عکس، یک طرف مشخصات و بیوگرافی Justify شده) */}
+            <section className="overflow-hidden rounded-[2.5rem] border border-amber-500/20 bg-gradient-to-br from-neutral-900/95 via-neutral-950/95 to-black/95 p-8 sm:p-12 shadow-2xl backdrop-blur-2xl relative">
+              <div className="absolute top-0 right-0 w-72 h-72 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+              <div className="flex items-center gap-3 mb-8 relative z-10">
+                <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 shadow-inner">
+                  <GraduationCap size={24} />
+                </div>
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-500 block">Expert Faculty</span>
+                  <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Course Instructor</h2>
+                </div>
+              </div>
+
+              <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 relative z-10">
+                {/* طرف راست/چپ: عکس استاد با فریم لوکس */}
+                <div className="w-full lg:w-[35%] flex flex-col items-center">
+                  <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-3xl overflow-hidden border-2 border-amber-500/40 shadow-[0_0_30px_rgba(245,158,11,0.2)] bg-black">
+                    <img 
+                      src={primaryInstructor.imageUrl || "/hero.png"} 
+                      alt={primaryInstructor.name} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="mt-4 text-center">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-black uppercase tracking-wider">
+                      <Award size={14} /> Lead Architect
+                    </span>
+                  </div>
+                </div>
+
+                {/* طرف دیگر: نام، عنوان و بیوگرافی کامل و تراز شده */}
+                <div className="w-full lg:w-[65%] space-y-4 text-left">
+                  <h3 className="text-3xl font-black text-white tracking-tight">{primaryInstructor.name}</h3>
+                  
+                  <div className="rounded-3xl border border-white/10 bg-black/50 p-6 sm:p-8 shadow-inner backdrop-blur-md">
+                    <p className="text-sm sm:text-base leading-[1.8] text-neutral-300 font-medium text-justify">
+                      {primaryInstructor.bio}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* در صورت وجود مدرس دوم */}
+              {secondaryInstructor && (
+                <div className="mt-12 pt-12 border-t border-white/10 flex flex-col lg:flex-row items-center lg:items-start gap-8 relative z-10">
+                  <div className="w-full lg:w-[35%] flex flex-col items-center">
+                    <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-3xl overflow-hidden border-2 border-blue-500/40 shadow-[0_0_30px_rgba(59,130,246,0.2)] bg-black">
+                      <img 
+                        src={secondaryInstructor.imageUrl || "/hero.png"} 
+                        alt={secondaryInstructor.name} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="mt-4 text-center">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-wider">
+                        <Award size={14} /> Co-Instructor
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-[65%] space-y-4 text-left">
+                    <h3 className="text-3xl font-black text-white tracking-tight">{secondaryInstructor.name}</h3>
+                    <div className="rounded-3xl border border-white/10 bg-black/50 p-6 sm:p-8 shadow-inner backdrop-blur-md">
+                      <p className="text-sm sm:text-base leading-[1.8] text-neutral-300 font-medium text-justify">
+                        {secondaryInstructor.bio}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </section>
 
             <section className="rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-neutral-900/95 via-neutral-950/95 to-black/95 p-8 shadow-2xl backdrop-blur-2xl sm:p-12">
@@ -200,6 +316,30 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
                 ))}
               </div>
 
+              {/* فرم اعمال کد کوپن تخفیف */}
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <form method="GET" className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500" size={16} />
+                    <input 
+                      type="text" 
+                      name="coupon" 
+                      defaultValue={appliedCouponCode}
+                      placeholder="Enter coupon code" 
+                      className="w-full rounded-2xl border border-white/10 bg-black/50 pl-10 pr-4 py-3 text-sm text-white placeholder-neutral-600 focus:border-yellow-500/50 focus:outline-none"
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    className="rounded-2xl bg-white/10 hover:bg-white/20 border border-white/10 px-5 py-3 text-xs font-black uppercase tracking-widest text-white transition-all cursor-pointer"
+                  >
+                    Apply
+                  </button>
+                </form>
+                {couponError && <p className="mt-2 text-xs font-bold text-red-400">{couponError}</p>}
+                {couponDiscountPercentage > 0 && <p className="mt-2 text-xs font-bold text-emerald-400">Coupon applied: {couponDiscountPercentage}% discount!</p>}
+              </div>
+
               <div className="mt-8 border-t border-white/10 pt-8 relative z-10">
                 {isUserLoggedIn ? (
                   <div className="space-y-6">
@@ -219,13 +359,12 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
                       </div>
                     </div>
 
-                    // ارسال اطلاعات مالی به فرم
-<CourseRegistrationForm 
-  courses={[course]} 
-  finalPayableAmount={finalPayableAmount}
-  walletDeduction={walletDeduction}
-  studentId={session.user.id} // 👈 این خط اضافه شود
-/>
+                    <CourseRegistrationForm 
+                      courses={[course]} 
+                      finalPayableAmount={finalPayableAmount}
+                      walletDeduction={walletDeduction}
+                      studentId={session.user.id}
+                    />
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -246,9 +385,8 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
                 </div>
               </div>
             </section>
-
-            <CourseInstructorSwitcher primary={primaryInstructor} secondary={secondaryInstructor} />
           </div>
+
         </div>
       </div>
     </main>
