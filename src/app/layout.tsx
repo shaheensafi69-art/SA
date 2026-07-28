@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css"; // This import is for side effects, no module or type declarations are expected.
 import PushAlertScript from "@/components/PushAlertScript"; // ایمپورت کامپوننت نوتیفیکیشن
+import SplashScreen from "@/components/SplashScreen"; // 👈 اضافه شدن کامپوننت لودر
 
 export const viewport: Viewport = {
   themeColor: "#020202",
@@ -50,9 +51,13 @@ export default function RootLayout({
           `
         }} />
       </head>
-      <body className="min-h-full flex flex-col bg-neutral-950 text-white">
+      <body className="min-h-full flex flex-col bg-neutral-950 text-white relative">
         {/* اجرای امن اسکریپت PushAlert در سمت کلاینت */}
         <PushAlertScript />
+        
+        {/* 👈 ویدیو در بالاترین لایه نمایش داده می‌شود */}
+        <SplashScreen />
+        
         {children}
       </body>
     </html>
