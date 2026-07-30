@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import "./globals.css"; // This import is for side effects, no module or type declarations are expected.
-import PushAlertScript from "@/components/PushAlertScript"; // ایمپورت کامپوننت نوتیفیکیشن
-import SplashScreen from "@/components/SplashScreen"; // 👈 اضافه شدن کامپوننت لودر
+import "./globals.css"; 
+import PushAlertScript from "@/components/PushAlertScript"; 
+import SplashScreen from "@/components/SplashScreen"; // این را نگه می‌داریم تا در اپلیکیشن کار کند
 
 export const viewport: Viewport = {
   themeColor: "#020202",
@@ -33,15 +33,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <head>
-        {/* دریافت مستقیم فونت‌ها از گوگل در مرورگر کاربر */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link 
           href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&display=swap" 
           rel="stylesheet" 
         />
-        
-        {/* تزریق متغیرهای فونت برای Tailwind */}
         <style dangerouslySetInnerHTML={{
           __html: `
             :root {
@@ -52,10 +49,9 @@ export default function RootLayout({
         }} />
       </head>
       <body className="min-h-full flex flex-col bg-neutral-950 text-white relative">
-        {/* اجرای امن اسکریپت PushAlert در سمت کلاینت */}
         <PushAlertScript />
         
-        {/* 👈 ویدیو در بالاترین لایه نمایش داده می‌شود */}
+        {/* کامپوننت هوشمند لودر */}
         <SplashScreen />
         
         {children}
