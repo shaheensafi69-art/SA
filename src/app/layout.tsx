@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css"; 
 import PushAlertScript from "@/components/PushAlertScript"; 
-import SplashScreen from "@/components/SplashScreen"; // این را نگه می‌داریم تا در اپلیکیشن کار کند
+import SplashScreen from "@/components/SplashScreen"; // ویدیوی مخصوص اپلیکیشن
 
 export const viewport: Viewport = {
   themeColor: "#020202",
@@ -51,7 +51,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-neutral-950 text-white relative">
         <PushAlertScript />
         
-        {/* کامپوننت هوشمند لودر */}
+        {/* لودر ویدیویی هوشمند فقط برای اپلیکیشن (PWA) */}
         <SplashScreen />
         
         {children}
