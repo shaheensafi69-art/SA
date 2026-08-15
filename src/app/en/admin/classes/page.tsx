@@ -1,10 +1,13 @@
-// src/app/en/admin/classes/page.tsx
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { Loader2, ArrowLeft, Search, ShieldAlert, BookOpen, Users, Radio, Sparkles, Clock, CalendarDays, CheckCircle2, User } from "lucide-react";
+import { 
+  Loader2, ArrowLeft, Search, ShieldAlert, BookOpen, 
+  Users, Radio, Sparkles, Clock, CalendarDays, 
+  CheckCircle2, User 
+} from "lucide-react";
 
 type ClassItem = {
   id: string;
@@ -89,39 +92,39 @@ export default function AdminClassesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="w-12 h-12 text-cyan-500 animate-spin" />
+      <div className="min-h-screen bg-[#030305] flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="w-12 h-12 text-rose-500 animate-spin" />
         <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Organizing Class Cohorts...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir="ltr">
+    <div className="min-h-screen bg-[#030305] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir="ltr">
       
-      {/* Background Ambience */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-cyan-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-      <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+      {/* ================= BACKGROUND GLOW EFFECTS (ADMIN THEME) ================= */}
+      <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-rose-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+      <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-700/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
       <div className="max-w-[1600px] mx-auto space-y-8 relative z-10 animate-[fadeIn_0.4s_ease-out]">
         
-        {/* ================= Header ================= */}
-        <header className="bg-[#0a0a0f]/80 p-6 sm:p-8 rounded-[2.5rem] border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden flex flex-col md:flex-row justify-between md:items-center gap-6">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none"></div>
+        {/* ================= HEADER ================= */}
+        <header className="bg-[#0a0a0f]/80 p-6 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden flex flex-col md:flex-row justify-between md:items-center gap-6">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/10 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div className="relative z-10">
-            <Link href="/en/admin" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-cyan-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+            <Link href="/en/admin" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-rose-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
-              Class <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Cohorts</span>
+              Class <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-purple-500">Cohorts</span>
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-xl">
               Monitor active groups, review completed classes, and track newly formed cohorts across all courses.
             </p>
           </div>
           
-          <div className="relative z-10 shrink-0">
+          <div className="relative z-10 shrink-0 w-full md:w-auto">
              <div className="bg-[#0a0a0f]/60 p-2 rounded-2xl border border-white/5 backdrop-blur-xl flex items-center gap-3 w-full sm:w-80 shadow-lg">
               <div className="pl-4 text-neutral-500"><Search size={18} /></div>
               <input 
@@ -133,7 +136,7 @@ export default function AdminClassesPage() {
           </div>
         </header>
 
-        {/* ================= Grouped Classes ================= */}
+        {/* ================= GROUPED CLASSES ================= */}
         {Object.keys(groupedClasses).length === 0 ? (
            <div className="text-center py-20 bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] backdrop-blur-md shadow-2xl">
              <ShieldAlert size={48} className="mx-auto text-neutral-600 mb-4" />
@@ -146,7 +149,7 @@ export default function AdminClassesPage() {
               <section key={courseName} className="animate-[slideUp_0.5s_ease-out_forwards]" style={{ animationDelay: `${groupIndex * 0.1}s`, opacity: 0 }}>
                 
                 <div className="flex items-center gap-3 mb-6 pl-2 border-b border-white/5 pb-3">
-                  <BookOpen size={20} className="text-cyan-400" />
+                  <BookOpen size={20} className="text-rose-500" />
                   <h2 className="text-xl sm:text-2xl font-black text-white tracking-wide">{courseName}</h2>
                   <span className="ml-2 px-2.5 py-1 bg-white/5 rounded-lg text-[10px] font-black text-neutral-400">
                     {groupedClasses[courseName].length} Classes
@@ -160,15 +163,15 @@ export default function AdminClassesPage() {
                       <Link 
                         href={`/en/admin/classes/${cls.id}`} 
                         key={cls.id}
-                        className="group flex flex-col bg-[#0a0a0f]/80 border border-white/5 rounded-[2rem] p-6 backdrop-blur-3xl shadow-xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(6,182,212,0.15)] hover:border-cyan-500/30 relative overflow-hidden"
+                        className="group flex flex-col bg-[#0a0a0f]/80 border border-white/5 rounded-[2rem] p-6 backdrop-blur-3xl shadow-xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(244,63,94,0.15)] hover:border-rose-500/30 relative overflow-hidden"
                       >
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-[40px] pointer-events-none group-hover:bg-cyan-500/10 transition-colors"></div>
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-[40px] pointer-events-none group-hover:bg-rose-500/10 transition-colors"></div>
 
                         <div className="flex justify-between items-start mb-5 relative z-10">
                           <span className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border flex items-center gap-1.5 ${
                             cls.is_active 
-                              ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" 
-                              : "bg-neutral-900 text-neutral-400 border-neutral-700"
+                              ? "bg-rose-500/10 text-rose-400 border-rose-500/20" 
+                              : "bg-black/60 text-neutral-400 border-white/10"
                           }`}>
                             {cls.is_active ? <Radio size={10} className="animate-pulse"/> : <CheckCircle2 size={10}/>}
                             {cls.is_active ? "In Progress" : "Completed"}
@@ -182,12 +185,12 @@ export default function AdminClassesPage() {
                         </div>
 
                         <div className="relative z-10 flex-1">
-                          <h3 className="text-xl font-black text-white mb-4 line-clamp-1 group-hover:text-cyan-300 transition-colors">
+                          <h3 className="text-lg sm:text-xl font-black text-white mb-4 line-clamp-2 leading-tight group-hover:text-rose-400 transition-colors">
                             {cls.class_name}
                           </h3>
                           
                           <div className="flex items-center gap-3 bg-black/40 border border-white/5 p-3 rounded-2xl mb-4">
-                            <div className="w-8 h-8 rounded-xl overflow-hidden bg-neutral-800 shrink-0 flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-xl overflow-hidden bg-neutral-800 shrink-0 flex items-center justify-center border border-white/5">
                               {cls.teacher?.avatar_url ? (
                                 <img src={cls.teacher.avatar_url} className="w-full h-full object-cover" />
                               ) : (
@@ -200,12 +203,12 @@ export default function AdminClassesPage() {
                             </div>
                           </div>
 
-                          <div className="flex items-center justify-between text-neutral-400 text-xs font-medium">
-                            <span className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/5">
-                              <Users size={12}/> {cls.students_count}
+                          <div className="flex items-center justify-between text-neutral-400 text-xs font-medium border-t border-white/5 pt-4">
+                            <span className="flex items-center gap-1.5">
+                              <Users size={14} className="text-rose-500/70" /> {cls.students_count} Students
                             </span>
-                            <span className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/5 font-mono text-[10px]">
-                              <CalendarDays size={12}/> {new Date(cls.created_at).toLocaleDateString()}
+                            <span className="flex items-center gap-1.5 font-mono text-[10px]">
+                              <CalendarDays size={14} className="text-rose-500/70" /> {new Date(cls.created_at).toLocaleDateString()}
                             </span>
                           </div>
                         </div>

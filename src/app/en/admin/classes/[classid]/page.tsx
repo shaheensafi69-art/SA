@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { Loader2, ArrowLeft, Users, Clock, CalendarDays, BookOpen, ShieldAlert, Radio, CheckCircle2, User, Mail, Sparkles, Plus, LockKeyhole } from "lucide-react";
+import { 
+  Loader2, ArrowLeft, Users, Clock, CalendarDays, 
+  BookOpen, ShieldAlert, Radio, CheckCircle2, 
+  User, Mail, Sparkles, Plus, LockKeyhole 
+} from "lucide-react";
 
 type ClassDetail = {
   id: string;
@@ -31,14 +35,20 @@ type EnrolledStudent = {
 
 export default function AdminClassDetailsPage() {
   const params = useParams();
-  const classId = params.classid as string;
+  
+  // 🔴 اصلاح حساس به حروف: خواندن آیدی دقیقاً بر اساس نام فولدر [classid]
+  const classId = (params?.classid || params?.classId || params?.id) as string;
 
   const [isLoading, setIsLoading] = useState(true);
   const [classData, setClassData] = useState<ClassDetail | null>(null);
   const [students, setStudents] = useState<EnrolledStudent[]>([]);
 
   useEffect(() => {
-    if (classId) fetchClassDetails();
+    if (classId) {
+      fetchClassDetails();
+    } else {
+      setIsLoading(false);
+    }
   }, [classId]);
 
   const fetchClassDetails = async () => {
@@ -46,6 +56,7 @@ export default function AdminClassDetailsPage() {
     const supabase = createClient();
 
     try {
+      // ۱. دریافت اطلاعات اصلی کلاس به همراه استاد و نام دوره
       const { data: clsData, error: clsError } = await supabase
         .from("class_groups")
         .select(`
@@ -69,35 +80,49 @@ export default function AdminClassDetailsPage() {
         schedule_days: clsData.schedule_days || "Monday, Wednesday, Friday"
       });
 
-      const { data: classStudents } = await supabase
+      // ۲. دریافت شاگردان (روش ایمن دو مرحله‌ای برای جلوگیری از خطاهای Join دیتابیس)
+      const { data: classStudentsData, error: csError } = await supabase
         .from("class_students")
-        .select("student_id, created_at, is_paid")
-        .eq("class_group_id", classId)
-        .order('created_at', { ascending: false });
+        .select("student_id, joined_at, is_paid")
+        .eq("class_group_id", classId);
 
-      if (classStudents && classStudents.length > 0) {
-        const studentIds = classStudents.map(cs => cs.student_id);
-        const { data: profiles } = await supabase
+      if (csError) throw csError;
+
+      if (classStudentsData && classStudentsData.length > 0) {
+        // استخراج تمام ID های شاگردان
+        const studentIds = classStudentsData.map(cs => cs.student_id);
+
+        // واکشی پروفایل این شاگردان
+        const { data: profilesData, error: profError } = await supabase
           .from("profiles")
           .select("id, first_name, last_name, email, avatar_url")
           .in("id", studentIds);
 
-        if (profiles) {
-          const formattedStudents = profiles.map(profile => {
-            const joinedData = classStudents.find(cs => cs.student_id === profile.id);
+        if (profError) throw profError;
+
+        if (profilesData) {
+          // ادغام اطلاعات ثبت نام با پروفایل
+          const formattedStudents: EnrolledStudent[] = profilesData.map(profile => {
+            const enrollmentInfo = classStudentsData.find(cs => cs.student_id === profile.id);
             return {
-              ...profile,
-              joined_at: joinedData?.created_at || new Date().toISOString(),
-              is_paid: joinedData?.is_paid ?? false
+              id: profile.id,
+              first_name: profile.first_name || "Unknown",
+              last_name: profile.last_name || "",
+              email: profile.email || "",
+              avatar_url: profile.avatar_url,
+              joined_at: enrollmentInfo?.joined_at || new Date().toISOString(),
+              is_paid: enrollmentInfo?.is_paid ?? false
             };
           });
           
+          // مرتب‌سازی: اول پرداخت شده‌ها (Active)، سپس پرداخت نشده‌ها (Locked)
           formattedStudents.sort((a, b) => (a.is_paid === b.is_paid) ? 0 : a.is_paid ? 1 : -1);
           setStudents(formattedStudents);
         }
       } else {
         setStudents([]);
       }
+
     } catch (error) {
       console.error("Error fetching class details:", error);
     } finally {
@@ -110,6 +135,7 @@ export default function AdminClassDetailsPage() {
     const newStatus = !currentStatus;
 
     try {
+      // آپدیت وضعیت پرداخت در دیتابیس
       const { error } = await supabase
         .from("class_students")
         .update({ is_paid: newStatus })
@@ -118,6 +144,7 @@ export default function AdminClassDetailsPage() {
 
       if (error) throw error;
 
+      // آپدیت رابط کاربری بدون رفرش کردن صفحه
       setStudents(prev => prev.map(s => s.id === studentId ? { ...s, is_paid: newStatus } : s));
     } catch (error: any) {
       alert("Failed to update status: " + error.message);
@@ -126,38 +153,45 @@ export default function AdminClassDetailsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="w-12 h-12 text-cyan-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Class Information...</p>
+      <div className="min-h-screen bg-[#030305] flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="w-12 h-12 text-rose-500 animate-spin shadow-[0_0_15px_rgba(244,63,94,0.5)] rounded-full" />
+        <p className="text-rose-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Cohort Information...</p>
       </div>
     );
   }
 
   if (!classData) {
     return (
-      <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-screen bg-[#030305] flex flex-col items-center justify-center p-6 text-center">
         <ShieldAlert size={48} className="text-neutral-600 mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">Cohort Not Found</h2>
-        <p className="text-neutral-500 mb-6">This class group does not exist or has been deleted.</p>
-        <Link href="/en/admin/classes" className="px-6 py-3 bg-white/10 text-white rounded-xl font-bold hover:bg-white/20 transition">Return to Cohorts</Link>
+        <h2 className="text-2xl font-black text-white mb-2">Cohort Not Found</h2>
+        <p className="text-neutral-500 mb-8 font-medium">This class group does not exist or the ID is incorrect.</p>
+        <Link href="/en/admin/classes" className="px-8 py-4 bg-rose-500 hover:bg-rose-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition shadow-[0_0_20px_rgba(244,63,94,0.3)]">
+          Return to Cohorts
+        </Link>
       </div>
     );
   }
 
+  // بررسی تازه بودن کلاس (در 10 روز گذشته ساخته شده باشد)
   const isNew = (new Date().getTime() - new Date(classData.created_at).getTime()) / (1000 * 3600 * 24) <= 10;
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir="ltr">
-      <div className="fixed top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-cyan-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+    <div className="min-h-screen bg-[#030305] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir="ltr">
+      
+      {/* ================= BACKGROUND GLOW EFFECTS (ADMIN THEME) ================= */}
+      <div className="fixed top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-rose-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+      <div className="fixed bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-purple-700/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
       <div className="relative z-10 max-w-[1400px] mx-auto space-y-6 sm:space-y-8 animate-[fadeIn_0.4s_ease-out]">
         
+        {/* ================= CLASS OVERVIEW HEADER ================= */}
         <section className="bg-[#0a0a0f]/80 p-6 sm:p-10 rounded-[2.5rem] border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/5 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div className="relative z-10 flex flex-col md:flex-row justify-between md:items-start gap-6 border-b border-white/5 pb-8 mb-8">
             <div>
-              <Link href="/en/admin/classes" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-cyan-400 transition-colors mb-6 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
+              <Link href="/en/admin/classes" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-rose-400 transition-colors mb-6 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
                 <ArrowLeft size={14} /> Back to Cohorts
               </Link>
               
@@ -165,12 +199,12 @@ export default function AdminClassDetailsPage() {
                 <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white">{classData.class_name}</h1>
                 {isNew && <span className="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center gap-1 shadow-md"><Sparkles size={10}/> New</span>}
               </div>
-              <p className="text-sm font-bold text-neutral-400 flex items-center gap-2"><BookOpen size={16}/> {classData.course?.title}</p>
+              <p className="text-sm font-bold text-neutral-400 flex items-center gap-2"><BookOpen size={16} className="text-rose-500/70" /> {classData.course?.title}</p>
             </div>
 
             <div className="shrink-0 flex items-center gap-3">
               <span className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border flex items-center gap-2 shadow-lg ${
-                classData.is_active ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/30" : "bg-black/60 text-neutral-300 border-white/10"
+                classData.is_active ? "bg-rose-500/20 text-rose-300 border-rose-500/30" : "bg-black/60 text-neutral-300 border-white/10"
               }`}>
                 {classData.is_active ? <Radio size={14} className="animate-pulse"/> : <CheckCircle2 size={14}/>}
                 {classData.is_active ? "Live / In Progress" : "Completed Cohort"}
@@ -179,46 +213,47 @@ export default function AdminClassDetailsPage() {
           </div>
 
           <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col justify-center">
-              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2 flex items-center gap-1.5"><Clock size={12}/> Time</p>
+            <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col justify-center hover:bg-white/5 transition-colors">
+              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2 flex items-center gap-1.5"><Clock size={12} className="text-rose-400"/> Time</p>
               <p className="text-base font-bold text-white font-mono">{classData.schedule_time}</p>
             </div>
-            <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col justify-center">
-              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2 flex items-center gap-1.5"><CalendarDays size={12}/> Days</p>
+            <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col justify-center hover:bg-white/5 transition-colors">
+              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2 flex items-center gap-1.5"><CalendarDays size={12} className="text-rose-400"/> Days</p>
               <p className="text-sm font-bold text-white">{classData.schedule_days}</p>
             </div>
-            <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col justify-center">
-              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2 flex items-center gap-1.5"><CalendarDays size={12}/> Created On</p>
+            <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col justify-center hover:bg-white/5 transition-colors">
+              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2 flex items-center gap-1.5"><CalendarDays size={12} className="text-rose-400"/> Created On</p>
               <p className="text-sm font-bold text-white font-mono">{new Date(classData.created_at).toLocaleDateString()}</p>
             </div>
-            <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col justify-center border-l-2 border-l-cyan-500/50 shadow-[inset_10px_0_20px_rgba(6,182,212,0.05)]">
-              <p className="text-[10px] font-black uppercase tracking-widest text-cyan-500/70 mb-2 flex items-center gap-1.5"><Users size={12}/> Enrolled</p>
-              <p className="text-2xl font-black text-cyan-400">{students.length}</p>
+            <div className="bg-rose-500/5 border border-rose-500/20 p-5 rounded-2xl flex flex-col justify-center border-l-2 border-l-rose-500 shadow-[inset_10px_0_20px_rgba(244,63,94,0.05)]">
+              <p className="text-[10px] font-black uppercase tracking-widest text-rose-400 mb-2 flex items-center gap-1.5"><Users size={12}/> Enrolled</p>
+              <p className="text-2xl font-black text-white">{students.length}</p>
             </div>
           </div>
         </section>
 
         <div className="grid gap-6 sm:gap-8 grid-cols-1 xl:grid-cols-[1.3fr_0.7fr]">
           
-          {/* LEFT: STUDENTS LIST */}
+          {/* ================= LEFT: STUDENTS LIST ================= */}
           <div className="space-y-6 sm:space-y-8 flex flex-col">
-            <section className="bg-[#0a0a0f]/80 border border-white/5 p-6 sm:p-8 rounded-[2.5rem] shadow-2xl backdrop-blur-3xl flex-1 flex flex-col relative">
+            <section className="bg-[#0a0a0f]/80 border border-white/5 p-6 sm:p-8 rounded-[2.5rem] shadow-2xl backdrop-blur-3xl flex-1 flex flex-col relative overflow-hidden">
+              <div className="absolute -top-10 -left-10 w-40 h-40 bg-purple-600/10 rounded-full blur-[80px] pointer-events-none"></div>
               
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6 border-b border-white/5 pb-4">
+              <div className="relative z-10 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6 border-b border-white/5 pb-4">
                 <h3 className="text-xl font-black text-white flex items-center gap-2">
-                  <Users size={22} className="text-cyan-400"/> Student Roster
+                  <Users size={22} className="text-rose-500"/> Student Roster
                 </h3>
                 
-                {/* 👈 دکمه هدایت به صفحه جدید جستجو و افزودن شاگرد */}
+                {/* 👈 دکمه هدایت به صفحه افزودن شاگرد */}
                 <Link 
                   href={`/en/admin/classes/${classId}/add-student`}
-                  className="bg-cyan-500 hover:bg-cyan-400 text-black px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-colors shadow-[0_0_20px_rgba(6,182,212,0.3)]"
+                  className="bg-rose-500 hover:bg-rose-600 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-colors shadow-[0_0_20px_rgba(244,63,94,0.3)]"
                 >
                   <Plus size={16} /> Enroll New Student
                 </Link>
               </div>
               
-              <div className="space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
+              <div className="relative z-10 space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
                 {students.length === 0 ? (
                   <div className="text-center py-16 border border-dashed border-white/5 rounded-3xl bg-black/20 text-neutral-500">
                     <Users size={32} className="mx-auto mb-3 opacity-50"/>
@@ -226,13 +261,13 @@ export default function AdminClassDetailsPage() {
                   </div>
                 ) : (
                   students.map((student) => (
-                    <div key={student.id} className={`w-full text-left rounded-2xl border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors ${student.is_paid ? 'bg-black/40 border-white/5' : 'bg-red-950/10 border-red-500/20'}`}>
+                    <div key={student.id} className={`w-full text-left rounded-2xl border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors ${student.is_paid ? 'bg-black/40 border-white/5 hover:border-white/10' : 'bg-rose-950/10 border-rose-500/20 hover:border-rose-500/40'}`}>
                       <div className="flex items-center gap-4 min-w-0">
                         <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-neutral-900 border border-white/10 shrink-0 flex items-center justify-center">
                           {student.avatar_url ? (
                             <img src={student.avatar_url} className="w-full h-full object-cover" />
                           ) : (
-                            <span className="font-black text-cyan-500">{student.first_name.charAt(0)}</span>
+                            <span className="font-black text-rose-500">{student.first_name.charAt(0)}</span>
                           )}
                         </div>
                         <div className="min-w-0">
@@ -247,16 +282,17 @@ export default function AdminClassDetailsPage() {
                           <p className="text-xs font-bold text-neutral-300 mt-0.5 font-mono">{new Date(student.joined_at).toLocaleDateString()}</p>
                         </div>
                         
+                        {/* دکمه تغییر وضعیت پرداخت مالی شاگرد توسط ادمین */}
                         <button
                           onClick={() => toggleStudentPaymentStatus(student.id, student.is_paid)}
-                          className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all flex items-center gap-1.5 min-w-[90px] justify-center ${
+                          className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all flex items-center gap-1.5 min-w-[110px] justify-center ${
                             student.is_paid 
                               ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20' 
-                              : 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20 animate-pulse'
+                              : 'bg-rose-500/10 border-rose-500/30 text-rose-400 hover:bg-rose-500/20 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.2)]'
                           }`}
                         >
                           {student.is_paid ? <CheckCircle2 size={12}/> : <LockKeyhole size={12}/>}
-                          {student.is_paid ? 'PAID / ACTIVE' : 'PENDING / LOCKED'}
+                          {student.is_paid ? 'PAID / ACTIVE' : 'LOCKED (UNPAID)'}
                         </button>
                       </div>
                     </div>
@@ -266,13 +302,13 @@ export default function AdminClassDetailsPage() {
             </section>
           </div>
 
-          {/* RIGHT: INSTRUCTOR INFO */}
+          {/* ================= RIGHT: INSTRUCTOR INFO ================= */}
           <div className="space-y-6 sm:space-y-8 flex flex-col">
             <section className="bg-[#0a0a0f]/80 border border-white/5 p-6 sm:p-8 rounded-[2.5rem] shadow-2xl backdrop-blur-3xl h-full relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-[40px] pointer-events-none"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-600/10 rounded-full blur-[40px] pointer-events-none"></div>
               
               <h3 className="text-base font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2 border-b border-white/5 pb-4 relative z-10">
-                <User size={18} className="text-cyan-400"/> Cohort Instructor
+                <User size={18} className="text-rose-400"/> Cohort Instructor
               </h3>
               
               {classData.teacher ? (
@@ -281,7 +317,7 @@ export default function AdminClassDetailsPage() {
                     {classData.teacher.avatar_url ? (
                       <img src={classData.teacher.avatar_url} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-3xl font-black text-cyan-500">{classData.teacher.first_name.charAt(0)}</span>
+                      <span className="text-3xl font-black text-rose-500">{classData.teacher.first_name.charAt(0)}</span>
                     )}
                   </div>
                   <h4 className="text-xl font-black text-white mb-1">{classData.teacher.first_name} {classData.teacher.last_name}</h4>
@@ -289,13 +325,13 @@ export default function AdminClassDetailsPage() {
                   
                   <Link 
                     href={`/en/admin/manage-teachers/${classData.teacher.id}`}
-                    className="w-full mt-auto py-4 bg-white/5 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-500/30 text-neutral-300 hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 text-center"
+                    className="w-full mt-auto py-4 bg-white/5 hover:bg-rose-500/20 border border-white/10 hover:border-rose-500/30 text-neutral-300 hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 text-center"
                   >
                     View Faculty Profile
                   </Link>
                 </div>
               ) : (
-                <div className="text-center py-12 text-neutral-500">
+                <div className="text-center py-12 text-neutral-500 mt-auto mb-auto">
                   <User size={32} className="mx-auto mb-3 opacity-50"/>
                   <p className="text-sm font-bold">No instructor assigned.</p>
                 </div>

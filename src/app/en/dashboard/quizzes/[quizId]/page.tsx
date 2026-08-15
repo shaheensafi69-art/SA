@@ -4,12 +4,17 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Loader2, CheckCircle2, AlertCircle, Send, PenTool, LayoutGrid, Clock } from "lucide-react";
+import { ArrowLeft, Loader2, AlertCircle, Send, PenTool, Clock, CheckCircle2, Circle } from "lucide-react";
 
 type Question = {
   id: string;
   question_text: string;
   points: number;
+  option_a: string | null;
+  option_b: string | null;
+  option_c: string | null;
+  option_d: string | null;
+  correct_option: string | null; // A, B, C, D
 };
 
 type QuizInfo = {
@@ -30,10 +35,11 @@ export default function StudentExamPaperPage() {
   const [quizInfo, setQuizInfo] = useState<QuizInfo | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   
-  // ذخیره جواب‌های تشریحی شاگرد: { question_id: "متن جواب نوشته شده" }
+  // ذخیره جواب‌ها: 
+  // اگر تستی باشد نام گزینه ("A", "B", "C", "D") ذخیره می‌شود.
+  // اگر تشریحی باشد "متن کامل تایپ شده" ذخیره می‌شود.
   const [answers, setAnswers] = useState<Record<string, string>>({});
   
-  // وضعیت پس از ثبت برگه
   const [isSubmittedSuccessfully, setIsSubmittedSuccessfully] = useState(false);
 
   useEffect(() => {
@@ -56,7 +62,7 @@ export default function StudentExamPaperPage() {
 
       const { data: questionsData, error: qError } = await supabase
         .from("quiz_questions")
-        .select("id, question_text, points") // نیازی به گزینه‌های A/B/C/D نداریم
+        .select("id, question_text, points, option_a, option_b, option_c, option_d, correct_option")
         .eq("quiz_id", quizId)
         .order("created_at", { ascending: true });
 
@@ -72,15 +78,14 @@ export default function StudentExamPaperPage() {
     }
   };
 
-  const handleAnswerChange = (questionId: string, text: string) => {
+  const handleAnswerChange = (questionId: string, answer: string) => {
     setAnswers(prev => ({
       ...prev,
-      [questionId]: text
+      [questionId]: answer
     }));
   };
 
   const handleSubmitExamPaper = async () => {
-    // بررسی اینکه آیا به تمام سوالات پاسخ داده است؟
     const unansweredCount = questions.length - Object.keys(answers).filter(k => answers[k].trim() !== "").length;
     if (unansweredCount > 0) {
       if (!confirm(`You have ${unansweredCount} unanswered questions! Are you sure you want to submit?`)) return;
@@ -95,15 +100,57 @@ export default function StudentExamPaperPage() {
     if (!session?.user || !quizInfo) return;
 
     try {
-      // ۱. ثبت در جدول quiz_attempts با وضعیت pending_review (بدون نمره)
+      // 1. بررسی اینکه آیا کل آزمون تستی است یا شامل سوالات تشریحی هم می‌شود
+      const hasDescriptive = questions.some(q => 
+        !q.option_a || 
+        q.option_a.toLowerCase() === "descriptive" || 
+        q.option_a.toLowerCase() === "null"
+      );
+      
+      let totalEarnedScore = 0;
+      
+      // پردازش جواب‌ها برای ذخیره در دیتابیس
+      const studentAnswersArray = questions.map(q => {
+        const isMultipleChoice = q.option_a && q.option_a.toLowerCase() !== "descriptive" && q.option_a.toLowerCase() !== "null";
+        
+        const studentAnswerVal = answers[q.id]?.trim() || "";
+        let earned = 0;
+        let isCorrect = null;
+        let answerTextToSave = studentAnswerVal;
+
+        // اگر سوال تستی باشد، نمره را محاسبه کرده و متن گزینه را برای دیتابیس استخراج می‌کنیم
+        if (isMultipleChoice) {
+          isCorrect = studentAnswerVal === q.correct_option;
+          earned = isCorrect ? q.points : 0;
+          totalEarnedScore += earned;
+          
+          if (studentAnswerVal === 'A') answerTextToSave = q.option_a || "A";
+          else if (studentAnswerVal === 'B') answerTextToSave = q.option_b || "B";
+          else if (studentAnswerVal === 'C') answerTextToSave = q.option_c || "C";
+          else if (studentAnswerVal === 'D') answerTextToSave = q.option_d || "D";
+        }
+
+        return {
+          question_id: q.id,
+          student_answer_text: answerTextToSave || "No answer provided.",
+          points_earned: earned,
+          is_correct: isCorrect
+        };
+      });
+
+      // اگر حتی یک سوال تشریحی باشد، آزمون باید توسط استاد نمره داده شود (pending_review)
+      const attemptStatus = hasDescriptive ? "pending_review" : "completed";
+      const isPassed = !hasDescriptive ? (totalEarnedScore >= quizInfo.passing_score) : false;
+
+      // 2. ثبت در جدول quiz_attempts
       const { data: attemptData, error: attemptError } = await supabase
         .from("quiz_attempts")
         .insert({
           quiz_id: quizId,
           student_id: session.user.id,
-          score: 0, 
-          is_passed: false,
-          status: "pending_review", // در انتظار تصحیح استاد
+          score: hasDescriptive ? 0 : totalEarnedScore, 
+          is_passed: isPassed,
+          status: attemptStatus, 
           letter_grade: null
         })
         .select("id")
@@ -111,22 +158,18 @@ export default function StudentExamPaperPage() {
 
       if (attemptError) throw attemptError;
 
-      // ۲. ثبت جواب‌های تشریحی شاگرد در جدول جدید quiz_student_answers
-      const studentAnswersArray = questions.map(q => ({
+      // 3. اضافه کردن ID تلاش (attempt_id) به آرایه جواب‌ها و ثبت در quiz_student_answers
+      const finalAnswersToInsert = studentAnswersArray.map(ans => ({
+        ...ans,
         attempt_id: attemptData.id,
-        question_id: q.id,
-        student_answer_text: answers[q.id]?.trim() || "No answer provided.",
-        points_earned: 0,
-        is_correct: null
       }));
 
       const { error: answersError } = await supabase
         .from("quiz_student_answers")
-        .insert(studentAnswersArray);
+        .insert(finalAnswersToInsert);
 
       if (answersError) throw answersError;
 
-      // نمایش صفحه موفقیت
       setIsSubmittedSuccessfully(true);
 
     } catch (error: any) {
@@ -156,13 +199,13 @@ export default function StudentExamPaperPage() {
         
         <div className="relative z-10 w-full max-w-xl bg-[#0a0a0f]/90 border border-white/10 rounded-[3rem] p-10 md:p-16 text-center backdrop-blur-3xl shadow-2xl animate-[slideInUp_0.4s_ease-out]">
           <div className="w-24 h-24 mx-auto rounded-[2rem] flex items-center justify-center mb-8 shadow-inner border border-white/5 bg-indigo-500/10">
-            <Clock size={48} className="text-indigo-400" />
+            <CheckCircle2 size={48} className="text-indigo-400" />
           </div>
           
           <h2 className="text-3xl font-black mb-2 text-white">Paper Submitted!</h2>
           <p className="text-neutral-400 font-medium mb-10 text-sm leading-relaxed">
             Your answers for <strong className="text-white">{quizInfo?.title}</strong> have been securely saved. 
-            The instructor will review your paper and assign your final grade shortly.
+            If your exam included descriptive questions, the instructor will review your paper and assign your final grade shortly.
           </p>
 
           <Link 
@@ -188,7 +231,7 @@ export default function StudentExamPaperPage() {
   }
 
   // ==========================================
-  // برگه اصلی امتحان (رندر سوالات تشریحی با اسکرول)
+  // برگه اصلی امتحان (پشتیبانی همزمان از ۴ جوابه و تشریحی)
   // ==========================================
   return (
     <div className="min-h-screen bg-[#020202] text-white font-sans flex flex-col relative pb-32" dir="ltr">
@@ -206,7 +249,7 @@ export default function StudentExamPaperPage() {
                 <span className="bg-red-500/20 text-red-400 border border-red-500/30 text-[9px] font-black uppercase px-2 py-0.5 rounded shrink-0 animate-pulse">Chance Exam</span>
               )}
             </div>
-            <p className="text-[10px] text-indigo-400 font-black uppercase tracking-widest mt-0.5">Descriptive Evaluation</p>
+            <p className="text-[10px] text-indigo-400 font-black uppercase tracking-widest mt-0.5">Official Assessment</p>
           </div>
         </div>
       </header>
@@ -215,52 +258,91 @@ export default function StudentExamPaperPage() {
       <main className="flex-1 max-w-4xl mx-auto w-full p-4 sm:p-6 md:p-10 space-y-8 sm:space-y-12 relative z-10">
         
         {/* پیام راهنما */}
-        <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-5 sm:p-6 flex gap-4 items-start">
+        <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-5 sm:p-6 flex gap-4 items-start shadow-inner">
           <PenTool className="text-indigo-400 shrink-0 mt-1" size={24} />
           <div>
             <h4 className="text-indigo-300 font-black text-sm mb-1 uppercase tracking-widest">Instructions</h4>
             <p className="text-xs sm:text-sm text-indigo-200/70 font-medium leading-relaxed">
-              Read each question carefully and type your descriptive answer in the provided boxes. 
-              Take your time to elaborate. Scroll down to see all questions.
+              Read each question carefully. Select an option for multiple-choice questions, or type your answer for descriptive ones. Scroll down to view all questions.
             </p>
           </div>
         </div>
 
         {/* لیست سوالات */}
         <div className="space-y-8 sm:space-y-10">
-          {questions.map((q, index) => (
-            <div key={q.id} className="bg-[#0a0a0f]/90 border border-white/5 rounded-[2rem] p-6 sm:p-8 shadow-2xl relative group focus-within:border-indigo-500/50 transition-colors">
-              
-              <div className="flex justify-between items-start mb-4 sm:mb-6 gap-4 border-b border-white/5 pb-4">
-                <div className="flex gap-4 items-start">
-                  <div className="w-8 h-8 rounded-full bg-indigo-500 text-white font-black flex items-center justify-center text-sm shadow-[0_0_15px_rgba(99,102,241,0.4)] shrink-0 mt-1">
-                    {index + 1}
+          {questions.map((q, index) => {
+            // منطق هوشمند برای تشخیص سوالات تستی از تشریحی
+            const isMultipleChoice = q.option_a && q.option_a.toLowerCase() !== "descriptive" && q.option_a.toLowerCase() !== "null";
+
+            return (
+              <div key={q.id} className="bg-[#0a0a0f]/90 border border-white/5 rounded-[2rem] p-6 sm:p-8 shadow-2xl relative group focus-within:border-indigo-500/50 transition-colors">
+                
+                <div className="flex justify-between items-start mb-4 sm:mb-6 gap-4 border-b border-white/5 pb-4">
+                  <div className="flex gap-4 items-start">
+                    <div className="w-8 h-8 rounded-full bg-indigo-500 text-white font-black flex items-center justify-center text-sm shadow-[0_0_15px_rgba(99,102,241,0.4)] shrink-0 mt-1">
+                      {index + 1}
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-black leading-relaxed text-white">
+                      {q.question_text}
+                    </h3>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-black leading-relaxed text-white">
-                    {q.question_text}
-                  </h3>
+                  <div className="px-3 py-1 bg-white/[0.03] border border-white/10 rounded-lg text-[10px] font-black text-neutral-400 uppercase tracking-widest shrink-0 whitespace-nowrap">
+                    {q.points} Pts
+                  </div>
                 </div>
-                <div className="px-3 py-1 bg-white/[0.03] border border-white/10 rounded-lg text-[10px] font-black text-neutral-400 uppercase tracking-widest shrink-0 whitespace-nowrap">
-                  {q.points} Pts
+
+                <div className="relative mt-6">
+                  {isMultipleChoice ? (
+                    // ================= رابط کاربری سوالات ۴ جوابه (تستی) =================
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                      {[
+                        { label: 'A', value: 'A', text: q.option_a },
+                        { label: 'B', value: 'B', text: q.option_b },
+                        { label: 'C', value: 'C', text: q.option_c },
+                        { label: 'D', value: 'D', text: q.option_d },
+                      ].filter(opt => opt.text).map((option) => {
+                        const isSelected = answers[q.id] === option.value;
+                        return (
+                          <button
+                            key={option.value}
+                            onClick={() => handleAnswerChange(q.id, option.value)}
+                            className={`w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-all duration-300 ${
+                              isSelected 
+                                ? "bg-indigo-600/20 border-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.2)]" 
+                                : "bg-black/50 border-white/5 hover:bg-white/5 hover:border-white/20"
+                            }`}
+                          >
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 border ${
+                              isSelected ? "bg-indigo-500 border-indigo-500 text-white" : "border-neutral-600 text-neutral-600"
+                            }`}>
+                              {isSelected ? <CheckCircle2 size={14} /> : <span className="text-[10px] font-black">{option.label}</span>}
+                            </div>
+                            <span className={`text-sm sm:text-base font-medium ${isSelected ? "text-white" : "text-neutral-300"}`}>
+                              {option.text}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    // ================= رابط کاربری سوالات تشریحی =================
+                    <textarea 
+                      rows={6}
+                      placeholder="Type your detailed answer here..."
+                      value={answers[q.id] || ""}
+                      onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                      className="w-full bg-black/50 border border-white/10 rounded-2xl p-5 text-white text-sm sm:text-base font-medium focus:outline-none focus:border-indigo-500/50 resize-y shadow-inner custom-scrollbar placeholder:text-neutral-600"
+                    />
+                  )}
                 </div>
-              </div>
 
-              <div className="relative">
-                <textarea 
-                  rows={6}
-                  placeholder="Type your detailed answer here..."
-                  value={answers[q.id] || ""}
-                  onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                  className="w-full bg-black/50 border border-white/10 rounded-2xl p-5 text-white text-sm sm:text-base font-medium focus:outline-none focus:border-indigo-500/50 resize-y shadow-inner custom-scrollbar placeholder:text-neutral-600"
-                />
               </div>
-
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* دکمه ارسال (ثابت در پایین صفحه برای موبایل) */}
-        <div className="pt-8 flex justify-center sticky bottom-24 sm:bottom-6 z-40">
+        {/* دکمه ارسال (ثابت در پایین صفحه) */}
+        <div className="pt-8 flex justify-center sticky bottom-6 z-40">
           <button 
             onClick={handleSubmitExamPaper}
             disabled={isSubmitting}

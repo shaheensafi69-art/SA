@@ -1,7 +1,11 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { Loader2, CheckCircle2, AlertCircle, User, Mail, Phone, BookOpen, LockKeyhole, Clock, Calendar, Users } from "lucide-react";
+import { 
+  Loader2, CheckCircle2, AlertCircle, User, Mail, 
+  Phone, BookOpen, LockKeyhole, Clock, CalendarDays, 
+  Users, Sparkles, AlertTriangle 
+} from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 
@@ -60,10 +64,10 @@ export default function CourseRegistrationForm({
     const options: string[] = [];
     if (selectedCourse?.instructor_name) options.push(selectedCourse.instructor_name);
     if (selectedCourse?.instructor_2_name) options.push(selectedCourse.instructor_2_name);
-    return options.length > 0 ? options : ["Not specified"];
+    return options.length > 0 ? options : ["Safi Academy Faculty"];
   }, [selectedCourse]);
 
-  useMemo(() => {
+  useEffect(() => {
     if (instructorOptions.length > 0 && (!selectedInstructor || !instructorOptions.includes(selectedInstructor))) {
       setSelectedInstructor(instructorOptions[0]);
     }
@@ -119,9 +123,9 @@ export default function CourseRegistrationForm({
       courseTitle: selectedCourse?.title || "Unknown course",
       instructor: selectedInstructor || "Safi Academy Faculty",
       classGroupId: selectedClassGroupId || null,
-      className: chosenClass?.class_name || "Standard Group",
-      classTime: chosenClass?.class_time || "TBD",
-      classDays: chosenClass?.class_days || "TBD",
+      className: chosenClass?.class_name || "Flexible / Tailored Cohort (Custom Schedule)",
+      classTime: chosenClass?.class_time || "To be arranged based on student preference",
+      classDays: chosenClass?.class_days || "Flexible",
       finalPrice: finalPayableAmount,
       walletDeduction: walletDeduction,
       notes: message
@@ -186,11 +190,11 @@ export default function CourseRegistrationForm({
         </div>
         <h3 className="text-2xl font-black text-white mb-3 tracking-tight relative z-10">Application Received!</h3>
         <p className="text-neutral-400 text-sm max-w-sm mb-6 leading-relaxed relative z-10 font-medium">
-          Your enrollment request and class selection have been saved. Our support team will verify your payment and activate your class.
+          Your enrollment request has been recorded. Our academic team will review your details and confirm your cohort schedule.
         </p>
         <span className="bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-yellow-500 shadow-inner relative z-10 animate-pulse flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-yellow-500"></span>
-          Status: Pending Payment
+          Status: Pending Confirmation
         </span>
       </section>
     );
@@ -293,7 +297,7 @@ export default function CourseRegistrationForm({
             {/* Academic Selection & Class Schedule */}
             <div className="space-y-5 sm:col-span-2 pt-4">
               <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500 flex items-center gap-2 mb-2 border-l-2 border-yellow-500 pl-2">
-                <BookOpen size={14} /> Academic & Class Schedule Selection
+                <BookOpen size={14} /> Academic & Schedule Selection
               </h4>
               <div className="grid gap-5 sm:grid-cols-2">
                 
@@ -327,18 +331,21 @@ export default function CourseRegistrationForm({
                   </select>
                 </label>
 
-                {/* Class Group / Schedule Selection (New!) */}
-                <label className="block sm:col-span-2 space-y-1.5">
+                {/* Class Group / Schedule Selection */}
+                <div className="sm:col-span-2 space-y-1.5">
                   <span className="text-[10px] font-black uppercase tracking-widest text-yellow-500/90 ml-1 flex items-center gap-1.5">
-                    <Clock size={12} className="text-yellow-500" /> Select Class & Schedule (Time & Days) *
+                    <Clock size={12} className="text-yellow-500" /> Class Cohort & Schedule
                   </span>
+                  
                   {isLoadingClasses ? (
-                    <div className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-sm text-neutral-400 flex items-center gap-2">
-                      <Loader2 size={16} className="animate-spin text-yellow-500" /> Loading available classes...
+                    <div className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-sm text-neutral-400 flex items-center gap-2 shadow-inner">
+                      <Loader2 size={16} className="animate-spin text-yellow-500" /> Loading available cohort schedules...
                     </div>
                   ) : classGroups.length > 0 ? (
                     <select
-                      required value={selectedClassGroupId} onChange={(e) => setSelectedClassGroupId(e.target.value)}
+                      required 
+                      value={selectedClassGroupId} 
+                      onChange={(e) => setSelectedClassGroupId(e.target.value)}
                       className="w-full rounded-2xl border border-yellow-500/30 bg-black/60 px-5 py-4 text-sm text-white placeholder-neutral-600 shadow-inner transition-all hover:border-yellow-500/50 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500"
                     >
                       {classGroups.map((group) => (
@@ -348,18 +355,36 @@ export default function CourseRegistrationForm({
                       ))}
                     </select>
                   ) : (
-                    <div className="w-full rounded-2xl border border-amber-500/30 bg-amber-500/10 px-5 py-4 text-xs font-bold text-amber-400">
-                      No active classes scheduled for this course yet. You can still register and our team will assign you to the best schedule.
+                    /* پیام دو زبانه بسیار شیک و محترمانه در صورت نبود کلاس */
+                    <div className="w-full p-5 rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent backdrop-blur-xl shadow-lg relative overflow-hidden">
+                      <div className="flex items-start gap-3.5">
+                        <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0 mt-0.5">
+                          <Sparkles size={18} />
+                        </div>
+                        <div className="space-y-2 text-left">
+                          {/* متن انگلیسی */}
+                          <p className="text-xs font-semibold text-neutral-200 leading-relaxed">
+                            No active class cohort is currently scheduled for this curriculum. However, you can proceed with your enrollment, and a custom class will be scheduled and arranged according to your preferred timing and availability.
+                          </p>
+                          
+                          {/* متن فارسی */}
+                          <p className="text-xs font-medium text-amber-300/90 leading-relaxed border-t border-white/5 pt-2" dir="rtl">
+                            در حال حاضر کلاس فعالی برای این دوره تشکیل نشده است؛ با این حال شما می‌توانید با اطمینان ثبت‌نام خود را تکمیل نمایید تا کلاس متناسب با زمان و تایم دلخواه شما ایجاد و هماهنگ شود.
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   )}
-                </label>
+                </div>
 
                 <label className="block sm:col-span-2 space-y-1.5">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-neutral-400 ml-1">Additional Notes (Optional)</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-neutral-400 ml-1">
+                    {classGroups.length === 0 ? "Preferred Timing & Additional Notes (Optional)" : "Additional Notes (Optional)"}
+                  </span>
                   <textarea
                     value={message} onChange={(e) => setMessage(e.target.value)}
                     className="h-28 w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-sm text-white placeholder-neutral-600 shadow-inner transition-all hover:border-white/20 focus:border-yellow-500/50 focus:outline-none focus:ring-1 focus:ring-yellow-500/50 custom-scrollbar resize-none"
-                    placeholder="Any specific questions or requirements before enrollment..."
+                    placeholder={classGroups.length === 0 ? "Mention your preferred days and hours (e.g., Evenings, Mon-Wed-Fri)..." : "Any specific questions or requirements before enrollment..."}
                   />
                 </label>
               </div>
@@ -374,7 +399,7 @@ export default function CourseRegistrationForm({
               >
                 {status === "loading" ? (
                   <>
-                    <Loader2 className="h-5 w-5 animate-spin" /> Processing Securely...
+                    <Loader2 className="h-5 w-5 animate-spin" /> Processing Application...
                   </>
                 ) : (
                   "Finalize Registration"
