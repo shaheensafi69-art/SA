@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
   Search, ShieldCheck, ThumbsUp, MessageSquare, Trash2, 
-  Send, X, Loader2, Plus, Clock 
+  Send, X, Loader2, Plus, Clock, Users 
 } from "lucide-react";
 
 interface PostItem {
@@ -53,8 +53,9 @@ export default function AdminFeedPage() {
   const [filteredPosts, setFilteredPosts] = useState<PostItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string>("student");
   
-  // لیست کاربران برای بخش Network Watch در سمت چپ (فقط در دسکتاپ نشان داده می‌شود)
+  // لیست کاربران برای بخش Network Watch در سمت چپ
   const [exploreUsers, setExploreUsers] = useState<FriendUser[]>([]);
 
   // مدیریت کامنت‌ها
@@ -90,6 +91,17 @@ export default function AdminFeedPage() {
       if (!session?.user) return router.push("/en/login");
       const userId = session.user.id;
       setCurrentUserId(userId);
+
+      // دریافت نقش کاربر فعلی برای تایید سطح دسترسی
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", userId)
+        .single();
+      
+      if (profileData) {
+        setUserRole(profileData.role);
+      }
 
       // ۱. دریافت پست‌ها
       const { data: res, error } = await supabase
@@ -252,7 +264,6 @@ export default function AdminFeedPage() {
         {/* ================= LEFT SIDEBAR (NETWORK WATCH) ================= */}
         <div className="hidden lg:block lg:col-span-4 xl:col-span-3 space-y-6 sticky top-8 z-10 xl:-ml-4">
           <div className="bg-[#0a0a0f]/90 border border-white/5 p-6 rounded-[2.5rem] backdrop-blur-2xl shadow-[0_20px_40px_rgba(0,0,0,0.4)] relative overflow-hidden group">
-            {/* افکت نوری جذاب در پس زمینه سایدبار */}
             <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-rose-500/15 rounded-full blur-[40px] pointer-events-none transition-all duration-700 group-hover:bg-rose-500/25"></div>
             
             <div className="flex items-center gap-4 mb-6 relative z-10">
@@ -301,7 +312,6 @@ export default function AdminFeedPage() {
         {/* ================= RIGHT MAIN FEED ================= */}
         <div className="col-span-1 lg:col-span-8 xl:col-span-9 space-y-6 w-full max-w-3xl mx-auto xl:max-w-4xl">
           
-          {/* هدر و دکمه ایجاد پست */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 bg-[#0a0a0f]/80 border border-white/5 p-5 sm:p-8 rounded-[2rem] backdrop-blur-xl shadow-2xl">
             <div>
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Community Feed</h1>
@@ -316,7 +326,6 @@ export default function AdminFeedPage() {
             </Link>
           </div>
 
-          {/* نوار جستجو */}
           <div className="relative">
             <input
               type="text"
@@ -328,7 +337,6 @@ export default function AdminFeedPage() {
             <Search className="absolute left-5 top-[18px] w-5 h-5 text-neutral-500" />
           </div>
 
-          {/* لیست پست‌ها */}
           <div className="space-y-6 pb-24 lg:pb-10">
             {filteredPosts.length === 0 ? (
               <div className="text-center py-20 bg-[#0a0a0f]/40 rounded-[2.5rem] border border-white/5 shadow-inner">
@@ -339,7 +347,6 @@ export default function AdminFeedPage() {
               filteredPosts.map((post) => (
                 <div key={post.id} className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-5 sm:p-8 backdrop-blur-md space-y-5 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all hover:border-white/10">
                   
-                  {/* هدر کارت پست */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 sm:gap-4">
                       <Link href={`/en/admin/feed/profile/${post.studentId}`} className="w-10 h-10 sm:w-14 sm:h-14 rounded-[1.2rem] bg-neutral-800 border-2 border-rose-500/30 overflow-hidden flex items-center justify-center hover:scale-105 hover:border-rose-500 transition-all shrink-0">
@@ -360,22 +367,18 @@ export default function AdminFeedPage() {
                       </div>
                     </div>
 
-                    {/* دکمه حذف برای ادمین (می‌تواند همه پست‌ها را حذف کند) */}
                     <button onClick={() => deletePost(post.id)} className="text-neutral-500 hover:text-red-500 p-2.5 transition-colors bg-white/5 rounded-xl hover:bg-red-500/10" title="Delete Post as Admin">
                       <Trash2 size={16} />
                     </button>
                   </div>
 
-                  {/* تگ مود */}
                   <div className="inline-block px-3.5 py-1.5 bg-gradient-to-r from-rose-500/20 to-transparent border-l-2 border-rose-500 rounded-r-lg text-rose-300 text-[10px] font-black uppercase tracking-widest mt-2 shadow-sm">
                     {post.moodTag}
                   </div>
 
-                  {/* عنوان و محتوا */}
                   {post.cleanTitle && <h3 className="text-lg sm:text-2xl font-black text-white leading-tight">{post.cleanTitle}</h3>}
                   <p className="text-neutral-300 text-[15px] leading-relaxed whitespace-pre-wrap">{post.content}</p>
 
-                  {/* تصویر پست (فیت شده در هر سایز) */}
                   {post.imageUrl && (
                     <div className="rounded-2xl border border-white/5 bg-[#050508] mt-4 flex items-center justify-center overflow-hidden">
                       <img 
@@ -386,7 +389,6 @@ export default function AdminFeedPage() {
                     </div>
                   )}
 
-                  {/* نمایش تعداد لایک و کامنت */}
                   {(post.likesCount > 0 || post.commentsCount > 0) && (
                     <div className="flex items-center justify-between pt-4 pb-1 text-[11px] font-bold text-neutral-400">
                       {post.likesCount > 0 ? (
@@ -403,7 +405,6 @@ export default function AdminFeedPage() {
 
                   <hr className="border-white/5" />
 
-                  {/* دکمه‌های اکشن (Like/Comment) */}
                   <div className="flex items-center justify-between pt-1">
                     <button
                       onClick={() => toggleLike(post)}
@@ -534,8 +535,9 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-      <div className="bg-[#0a0a0f] border border-white/10 rounded-t-[2rem] sm:rounded-[2rem] w-full max-w-2xl max-h-[90vh] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden animate-[slideUp_0.3s_ease-out]">
+    // 🔴 در اینجا پدینگ پایین (pb-[100px]) مخصوص موبایل اعمال شد تا مدال در بالای Navigation Bar قرار بگیرد
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 pb-[100px] sm:p-4 sm:pb-4 bg-black/80 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
+      <div className="bg-[#0a0a0f] border border-white/10 rounded-t-[2rem] sm:rounded-[2rem] w-full max-w-2xl max-h-[80vh] sm:max-h-[90vh] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden animate-[slideUp_0.3s_ease-out]">
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-[#0a0a0f]/90">
@@ -569,7 +571,8 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
               <button onClick={() => { setReplyingToId(null); setReplyingToName(null); }} className="text-neutral-400 hover:text-white text-xs font-bold bg-white/5 px-3 py-1 rounded-lg">Cancel</button>
             </div>
           )}
-          <div className="flex items-end gap-3 pb-safe">
+          
+          <div className="flex items-end gap-3 pb-2 sm:pb-0">
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
@@ -583,7 +586,7 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
               className="w-[55px] h-[55px] shrink-0 bg-rose-500 text-white rounded-2xl flex items-center justify-center hover:bg-rose-600 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(244,63,94,0.3)]"
             >
               {isSending ? (
-                <Loader2 size={20} className="animate-spin" />
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <Send size={20} className="ml-1" />
               )}

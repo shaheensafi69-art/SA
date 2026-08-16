@@ -542,8 +542,8 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-      <div className="bg-[#0a0a0f] border border-white/10 rounded-t-[2rem] sm:rounded-[2rem] w-full max-w-2xl max-h-[90vh] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden animate-[slideUp_0.3s_ease-out]">
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 pb-[85px] sm:pb-4 bg-black/80 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
+      <div className="bg-[#0a0a0f] border border-white/10 rounded-t-[2rem] sm:rounded-[2rem] w-full max-w-2xl max-h-[85vh] sm:max-h-[90vh] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden animate-[slideUp_0.3s_ease-out]">
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-[#0a0a0f]/90">
@@ -578,8 +578,7 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
             </div>
           )}
           
-          {/* 🔴 این قسمت پدینگ و گپ آن اصلاح شده است */}
-          <div className="flex items-end gap-3 pb-6 lg:pb-0"> 
+          <div className="flex items-end gap-3"> 
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}

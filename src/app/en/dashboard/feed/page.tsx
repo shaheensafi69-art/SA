@@ -240,14 +240,12 @@ export default function StudentFeedPage() {
   }
 
   return (
-    // مکس‌ویدث افزایش یافت تا در نمایشگرهای بزرگ فضای بهتری برای سایدبار چپ فراهم شود
     <div className="max-w-[90rem] mx-auto px-4 sm:px-8 py-6 sm:py-8 font-sans relative">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 relative items-start">
         
-        {/* ================= سمت چپ: مدیریت دوستان (زیبا شده و متمایل به چپ) ================= */}
+        {/* ================= سمت چپ: مدیریت دوستان ================= */}
         <div className="hidden lg:block lg:col-span-4 xl:col-span-3 space-y-6 sticky top-8 z-10 xl:-ml-4">
           <div className="bg-[#0a0a0f]/90 border border-white/5 p-6 rounded-[2.5rem] backdrop-blur-2xl shadow-[0_20px_40px_rgba(0,0,0,0.4)] relative overflow-hidden group">
-            {/* افکت نوری جذاب در پس زمینه سایدبار */}
             <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-[#C2185B]/15 rounded-full blur-[40px] pointer-events-none transition-all duration-700 group-hover:bg-[#C2185B]/25"></div>
             
             <div className="flex items-center gap-4 mb-6 relative z-10">
@@ -293,16 +291,14 @@ export default function StudentFeedPage() {
           </div>
         </div>
 
-        {/* ================= سمت راست: فید پست‌ها (با تنظیم گرید جدید) ================= */}
+        {/* ================= سمت راست: فید پست‌ها ================= */}
         <div className="col-span-1 lg:col-span-8 xl:col-span-9 space-y-6 w-full max-w-3xl mx-auto xl:max-w-4xl">
           
-          {/* هدر و دکمه ایجاد پست */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 bg-[#0a0a0f]/80 border border-white/5 p-5 sm:p-8 rounded-[2rem] backdrop-blur-xl shadow-2xl">
             <div>
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Academy Feed</h1>
               <p className="text-xs text-neutral-400 font-medium mt-1.5">Share your setups, ideas, and discuss with peers.</p>
             </div>
-            {/* دکمه فقط در حالت دسکتاپ/تبلت نمایش داده می‌شود */}
             <Link
               href="/en/dashboard/feed/create"
               className="hidden sm:flex px-6 py-4 bg-gradient-to-r from-[#C2185B] to-pink-600 text-white font-black text-xs uppercase tracking-widest rounded-2xl hover:scale-105 transition-transform duration-300 shadow-[0_10px_25px_rgba(194,24,91,0.4)] items-center justify-center gap-2"
@@ -312,7 +308,6 @@ export default function StudentFeedPage() {
             </Link>
           </div>
 
-          {/* نوار جستجو */}
           <div className="relative">
             <input
               type="text"
@@ -324,7 +319,6 @@ export default function StudentFeedPage() {
             <svg className="absolute left-5 top-[18px] w-5 h-5 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           </div>
 
-          {/* لیست پست‌ها */}
           <div className="space-y-6 pb-24 lg:pb-10">
             {filteredPosts.length === 0 ? (
               <div className="text-center py-20 bg-[#0a0a0f]/40 rounded-[2.5rem] border border-white/5 shadow-inner">
@@ -335,7 +329,6 @@ export default function StudentFeedPage() {
               filteredPosts.map((post) => (
                 <div key={post.id} className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-5 sm:p-8 backdrop-blur-md space-y-5 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all">
                   
-                  {/* هدر کارت پست */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 sm:gap-4">
                       <Link href={`/en/dashboard/feed/profile/${post.studentId}`} className="w-10 h-10 sm:w-14 sm:h-14 rounded-[1.2rem] bg-neutral-800 border-2 border-[#C2185B]/30 overflow-hidden flex items-center justify-center hover:scale-105 hover:border-[#C2185B] transition-all shrink-0">
@@ -363,16 +356,13 @@ export default function StudentFeedPage() {
                     )}
                   </div>
 
-                  {/* تگ مود */}
                   <div className="inline-block px-3.5 py-1.5 bg-gradient-to-r from-[#C2185B]/20 to-transparent border-l-2 border-[#C2185B] rounded-r-lg text-pink-300 text-[10px] font-black uppercase tracking-widest mt-2 shadow-sm">
                     {post.moodTag}
                   </div>
 
-                  {/* عنوان و محتوا */}
                   {post.cleanTitle && <h3 className="text-lg sm:text-2xl font-black text-white leading-tight">{post.cleanTitle}</h3>}
                   <p className="text-neutral-300 text-[15px] leading-relaxed whitespace-pre-wrap">{post.content}</p>
 
-                  {/* تصویر پست (فیت شده در هر سایز) */}
                   {post.imageUrl && (
                     <div className="rounded-2xl border border-white/5 bg-[#050508] mt-4 flex items-center justify-center overflow-hidden">
                       <img 
@@ -383,7 +373,6 @@ export default function StudentFeedPage() {
                     </div>
                   )}
 
-                  {/* نمایش تعداد لایک و کامنت */}
                   {(post.likesCount > 0 || post.commentsCount > 0) && (
                     <div className="flex items-center justify-between pt-4 pb-1 text-[11px] font-bold text-neutral-400">
                       {post.likesCount > 0 ? (
@@ -400,7 +389,6 @@ export default function StudentFeedPage() {
 
                   <hr className="border-white/5" />
 
-                  {/* دکمه‌های اکشن (Like/Comment) */}
                   <div className="flex items-center justify-between pt-1">
                     <button
                       onClick={() => toggleLike(post)}
@@ -531,8 +519,9 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-      <div className="bg-[#0a0a0f] border border-white/10 rounded-t-[2rem] sm:rounded-[2rem] w-full max-w-2xl max-h-[90vh] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden animate-[slideUp_0.3s_ease-out]">
+    // 🔴 در اینجا پدینگ پایین (pb-[100px]) برای موبایل اضافه شد تا مدال کاملاً بالای نویگیشن بار قرار بگیرد.
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 pb-[100px] sm:p-4 bg-black/80 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
+      <div className="bg-[#0a0a0f] border border-white/10 rounded-t-[2rem] sm:rounded-[2rem] w-full max-w-2xl max-h-[85vh] sm:max-h-[90vh] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden animate-[slideUp_0.3s_ease-out]">
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-[#0a0a0f]/90">
@@ -567,7 +556,9 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
               <button onClick={() => { setReplyingToId(null); setReplyingToName(null); }} className="text-neutral-400 hover:text-white text-xs font-bold bg-white/5 px-3 py-1 rounded-lg">Cancel</button>
             </div>
           )}
-          <div className="flex items-end gap-3 pb-safe">
+          
+          {/* 🔴 کلاس pb-safe حذف و با پدینگ استاندارد جایگزین شد */}
+          <div className="flex items-end gap-3 pb-2 sm:pb-0">
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
