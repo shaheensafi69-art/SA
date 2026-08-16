@@ -7,7 +7,7 @@ import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { 
   ArrowRight, ShieldCheck, Globe, Cpu, TrendingUp, ShoppingCart, 
   CreditCard, Smartphone, Award, Trophy, ChevronRight, 
-  CheckCircle2, Building, Zap, Users, GraduationCap, Clock, Sparkles, Quote, Volume2, VolumeX
+  CheckCircle2, Building, Zap, Users, GraduationCap, Clock, Sparkles, Quote, Volume2, VolumeX, Download
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -276,7 +276,7 @@ export default function EnglishHome() {
         </div>
       </section>
 
-      {/* ================= 🌟 CAREER ACADEMIES BANNER SECTION (با عکس جدید Storyboard) ================= */}
+      {/* ================= 🌟 CAREER ACADEMIES BANNER SECTION ================= */}
       <section className="relative z-20 w-full px-6 md:px-12 lg:px-20 py-16">
         <div className="w-full">
           <div className="relative w-full rounded-[3.5rem] overflow-hidden border border-white/15 bg-gradient-to-r from-[#0d0d14] via-[#12121c] to-[#0d0d14] shadow-[0_30px_90px_rgba(0,0,0,0.9)] p-8 md:p-16 lg:p-20">
@@ -698,7 +698,50 @@ export default function EnglishHome() {
         </div>
       </section>
 
-      {/* ================= 5.5. STUDENT SUCCESS STORIES (TESTIMONIALS) ================= */}
+      {/* ================= 5.5. GET THE APP SECTION (NEW) ================= */}
+      <section className="relative z-20 w-full px-6 md:px-12 lg:px-20 py-24 bg-[#030305] border-t border-white/5 overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[40vw] h-[40vw] bg-fuchsia-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[30vw] h-[30vw] bg-blue-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto bg-[#0a0a0f]/80 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-8 md:p-16 flex flex-col-reverse lg:flex-row items-center justify-between gap-12 shadow-[0_30px_80px_rgba(0,0,0,0.5)] relative overflow-hidden group">
+          
+          <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+
+          {/* Text Content */}
+          <div className="w-full lg:w-1/2 space-y-8 relative z-10 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 rounded-full border border-fuchsia-500/40 bg-fuchsia-500/10 px-5 py-2 text-xs font-black uppercase tracking-widest text-fuchsia-400 shadow-[0_0_20px_rgba(217,70,239,0.2)] mx-auto lg:mx-0">
+              <Smartphone size={16} /> Official Mobile App
+            </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
+              Safi Academy in your <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-blue-500">Pocket.</span>
+            </h2>
+            <p className="text-neutral-400 text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
+              Access your trading journal, join live campus sessions, manage your SafiPay wallet, and connect with the community anywhere, anytime. 
+            </p>
+            <div className="pt-4 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+              <Link href="/en/get-app" className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-fuchsia-600 to-blue-600 hover:from-fuchsia-500 hover:to-blue-500 text-white font-black text-base uppercase tracking-wider rounded-2xl transition-all shadow-[0_15px_40px_rgba(217,70,239,0.3)] hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3">
+                <Download size={20} /> Get The App
+              </Link>
+            </div>
+          </div>
+
+          {/* 3D Phone Image */}
+          <div className="w-full lg:w-1/2 relative z-10 flex justify-center lg:justify-end">
+            <div className="relative w-full max-w-[350px] aspect-[4/5] flex items-center justify-center">
+              <div className="absolute inset-0 bg-gradient-to-tr from-fuchsia-500/20 to-blue-500/20 rounded-full blur-[60px] animate-pulse"></div>
+              <img 
+                src="/3d-phone.png" 
+                alt="Safi Academy Mobile App" 
+                className="relative z-10 w-full h-full object-contain animate-float drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+              />
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ================= 6. STUDENT SUCCESS STORIES (TESTIMONIALS) ================= */}
       <section className="relative z-10 w-full px-6 md:px-12 lg:px-20 py-28 bg-[#060609] border-t border-white/5">
         <div className="w-full">
           <div className="mb-16 text-center max-w-4xl mx-auto space-y-4">
@@ -741,7 +784,7 @@ export default function EnglishHome() {
         </div>
       </section>
 
-      {/* ================= 6. MASSIVE CTA ================= */}
+      {/* ================= 7. MASSIVE CTA ================= */}
       <section className="relative z-10 w-full px-6 py-44 flex items-center justify-center overflow-hidden border-t border-white/10">
          <div className="absolute inset-0 bg-gradient-to-br from-yellow-600 via-amber-900 to-[#020202] opacity-80"></div>
          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-30 mix-blend-overlay"></div>
