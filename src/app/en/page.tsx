@@ -7,7 +7,9 @@ import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { 
   ArrowRight, ShieldCheck, Globe, Cpu, TrendingUp, ShoppingCart, 
   CreditCard, Smartphone, Award, Trophy, ChevronRight, 
-  CheckCircle2, Building, Zap, Users, GraduationCap, Clock, Sparkles, Quote, Volume2, VolumeX, Download
+  CheckCircle2, Building, Zap, Users, GraduationCap, Clock, Sparkles, Quote, Volume2, VolumeX, Download,
+  Bell, Home, BookOpen, Wallet, User, LayoutGrid, Radio, Rss, Menu, Flame, 
+  PlayCircle, Heart, Search, Video, LogOut, MessageSquare, Plus, FileText, Bookmark, Calendar
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -70,7 +72,7 @@ const VideoPlayer = ({ src }: { src: string }) => {
 /* -------------------------------------------------------------------------- */
 export default function EnglishHome() {
 
-  // ================= LIVE DATABASE STATS =================
+  // ================= LIVE DATABASE STATS (Main Site) =================
   const [stats, setStats] = useState({
     students: 0,
     graduates: 0,
@@ -79,10 +81,27 @@ export default function EnglishHome() {
   });
   const [isStatsLoading, setIsStatsLoading] = useState(true);
 
+  // ================= MOBILE APP MOCKUP STATE & DATA =================
+  const [activeAppTab, setActiveAppTab] = useState('overview');
+  const [appData, setAppData] = useState({
+    courses: [
+      { id: '1', title: 'Web & App Development with AI', instructor_name: 'Shaheen Safi', price: '$90.00', category: 'MASTERCLASS', language: 'English, DARI' },
+      { id: '2', title: 'Shopify Masterclass Pro', instructor_name: 'Shaheen Safi', price: '$150.00', category: 'E-COMMERCE', language: 'English' }
+    ],
+    feed: [
+      { id: '1', profiles: { first_name: 'Shaheen', last_name: 'Safi', avatar_url: '' }, created_at: '2026-08-14', title: 'Gaming Room', content: 'Call Of duty', image_url: 'https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=500&q=80' }
+    ],
+    liveClasses: [
+      { id: '1', class_name: 'Shopify Main Batch', schedule_info: 'Mon, Wed, Fri, Tuesday, Wednesday, Sunday • 18:00' }
+    ]
+  });
+
   useEffect(() => {
-    const fetchLiveStats = async () => {
+    const fetchData = async () => {
       const supabase = createClient();
+      
       try {
+        // Fetch Main Site Stats
         const [
           { count: studentsCount },
           { count: graduatesCount },
@@ -101,52 +120,36 @@ export default function EnglishHome() {
           teachers: teachersCount || 0,
           courses: coursesCount || 0
         });
+
+        // Fetch App Mockup Data from Database
+        const { data: coursesData } = await supabase.from('courses').select('id, title, instructor_name, price, category, language').limit(3);
+        const { data: feedData } = await supabase.from('discussion_posts').select('id, title, content, created_at, image_url, profiles(first_name, last_name, avatar_url)').order('created_at', { ascending: false }).limit(3);
+        const { data: classesData } = await supabase.from('class_groups').select('id, class_name, schedule_info').eq('is_active', true).limit(2);
+
+        setAppData(prev => ({
+          courses: coursesData && coursesData.length > 0 ? coursesData : prev.courses,
+          feed: feedData && feedData.length > 0 ? feedData : prev.feed,
+          liveClasses: classesData && classesData.length > 0 ? classesData : prev.liveClasses
+        }));
+
       } catch (error) {
-        console.error("Error fetching academy stats:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setIsStatsLoading(false);
       }
     };
 
-    fetchLiveStats();
+    fetchData();
   }, []);
 
   const gradPercentage = stats.students > 0 ? Math.round((stats.graduates / stats.students) * 100) : 0;
 
   // ================= STATIC DATA =================
   const ecosystemFeatures = [
-    {
-      title: "SafiPay Digital Banking",
-      desc: "Open multi-currency international accounts instantly. Hold balances in EUR, USD, GBP, PLN, SEK, NOK, RON, HUF, CZK, and DKK. Issue virtual and physical Visa cards in exactly one second, securely backed by EU standards.",
-      icon: <CreditCard className="w-8 h-8 text-yellow-400" />,
-      link: "www.safipay.net",
-      color: "from-blue-600/20 to-cyan-600/20",
-      border: "border-blue-500/30",
-    },
-    {
-      title: "Safi TopUp Global",
-      desc: "Connect anywhere. Send mobile credit and top-ups to over 150 countries and 700+ global operators. Instantly purchase digital gift cards, gaming cards, and pay prepaid utility bills globally.",
-      icon: <Smartphone className="w-8 h-8 text-yellow-400" />,
-      link: "www.safitopup.site",
-      color: "from-emerald-600/20 to-teal-600/20",
-      border: "border-emerald-500/30",
-    },
-    {
-      title: "SafiPro Apparel",
-      desc: "Our exclusive lifestyle and e-commerce brand. Discover high-quality, modern clothing with unique, cutting-edge designs engineered to meet the highest global fashion standards.",
-      icon: <ShoppingCart className="w-8 h-8 text-yellow-400" />,
-      link: "www.safipro.site",
-      color: "from-rose-600/20 to-orange-600/20",
-      border: "border-rose-500/30",
-    },
-    {
-      title: "Safi International Capital LTD",
-      desc: "The financial titan behind it all. Officially registered in the UK (No. 17063286). Headquartered in Covent Garden, London. Providing world-class financial services and international capital management.",
-      icon: <Building className="w-8 h-8 text-yellow-400" />,
-      link: "UK Registry",
-      color: "from-purple-600/20 to-indigo-600/20",
-      border: "border-purple-500/30",
-    }
+    { title: "SafiPay Digital Banking", desc: "Open multi-currency international accounts instantly. Hold balances in EUR, USD, GBP, PLN, SEK, NOK, RON, HUF, CZK, and DKK. Issue virtual and physical Visa cards in exactly one second, securely backed by EU standards.", icon: <CreditCard className="w-8 h-8 text-yellow-400" />, link: "www.safipay.net", color: "from-blue-600/20 to-cyan-600/20", border: "border-blue-500/30", },
+    { title: "Safi TopUp Global", desc: "Connect anywhere. Send mobile credit and top-ups to over 150 countries and 700+ global operators. Instantly purchase digital gift cards, gaming cards, and pay prepaid utility bills globally.", icon: <Smartphone className="w-8 h-8 text-yellow-400" />, link: "www.safitopup.site", color: "from-emerald-600/20 to-teal-600/20", border: "border-emerald-500/30", },
+    { title: "SafiPro Apparel", desc: "Our exclusive lifestyle and e-commerce brand. Discover high-quality, modern clothing with unique, cutting-edge designs engineered to meet the highest global fashion standards.", icon: <ShoppingCart className="w-8 h-8 text-yellow-400" />, link: "www.safipro.site", color: "from-rose-600/20 to-orange-600/20", border: "border-rose-500/30", },
+    { title: "Safi International Capital LTD", desc: "The financial titan behind it all. Officially registered in the UK (No. 17063286). Headquartered in Covent Garden, London. Providing world-class financial services and international capital management.", icon: <Building className="w-8 h-8 text-yellow-400" />, link: "UK Registry", color: "from-purple-600/20 to-indigo-600/20", border: "border-purple-500/30", }
   ];
 
   const leadershipTeam = [
@@ -157,38 +160,10 @@ export default function EnglishHome() {
   ];
 
   const testimonials = [
-    {
-      quote: "The course did a great job explaining AI - from development through application. I appreciated the varying perspectives presented, which were helpful in understanding how to use AI responsibly as a tool in my profession, rather than a novelty.",
-      name: "Cris M.",
-      role: "Google AI Essentials graduate",
-      image: "https://cms-images.udemycdn.com/96883mtakkm8/3RtbxhMUTMftb9PKczSTDW/f383a1effc2975968d2f87d9273c6e9d/cris-m.webp",
-      linkText: "View AI courses",
-      linkUrl: "/en/courses"
-    },
-    {
-      quote: "Safi Academy was truly a game-changer and a great guide for me as we brought our startup ecosystem to life.",
-      name: "Alvin Lim",
-      role: "Technical Co-Founder, CTO at Dimensional",
-      image: "https://cms-images.udemycdn.com/96883mtakkm8/1Djz6c0gZLaCG5SQS3PgUY/54b6fb8c85d8da01da95cbb94fa6335f/Alvin_Lim.jpeg",
-      linkText: "View this iOS & Swift course",
-      linkUrl: "/en/courses"
-    },
-    {
-      quote: "Safi Academy gives you the ability to be persistent. I learned exactly what I needed to know in the real world. It helped me sell myself to get a new role.",
-      name: "William A. Wachlin",
-      role: "Partner Account Manager at Amazon Web Services",
-      image: "https://cms-images.udemycdn.com/96883mtakkm8/6dT7xusLHYoOUizXeVqgUk/4317f63fe25b2e07ad8c70cda641014b/William_A_Wachlin.jpeg",
-      linkText: "View this AWS course",
-      linkUrl: "/en/courses"
-    },
-    {
-      quote: "I loved the course about AI Studio. I was not aware of this Google tool, but immediately after taking the course, I put it to use. Within 24 hours, I had a functional, highly useful app for my venture.",
-      name: "Ben C.",
-      role: "Google AI Professional Certificate graduate",
-      image: "https://cms-images.udemycdn.com/96883mtakkm8/1AXU6146N5h3Ti9rGXytFv/4832b694a15fa19c4f0538ee0c71f55a/ben-c.webp",
-      linkText: "View Google AI Certificates",
-      linkUrl: "/en/honors"
-    }
+    { quote: "The course did a great job explaining AI - from development through application. I appreciated the varying perspectives presented, which were helpful in understanding how to use AI responsibly as a tool in my profession, rather than a novelty.", name: "Cris M.", role: "Google AI Essentials graduate", image: "https://cms-images.udemycdn.com/96883mtakkm8/3RtbxhMUTMftb9PKczSTDW/f383a1effc2975968d2f87d9273c6e9d/cris-m.webp", linkText: "View AI courses", linkUrl: "/en/courses" },
+    { quote: "Safi Academy was truly a game-changer and a great guide for me as we brought our startup ecosystem to life.", name: "Alvin Lim", role: "Technical Co-Founder, CTO at Dimensional", image: "https://cms-images.udemycdn.com/96883mtakkm8/1Djz6c0gZLaCG5SQS3PgUY/54b6fb8c85d8da01da95cbb94fa6335f/Alvin_Lim.jpeg", linkText: "View this iOS & Swift course", linkUrl: "/en/courses" },
+    { quote: "Safi Academy gives you the ability to be persistent. I learned exactly what I needed to know in the real world. It helped me sell myself to get a new role.", name: "William A. Wachlin", role: "Partner Account Manager at Amazon Web Services", image: "https://cms-images.udemycdn.com/96883mtakkm8/6dT7xusLHYoOUizXeVqgUk/4317f63fe25b2e07ad8c70cda641014b/William_A_Wachlin.jpeg", linkText: "View this AWS course", linkUrl: "/en/courses" },
+    { quote: "I loved the course about AI Studio. I was not aware of this Google tool, but immediately after taking the course, I put it to use. Within 24 hours, I had a functional, highly useful app for my venture.", name: "Ben C.", role: "Google AI Professional Certificate graduate", image: "https://cms-images.udemycdn.com/96883mtakkm8/1AXU6146N5h3Ti9rGXytFv/4832b694a15fa19c4f0538ee0c71f55a/ben-c.webp", linkText: "View Google AI Certificates", linkUrl: "/en/honors" }
   ];
 
   return (
@@ -698,7 +673,7 @@ export default function EnglishHome() {
         </div>
       </section>
 
-      {/* ================= 5.5. GET THE APP SECTION (NEW) ================= */}
+      {/* ================= 5.5. GET THE APP SECTION (PURE CSS APP MOCKUP) ================= */}
       <section className="relative z-20 w-full px-6 md:px-12 lg:px-20 py-24 bg-[#030305] border-t border-white/5 overflow-hidden">
         {/* Background Effects */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[40vw] h-[40vw] bg-fuchsia-600/20 rounded-full blur-[120px] pointer-events-none"></div>
@@ -717,7 +692,7 @@ export default function EnglishHome() {
               Safi Academy in your <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-blue-500">Pocket.</span>
             </h2>
             <p className="text-neutral-400 text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
-              Access your trading journal, join live campus sessions, manage your SafiPay wallet, and connect with the community anywhere, anytime. 
+              Access your trading journal, join live campus sessions, manage your SafiPay wallet, and connect with the community anywhere, anytime. Interact with the phone to see it in action.
             </p>
             <div className="pt-4 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
               <Link href="/en/get-app" className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-fuchsia-600 to-blue-600 hover:from-fuchsia-500 hover:to-blue-500 text-white font-black text-base uppercase tracking-wider rounded-2xl transition-all shadow-[0_15px_40px_rgba(217,70,239,0.3)] hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3">
@@ -726,15 +701,405 @@ export default function EnglishHome() {
             </div>
           </div>
 
-          {/* 3D Phone Image */}
+          {/* Fully Interactive Pure Code Phone Mockup */}
           <div className="w-full lg:w-1/2 relative z-10 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[350px] aspect-[4/5] flex items-center justify-center">
-              <div className="absolute inset-0 bg-gradient-to-tr from-fuchsia-500/20 to-blue-500/20 rounded-full blur-[60px] animate-pulse"></div>
-              <img 
-                src="/3d-phone.png" 
-                alt="Safi Academy Mobile App" 
-                className="relative z-10 w-full h-full object-contain animate-float drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
-              />
+            <div className="relative flex items-center justify-center animate-float drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all">
+              
+              {/* Background Glow Behind Phone */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-fuchsia-500/40 to-blue-500/40 rounded-full blur-[70px] animate-pulse"></div>
+              
+              {/* CSS Phone Chassis */}
+              <div className="relative z-10 w-[290px] h-[610px] bg-neutral-950 border-[8px] border-neutral-900 rounded-[3rem] shadow-[0_0_0_1px_rgba(255,255,255,0.1),_0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col font-sans">
+                
+                {/* Dynamic Island / Notch */}
+                <div className="absolute top-2 inset-x-0 flex justify-center z-50">
+                  <div className="w-24 h-7 bg-black rounded-full flex items-center justify-between px-2.5 shadow-inner">
+                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 animate-pulse"></div>
+                     <div className="w-2.5 h-2.5 rounded-full bg-neutral-800 border border-white/5"></div>
+                  </div>
+                </div>
+
+                {/* --- Screen Inner Content (Light Theme like Screenshots) --- */}
+                <div className="flex-1 bg-[#faf6f8] text-neutral-900 w-full flex flex-col relative overflow-hidden">
+                  
+                  {/* Subtle Pink Header Glow inside App */}
+                  <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#ffedf3] to-transparent pointer-events-none"></div>
+                  
+                  {/* APP TABS CONTENT AREA (Scrollable) */}
+                  <div className="flex-1 overflow-y-auto pb-24 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] relative z-10 w-full">
+                    
+                    {/* TAB 1: OVERVIEW */}
+                    {activeAppTab === 'overview' && (
+                      <div className="px-4 pt-12 flex flex-col gap-4 animate-[fadeIn_0.3s_ease-out]">
+                        <div className="flex justify-end w-full pb-2">
+                           <span className="text-[10px] font-black text-neutral-400 tracking-widest">56</span>
+                        </div>
+                        {/* Profile Header */}
+                        <div className="bg-white rounded-3xl p-4 shadow-sm border border-neutral-100 relative">
+                           <div className="flex items-center gap-3 mb-4">
+                              <div className="w-12 h-12 bg-pink-100 rounded-xl border border-pink-200 flex-shrink-0"></div>
+                              <div>
+                                 <span className="bg-pink-100 text-[#d81b60] text-[8px] font-black uppercase px-2 py-0.5 rounded-md">Academy Student</span>
+                                 <h3 className="text-lg font-black leading-tight mt-1">Shaheen Safi</h3>
+                                 <p className="text-[10px] text-neutral-500">info@safiacademy.org</p>
+                              </div>
+                           </div>
+                           <div className="bg-[#f5f6f8] rounded-2xl p-3 flex justify-between items-center">
+                              <span className="text-[11px] font-bold text-neutral-500">Wallet Balance</span>
+                              <span className="text-base font-black text-emerald-600">$5.00</span>
+                           </div>
+                        </div>
+
+                        {/* Streaks */}
+                        <div className="grid grid-cols-2 gap-3">
+                           <div className="bg-white rounded-2xl p-3 shadow-sm border border-neutral-100 flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
+                                 <Flame size={16} className="text-orange-500" />
+                              </div>
+                              <div>
+                                 <p className="text-[8px] font-bold text-neutral-400 uppercase tracking-wider">Daily Streak</p>
+                                 <p className="text-xs font-black">0 Days</p>
+                              </div>
+                           </div>
+                           <div className="bg-white rounded-2xl p-3 shadow-sm border border-neutral-100 flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
+                                 <Zap size={16} className="text-orange-400" />
+                              </div>
+                              <div>
+                                 <p className="text-[8px] font-bold text-neutral-400 uppercase tracking-wider">Longest Streak</p>
+                                 <p className="text-xs font-black">0 Days</p>
+                              </div>
+                           </div>
+                        </div>
+
+                        {/* Stats Box */}
+                        <div className="grid grid-cols-3 gap-3">
+                           <div className="bg-white rounded-2xl p-3 shadow-sm border border-neutral-100 flex flex-col justify-between aspect-square">
+                              <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                                 <BookOpen size={12} className="text-blue-600" />
+                              </div>
+                              <div>
+                                 <p className="text-base font-black text-blue-600">1</p>
+                                 <p className="text-[8px] font-bold text-neutral-400 uppercase tracking-wider">Enrolled</p>
+                              </div>
+                           </div>
+                           <div className="bg-white rounded-2xl p-3 shadow-sm border border-neutral-100 flex flex-col justify-between aspect-square">
+                              <div className="w-6 h-6 rounded-full bg-pink-100 flex items-center justify-center mb-2">
+                                 <Zap size={12} className="text-[#d81b60]" />
+                              </div>
+                              <div>
+                                 <p className="text-base font-black text-[#d81b60]">1000</p>
+                                 <p className="text-[8px] font-bold text-neutral-400 uppercase tracking-wider">Score</p>
+                              </div>
+                           </div>
+                           <div className="bg-white rounded-2xl p-3 shadow-sm border border-neutral-100 flex flex-col justify-between aspect-square">
+                              <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center mb-2">
+                                 <Trophy size={12} className="text-emerald-600" />
+                              </div>
+                              <div>
+                                 <p className="text-base font-black text-emerald-600">1</p>
+                                 <p className="text-[8px] font-bold text-neutral-400 uppercase tracking-wider">Certs</p>
+                              </div>
+                           </div>
+                        </div>
+
+                        {/* Continue Learning */}
+                        <div>
+                           <h4 className="text-[13px] font-black mb-2 px-1">Continue Learning</h4>
+                           <div className="bg-white rounded-2xl p-4 shadow-sm border border-neutral-100 flex items-center gap-4">
+                              <div className="w-12 h-12 rounded-full border-4 border-neutral-100 flex items-center justify-center flex-shrink-0">
+                                 <span className="text-[10px] font-black">0%</span>
+                              </div>
+                              <div>
+                                 <span className="bg-pink-100 text-[#d81b60] text-[8px] font-black uppercase px-2 py-0.5 rounded-md">In Progress</span>
+                                 <p className="text-[13px] font-black mt-1 line-clamp-1">Shopify Masterclass</p>
+                              </div>
+                           </div>
+                        </div>
+
+                        {/* Active Classes */}
+                        <div>
+                           <h4 className="text-[13px] font-black mb-2 px-1">Active Live Campus Classes</h4>
+                           <div className="bg-white rounded-2xl p-4 shadow-sm border border-neutral-100 flex justify-between items-center">
+                              <div className="flex gap-3">
+                                 <div className="w-10 h-10 rounded-xl bg-pink-50 flex items-center justify-center flex-shrink-0 text-[#d81b60]">
+                                    <Video size={18} />
+                                 </div>
+                                 <div>
+                                    <p className="text-[12px] font-black">Shopify Main Batch</p>
+                                    <p className="text-[9px] text-neutral-500 line-clamp-1">Mon, Wed, Fri...</p>
+                                 </div>
+                              </div>
+                              <button className="bg-pink-100 text-[#d81b60] text-[10px] font-black px-3 py-1.5 rounded-lg flex items-center gap-1">
+                                 Join <span className="text-[10px]">🚀</span>
+                              </button>
+                           </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TAB 2: COURSES */}
+                    {activeAppTab === 'courses' && (
+                      <div className="px-4 pt-12 flex flex-col gap-4 animate-[fadeIn_0.3s_ease-out]">
+                        <div className="flex justify-between items-center w-full pb-1">
+                           <div className="flex items-center gap-2">
+                             <div className="font-bold text-sm">2:35</div>
+                             <div className="flex gap-0.5"><div className="w-2 h-2 rounded-full bg-neutral-300"></div><div className="w-2 h-2 rounded-full bg-neutral-300"></div></div>
+                           </div>
+                           <span className="text-[10px] font-black text-neutral-400 tracking-widest">55</span>
+                        </div>
+                        
+                        <div className="bg-white rounded-3xl p-4 shadow-sm border border-neutral-100 flex items-center gap-3">
+                           <div className="w-12 h-12 bg-[#d81b60] rounded-2xl flex items-center justify-center flex-shrink-0 text-white shadow-md">
+                              <BookOpen size={20} />
+                           </div>
+                           <div>
+                              <h3 className="text-base font-black leading-tight">Academy Learning Hub</h3>
+                              <p className="text-[10px] text-neutral-500 mt-1">Explore masterclasses, view your enrollments & upgrade skills.</p>
+                           </div>
+                        </div>
+
+                        <div className="flex bg-white rounded-2xl p-1 border border-neutral-100 shadow-sm">
+                           <button className="flex-1 py-2 text-[11px] font-black text-[#d81b60] bg-white rounded-xl shadow-sm">Explore All (14)</button>
+                           <button className="flex-1 py-2 text-[11px] font-bold text-neutral-500">My Enrolled (1)</button>
+                        </div>
+
+                        <div className="relative">
+                           <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#d81b60]" />
+                           <input type="text" placeholder="Search masterclasses by title..." className="w-full bg-white border border-neutral-100 rounded-2xl py-3 pl-10 pr-4 text-[11px] shadow-sm outline-none placeholder:text-neutral-400" />
+                        </div>
+
+                        <div className="flex flex-col gap-4">
+                           {appData.courses.map((course, i) => (
+                             <div key={course.id || i} className="bg-white rounded-[1.5rem] shadow-sm border border-neutral-100 overflow-hidden relative">
+                                <div className="h-28 bg-neutral-100 relative">
+                                   <div className="absolute top-3 left-3 bg-neutral-800 text-white text-[8px] font-black uppercase px-2 py-1 rounded-md z-10">{course.category || 'MASTERCLASS'}</div>
+                                   <div className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md z-10">
+                                      <Heart size={14} className="text-[#d81b60]" fill="#d81b60" />
+                                   </div>
+                                </div>
+                                <div className="p-4">
+                                   <h4 className="text-[13px] font-black mb-1 leading-tight">{course.title}</h4>
+                                   <p className="text-[9px] text-neutral-500 mb-4">Instructor: {course.instructor_name} • {course.language || 'English'}</p>
+                                   <div className="flex justify-between items-center">
+                                      <span className="text-[#d81b60] font-black text-base">{course.price}</span>
+                                      <button className="bg-[#d81b60] text-white text-[10px] font-black px-4 py-2 rounded-xl">View Details 🚀</button>
+                                   </div>
+                                </div>
+                             </div>
+                           ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TAB 3: LIVE */}
+                    {activeAppTab === 'live' && (
+                      <div className="px-4 pt-12 flex flex-col gap-5 animate-[fadeIn_0.3s_ease-out]">
+                        <div className="flex justify-between items-center w-full pb-1">
+                           <div className="flex items-center gap-2">
+                             <div className="font-bold text-sm">2:35</div>
+                           </div>
+                        </div>
+
+                        <div className="bg-white rounded-3xl p-4 shadow-sm border border-neutral-100 flex items-center gap-3">
+                           <div className="w-12 h-12 bg-pink-100 rounded-2xl flex items-center justify-center flex-shrink-0 text-[#d81b60] border border-pink-200">
+                              <Radio size={20} />
+                           </div>
+                           <div>
+                              <h3 className="text-base font-black leading-tight">Live Campus & Hubs</h3>
+                              <p className="text-[10px] text-neutral-500 mt-1">Access official Microsoft Teams corporate lecture rooms.</p>
+                           </div>
+                        </div>
+
+                        <div>
+                           <div className="flex items-center gap-2 mb-3 px-1">
+                              <div className="w-2 h-2 rounded-full bg-[#d81b60]"></div>
+                              <h4 className="text-[13px] font-black">Live Transmissions ({appData.liveClasses.length})</h4>
+                           </div>
+                           
+                           <div className="flex flex-col gap-3">
+                             {appData.liveClasses.map((cls, i) => (
+                               <div key={i} className="bg-white rounded-3xl p-4 shadow-sm border border-neutral-100 relative">
+                                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400">
+                                     <ChevronRight size={18} />
+                                  </div>
+                                  <span className="bg-red-500 text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-md mb-2 inline-block">Live Now</span>
+                                  <h4 className="text-[14px] font-black leading-tight mb-1">{cls.class_name}</h4>
+                                  <p className="text-[10px] text-neutral-500">Instructor: Shaheen Safi</p>
+                                  <p className="text-[10px] text-neutral-500">Schedule: {cls.schedule_info}</p>
+                               </div>
+                             ))}
+                           </div>
+                        </div>
+
+                        <div>
+                           <h4 className="text-[13px] font-black mb-3 px-1">Scheduled & Standby Channels</h4>
+                           <div className="bg-[#f5f6f8] rounded-3xl p-6 border border-neutral-200 text-center">
+                              <p className="text-[11px] font-bold text-neutral-500">No upcoming or standby classes at the moment.</p>
+                           </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TAB 4: FEED */}
+                    {activeAppTab === 'feed' && (
+                      <div className="px-4 pt-12 flex flex-col gap-4 animate-[fadeIn_0.3s_ease-out]">
+                        <div className="flex justify-between items-center w-full">
+                           <h3 className="text-2xl font-black">Academy Feed</h3>
+                           <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center text-[#d81b60]">
+                              <Bell size={14} />
+                           </div>
+                        </div>
+
+                        <div className="relative">
+                           <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
+                           <input type="text" placeholder="Search posts, peers, or ideas..." className="w-full bg-white border border-neutral-100 rounded-2xl py-3 pl-10 pr-4 text-[12px] font-medium shadow-sm outline-none placeholder:text-neutral-400" />
+                        </div>
+
+                        <div className="flex flex-col gap-5 pb-10">
+                           {appData.feed.map((post, i) => (
+                             <div key={post.id || i} className="bg-white rounded-[2rem] shadow-sm border border-neutral-100 p-4">
+                                <div className="flex items-center gap-3 mb-3">
+                                   <div className="w-10 h-10 rounded-full bg-neutral-200 overflow-hidden flex-shrink-0">
+                                     {post.profiles?.avatar_url && <img src={post.profiles.avatar_url} className="w-full h-full object-cover" />}
+                                   </div>
+                                   <div>
+                                      <h4 className="text-[13px] font-black">{post.profiles?.first_name || 'Shaheen'} {post.profiles?.last_name || 'Safi'}</h4>
+                                      <p className="text-[9px] text-neutral-400 flex items-center gap-1"><Globe size={8}/> {new Date(post.created_at).toISOString().split('T')[0]}</p>
+                                   </div>
+                                </div>
+                                <span className="bg-pink-100 text-[#d81b60] text-[9px] font-black px-2 py-1 rounded-lg mb-2 inline-block">🚀 Excited</span>
+                                <h4 className="text-[15px] font-black mb-1">{post.title}</h4>
+                                <p className="text-[12px] text-neutral-600 mb-3">{post.content}</p>
+                                <div className="w-full h-56 bg-neutral-100 rounded-2xl overflow-hidden relative">
+                                   <img src={post.image_url || '/hero.png'} className="w-full h-full object-cover" alt="Post" />
+                                </div>
+                             </div>
+                           ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TAB 5: MENU */}
+                    {activeAppTab === 'menu' && (
+                      <div className="px-4 pt-12 flex flex-col gap-4 animate-[fadeIn_0.3s_ease-out]">
+                        <div className="flex justify-between items-center w-full pb-2">
+                           <span className="text-[10px] font-black text-[#d81b60] uppercase tracking-widest">Student Portal Menu</span>
+                           <div className="w-6 h-6 rounded-full bg-pink-100 flex items-center justify-center text-[#d81b60]">
+                              <VolumeX size={12} />
+                           </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                           {/* Active menu item */}
+                           <div className="bg-pink-100 rounded-2xl p-3 flex justify-between items-center cursor-pointer">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-xl bg-[#d81b60] text-white flex items-center justify-center">
+                                  <LayoutGrid size={16} />
+                                </div>
+                                <span className="text-[13px] font-black text-[#d81b60]">Overview</span>
+                              </div>
+                              <ChevronRight size={16} className="text-[#d81b60]" />
+                           </div>
+
+                           {/* Other items */}
+                           {[
+                             { label: 'Announcements', icon: <Volume2 size={16}/> },
+                             { label: 'My Courses', icon: <BookOpen size={16}/> },
+                             { label: 'Wishlist', icon: <Heart size={16}/> },
+                             { label: 'Live Campus', icon: <Radio size={16}/> },
+                             { label: 'Assignments', icon: <FileText size={16}/> },
+                             { label: 'Exams & Quizzes', icon: <Bookmark size={16}/> },
+                             { label: 'Certificates', icon: <Award size={16}/> },
+                             { label: 'Scholarships', icon: <GraduationCap size={16}/> },
+                             { label: 'Payments & Invoices', icon: <CreditCard size={16}/> },
+                             { label: 'Trading Journal', icon: <TrendingUp size={16}/> },
+                           ].map((item, i) => (
+                             <div key={i} className="bg-white rounded-2xl p-3 flex justify-between items-center shadow-sm border border-neutral-100 cursor-pointer hover:bg-neutral-50 transition-colors">
+                                <div className="flex items-center gap-4 px-2">
+                                  <div className="text-[#d81b60] opacity-80">
+                                    {item.icon}
+                                  </div>
+                                  <span className="text-[13px] font-black">{item.label}</span>
+                                </div>
+                                <ChevronRight size={16} className="text-neutral-400" />
+                             </div>
+                           ))}
+                        </div>
+
+                        {/* Profile Bottom Card */}
+                        <div className="mt-4 bg-pink-50 rounded-2xl p-3 border border-pink-100 flex justify-between items-center">
+                           <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-neutral-800 flex-shrink-0"></div>
+                              <div>
+                                 <h4 className="text-[13px] font-black leading-tight">Roheed Safi</h4>
+                                 <span className="text-[9px] font-bold text-emerald-600">BAL: $5.00</span>
+                              </div>
+                           </div>
+                           <button className="border border-pink-200 text-[#d81b60] text-[10px] font-black px-3 py-2 rounded-xl flex items-center gap-1">
+                              <LogOut size={12} /> LOG OUT
+                           </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* --- BOTTOM NAVIGATION BAR --- */}
+                  <div className="absolute bottom-0 w-full h-[72px] bg-white border-t border-neutral-200 flex justify-around items-center px-1 z-20 rounded-b-[2.2rem] shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
+                     
+                     {/* If NOT in Feed, show Standard Menu. If in Feed, show Social Menu exactly like screenshot */}
+                     {activeAppTab !== 'feed' ? (
+                       <>
+                         <button onClick={() => setActiveAppTab('overview')} className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all ${activeAppTab === 'overview' ? 'bg-pink-100 text-[#d81b60]' : 'text-neutral-400'}`}>
+                           <LayoutGrid size={18} />
+                           <span className="text-[8px] font-black uppercase mt-1 tracking-wider">Overview</span>
+                         </button>
+                         <button onClick={() => setActiveAppTab('courses')} className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all ${activeAppTab === 'courses' ? 'bg-pink-100 text-[#d81b60]' : 'text-neutral-400'}`}>
+                           <BookOpen size={18} />
+                           <span className="text-[8px] font-black uppercase mt-1 tracking-wider">Courses</span>
+                         </button>
+                         <button onClick={() => setActiveAppTab('live')} className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all ${activeAppTab === 'live' ? 'bg-pink-100 text-[#d81b60]' : 'text-neutral-400'}`}>
+                           <Radio size={18} />
+                           <span className="text-[8px] font-black uppercase mt-1 tracking-wider">Live</span>
+                         </button>
+                         <button onClick={() => setActiveAppTab('feed')} className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all ${activeAppTab === 'feed' ? 'bg-pink-100 text-[#d81b60]' : 'text-neutral-400'}`}>
+                           <Rss size={18} />
+                           <span className="text-[8px] font-black uppercase mt-1 tracking-wider">Feed</span>
+                         </button>
+                         <button onClick={() => setActiveAppTab('menu')} className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all ${activeAppTab === 'menu' ? 'bg-pink-100 text-[#d81b60]' : 'text-neutral-400'}`}>
+                           <Menu size={18} />
+                           <span className="text-[8px] font-black uppercase mt-1 tracking-wider">Menu</span>
+                         </button>
+                       </>
+                     ) : (
+                       // Feed Specific Bottom Nav (Social Layout)
+                       <>
+                         <button onClick={() => setActiveAppTab('feed')} className="flex flex-col items-center justify-center w-14 h-14 bg-pink-100 text-[#d81b60] rounded-2xl">
+                           <LayoutGrid size={18} />
+                           <span className="text-[8px] font-black uppercase mt-1 tracking-wider">Feed</span>
+                         </button>
+                         <button className="flex flex-col items-center justify-center w-14 h-14 text-neutral-400 hover:text-[#d81b60] transition-colors">
+                           <Users size={18} />
+                           <span className="text-[8px] font-black uppercase mt-1 tracking-wider">Friends</span>
+                         </button>
+                         <button className="flex flex-col items-center justify-center w-16 h-16 bg-[#d81b60] text-white rounded-full shadow-lg transform -translate-y-4 hover:scale-105 transition-transform">
+                           <Plus size={24} />
+                           <span className="text-[8px] font-black uppercase mt-0.5 tracking-wider">Post</span>
+                         </button>
+                         <button className="flex flex-col items-center justify-center w-14 h-14 text-neutral-400 hover:text-[#d81b60] transition-colors">
+                           <User size={18} />
+                           <span className="text-[8px] font-black uppercase mt-1 tracking-wider">Profile</span>
+                         </button>
+                         <button onClick={() => setActiveAppTab('overview')} className="flex flex-col items-center justify-center w-14 h-14 text-neutral-400 hover:text-red-500 transition-colors">
+                           <LogOut size={18} />
+                           <span className="text-[8px] font-black uppercase mt-1 tracking-wider">Exit</span>
+                         </button>
+                       </>
+                     )}
+                  </div>
+
+                </div>
+              </div>
             </div>
           </div>
 
@@ -822,7 +1187,7 @@ export default function EnglishHome() {
         }
         @keyframes float {
           0% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
+          50% { transform: translateY(-15px); }
           100% { transform: translateY(0px); }
         }
         .animate-float {
