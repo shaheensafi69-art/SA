@@ -1,15 +1,17 @@
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+import type { EmailOtpType } from '@supabase/supabase-js'
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const token_hash = requestUrl.searchParams.get('token_hash')
-  const type = requestUrl.searchParams.get('type') as any
+  const type = requestUrl.searchParams.get('type') as EmailOtpType | null
   const origin = requestUrl.origin
 
   if (token_hash && type) {
     const cookieStore = cookies()
+    
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -18,34 +20,39 @@ export async function GET(request: Request) {
           get(name: string) {
             return cookieStore.get(name)?.value
           },
-          set(name: string, value: string, options: any) {
-            cookieStore.set({ name, value, ...options })
+          set(name: string, value: string, options: CookieOptions) {
+            try {
+              cookieStore.set({ name, value, ...options })
+            } catch (error) {
+              // در سرور کامپوننت‌ها گاهی کوکی قابل ست شدن نیست که نادیده گرفته می‌شود
+            }
           },
-          remove(name: string, options: any) {
-            cookieStore.set({ name, value: '', ...options })
+          remove(name: string, options: CookieOptions) {
+            try {
+              cookieStore.set({ name, value: '', ...options })
+            } catch (error) {}
           },
         },
       }
     )
-    
-    // تایید توکن ایمیل با سوپابیس
+
+    // تایید توکن ایمیل با Supabase
     const { error } = await supabase.auth.verifyOtp({
-      token_hash,
       type,
+      token_hash,
     })
 
     if (!error) {
-      // اگر نوع عملیات ثبت‌نام (signup) بود، به صفحه تایید ایمیل برو
+      // هدایت بر اساس نوع درخواست
       if (type === 'signup') {
         return NextResponse.redirect(`${origin}/en/email-confirmed`)
       }
-      // اگر نوع عملیات بازیابی رمز عبور (recovery) بود، به صفحه تغییر رمز برو
       if (type === 'recovery') {
         return NextResponse.redirect(`${origin}/en/reset-password`)
       }
     }
   }
 
-  // در صورت بروز خطا یا منقضی شدن لینک، هدایت به صفحه لاگین با پیام خطا
-  return NextResponse.redirect(`${origin}/en/login?error=Invalid or expired link`)
+  // اگر توکن نامعتبر یا منقضی شده بود، هدایت به صفحه لاگین
+  return NextResponse.redirect(`${origin}/en/login?error=Invalid or expired verification link`)
 }
