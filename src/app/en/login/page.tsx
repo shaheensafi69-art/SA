@@ -101,7 +101,19 @@ export default function LoginPage() {
 
       if (error) throw error;
 
-      if (data.session) {
+      if (data.session && data.user) {
+        // ==========================================
+        // 🔒 بررسی تایید ایمیل قبل از اجازه ورود
+        // ==========================================
+        const isEmailVerified = data.user.email_confirmed_at != null;
+
+        if (!isEmailVerified) {
+          await supabase.auth.signOut();
+          setErrorMsg("Please verify your email address before signing in. لطفاً ابتدا ایمیل خود را تایید کنید.");
+          setIsLoading(false);
+          return;
+        }
+
         const { data: finalProfile } = await supabase
             .from("profiles")
             .select("role")
@@ -189,7 +201,7 @@ export default function LoginPage() {
 
             <div className="relative z-10">
               {errorMsg && (
-                <div className="bg-red-500/15 border border-red-500/30 text-red-400 px-3 py-2 rounded-xl text-xs font-bold mb-3 text-center">
+                <div className="bg-red-500/15 border border-red-500/30 text-red-400 px-3 py-2 rounded-xl text-xs font-bold mb-3 text-center leading-relaxed">
                   {errorMsg}
                 </div>
               )}
@@ -280,9 +292,8 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* ستون راست: فضای ۳D زنده با کاراکتر فضانورد شناور (دقیقاً مثل صفحه ثبت‌نام) */}
-      <div className="hidden lg:relative lg:flex flex-col justify-end overflow-hidden">
-        
+      {/* ستون راست: فضای ۳D زنده با کاراکتر فضانورد شناور */}
+      <div className="hidden lg:relative lg:flex flex-col justify-end overflow-hidden pointer-events-none">
         <div className="absolute inset-0 flex items-center justify-center p-8 pointer-events-none">
           <img 
             src="https://i.ibb.co/HTZ6DPsS/original-33b8479c324a5448d6145b3cad7c51e7-removebg-preview.png" 
@@ -291,7 +302,7 @@ export default function LoginPage() {
           />
         </div>
 
-        <div className="relative z-10 p-10 pb-14 flex flex-col items-center text-center bg-gradient-to-t from-[#020202] via-transparent to-transparent">
+        <div className="relative z-10 p-10 pb-14 flex flex-col items-center text-center bg-gradient-to-t from-[#020202] via-transparent to-transparent pointer-events-auto">
           <blockquote className="space-y-2 max-w-md">
             <p className="text-lg font-bold tracking-tight text-white leading-relaxed drop-shadow-md">
               “Education is the passport to the future, for tomorrow belongs to those who prepare for it today.”
@@ -303,15 +314,10 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* استایل انیمیشن شناور سه‌بعدی */}
       <style jsx global>{`
         @keyframes float {
-          0%, 100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-15px) rotate(2deg);
-          }
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-15px) rotate(2deg); }
         }
         .animate-float {
           animation: float 6s ease-in-out infinite;
