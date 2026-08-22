@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { 
@@ -20,13 +20,11 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     setError(null);
 
-    // بررسی تطابق رمزها
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
-    // بررسی طول رمز
     if (password.length < 6) {
       setError("Password must be at least 6 characters long.");
       return;
@@ -36,14 +34,13 @@ export default function ResetPasswordPage() {
     const supabase = createClient();
 
     try {
-      // آپدیت کردن رمز عبور کاربر در دیتابیس
+      // آپدیت کردن رمز عبور جدید کاربر
       const { error } = await supabase.auth.updateUser({
         password: password
       });
 
       if (error) throw error;
 
-      // موفقیت آمیز بود
       setIsSuccess(true);
     } catch (err: any) {
       console.error("Update password error:", err);
@@ -64,7 +61,7 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-md relative z-10 animate-[fadeInUp_0.5s_ease-out]">
         
         {/* Main Card */}
-        <div className="bg-[#0a0a0f]/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 sm:p-10 shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
+        <div className="bg-[#0a0a0f]/85 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 sm:p-10 shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
           
           <div className="w-16 h-16 bg-gradient-to-br from-fuchsia-500/20 to-blue-500/20 rounded-2xl flex items-center justify-center border border-white/10 mb-8 shadow-inner">
             <KeyRound size={32} className="text-fuchsia-400" />
