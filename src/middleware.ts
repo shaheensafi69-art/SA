@@ -7,8 +7,13 @@ const defaultLocale = 'en';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 🚫 فیلتر مهم: درخواست‌های API و فایل‌های استاتیک باید بدون دستکاری رد شوند
-  if (pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.includes('.')) {
+  // 🚫 فیلتر مهم: درخواست‌های API، مسیر کالبک احراز هویت و فایل‌های استاتیک باید بدون دستکاری رد شوند
+  if (
+    pathname.startsWith('/api') || 
+    pathname.startsWith('/_next') || 
+    pathname.startsWith('/auth/callback') || 
+    pathname.includes('.')
+  ) {
     return NextResponse.next();
   }
 
