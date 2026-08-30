@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import "./globals.css"; 
-import PushAlertScript from "@/components/PushAlertScript"; 
+import "./globals.css";
+import PushAlertScript from "@/components/PushAlertScript";
 import SplashScreen from "@/components/SplashScreen"; // ویدیوی مخصوص اپلیکیشن
 
 export const viewport: Viewport = {
@@ -35,9 +35,9 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link 
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&display=swap" 
-          rel="stylesheet" 
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&display=swap"
+          rel="stylesheet"
         />
         <style dangerouslySetInnerHTML={{
           __html: `
@@ -50,10 +50,10 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-neutral-950 text-white relative">
         <PushAlertScript />
-        
+
         {/* لودر ویدیویی هوشمند فقط برای اپلیکیشن (PWA) */}
         <SplashScreen />
-        
+
         {children}
       </body>
     </html>
