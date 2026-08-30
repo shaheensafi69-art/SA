@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+export const dynamic = 'force-dynamic';
 export async function GET(req: Request) {
   try {
     // ۱. بررسی امنیت (همان توکنی که برای کرون جاب قبلی ساختید)
@@ -18,7 +19,7 @@ export async function GET(req: Request) {
 
     // ۲. پیدا کردن روز فعلی به وقت کابل (Asia/Kabul)
     const options = { timeZone: 'Asia/Kabul', weekday: 'long' as const };
-    const todayKabulStr = new Date().toLocaleDateString('en-US', options); 
+    const todayKabulStr = new Date().toLocaleDateString('en-US', options);
     // خروجی مثلاً: "Monday"
 
     // ۳. گرفتن صنف‌هایی که فعال هستند و امروز کلاس دارند
@@ -70,9 +71,9 @@ export async function GET(req: Request) {
       if (insertError) throw insertError;
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: `Successfully scheduled ${notificationsToInsert.length} class reminders for today.` 
+    return NextResponse.json({
+      success: true,
+      message: `Successfully scheduled ${notificationsToInsert.length} class reminders for today.`
     });
 
   } catch (err: any) {

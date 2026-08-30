@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+export const dynamic = 'force-dynamic';
 export async function GET(req: Request) {
   try {
     const authHeader = req.headers.get('authorization');
@@ -70,8 +71,8 @@ export async function GET(req: Request) {
       }
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       processedCount: pendingNotifs.length,
       details: results
     });
