@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import {
   X, Sparkles, LogOut, Bell, ShieldCheck, LayoutDashboard,
   Users, UserCheck, BookOpen, Presentation, CircleDollarSign,
-  Trophy, Megaphone, Video, Headset, Settings, Grid, Rss
+  Trophy, Megaphone, Video, Headset, Settings, Grid, Rss,
+  Newspaper, GraduationCap // آیکون‌های جدید اضافه شدند
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -65,6 +66,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     router.replace("/en/login");
   };
 
+  // اضافه شدن Blogs و Scholarships به لیست منوها
   const menuItems = [
     { name: "Overview", path: "/en/admin", icon: <LayoutDashboard size={22} />, disabled: false },
     { name: "Academy Feed", path: "/en/feed", icon: <Rss size={22} />, disabled: false },
@@ -72,6 +74,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Faculty", path: "/en/admin/manage-teachers", icon: <UserCheck size={22} />, disabled: false },
     { name: "Courses", path: "/en/admin/courses", icon: <BookOpen size={22} />, disabled: false },
     { name: "Classes", path: "/en/admin/classes", icon: <Presentation size={22} />, disabled: false },
+    { name: "Scholarships", path: "/en/admin/scholarships", icon: <GraduationCap size={22} />, disabled: false },
+    { name: "Blogs", path: "/en/admin/blogs/create", icon: <Newspaper size={22} />, disabled: false },
     { name: "Finance", path: "/en/admin/finance", icon: <CircleDollarSign size={22} />, disabled: false },
     { name: "Honors", path: "/en/admin/awards", icon: <Trophy size={22} />, disabled: false },
     { name: "Notices", path: "/en/admin/announcements", icon: <Megaphone size={22} />, disabled: false },
@@ -88,6 +92,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       case "Faculty": return "from-indigo-500/20 to-indigo-500/5 text-indigo-400 border-indigo-500/30";
       case "Courses": return "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/30";
       case "Classes": return "from-cyan-500/20 to-cyan-500/5 text-cyan-400 border-cyan-500/30";
+      case "Scholarships": return "from-sky-500/20 to-sky-500/5 text-sky-400 border-sky-500/30"; // رنگ اختصاصی بورسیه‌ها
+      case "Blogs": return "from-violet-500/20 to-violet-500/5 text-violet-400 border-violet-500/30"; // رنگ اختصاصی بلاگ
       case "Finance": return "from-green-500/20 to-green-500/5 text-green-400 border-green-500/30";
       case "Honors": return "from-amber-500/20 to-amber-500/5 text-amber-400 border-amber-500/30";
       case "Notices": return "from-orange-500/20 to-orange-500/5 text-orange-400 border-orange-500/30";
