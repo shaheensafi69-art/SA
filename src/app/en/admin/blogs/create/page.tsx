@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { uploadFileToR2 } from "@/utils/upload";
 import {
     PenTool,
     Image as ImageIcon,
@@ -42,23 +43,7 @@ export default function CreateBlogPage() {
 
         setUploadingImage(true);
         try {
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-            const filePath = `${fileName}`;
-
-            // آپلود فایل به باکت Blog
-            const { error: uploadError } = await supabase.storage
-                .from('Blog')
-                .upload(filePath, file);
-
-            if (uploadError) throw uploadError;
-
-            // دریافت لینک عمومی عکس
-            const { data: { publicUrl } } = supabase.storage
-                .from('Blog')
-                .getPublicUrl(filePath);
-
-            // قرار دادن لینک در استیت فرم
+            const publicUrl = await uploadFileToR2(file, 'Blog');
             setFormData(prev => ({ ...prev, cover_image: publicUrl }));
         } catch (error: any) {
             alert("Error uploading image: " + error.message);

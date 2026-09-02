@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { uploadFileToR2 } from "@/utils/upload";
 
 type UserProfile = {
   first_name: string;
@@ -87,17 +88,7 @@ export default function SettingsPage() {
     if (!session?.user) return;
 
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${session.user.id}-${Math.random()}.${fileExt}`;
-      
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(fileName);
-      const newAvatarUrl = publicUrlData.publicUrl;
+      const newAvatarUrl = await uploadFileToR2(file, 'avatars');
 
       const { error: updateError } = await supabase
         .from('profiles')
@@ -110,7 +101,7 @@ export default function SettingsPage() {
       showNotification("success", "Profile picture updated instantly!");
     } catch (error: any) {
       console.error("Avatar upload error:", error);
-      showNotification("error", "Failed to upload. Make sure 'avatars' bucket is public.");
+      showNotification("error", "Failed to upload avatar to Cloudflare R2.");
     } finally {
       setIsSaving(false);
     }

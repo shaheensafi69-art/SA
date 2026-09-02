@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { uploadFileToR2 } from "@/utils/upload";
 import { useRouter } from "next/navigation";
 import { Video, Sparkles, Upload, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
@@ -51,27 +52,7 @@ export default function CreateReelPage() {
 
         setIsSubmitting(true);
         try {
-            // ۱. آپلود ویدیو در باکت reels (مستقیماً در ریشه باکت)
-            const fileExt = videoFile.name.split('.').pop();
-            // نام فایل به صورت: userId_timestamp.ext
-            const fileName = `${currentUserId}_${Date.now()}.${fileExt}`;
-
-            // --- اصلاح شده: حذف پوشه 'uploads/' برای جلوگیری از ساخت پوشه ---
-            const filePath = fileName;
-            // -----------------------------------------------------------
-
-            const { error: uploadError } = await supabase.storage
-                .from("reels")
-                .upload(filePath, videoFile);
-
-            if (uploadError) throw uploadError;
-
-            // ۲. دریافت Public URL ویدیو
-            const { data: publicUrlData } = supabase.storage
-                .from("reels")
-                .getPublicUrl(filePath);
-
-            const videoUrl = publicUrlData.publicUrl;
+            const videoUrl = await uploadFileToR2(videoFile, 'reels');
 
             // ۳. ثبت اطلاعات در جدول reels
             const { error: insertError } = await supabase.from("reels").insert({

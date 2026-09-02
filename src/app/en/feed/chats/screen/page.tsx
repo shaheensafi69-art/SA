@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, Suspense } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { uploadFileToR2 } from "@/utils/upload";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Send, Image as ImageIcon, Check, CheckCheck, Sparkles, X, Search, CornerUpLeft, MessageSquare, Paperclip } from "lucide-react";
@@ -214,21 +215,7 @@ function ChatScreenContent() {
 
         setIsUploading(true);
         try {
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${currentUserId}_${Date.now()}.${fileExt}`;
-            const filePath = `chat_attachments/${fileName}`;
-
-            const { error: uploadErr } = await supabase.storage
-                .from("reels")
-                .upload(filePath, file);
-
-            if (uploadErr) throw uploadErr;
-
-            const { data: urlData } = supabase.storage
-                .from("reels")
-                .getPublicUrl(filePath);
-
-            const fileUrl = urlData.publicUrl;
+            const fileUrl = await uploadFileToR2(file, 'feed');
             const isImage = file.type.startsWith('image/');
 
             const { data, error } = await supabase.from("direct_messages").insert({

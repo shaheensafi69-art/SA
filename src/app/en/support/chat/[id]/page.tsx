@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { uploadFileToR2 } from "@/utils/upload";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Send, BotMessageSquare, Loader2, ShieldCheck, User as UserIcon, Sparkles, Paperclip, FileText, Download, X } from "lucide-react";
 
@@ -106,19 +107,10 @@ export default function ChatScreen({ params }: { params: { id: string } }) {
 
             if (selectedFile) {
                 setIsUploading(true);
-                const fileExt = selectedFile.name.split('.').pop();
-                const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
-                const filePath = `${ticket.id}/${fileName}`;
-
-                const { error: uploadError } = await supabase.storage
-                    .from('support')
-                    .upload(filePath, selectedFile);
-
-                if (!uploadError) {
-                    const { data: publicUrlData } = supabase.storage
-                        .from('support')
-                        .getPublicUrl(filePath);
-                    attachmentUrl = publicUrlData.publicUrl;
+                try {
+                    attachmentUrl = await uploadFileToR2(selectedFile, 'support');
+                } catch (err) {
+                    console.error("Support attachment upload error:", err);
                 }
                 setSelectedFile(null);
                 setIsUploading(false);

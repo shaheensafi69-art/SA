@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
+import { uploadFileToR2 } from "@/utils/upload";
 import {
   ArrowLeft,
   ImagePlus,
@@ -69,20 +70,9 @@ export default function CreatePostPage() {
 
       // ۱. آپلود تصویر در Supabase Storage (در صورت انتخاب فایل)
       if (imageFile) {
-        const fileExt = imageFile.name.split('.').pop();
-        const fileName = `${session.user.id}_${Date.now()}.${fileExt}`;
-        const filePath = `post_images/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('discussion_media')
-          .upload(filePath, imageFile);
-
-        if (!uploadError) {
-          const { data: publicUrlData } = supabase.storage
-            .from('discussion_media')
-            .getPublicUrl(filePath);
-          uploadedImageUrl = publicUrlData.publicUrl;
-        } else {
+        try {
+          uploadedImageUrl = await uploadFileToR2(imageFile, 'feed');
+        } catch (uploadError) {
           console.error("Image upload failed:", uploadError);
         }
       }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { uploadFileToR2 } from "@/utils/upload";
 import { LockKeyhole } from "lucide-react";
 import Link from "next/link";
 
@@ -145,20 +146,7 @@ export default function TradingJournalPage() {
       let uploadedChartUrl = null;
 
       if (chartFile) {
-        const fileExt = chartFile.name.split('.').pop();
-        const fileName = `${session.user.id}-${Date.now()}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('journal_charts')
-          .upload(fileName, chartFile);
-
-        if (uploadError) {
-          alert(`Image Upload Error: ${uploadError.message}`);
-          throw uploadError;
-        }
-
-        const { data: publicUrlData } = supabase.storage.from('journal_charts').getPublicUrl(fileName);
-        uploadedChartUrl = publicUrlData.publicUrl;
+        uploadedChartUrl = await uploadFileToR2(chartFile, 'journal_charts');
       }
 
       const { error } = await supabase

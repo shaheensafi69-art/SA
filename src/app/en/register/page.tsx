@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import { uploadFileToR2 } from "@/utils/upload";
 import { Loader2, Eye, EyeOff, Sparkles, ArrowRight, ArrowLeft, Mail, ShieldCheck } from "lucide-react";
 
 // ==========================================
@@ -224,16 +225,10 @@ function RegisterFormContent() {
 
       let avatar_url = "";
       if (photoFile) {
-        const fileExt = photoFile.name.split('.').pop();
-        const fileName = `${userId}-${Math.random()}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('avatars')
-          .upload(fileName, photoFile);
-        
-        if (!uploadError) {
-          const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(fileName);
-          avatar_url = publicUrlData.publicUrl;
+        try {
+          avatar_url = await uploadFileToR2(photoFile, 'avatars');
+        } catch (err) {
+          console.error("Avatar upload error:", err);
         }
       }
 

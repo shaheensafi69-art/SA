@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { uploadFileToR2 } from "@/utils/upload";
 import Link from "next/link";
 import { Loader2, ArrowLeft, BookOpen, User, DollarSign, Image as ImageIcon, Save, CheckCircle2, AlertCircle, ChevronDown, Check, Type, AlignLeft } from "lucide-react";
 
@@ -84,19 +85,10 @@ export default function CreateCoursePage() {
 
       // اگر فایلی برای کاور انتخاب شده باشد، ابتدا آن را آپلود می‌کنیم
       if (thumbnailFile) {
-        const fileExt = thumbnailFile.name.split('.').pop();
-        const fileName = `course_${Date.now()}.${fileExt}`;
-        const filePath = `thumbnails/${fileName}`; // باکت course_thumbnails یا مشابه آن باید در سوپابیس وجود داشته باشد
-
-        const { error: uploadError } = await supabase.storage
-          .from("courses") // نام باکت
-          .upload(filePath, thumbnailFile);
-
-        if (uploadError) {
-          console.warn("Upload failed, continuing without custom image: ", uploadError);
-        } else {
-          const { data: publicUrlData } = supabase.storage.from("courses").getPublicUrl(filePath);
-          finalThumbnailUrl = publicUrlData.publicUrl;
+        try {
+          finalThumbnailUrl = await uploadFileToR2(thumbnailFile, "course-thumbnails");
+        } catch (uploadError) {
+          console.warn("R2 Upload failed, continuing without custom image: ", uploadError);
         }
       }
 

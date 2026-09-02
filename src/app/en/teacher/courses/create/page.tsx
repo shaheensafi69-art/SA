@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { uploadFileToR2 } from "@/utils/upload";
 import Link from "next/link";
 import { ArrowLeft, Loader2, BookOpen, Image as ImageIcon, DollarSign, Globe, User, Users, AlignLeft, CheckCircle2, Save, Lock, Upload, AlertCircle } from "lucide-react";
 
@@ -94,39 +95,18 @@ export default function CreateCoursePage() {
     }
   };
 
-  // ================= تابع طلایی آپلود عکس در باکت‌های سوپابیس =================
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, bucketName: string, targetField: 'thumbnail_url' | 'instructor_2_image_url') => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, defaultFolder: string, targetField: 'thumbnail_url' | 'instructor_2_image_url') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // روشن کردن لودینگ دکمه آپلود مربوطه
     if (targetField === 'thumbnail_url') setIsUploadingThumb(true);
     else setIsUploadingInstructor(true);
     setErrorMsg(null);
 
-    const supabase = createClient();
-
     try {
-      // ساخت یک نام یکتا برای فایل جلوگیری از تداخل (Overwriting)
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-
-      // آپلود فایل در باکت مورد نظر
-      const { error: uploadError } = await supabase.storage
-        .from(bucketName)
-        .upload(fileName, file, { cacheControl: '3600', upsert: false });
-
-      if (uploadError) throw uploadError;
-
-      // دریافت لینک عمومی (Public URL) عکس آپلود شده
-      const { data: publicUrlData } = supabase.storage
-        .from(bucketName)
-        .getPublicUrl(fileName);
-
-      if (publicUrlData) {
-        // جایگذاری اتوماتیک لینک در فیلد متنی مربوطه در فرم
-        setForm(prev => ({ ...prev, [targetField]: publicUrlData.publicUrl }));
-      }
+      const folderName = targetField === 'thumbnail_url' ? 'course-thumbnails' : 'instructor_image';
+      const uploadedUrl = await uploadFileToR2(file, folderName);
+      setForm(prev => ({ ...prev, [targetField]: uploadedUrl }));
     } catch (err: any) {
       setErrorMsg(`Image Upload Failed: ${err.message}`);
     } finally {

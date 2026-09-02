@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { uploadFileToR2 } from "@/utils/upload";
 import { 
   CheckCircle2, ClipboardCheck, FileCheck, Video, 
   MessageSquare, ExternalLink, Loader2, UploadCloud, 
@@ -181,18 +182,12 @@ export default function StudentHubPage() {
     const { data: { session } } = await supabase.auth.getSession();
 
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${session?.user?.id}-${assignmentId}-${Math.random()}.${fileExt}`;
-      
-      const { error: uploadError } = await supabase.storage.from('assignments').upload(fileName, file);
-      if (uploadError) throw uploadError;
-
-      const { data: publicUrlData } = supabase.storage.from('assignments').getPublicUrl(fileName);
+      const fileUrl = await uploadFileToR2(file, 'assignments');
       
       await supabase.from('assignment_submissions').insert({ 
         assignment_id: assignmentId, 
         student_id: session?.user?.id, 
-        file_url: publicUrlData.publicUrl 
+        file_url: fileUrl 
       });
 
       await fetchAllData();

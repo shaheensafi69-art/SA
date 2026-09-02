@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { uploadFileToR2 } from "@/utils/upload";
 import { Loader2, Award, FileBadge, Medal, Send, User, BookOpen, Link as LinkIcon, Hash, CheckCircle2, AlertCircle, UploadCloud, Search, Wand2 } from "lucide-react";
 
 type Student = {
@@ -174,19 +175,7 @@ export default function TeacherAchievementsPage() {
 
       // آپلود فایل در باکت (اگر فایلی انتخاب شده باشد)
       if (certFile) {
-        const fileExt = certFile.name.split('.').pop();
-        const fileName = `${certForm.student_id}_${Date.now()}.${fileExt}`;
-        const filePath = `certificates/${fileName}`; // فرض بر این است که باکتی به نام certificates ساخته‌اید
-
-        const { error: uploadError, data } = await supabase.storage
-          .from("certificates")
-          .upload(filePath, certFile);
-
-        if (uploadError) throw new Error("Failed to upload certificate file: " + uploadError.message);
-
-        // دریافت لینک پابلیک فایل آپلود شده
-        const { data: publicUrlData } = supabase.storage.from("certificates").getPublicUrl(filePath);
-        finalUrl = publicUrlData.publicUrl;
+        finalUrl = await uploadFileToR2(certFile, "certificates");
       }
 
       const { error } = await supabase.from("certificates").insert({

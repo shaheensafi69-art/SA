@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { uploadFileToR2 } from "@/utils/upload";
 
 export default function AddCoursePage() {
   const router = useRouter();
@@ -32,11 +33,7 @@ export default function AddCoursePage() {
     try {
       let thumbnailUrl = "";
       if (thumbnail) {
-        const fileExt = thumbnail.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage.from("course-thumbnails").upload(fileName, thumbnail);
-        if (uploadError) throw uploadError;
-        thumbnailUrl = supabase.storage.from("course-thumbnails").getPublicUrl(fileName).data.publicUrl;
+        thumbnailUrl = await uploadFileToR2(thumbnail, "course-thumbnails");
       }
 
       const { error } = await supabase.from("courses").insert({

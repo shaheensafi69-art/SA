@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import StoryBar from "@/components/feed/StoryBar";
 
 interface PostItem {
   id: string;
@@ -293,6 +294,9 @@ export default function StudentFeedPage() {
 
         {/* ================= سمت راست: فید پست‌ها ================= */}
         <div className="col-span-1 lg:col-span-8 xl:col-span-9 space-y-6 w-full max-w-3xl mx-auto xl:max-w-4xl">
+
+          {/* User Stories Bar */}
+          <StoryBar currentUserId={currentUserId} />
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 bg-[#0a0a0f]/80 border border-white/5 p-5 sm:p-8 rounded-[2rem] backdrop-blur-xl shadow-2xl">
             <div>
