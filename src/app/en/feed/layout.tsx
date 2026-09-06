@@ -134,17 +134,19 @@ export default function FeedLayout({ children }: { children: React.ReactNode }) 
       </aside>
 
       {/* ================= محتوای اصلی فید ================= */}
-      <main className={`flex-1 h-full overflow-y-auto custom-scrollbar relative z-10 ${isChatPage ? 'pb-0' : isReelsPage ? 'pb-20 lg:pb-0' : 'pb-28 lg:pb-0'}`}>
+      <main className={`flex-1 h-full overflow-y-auto custom-scrollbar relative z-10 ${isChatPage || isReelsPage ? 'pb-16 lg:pb-0' : 'pb-28 lg:pb-0'}`}>
 
-        {/* دکمه شناور پیام در بالای صفحه موبایل (در تمام صفحات) */}
-        <div className="lg:hidden absolute top-4 right-4 z-40">
-          <Link
-            href="/en/feed/chats/list"
-            className="w-10 h-10 rounded-2xl bg-[#060609]/90 border border-white/10 backdrop-blur-xl flex items-center justify-center text-white shadow-lg active:scale-95 transition-transform"
-          >
-            <MessageSquare size={18} className="text-[#C2185B]" />
-          </Link>
-        </div>
+        {/* دکمه شناور پیام در بالای صفحه موبایل (غیر از صفحه ریلس و چت) */}
+        {!isReelsPage && !isChatPage && (
+          <div className="lg:hidden absolute top-4 right-4 z-40">
+            <Link
+              href="/en/feed/chats/list"
+              className="w-10 h-10 rounded-2xl bg-[#060609]/90 border border-white/10 backdrop-blur-xl flex items-center justify-center text-white shadow-lg active:scale-95 transition-transform"
+            >
+              <MessageSquare size={18} className="text-[#C2185B]" />
+            </Link>
+          </div>
+        )}
 
         {children}
       </main>

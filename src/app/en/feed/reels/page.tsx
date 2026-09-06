@@ -533,23 +533,23 @@ function ReelsContent() {
             )}
 
             {/* ================= BROWSER DEEP LINK / APP PROMPT BANNER (Mobile Web Only) ================= */}
-            <div className="lg:hidden absolute top-3 left-4 right-4 z-40 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-2.5 flex items-center justify-between shadow-xl">
-                <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-[#C2185B] to-yellow-500 flex items-center justify-center text-black font-black text-xs shadow-md">
+            <div className="lg:hidden absolute top-2.5 left-3.5 right-3.5 z-40 bg-black/40 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 flex items-center justify-between shadow-lg">
+                <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-[#C2185B] to-yellow-500 flex items-center justify-center text-black font-black text-[9px] shadow-sm">
                         SA
                     </div>
-                    <div>
-                        <p className="text-white font-black text-[11px] leading-tight">Safi Academy</p>
-                        <p className="text-neutral-400 text-[9px] font-medium">Watch in Mobile App</p>
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-white font-black text-[11px] leading-none">Safi Academy</span>
+                        <span className="text-neutral-400 text-[9px] font-medium">• Watch in App</span>
                     </div>
                 </div>
                 <a
                     href="https://play.google.com/store/apps/details?id=org.safiacademy.app"
                     target="_blank"
                     rel="noreferrer"
-                    className="px-3 py-1.5 bg-[#C2185B] hover:bg-[#ad1450] text-white text-[10px] font-black uppercase tracking-wider rounded-xl shadow-[0_0_10px_rgba(194,24,91,0.4)] transition-all flex items-center gap-1"
+                    className="px-2.5 py-1 bg-[#C2185B] hover:bg-[#ad1450] text-white text-[9px] font-black uppercase tracking-wider rounded-lg shadow-sm transition-all flex items-center gap-1"
                 >
-                    <Smartphone size={12} /> Open App
+                    <Smartphone size={11} /> Open App
                 </a>
             </div>
 
@@ -569,24 +569,24 @@ function ReelsContent() {
             >
 
                 {/* Top Floating Feed Switcher Tabs: [ For You | Friends ] */}
-                <div className="absolute top-14 lg:top-6 left-1/2 -translate-x-1/2 z-30 flex items-center bg-black/50 backdrop-blur-xl border border-white/15 p-1 rounded-2xl shadow-2xl">
+                <div className="absolute top-11 lg:top-4 left-1/2 -translate-x-1/2 z-30 flex items-center bg-black/40 backdrop-blur-md border border-white/10 p-0.5 rounded-full shadow-lg">
                     <button
                         onClick={() => setActiveTab('for_you')}
-                        className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 ${activeTab === 'for_you'
-                            ? "bg-[#C2185B] text-white shadow-[0_0_15px_rgba(194,24,91,0.5)] scale-105"
+                        className={`px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${activeTab === 'for_you'
+                            ? "bg-[#C2185B] text-white shadow-[0_0_10px_rgba(194,24,91,0.5)]"
                             : "text-neutral-400 hover:text-white"
                             }`}
                     >
-                        <Compass size={14} /> For You
+                        <Compass size={12} /> For You
                     </button>
                     <button
                         onClick={() => setActiveTab('friends')}
-                        className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 ${activeTab === 'friends'
-                            ? "bg-[#C2185B] text-white shadow-[0_0_15px_rgba(194,24,91,0.5)] scale-105"
+                        className={`px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${activeTab === 'friends'
+                            ? "bg-[#C2185B] text-white shadow-[0_0_10px_rgba(194,24,91,0.5)]"
                             : "text-neutral-400 hover:text-white"
                             }`}
                     >
-                        <Users size={14} /> Friends
+                        <Users size={12} /> Friends
                     </button>
                 </div>
 
@@ -666,51 +666,51 @@ function ReelsContent() {
                                 <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-black/60 to-transparent pointer-events-none"></div>
 
                                 {/* Top Right Mute/Unmute Button */}
-                                <div className="absolute top-16 lg:top-6 right-5 z-20 flex items-center gap-3">
+                                <div className="absolute top-11 lg:top-4 right-3.5 sm:right-5 z-30 flex items-center gap-3">
                                     <button
                                         onClick={() => setIsMuted(!isMuted)}
-                                        className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-md border border-white/15 flex items-center justify-center text-white hover:bg-black/80 transition-all shadow-lg"
+                                        className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-black/70 transition-all shadow-md"
                                         title={isMuted ? "Unmute" : "Mute"}
                                     >
-                                        {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                                        {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
                                     </button>
                                 </div>
 
-                                {/* Reel Info: Author, Title, Category & Description */}
-                                <div className="absolute bottom-20 lg:bottom-8 left-5 right-20 z-20 space-y-3 pointer-events-auto">
-                                    <div className="flex items-center gap-3">
+                                {/* Reel Info: Author, Title, Category & Description (Aligned close to bottom bar) */}
+                                <div className="absolute bottom-3 sm:bottom-4 lg:bottom-6 left-3.5 sm:left-5 right-16 sm:right-20 z-20 space-y-2 pointer-events-auto">
+                                    <div className="flex items-center gap-2.5">
                                         <Link
                                             href={`/en/feed/profile/${reel.user_id}`}
-                                            className="w-12 h-12 rounded-2xl bg-neutral-900 border-[2.5px] border-[#C2185B] overflow-hidden flex items-center justify-center shrink-0 shadow-lg hover:scale-105 transition-transform"
+                                            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-neutral-900 border-[2px] border-[#C2185B] overflow-hidden flex items-center justify-center shrink-0 shadow-md hover:scale-105 transition-transform"
                                         >
                                             {reel.authorAvatar ? (
                                                 <img src={reel.authorAvatar} alt="" className="w-full h-full object-cover" />
                                             ) : (
-                                                <span className="text-[#C2185B] font-black text-sm">{reel.authorName.charAt(0)}</span>
+                                                <span className="text-[#C2185B] font-black text-xs">{reel.authorName.charAt(0)}</span>
                                             )}
                                         </Link>
                                         <div>
                                             <Link
                                                 href={`/en/feed/profile/${reel.user_id}`}
-                                                className="text-white font-black text-sm tracking-wide drop-shadow-md hover:underline block"
+                                                className="text-white font-black text-xs sm:text-sm tracking-wide drop-shadow-md hover:underline block"
                                             >
                                                 {reel.authorName}
                                             </Link>
-                                            <span className="inline-block px-2.5 py-0.5 bg-[#C2185B]/30 backdrop-blur-sm border border-[#C2185B]/50 text-pink-100 text-[9px] font-black uppercase tracking-widest rounded-md mt-1 shadow-sm">
+                                            <span className="inline-block px-2 py-0.5 bg-[#C2185B]/30 backdrop-blur-sm border border-[#C2185B]/50 text-pink-100 text-[8px] sm:text-[9px] font-black uppercase tracking-wider rounded-md mt-0.5 shadow-sm">
                                                 {reel.category}
                                             </span>
                                         </div>
                                     </div>
 
                                     <div>
-                                        <h3 className="text-white font-black text-sm drop-shadow-md">{reel.title}</h3>
+                                        <h3 className="text-white font-bold text-xs sm:text-sm drop-shadow-md">{reel.title}</h3>
                                         {reel.description && (
-                                            <div className="text-neutral-200 text-xs font-medium mt-1.5 drop-shadow-md">
+                                            <div className="text-neutral-200 text-[11px] sm:text-xs font-medium mt-1 drop-shadow-md">
                                                 <p className={isExpanded ? "" : "line-clamp-2"}>{reel.description}</p>
                                                 {reel.description.length > 80 && (
                                                     <button
                                                         onClick={() => setExpandedDescriptions(prev => ({ ...prev, [reel.id]: !isExpanded }))}
-                                                        className="text-[#C2185B] font-black text-[11px] mt-1 hover:text-pink-400 transition-colors bg-black/40 px-2 py-0.5 rounded-full"
+                                                        className="text-[#C2185B] font-black text-[10px] sm:text-[11px] mt-0.5 hover:text-pink-400 transition-colors bg-black/40 px-2 py-0.5 rounded-full"
                                                     >
                                                         {isExpanded ? "Show Less" : "Read More..."}
                                                     </button>
@@ -721,7 +721,7 @@ function ReelsContent() {
                                 </div>
 
                                 {/* ================= RIGHT FLOATING ACTION BAR ================= */}
-                                <div className="absolute bottom-24 lg:bottom-12 right-4 z-20 flex flex-col items-center gap-5">
+                                <div className="absolute bottom-3 sm:bottom-4 lg:bottom-6 right-2.5 sm:right-4 z-20 flex flex-col items-center gap-3 sm:gap-4">
 
                                     {/* Like Button */}
                                     <button
@@ -729,13 +729,13 @@ function ReelsContent() {
                                         className="flex flex-col items-center group/btn"
                                         title={reel.isLikedByMe ? "Unlike" : "Like"}
                                     >
-                                        <div className={`w-12 h-12 rounded-full backdrop-blur-xl border flex items-center justify-center transition-all shadow-lg ${reel.isLikedByMe
-                                            ? "bg-[#C2185B] border-[#C2185B] text-white shadow-[0_0_25px_rgba(194,24,91,0.7)] scale-110"
-                                            : "bg-black/50 border-white/20 text-white hover:bg-black/70 hover:scale-105"
+                                        <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full backdrop-blur-xl border flex items-center justify-center transition-all shadow-md ${reel.isLikedByMe
+                                            ? "bg-[#C2185B] border-[#C2185B] text-white shadow-[0_0_20px_rgba(194,24,91,0.7)] scale-110"
+                                            : "bg-black/40 border-white/20 text-white hover:bg-black/60 hover:scale-105"
                                             }`}>
-                                            <Heart size={22} fill={reel.isLikedByMe ? "currentColor" : "none"} />
+                                            <Heart size={20} fill={reel.isLikedByMe ? "currentColor" : "none"} />
                                         </div>
-                                        <span className="text-[11px] font-black text-white mt-1.5 drop-shadow-lg">{reel.likes_count}</span>
+                                        <span className="text-[10px] font-black text-white mt-1 drop-shadow-md">{reel.likes_count}</span>
                                     </button>
 
                                     {/* Comment Button (Opens modal on mobile, focuses desktop panel) */}
@@ -744,18 +744,18 @@ function ReelsContent() {
                                         className="flex flex-col items-center group/btn lg:hidden"
                                         title="Comments"
                                     >
-                                        <div className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-black/70 hover:scale-105 transition-all shadow-lg">
-                                            <MessageCircle size={22} />
+                                        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-black/60 hover:scale-105 transition-all shadow-md">
+                                            <MessageCircle size={20} />
                                         </div>
-                                        <span className="text-[11px] font-black text-white mt-1.5 drop-shadow-lg">{reel.comments_count}</span>
+                                        <span className="text-[10px] font-black text-white mt-1 drop-shadow-md">{reel.comments_count}</span>
                                     </button>
 
                                     {/* Desktop Comment Count Indicator */}
                                     <div className="hidden lg:flex flex-col items-center opacity-85">
-                                        <div className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-lg">
-                                            <MessageCircle size={22} />
+                                        <div className="w-11 h-11 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-md">
+                                            <MessageCircle size={20} />
                                         </div>
-                                        <span className="text-[11px] font-black text-white mt-1.5 drop-shadow-lg">{reel.comments_count}</span>
+                                        <span className="text-[10px] font-black text-white mt-1 drop-shadow-md">{reel.comments_count}</span>
                                     </div>
 
                                     {/* Share Button */}
@@ -764,10 +764,10 @@ function ReelsContent() {
                                         className="flex flex-col items-center group/btn"
                                         title="Share Reel"
                                     >
-                                        <div className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-[#C2185B] hover:border-[#C2185B] hover:scale-105 transition-all shadow-lg">
-                                            <Share2 size={20} />
+                                        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-[#C2185B] hover:border-[#C2185B] hover:scale-105 transition-all shadow-md">
+                                            <Share2 size={18} />
                                         </div>
-                                        <span className="text-[10px] font-black text-white mt-1.5 uppercase tracking-wider drop-shadow-lg">Share</span>
+                                        <span className="text-[9px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-md">Share</span>
                                     </button>
 
                                     {/* Download Button (TikTok/Instagram Style) */}
@@ -777,14 +777,14 @@ function ReelsContent() {
                                         className="flex flex-col items-center group/btn"
                                         title="Download Video"
                                     >
-                                        <div className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-black hover:border-yellow-500 hover:scale-105 transition-all shadow-lg disabled:opacity-50">
+                                        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-black hover:border-yellow-500 hover:scale-105 transition-all shadow-md disabled:opacity-50">
                                             {isDownloadingThis ? (
-                                                <Loader2 size={20} className="animate-spin text-white" />
+                                                <Loader2 size={18} className="animate-spin text-white" />
                                             ) : (
-                                                <Download size={20} />
+                                                <Download size={18} />
                                             )}
                                         </div>
-                                        <span className="text-[10px] font-black text-white mt-1.5 uppercase tracking-wider drop-shadow-lg">Save</span>
+                                        <span className="text-[9px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-md">Save</span>
                                     </button>
 
                                 </div>
