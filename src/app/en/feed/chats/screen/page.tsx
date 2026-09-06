@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Send, Image as ImageIcon, Check, CheckCheck, Sparkles, X, Search, CornerUpLeft, MessageSquare, Paperclip } from "lucide-react";
+import { ArrowLeft, Send, Image as ImageIcon, Check, CheckCheck, Sparkles, X, Search, CornerUpLeft, MessageSquare, Paperclip, Play, Film, Video } from "lucide-react";
 
 interface MessageItem {
     id: string;
@@ -369,9 +369,26 @@ function ChatScreenContent() {
                                         )}
 
                                         {msg.attachment_url && (
-                                            <div className="mb-3 rounded-xl overflow-hidden border border-white/10 bg-black">
+                                            <div className="mb-3 rounded-2xl overflow-hidden border border-white/10 bg-black/80 shadow-lg">
                                                 {msg.attachment_type === 'image' ? (
                                                     <img src={msg.attachment_url} alt="" className="max-h-72 w-full object-cover" />
+                                                ) : msg.attachment_type === 'reel' ? (
+                                                    <div className="flex flex-col">
+                                                        <div className="relative aspect-[9/16] max-h-72 w-full bg-black flex items-center justify-center overflow-hidden">
+                                                            <video
+                                                                src={msg.attachment_url}
+                                                                controls
+                                                                playsInline
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        </div>
+                                                        <Link
+                                                            href="/en/feed/reels"
+                                                            className="flex items-center justify-center gap-2 p-3 bg-gradient-to-r from-[#C2185B]/30 to-pink-900/30 hover:from-[#C2185B]/50 hover:to-pink-900/50 border-t border-white/10 text-white text-xs font-black tracking-wider uppercase transition-colors"
+                                                        >
+                                                            <Film size={14} className="text-[#C2185B]" /> Open in Reels Feed
+                                                        </Link>
+                                                    </div>
                                                 ) : (
                                                     <a href={msg.attachment_url} target="_blank" rel="noreferrer" className="p-3.5 block text-xs font-bold text-pink-300 underline">
                                                         Download Attachment
