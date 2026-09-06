@@ -530,57 +530,44 @@ function ReelsContent() {
                 </div>
             )}
 
-            {/* ================= BROWSER APP POPUP BANNER (Appears for a few seconds on entry, then smoothly collapses) ================= */}
-            {showAppBanner && (
-                <div className="lg:hidden absolute top-2 left-3 right-3 z-40 bg-black/80 backdrop-blur-xl border border-white/15 rounded-2xl px-3.5 py-2 flex items-center justify-between shadow-2xl animate-[fadeIn_0.3s_ease-out]">
-                    <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-[#C2185B] to-yellow-500 flex items-center justify-center text-black font-black text-[10px] shadow-md">
-                            SA
+            {/* ================= FIXED TOP HEADER (STAYS PERMANENTLY FIXED ACROSS ALL VIDEOS AS YOU SCROLL) ================= */}
+            <div className="absolute top-3 lg:top-5 left-0 right-0 z-40 flex flex-col items-center pointer-events-none px-3">
+                
+                {/* Temporary App Banner (auto-collapses after 4.5s or close button) */}
+                {showAppBanner && (
+                    <div className="pointer-events-auto w-full max-w-md bg-black/80 backdrop-blur-2xl border border-white/15 rounded-2xl px-3.5 py-2 flex items-center justify-between shadow-2xl mb-2 animate-[fadeIn_0.3s_ease-out]">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-[#C2185B] to-yellow-500 flex items-center justify-center text-black font-black text-[10px] shadow-md">
+                                SA
+                            </div>
+                            <div>
+                                <p className="text-white font-black text-[11px] leading-tight">Safi Academy</p>
+                                <p className="text-neutral-400 text-[9px] font-medium">Watch in Mobile App</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-white font-black text-[11px] leading-tight">Safi Academy</p>
-                            <p className="text-neutral-400 text-[9px] font-medium">Watch in Mobile App</p>
+                        <div className="flex items-center gap-2">
+                            <a
+                                href="https://play.google.com/store/apps/details?id=org.safiacademy.app"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-2.5 py-1 bg-[#C2185B] hover:bg-[#ad1450] text-white text-[9px] font-black uppercase tracking-wider rounded-lg shadow-[0_0_10px_rgba(194,24,91,0.4)] transition-all flex items-center gap-1"
+                            >
+                                <Smartphone size={11} /> Open App
+                            </a>
+                            <button
+                                onClick={() => setShowAppBanner(false)}
+                                className="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
+                            >
+                                <X size={12} />
+                            </button>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <a
-                            href="https://play.google.com/store/apps/details?id=org.safiacademy.app"
-                            target="_blank"
-                            rel="noreferrer"
-                            className="px-2.5 py-1 bg-[#C2185B] hover:bg-[#ad1450] text-white text-[9px] font-black uppercase tracking-wider rounded-lg shadow-[0_0_10px_rgba(194,24,91,0.4)] transition-all flex items-center gap-1"
-                        >
-                            <Smartphone size={11} /> Open App
-                        </a>
-                        <button
-                            onClick={() => setShowAppBanner(false)}
-                            className="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
-                        >
-                            <X size={12} />
-                        </button>
-                    </div>
-                </div>
-            )}
+                )}
 
-            {/* ================= MAIN REELS CONTAINER ================= */}
-            <div
-                ref={containerRef}
-                className="flex-1 w-full h-full relative overflow-y-scroll snap-y snap-mandatory no-scrollbar bg-black lg:rounded-[2rem] lg:border border-white/5 shadow-2xl"
-                onScroll={(e) => {
-                    const clientH = e.currentTarget.clientHeight;
-                    if (clientH > 0) {
-                        const index = Math.round(e.currentTarget.scrollTop / clientH);
-                        if (index !== activeVideoIndex && index >= 0 && index < reels.length) {
-                            handleVideoIntersection(index);
-                        }
-                    }
-                }}
-            >
-
-                {/* Top Compact Navigation Pill Bar: [ For You | Friends ] + Small App & Mute Icons */}
-                <div className={`absolute ${showAppBanner ? 'top-14' : 'top-3 lg:top-5'} left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 transition-all duration-300`}>
-                    
+                {/* Sleek Tabs & Controls Bar (Persistent on all reels) */}
+                <div className="pointer-events-auto flex items-center gap-2">
                     {/* Switcher Pill */}
-                    <div className="flex items-center bg-black/55 backdrop-blur-xl border border-white/15 p-1 rounded-2xl shadow-xl">
+                    <div className="flex items-center bg-black/60 backdrop-blur-2xl border border-white/15 p-1 rounded-2xl shadow-2xl">
                         <button
                             onClick={() => setActiveTab('for_you')}
                             className={`px-3 py-1 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${activeTab === 'for_you'
@@ -606,7 +593,7 @@ function ReelsContent() {
                         href="https://play.google.com/store/apps/details?id=org.safiacademy.app"
                         target="_blank"
                         rel="noreferrer"
-                        className="w-8 h-8 rounded-xl bg-black/55 backdrop-blur-xl border border-white/15 flex items-center justify-center text-pink-300 hover:text-white hover:bg-[#C2185B]/40 hover:border-[#C2185B] transition-all shadow-xl"
+                        className="w-8 h-8 rounded-xl bg-black/60 backdrop-blur-2xl border border-white/15 flex items-center justify-center text-pink-300 hover:text-white hover:bg-[#C2185B]/40 hover:border-[#C2185B] transition-all shadow-xl"
                         title="Get Safi Academy App"
                     >
                         <Smartphone size={14} />
@@ -615,14 +602,29 @@ function ReelsContent() {
                     {/* Small Mute / Unmute Button */}
                     <button
                         onClick={() => setIsMuted(!isMuted)}
-                        className="w-8 h-8 rounded-xl bg-black/55 backdrop-blur-xl border border-white/15 flex items-center justify-center text-white hover:bg-black/80 transition-all shadow-xl"
+                        className="w-8 h-8 rounded-xl bg-black/60 backdrop-blur-2xl border border-white/15 flex items-center justify-center text-white hover:bg-black/80 transition-all shadow-xl"
                         title={isMuted ? "Unmute" : "Mute"}
                     >
                         {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
                     </button>
-
                 </div>
 
+            </div>
+
+            {/* ================= MAIN REELS CONTAINER ================= */}
+            <div
+                ref={containerRef}
+                className="flex-1 w-full h-full relative overflow-y-scroll snap-y snap-mandatory no-scrollbar bg-black lg:rounded-[2rem] lg:border border-white/5 shadow-2xl"
+                onScroll={(e) => {
+                    const clientH = e.currentTarget.clientHeight;
+                    if (clientH > 0) {
+                        const index = Math.round(e.currentTarget.scrollTop / clientH);
+                        if (index !== activeVideoIndex && index >= 0 && index < reels.length) {
+                            handleVideoIntersection(index);
+                        }
+                    }
+                }}
+            >
                 {/* Empty State */}
                 {reels.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-6 bg-[#030305]">
@@ -696,10 +698,10 @@ function ReelsContent() {
 
                                 {/* Gradient Overlays for Readability */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/10 to-transparent pointer-events-none lg:rounded-[2rem]"></div>
-                                <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/50 to-transparent pointer-events-none"></div>
+                                <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-black/60 to-transparent pointer-events-none"></div>
 
-                                {/* ================= LOWERED REEL INFO (BOTTOM LEFT) ================= */}
-                                <div className="absolute bottom-3 lg:bottom-6 left-3.5 right-18 z-20 space-y-2 pointer-events-auto">
+                                {/* ================= SAFE BOTTOM OFFSET FOR AUTHOR INFO (BOTTOM LEFT) ================= */}
+                                <div className="absolute bottom-20 lg:bottom-10 left-3.5 right-18 z-20 space-y-2 pointer-events-auto">
                                     <div className="flex items-center gap-2.5">
                                         <Link
                                             href={`/en/feed/profile/${reel.user_id}`}
@@ -742,8 +744,8 @@ function ReelsContent() {
                                     </div>
                                 </div>
 
-                                {/* ================= LOWERED ACTION BAR (BOTTOM RIGHT) ================= */}
-                                <div className="absolute bottom-3 lg:bottom-6 right-2.5 z-20 flex flex-col items-center gap-3.5 sm:gap-4.5">
+                                {/* ================= SAFE BOTTOM OFFSET FOR ACTION BAR (BOTTOM RIGHT) ================= */}
+                                <div className="absolute bottom-20 lg:bottom-10 right-2.5 z-20 flex flex-col items-center gap-3.5 sm:gap-4.5">
 
                                     {/* Like Button */}
                                     <button
