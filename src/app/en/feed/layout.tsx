@@ -134,9 +134,9 @@ export default function FeedLayout({ children }: { children: React.ReactNode }) 
       </aside>
 
       {/* ================= محتوای اصلی فید ================= */}
-      <main className={`flex-1 h-full overflow-y-auto custom-scrollbar relative z-10 ${isChatPage || isReelsPage ? 'pb-16 lg:pb-0' : 'pb-28 lg:pb-0'}`}>
+      <main className={`flex-1 h-full overflow-y-auto custom-scrollbar relative z-10 ${isChatPage ? 'pb-0' : isReelsPage ? 'pb-16 lg:pb-0' : 'pb-28 lg:pb-0'}`}>
 
-        {/* دکمه شناور پیام در بالای صفحه موبایل (غیر از صفحه ریلس و چت) */}
+        {/* دکمه شناور پیام در بالای صفحه موبایل (در صفحات به غیر از ریلز و چت) */}
         {!isReelsPage && !isChatPage && (
           <div className="lg:hidden absolute top-4 right-4 z-40">
             <Link

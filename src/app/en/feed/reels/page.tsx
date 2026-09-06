@@ -19,7 +19,6 @@ import {
     Search,
     Smartphone,
     ExternalLink,
-    Play,
     Loader2
 } from "lucide-react";
 import Link from "next/link";
@@ -99,10 +98,21 @@ function ReelsContent() {
     // Download loading state
     const [downloadingReelId, setDownloadingReelId] = useState<string | null>(null);
 
+    // Top App Banner state (shows for a few seconds on entry, then collapses to a sleek icon)
+    const [showAppBanner, setShowAppBanner] = useState(true);
+
     const router = useRouter();
     const searchParams = useSearchParams();
     const targetReelId = searchParams.get("id");
     const supabase = createClient();
+
+    // Auto-dismiss the top app banner after 4.5 seconds
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowAppBanner(false);
+        }, 4500);
+        return () => clearTimeout(timer);
+    }, []);
 
     const showToast = useCallback((msg: string) => {
         if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
@@ -112,7 +122,7 @@ function ReelsContent() {
         }, 2000);
     }, []);
 
-    // Initial load
+    // Initial load & Tab change
     useEffect(() => {
         fetchReelsData(activeTab);
     }, [activeTab]);
@@ -168,12 +178,10 @@ function ReelsContent() {
                     const views = item.views_count || 0;
                     const likes = item.likes_count || 0;
                     const comments = item.comments_count || 0;
-                    // Explore engagement weight + random factor for discovery
                     const score = (likes * 3) + (comments * 5) + (views * 1) + (Math.random() * 10);
                     return { item, score };
                 });
 
-                // Sort by explore score descending
                 scoredReels.sort((a, b) => b.score - a.score);
                 const sortedRaw = scoredReels.map(s => s.item);
 
@@ -250,7 +258,7 @@ function ReelsContent() {
         });
     };
 
-    // Toggle Like Handler (persists in reel_likes table and updates reels count)
+    // Toggle Like Handler
     const toggleLike = async (reel: ReelItem) => {
         if (!currentUserId) return;
 
@@ -271,14 +279,12 @@ function ReelsContent() {
 
         try {
             if (willBeLiked) {
-                // Insert into reel_likes table
                 const { error: insErr } = await supabase
                     .from("reel_likes")
                     .insert({ reel_id: reel.id, user_id: currentUserId });
 
                 if (insErr) console.error("Error adding reel like:", insErr);
 
-                // Update reels count
                 await supabase
                     .from("reels")
                     .update({ likes_count: newLikesCount })
@@ -288,7 +294,6 @@ function ReelsContent() {
                     await supabase.rpc('increment_reel_likes', { reel_id_input: reel.id });
                 } catch (_) { }
             } else {
-                // Delete from reel_likes table
                 const { error: delErr } = await supabase
                     .from("reel_likes")
                     .delete()
@@ -297,7 +302,6 @@ function ReelsContent() {
 
                 if (delErr) console.error("Error removing reel like:", delErr);
 
-                // Update reels count
                 await supabase
                     .from("reels")
                     .update({ likes_count: newLikesCount })
@@ -318,14 +322,12 @@ function ReelsContent() {
         const lastTap = lastTapTimeRef.current[reel.id] || 0;
 
         if (now - lastTap < 300) {
-            // Double Tap Detected!
-            // Trigger heart animation
+            // Double Tap Detected
             setHeartAnimations(prev => ({ ...prev, [reel.id]: true }));
             setTimeout(() => {
                 setHeartAnimations(prev => ({ ...prev, [reel.id]: false }));
             }, 800);
 
-            // If not liked yet, like it
             if (!reel.isLikedByMe) {
                 toggleLike(reel);
             }
@@ -365,7 +367,6 @@ function ReelsContent() {
             }
         });
 
-        // Log view to reel_views table if not viewed in this session
         const currentReel = reels[index];
         if (currentReel && currentUserId && !viewedReelsRef.current.has(currentReel.id)) {
             viewedReelsRef.current.add(currentReel.id);
@@ -381,7 +382,6 @@ function ReelsContent() {
                 viewed_at: new Date().toISOString()
             });
 
-            // Update views_count in reels table
             const current = reels.find(r => r.id === reelId);
             const newCount = (current?.views_count || 0) + 1;
             await supabase.from("reels").update({ views_count: newCount }).eq("id", reelId);
@@ -497,7 +497,6 @@ function ReelsContent() {
             showToast("Video saved successfully");
         } catch (e) {
             console.error("Download error:", e);
-            // Fallback direct window open
             window.open(reel.video_url, "_blank");
             showToast("Video saved successfully");
         } finally {
@@ -505,16 +504,15 @@ function ReelsContent() {
         }
     };
 
-    // Filtered friends for share search
     const filteredFriends = friends.filter(f =>
         `${f.first_name} ${f.last_name}`.toLowerCase().includes(friendSearch.toLowerCase())
     );
 
     if (isLoading) {
         return (
-            <div className="w-full h-screen flex flex-col items-center justify-center bg-[#030305]">
-                <div className="w-12 h-12 border-4 border-[#C2185B] border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p className="text-xs font-bold uppercase tracking-widest text-neutral-400">Loading Explore Reels...</p>
+            <div className="w-full h-full flex flex-col items-center justify-center bg-[#030305]">
+                <div className="w-10 h-10 border-3 border-[#C2185B] border-t-transparent rounded-full animate-spin mb-3"></div>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-400">Loading Explore Reels...</p>
             </div>
         );
     }
@@ -522,36 +520,46 @@ function ReelsContent() {
     return (
         <div className="w-full h-full flex flex-col lg:flex-row bg-[#030305] lg:p-4 gap-4 overflow-hidden relative font-sans select-none">
 
-            {/* Floating Toast Notification */}
+            {/* Floating Toast Notification (English Only) */}
             {toastMessage && (
-                <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] bg-[#0a0a0f]/95 border border-[#C2185B]/40 px-5 py-3 rounded-2xl shadow-[0_10px_30px_rgba(194,24,91,0.3)] backdrop-blur-xl flex items-center gap-3 animate-[fadeIn_0.2s_ease-out]">
-                    <div className="w-6 h-6 rounded-full bg-[#C2185B] flex items-center justify-center text-white shrink-0 shadow-sm">
-                        <Check size={14} className="stroke-[3]" />
+                <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[200] bg-[#0a0a0f]/95 border border-[#C2185B]/50 px-4 py-2.5 rounded-2xl shadow-[0_10px_30px_rgba(194,24,91,0.35)] backdrop-blur-xl flex items-center gap-2.5 animate-[fadeIn_0.2s_ease-out]">
+                    <div className="w-5 h-5 rounded-full bg-[#C2185B] flex items-center justify-center text-white shrink-0 shadow-sm">
+                        <Check size={12} className="stroke-[3]" />
                     </div>
                     <span className="text-xs font-bold text-white tracking-wide">{toastMessage}</span>
                 </div>
             )}
 
-            {/* ================= BROWSER DEEP LINK / APP PROMPT BANNER (Mobile Web Only) ================= */}
-            <div className="lg:hidden absolute top-2.5 left-3.5 right-3.5 z-40 bg-black/40 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 flex items-center justify-between shadow-lg">
-                <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-[#C2185B] to-yellow-500 flex items-center justify-center text-black font-black text-[9px] shadow-sm">
-                        SA
+            {/* ================= BROWSER APP POPUP BANNER (Appears for a few seconds on entry, then smoothly collapses) ================= */}
+            {showAppBanner && (
+                <div className="lg:hidden absolute top-2 left-3 right-3 z-40 bg-black/80 backdrop-blur-xl border border-white/15 rounded-2xl px-3.5 py-2 flex items-center justify-between shadow-2xl animate-[fadeIn_0.3s_ease-out]">
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-[#C2185B] to-yellow-500 flex items-center justify-center text-black font-black text-[10px] shadow-md">
+                            SA
+                        </div>
+                        <div>
+                            <p className="text-white font-black text-[11px] leading-tight">Safi Academy</p>
+                            <p className="text-neutral-400 text-[9px] font-medium">Watch in Mobile App</p>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                        <span className="text-white font-black text-[11px] leading-none">Safi Academy</span>
-                        <span className="text-neutral-400 text-[9px] font-medium">• Watch in App</span>
+                    <div className="flex items-center gap-2">
+                        <a
+                            href="https://play.google.com/store/apps/details?id=org.safiacademy.app"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="px-2.5 py-1 bg-[#C2185B] hover:bg-[#ad1450] text-white text-[9px] font-black uppercase tracking-wider rounded-lg shadow-[0_0_10px_rgba(194,24,91,0.4)] transition-all flex items-center gap-1"
+                        >
+                            <Smartphone size={11} /> Open App
+                        </a>
+                        <button
+                            onClick={() => setShowAppBanner(false)}
+                            className="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
+                        >
+                            <X size={12} />
+                        </button>
                     </div>
                 </div>
-                <a
-                    href="https://play.google.com/store/apps/details?id=org.safiacademy.app"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-2.5 py-1 bg-[#C2185B] hover:bg-[#ad1450] text-white text-[9px] font-black uppercase tracking-wider rounded-lg shadow-sm transition-all flex items-center gap-1"
-                >
-                    <Smartphone size={11} /> Open App
-                </a>
-            </div>
+            )}
 
             {/* ================= MAIN REELS CONTAINER ================= */}
             <div
@@ -568,54 +576,79 @@ function ReelsContent() {
                 }}
             >
 
-                {/* Top Floating Feed Switcher Tabs: [ For You | Friends ] */}
-                <div className="absolute top-11 lg:top-4 left-1/2 -translate-x-1/2 z-30 flex items-center bg-black/40 backdrop-blur-md border border-white/10 p-0.5 rounded-full shadow-lg">
-                    <button
-                        onClick={() => setActiveTab('for_you')}
-                        className={`px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${activeTab === 'for_you'
-                            ? "bg-[#C2185B] text-white shadow-[0_0_10px_rgba(194,24,91,0.5)]"
-                            : "text-neutral-400 hover:text-white"
-                            }`}
+                {/* Top Compact Navigation Pill Bar: [ For You | Friends ] + Small App & Mute Icons */}
+                <div className={`absolute ${showAppBanner ? 'top-14' : 'top-3 lg:top-5'} left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 transition-all duration-300`}>
+                    
+                    {/* Switcher Pill */}
+                    <div className="flex items-center bg-black/55 backdrop-blur-xl border border-white/15 p-1 rounded-2xl shadow-xl">
+                        <button
+                            onClick={() => setActiveTab('for_you')}
+                            className={`px-3 py-1 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${activeTab === 'for_you'
+                                ? "bg-[#C2185B] text-white shadow-[0_0_12px_rgba(194,24,91,0.5)] scale-102"
+                                : "text-neutral-400 hover:text-white"
+                                }`}
+                        >
+                            <Compass size={12} /> For You
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('friends')}
+                            className={`px-3 py-1 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${activeTab === 'friends'
+                                ? "bg-[#C2185B] text-white shadow-[0_0_12px_rgba(194,24,91,0.5)] scale-102"
+                                : "text-neutral-400 hover:text-white"
+                                }`}
+                        >
+                            <Users size={12} /> Friends
+                        </button>
+                    </div>
+
+                    {/* Small Persistent Mobile App Icon (Opens Play Store) */}
+                    <a
+                        href="https://play.google.com/store/apps/details?id=org.safiacademy.app"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-8 h-8 rounded-xl bg-black/55 backdrop-blur-xl border border-white/15 flex items-center justify-center text-pink-300 hover:text-white hover:bg-[#C2185B]/40 hover:border-[#C2185B] transition-all shadow-xl"
+                        title="Get Safi Academy App"
                     >
-                        <Compass size={12} /> For You
-                    </button>
+                        <Smartphone size={14} />
+                    </a>
+
+                    {/* Small Mute / Unmute Button */}
                     <button
-                        onClick={() => setActiveTab('friends')}
-                        className={`px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${activeTab === 'friends'
-                            ? "bg-[#C2185B] text-white shadow-[0_0_10px_rgba(194,24,91,0.5)]"
-                            : "text-neutral-400 hover:text-white"
-                            }`}
+                        onClick={() => setIsMuted(!isMuted)}
+                        className="w-8 h-8 rounded-xl bg-black/55 backdrop-blur-xl border border-white/15 flex items-center justify-center text-white hover:bg-black/80 transition-all shadow-xl"
+                        title={isMuted ? "Unmute" : "Mute"}
                     >
-                        <Users size={12} /> Friends
+                        {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
                     </button>
+
                 </div>
 
-                {/* Empty State when no reels in selected tab */}
+                {/* Empty State */}
                 {reels.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-6 bg-[#030305]">
-                        <div className="w-20 h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-[#C2185B] shadow-2xl">
-                            {activeTab === 'friends' ? <Users size={32} /> : <Sparkles size={32} />}
+                        <div className="w-16 h-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mb-3 text-[#C2185B] shadow-2xl">
+                            {activeTab === 'friends' ? <Users size={28} /> : <Sparkles size={28} />}
                         </div>
-                        <h2 className="text-lg sm:text-xl font-black text-white uppercase tracking-wider">
+                        <h2 className="text-base sm:text-lg font-black text-white uppercase tracking-wider">
                             {activeTab === 'friends' ? "No Friends Reels Yet" : "No Reels Found"}
                         </h2>
-                        <p className="text-xs text-neutral-400 font-medium max-w-sm mt-2 leading-relaxed">
+                        <p className="text-xs text-neutral-400 font-medium max-w-sm mt-1.5 leading-relaxed">
                             {activeTab === 'friends'
-                                ? "Connect with fellow academy members in Network to see their private and shared reels here!"
+                                ? "Connect with fellow academy members in Network to see their reels here!"
                                 : "Be the first member to upload an engaging vertical reel!"
                             }
                         </p>
                         {activeTab === 'friends' ? (
-                            <div className="flex items-center gap-3 mt-6">
+                            <div className="flex items-center gap-3 mt-5">
                                 <button
                                     onClick={() => setActiveTab('for_you')}
-                                    className="px-5 py-3 bg-[#C2185B] text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all shadow-[0_0_20px_rgba(194,24,91,0.4)]"
+                                    className="px-4 py-2.5 bg-[#C2185B] text-white text-xs font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-all shadow-[0_0_15px_rgba(194,24,91,0.4)]"
                                 >
                                     Explore For You
                                 </button>
                                 <Link
                                     href="/en/feed/network"
-                                    className="px-5 py-3 bg-white/5 border border-white/10 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-white/10 transition-all"
+                                    className="px-4 py-2.5 bg-white/5 border border-white/10 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all"
                                 >
                                     Find Friends
                                 </Link>
@@ -623,9 +656,9 @@ function ReelsContent() {
                         ) : (
                             <Link
                                 href="/en/feed/create/reels"
-                                className="mt-6 px-6 py-3.5 bg-gradient-to-r from-[#C2185B] to-yellow-500 text-black text-xs font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all shadow-[0_0_20px_rgba(194,24,91,0.4)]"
+                                className="mt-5 px-5 py-3 bg-gradient-to-r from-[#C2185B] to-yellow-500 text-black text-xs font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-all shadow-[0_0_20px_rgba(194,24,91,0.4)]"
                             >
-                                + Create First Reel
+                                + Create Reel
                             </Link>
                         )}
                     </div>
@@ -656,32 +689,21 @@ function ReelsContent() {
                                 {isHeartPopping && (
                                     <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-30">
                                         <div className="animate-[ping_0.6s_ease-out] text-[#C2185B] drop-shadow-[0_0_35px_rgba(194,24,91,0.9)]">
-                                            <Heart size={110} fill="#C2185B" className="stroke-[#ffffff] stroke-[1.5]" />
+                                            <Heart size={100} fill="#C2185B" className="stroke-[#ffffff] stroke-[1.5]" />
                                         </div>
                                     </div>
                                 )}
 
                                 {/* Gradient Overlays for Readability */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/15 to-transparent pointer-events-none lg:rounded-[2rem]"></div>
-                                <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-black/60 to-transparent pointer-events-none"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/10 to-transparent pointer-events-none lg:rounded-[2rem]"></div>
+                                <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/50 to-transparent pointer-events-none"></div>
 
-                                {/* Top Right Mute/Unmute Button */}
-                                <div className="absolute top-11 lg:top-4 right-3.5 sm:right-5 z-30 flex items-center gap-3">
-                                    <button
-                                        onClick={() => setIsMuted(!isMuted)}
-                                        className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-black/70 transition-all shadow-md"
-                                        title={isMuted ? "Unmute" : "Mute"}
-                                    >
-                                        {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-                                    </button>
-                                </div>
-
-                                {/* Reel Info: Author, Title, Category & Description (Aligned close to bottom bar) */}
-                                <div className="absolute bottom-3 sm:bottom-4 lg:bottom-6 left-3.5 sm:left-5 right-16 sm:right-20 z-20 space-y-2 pointer-events-auto">
+                                {/* ================= LOWERED REEL INFO (BOTTOM LEFT) ================= */}
+                                <div className="absolute bottom-3 lg:bottom-6 left-3.5 right-18 z-20 space-y-2 pointer-events-auto">
                                     <div className="flex items-center gap-2.5">
                                         <Link
                                             href={`/en/feed/profile/${reel.user_id}`}
-                                            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-neutral-900 border-[2px] border-[#C2185B] overflow-hidden flex items-center justify-center shrink-0 shadow-md hover:scale-105 transition-transform"
+                                            className="w-10 h-10 rounded-full bg-neutral-900 border-2 border-[#C2185B] overflow-hidden flex items-center justify-center shrink-0 shadow-lg hover:scale-105 transition-transform"
                                         >
                                             {reel.authorAvatar ? (
                                                 <img src={reel.authorAvatar} alt="" className="w-full h-full object-cover" />
@@ -692,22 +714,22 @@ function ReelsContent() {
                                         <div>
                                             <Link
                                                 href={`/en/feed/profile/${reel.user_id}`}
-                                                className="text-white font-black text-xs sm:text-sm tracking-wide drop-shadow-md hover:underline block"
+                                                className="text-white font-black text-xs sm:text-sm tracking-wide drop-shadow-md hover:underline block leading-tight"
                                             >
                                                 {reel.authorName}
                                             </Link>
-                                            <span className="inline-block px-2 py-0.5 bg-[#C2185B]/30 backdrop-blur-sm border border-[#C2185B]/50 text-pink-100 text-[8px] sm:text-[9px] font-black uppercase tracking-wider rounded-md mt-0.5 shadow-sm">
+                                            <span className="inline-block px-2 py-0.5 bg-[#C2185B]/40 backdrop-blur-sm border border-[#C2185B]/50 text-pink-100 text-[8px] sm:text-[9px] font-black uppercase tracking-wider rounded mt-0.5 shadow-sm">
                                                 {reel.category}
                                             </span>
                                         </div>
                                     </div>
 
                                     <div>
-                                        <h3 className="text-white font-bold text-xs sm:text-sm drop-shadow-md">{reel.title}</h3>
+                                        <h3 className="text-white font-bold text-xs sm:text-sm drop-shadow-md line-clamp-1 leading-snug">{reel.title}</h3>
                                         {reel.description && (
-                                            <div className="text-neutral-200 text-[11px] sm:text-xs font-medium mt-1 drop-shadow-md">
+                                            <div className="text-neutral-200 text-[11px] sm:text-xs font-medium mt-0.5 drop-shadow-md">
                                                 <p className={isExpanded ? "" : "line-clamp-2"}>{reel.description}</p>
-                                                {reel.description.length > 80 && (
+                                                {reel.description.length > 70 && (
                                                     <button
                                                         onClick={() => setExpandedDescriptions(prev => ({ ...prev, [reel.id]: !isExpanded }))}
                                                         className="text-[#C2185B] font-black text-[10px] sm:text-[11px] mt-0.5 hover:text-pink-400 transition-colors bg-black/40 px-2 py-0.5 rounded-full"
@@ -720,8 +742,8 @@ function ReelsContent() {
                                     </div>
                                 </div>
 
-                                {/* ================= RIGHT FLOATING ACTION BAR ================= */}
-                                <div className="absolute bottom-3 sm:bottom-4 lg:bottom-6 right-2.5 sm:right-4 z-20 flex flex-col items-center gap-3 sm:gap-4">
+                                {/* ================= LOWERED ACTION BAR (BOTTOM RIGHT) ================= */}
+                                <div className="absolute bottom-3 lg:bottom-6 right-2.5 z-20 flex flex-col items-center gap-3.5 sm:gap-4.5">
 
                                     {/* Like Button */}
                                     <button
@@ -729,13 +751,13 @@ function ReelsContent() {
                                         className="flex flex-col items-center group/btn"
                                         title={reel.isLikedByMe ? "Unlike" : "Like"}
                                     >
-                                        <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full backdrop-blur-xl border flex items-center justify-center transition-all shadow-md ${reel.isLikedByMe
-                                            ? "bg-[#C2185B] border-[#C2185B] text-white shadow-[0_0_20px_rgba(194,24,91,0.7)] scale-110"
-                                            : "bg-black/40 border-white/20 text-white hover:bg-black/60 hover:scale-105"
+                                        <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-xl border flex items-center justify-center transition-all shadow-lg ${reel.isLikedByMe
+                                            ? "bg-[#C2185B] border-[#C2185B] text-white shadow-[0_0_20px_rgba(194,24,91,0.7)] scale-105"
+                                            : "bg-black/45 border-white/20 text-white hover:bg-black/70 hover:scale-105"
                                             }`}>
                                             <Heart size={20} fill={reel.isLikedByMe ? "currentColor" : "none"} />
                                         </div>
-                                        <span className="text-[10px] font-black text-white mt-1 drop-shadow-md">{reel.likes_count}</span>
+                                        <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.likes_count}</span>
                                     </button>
 
                                     {/* Comment Button (Opens modal on mobile, focuses desktop panel) */}
@@ -744,18 +766,18 @@ function ReelsContent() {
                                         className="flex flex-col items-center group/btn lg:hidden"
                                         title="Comments"
                                     >
-                                        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-black/60 hover:scale-105 transition-all shadow-md">
+                                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-black/70 hover:scale-105 transition-all shadow-lg">
                                             <MessageCircle size={20} />
                                         </div>
-                                        <span className="text-[10px] font-black text-white mt-1 drop-shadow-md">{reel.comments_count}</span>
+                                        <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.comments_count}</span>
                                     </button>
 
                                     {/* Desktop Comment Count Indicator */}
                                     <div className="hidden lg:flex flex-col items-center opacity-85">
-                                        <div className="w-11 h-11 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-md">
+                                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-lg">
                                             <MessageCircle size={20} />
                                         </div>
-                                        <span className="text-[10px] font-black text-white mt-1 drop-shadow-md">{reel.comments_count}</span>
+                                        <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.comments_count}</span>
                                     </div>
 
                                     {/* Share Button */}
@@ -764,10 +786,10 @@ function ReelsContent() {
                                         className="flex flex-col items-center group/btn"
                                         title="Share Reel"
                                     >
-                                        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-[#C2185B] hover:border-[#C2185B] hover:scale-105 transition-all shadow-md">
+                                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-[#C2185B] hover:border-[#C2185B] hover:scale-105 transition-all shadow-lg">
                                             <Share2 size={18} />
                                         </div>
-                                        <span className="text-[9px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-md">Share</span>
+                                        <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">Share</span>
                                     </button>
 
                                     {/* Download Button (TikTok/Instagram Style) */}
@@ -777,14 +799,14 @@ function ReelsContent() {
                                         className="flex flex-col items-center group/btn"
                                         title="Download Video"
                                     >
-                                        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-black hover:border-yellow-500 hover:scale-105 transition-all shadow-md disabled:opacity-50">
+                                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-black hover:border-yellow-500 hover:scale-105 transition-all shadow-lg disabled:opacity-50">
                                             {isDownloadingThis ? (
                                                 <Loader2 size={18} className="animate-spin text-white" />
                                             ) : (
                                                 <Download size={18} />
                                             )}
                                         </div>
-                                        <span className="text-[9px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-md">Save</span>
+                                        <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">Save</span>
                                     </button>
 
                                 </div>
@@ -807,7 +829,6 @@ function ReelsContent() {
                         reelId={reels[activeVideoIndex]?.id}
                         currentUserId={currentUserId}
                         onCommentAdded={() => {
-                            // Update comments count on active reel locally
                             setReels(prev => prev.map((r, idx) => {
                                 if (idx === activeVideoIndex) {
                                     return { ...r, comments_count: r.comments_count + 1 };
@@ -1031,7 +1052,6 @@ function SharedCommentsView({ reelId, currentUserId, onCommentAdded }: { reelId:
         setIsSending(true);
 
         try {
-            // 1. Insert into reel_comments table
             const { error: insertErr } = await supabase.from("reel_comments").insert({
                 reel_id: reelId,
                 user_id: currentUserId,
@@ -1040,7 +1060,6 @@ function SharedCommentsView({ reelId, currentUserId, onCommentAdded }: { reelId:
 
             if (insertErr) throw insertErr;
 
-            // 2. Update comments_count in reels table
             const { count } = await supabase
                 .from("reel_comments")
                 .select("id", { count: "exact", head: true })
