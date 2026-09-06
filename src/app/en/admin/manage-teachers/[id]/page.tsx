@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { Loader2, ArrowLeft, Mail, Wallet, BookOpen, Users, CheckCircle2, AlertCircle, TrendingUp, History, CreditCard, Award, X } from "lucide-react";
+import { Loader2, ArrowLeft, Mail, Wallet, BookOpen, Users, CheckCircle2, AlertCircle, TrendingUp, History, CreditCard, Award, X, ShieldAlert } from "lucide-react";
 
 type TeacherProfile = {
   id: string;

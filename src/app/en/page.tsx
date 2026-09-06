@@ -127,9 +127,9 @@ export default function EnglishHome() {
         const { data: classesData } = await supabase.from('class_groups').select('id, class_name, schedule_info').eq('is_active', true).limit(2);
 
         setAppData(prev => ({
-          courses: coursesData && coursesData.length > 0 ? coursesData : prev.courses,
-          feed: feedData && feedData.length > 0 ? feedData : prev.feed,
-          liveClasses: classesData && classesData.length > 0 ? classesData : prev.liveClasses
+          courses: coursesData && coursesData.length > 0 ? (coursesData as any) : prev.courses,
+          feed: feedData && feedData.length > 0 ? (feedData as any) : prev.feed,
+          liveClasses: classesData && classesData.length > 0 ? (classesData as any) : prev.liveClasses
         }));
 
       } catch (error) {

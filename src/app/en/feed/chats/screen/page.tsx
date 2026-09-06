@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Send, Image as ImageIcon, Check, CheckCheck, Sparkles, X, Search, CornerUpLeft, MessageSquare, Paperclip, Play, Film, Video } from "lucide-react";
+import { ArrowLeft, Send, Image as ImageIcon, Check, CheckCheck, Sparkles, X, Search, CornerUpLeft, MessageSquare, Paperclip, Video, Play } from "lucide-react";
 
 interface MessageItem {
     id: string;
@@ -369,25 +369,30 @@ function ChatScreenContent() {
                                         )}
 
                                         {msg.attachment_url && (
-                                            <div className="mb-3 rounded-2xl overflow-hidden border border-white/10 bg-black/80 shadow-lg">
+                                            <div className="mb-3 rounded-2xl overflow-hidden border border-white/10 bg-black/80 shadow-md">
                                                 {msg.attachment_type === 'image' ? (
                                                     <img src={msg.attachment_url} alt="" className="max-h-72 w-full object-cover" />
-                                                ) : msg.attachment_type === 'reel' ? (
+                                                ) : msg.attachment_type === 'reel' || msg.attachment_type === 'video' || msg.attachment_url.includes('/reels/') || msg.attachment_url.endsWith('.mp4') ? (
                                                     <div className="flex flex-col">
-                                                        <div className="relative aspect-[9/16] max-h-72 w-full bg-black flex items-center justify-center overflow-hidden">
+                                                        <div className="relative bg-black rounded-xl overflow-hidden max-h-80 flex items-center justify-center">
                                                             <video
                                                                 src={msg.attachment_url}
                                                                 controls
                                                                 playsInline
-                                                                className="w-full h-full object-cover"
+                                                                className="max-h-72 w-full object-contain rounded-xl bg-black"
                                                             />
                                                         </div>
-                                                        <Link
-                                                            href="/en/feed/reels"
-                                                            className="flex items-center justify-center gap-2 p-3 bg-gradient-to-r from-[#C2185B]/30 to-pink-900/30 hover:from-[#C2185B]/50 hover:to-pink-900/50 border-t border-white/10 text-white text-xs font-black tracking-wider uppercase transition-colors"
-                                                        >
-                                                            <Film size={14} className="text-[#C2185B]" /> Open in Reels Feed
-                                                        </Link>
+                                                        <div className="p-2.5 bg-black/40 flex items-center justify-between gap-2 border-t border-white/5">
+                                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#C2185B] flex items-center gap-1">
+                                                                <Video size={12} /> Safi Reel
+                                                            </span>
+                                                            <Link
+                                                                href="/en/feed/reels"
+                                                                className="text-[10px] font-bold text-neutral-300 hover:text-white px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                                                            >
+                                                                Watch in Reels
+                                                            </Link>
+                                                        </div>
                                                     </div>
                                                 ) : (
                                                     <a href={msg.attachment_url} target="_blank" rel="noreferrer" className="p-3.5 block text-xs font-bold text-pink-300 underline">

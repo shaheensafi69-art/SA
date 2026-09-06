@@ -117,7 +117,7 @@ export default function CreateReelPage() {
                             onChange={(e) => setCategory(e.target.value)}
                             className="w-full bg-neutral-900 border border-white/10 rounded-2xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#C2185B] transition-colors font-medium"
                         >
-                            <option value="Explore">Explore & Discovery</option>
+                            <option value="Explore">Explore</option>
                             <option value="Technology">Technology & Coding</option>
                             <option value="Trading">Financial Markets & Trading</option>
                             <option value="Campus">Live Campus & Study</option>
