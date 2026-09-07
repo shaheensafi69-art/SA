@@ -1,489 +1,338 @@
 "use client";
 
-import { useEffect, useState, useRef, Suspense } from "react";
-import { createClient } from "@/utils/supabase/client";
-import { uploadFileToR2 } from "@/utils/upload";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import {
+    Rss, Users, SquarePen, User, Video,
+    MessageSquare, ArrowLeft, LayoutDashboard, Sparkles, X, PlusCircle, Home, Compass, Search, Menu, Activity
+} from "lucide-react";
 import Link from "next/link";
-import { ArrowLeft, Send, Image as ImageIcon, Check, CheckCheck, Sparkles, X, Search, CornerUpLeft, MessageSquare, Paperclip, Video, Play } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
-interface MessageItem {
-    id: string;
-    sender_id: string;
-    receiver_id: string;
-    message_text: string;
-    attachment_url: string | null;
-    attachment_type: string | null;
-    is_read: boolean;
-    reply_to_text?: string | null;
-    created_at: string;
-}
-
-interface PartnerProfile {
-    id: string;
-    first_name: string;
-    last_name: string;
-    avatar_url: string;
-    role: string;
-}
-
-interface ChatSidebarItem {
-    id: string;
-    first_name: string;
-    last_name: string;
-    avatar_url: string;
-    lastMessage?: string;
-    lastMessageTime?: string;
-}
-
-function ChatScreenContent() {
-    const [isLoading, setIsLoading] = useState(true);
-    const [messages, setMessages] = useState<MessageItem[]>([]);
-    const [newMessage, setNewMessage] = useState("");
-    const [partner, setPartner] = useState<PartnerProfile | null>(null);
-    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-    const [isUploading, setIsUploading] = useState(false);
-
-    const [sidebarChats, setSidebarChats] = useState<ChatSidebarItem[]>([]);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [replyingTo, setReplyingTo] = useState<MessageItem | null>(null);
-
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+export default function FeedLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const partnerId = searchParams.get("userId");
-    const supabase = createClient();
+    const pathname = usePathname() || "";
+    const [userProfile, setUserProfile] = useState<any>(null);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isMenuDrawerOpen, setIsMenuDrawerOpen] = useState(false);
+
+    const isReelsPage = pathname.includes('/en/feed/reels');
+    const isChatPage = pathname.includes('/en/feed/chats/screen');
 
     useEffect(() => {
-        if (!partnerId) {
-            router.push("/en/feed/chats/list");
-            return;
-        }
-        initChatAndSidebar();
-    }, [partnerId]);
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
-    const initChatAndSidebar = async () => {
-        setIsLoading(true);
-        try {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session?.user) return router.push("/en/login");
-            const userId = session.user.id;
-            setCurrentUserId(userId);
-
-            const { data: partnerRes } = await supabase
-                .from("profiles")
-                .select("id, first_name, last_name, avatar_url, role")
-                .eq("id", partnerId)
-                .single();
-
-            if (partnerRes) setPartner(partnerRes);
-
-            const { data: msgRes } = await supabase
-                .from("direct_messages")
-                .select("*")
-                .or(`and(sender_id.eq.${userId},receiver_id.eq.${partnerId}),and(sender_id.eq.${partnerId},receiver_id.eq.${userId})`)
-                .order("created_at", { ascending: true });
-
-            if (msgRes) setMessages(msgRes);
-
-            await supabase
-                .from("direct_messages")
-                .update({ is_read: true, read_at: new Date().toISOString() })
-                .eq("sender_id", partnerId)
-                .eq("receiver_id", userId)
-                .eq("is_read", false);
-
-            const { data: allMsgs } = await supabase
-                .from("direct_messages")
-                .select("*")
-                .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
-                .order("created_at", { ascending: false });
-
-            const partnerMap = new Set<string>();
-            const lastMsgDict: any = {};
-            allMsgs?.forEach((m) => {
-                const pId = m.sender_id === userId ? m.receiver_id : m.sender_id;
-                partnerMap.add(pId);
-                if (!lastMsgDict[pId]) lastMsgDict[pId] = { text: m.message_text, time: m.created_at };
-            });
-
-            const pIds = Array.from(partnerMap);
-            if (pIds.length > 0) {
-                const { data: pProfiles } = await supabase
+        const fetchUser = async () => {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data: profile } = await supabase
                     .from("profiles")
-                    .select("id, first_name, last_name, avatar_url")
-                    .in("id", pIds);
-
-                const formattedSidebar: ChatSidebarItem[] = (pProfiles || []).map(p => ({
-                    id: p.id,
-                    first_name: p.first_name || "User",
-                    last_name: p.last_name || "",
-                    avatar_url: p.avatar_url || "",
-                    lastMessage: lastMsgDict[p.id]?.text || "",
-                    lastMessageTime: lastMsgDict[p.id]?.time || ""
-                }));
-                setSidebarChats(formattedSidebar);
+                    .select("id, role, first_name, last_name, avatar_url")
+                    .eq("id", user.id)
+                    .single();
+                if (profile) setUserProfile(profile);
             }
-
-            const channel = supabase
-                .channel(`chat_room_${userId}_${partnerId}`)
-                .on(
-                    'postgres_changes',
-                    {
-                        event: 'INSERT',
-                        schema: 'public',
-                        table: 'direct_messages',
-                        filter: `or(and(sender_id.eq.${userId},receiver_id.eq.${partnerId}),and(sender_id.eq.${partnerId},receiver_id.eq.${userId}))`
-                    },
-                    (payload) => {
-                        const newMsg = payload.new as MessageItem;
-                        setMessages((prev) => {
-                            if (prev.some(m => m.id === newMsg.id)) return prev;
-                            return [...prev, newMsg];
-                        });
-                        if (newMsg.receiver_id === userId) {
-                            supabase.from("direct_messages").update({ is_read: true }).eq("id", newMsg.id);
-                        }
-                    }
-                )
-                .subscribe();
-
-            return () => {
-                supabase.removeChannel(channel);
-            };
-
-        } catch (e) {
-            console.error("Error initializing chat:", e);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleSendMessage = async (e?: React.FormEvent) => {
-        if (e) e.preventDefault();
-        if (!newMessage.trim() || !currentUserId || !partnerId) return;
-
-        const text = newMessage.trim();
-        const replyText = replyingTo ? replyingTo.message_text : null;
-        setNewMessage("");
-        setReplyingTo(null);
-
-        const tempMsg: MessageItem = {
-            id: `temp_${Date.now()}`,
-            sender_id: currentUserId,
-            receiver_id: partnerId,
-            message_text: text,
-            attachment_url: null,
-            attachment_type: null,
-            is_read: false,
-            reply_to_text: replyText,
-            created_at: new Date().toISOString()
         };
-        setMessages(prev => [...prev, tempMsg]);
+        fetchUser();
+    }, []);
 
-        try {
-            const { data, error } = await supabase.from("direct_messages").insert({
-                sender_id: currentUserId,
-                receiver_id: partnerId,
-                message_text: text,
-                reply_to_text: replyText,
-                is_delivered: true,
-                is_read: false,
-            }).select().single();
-
-            if (error) throw error;
-            if (data) {
-                setMessages(prev => prev.map(m => m.id === tempMsg.id ? data : m));
-            }
-        } catch (e) {
-            console.error("Error sending message:", e);
-            alert("Failed to send message.");
+    const handleBackToOverview = () => {
+        const role = userProfile?.role?.toLowerCase();
+        if (role === 'admin') {
+            router.push('/en/admin/dashboard');
+        } else if (role === 'teacher') {
+            router.push('/en/teacher/dashboard');
+        } else {
+            router.push('/en/dashboard');
         }
     };
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file || !currentUserId || !partnerId) return;
+    const myProfilePath = userProfile?.id ? `/en/feed/profile/${userProfile.id}` : "/en/feed/profile";
 
-        setIsUploading(true);
-        try {
-            const fileUrl = await uploadFileToR2(file, 'feed');
-            const isImage = file.type.startsWith('image/');
-
-            const { data, error } = await supabase.from("direct_messages").insert({
-                sender_id: currentUserId,
-                receiver_id: partnerId,
-                message_text: isImage ? "📷 Photo" : "📎 Attachment",
-                attachment_url: fileUrl,
-                attachment_type: isImage ? "image" : "file",
-                is_delivered: true,
-                is_read: false,
-            }).select().single();
-
-            if (error) throw error;
-            if (data) {
-                setMessages(prev => [...prev, data]);
-            }
-
-        } catch (e) {
-            console.error("Upload error:", e);
-            alert("Failed to upload attachment.");
-        } finally {
-            setIsUploading(false);
-        }
-    };
-
-    const filteredSidebar = sidebarChats.filter(c =>
-        `${c.first_name} ${c.last_name}`.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    if (isLoading) {
-        return (
-            <div className="w-full h-[80vh] flex items-center justify-center bg-transparent">
-                <div className="w-12 h-12 border-4 border-[#C2185B] border-t-transparent rounded-full animate-spin"></div>
-            </div>
-        );
-    }
+    const feedNavItems = [
+        { name: "Feed Stream", path: "/en/feed", icon: <Rss size={20} /> },
+        { name: "Explore Reels", path: "/en/feed/reels", icon: <Video size={20} /> },
+        { name: "Global Network", path: "/en/feed/network", icon: <Users size={20} /> },
+        { name: "Create Post", path: "#", isAction: true, icon: <SquarePen size={20} /> },
+        { name: "Messages", path: "/en/feed/chats/list", icon: <MessageSquare size={20} /> },
+        { name: "Likes & Comments", path: "/en/feed/like-comment-status", icon: <Activity size={20} /> },
+        { name: "My Profile", path: myProfilePath, icon: <User size={20} /> },
+    ];
 
     return (
-        <div className="w-full h-full flex bg-[#030305] overflow-hidden font-sans relative">
+        <div className="fixed inset-0 z-[9999] flex h-screen w-screen bg-[#030305] text-white font-sans overflow-hidden selection:bg-[#C2185B] selection:text-white">
 
-            {/* پس‌زمینه گرادیانتی بسیار نرم و لوکس */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(194,24,91,0.08),transparent_50%),radial-gradient(ellipse_at_bottom_right,_rgba(234,179,8,0.05),transparent_50%)] pointer-events-none z-0"></div>
+            {/* هاله‌های نوری پس‌زمینه پریمیوم */}
+            <div className="absolute top-[-15%] left-[-15%] w-[50vw] h-[50vw] bg-[#C2185B]/15 rounded-full blur-[150px] pointer-events-none z-0"></div>
+            <div className="absolute bottom-[-15%] right-[-15%] w-[50vw] h-[50vw] bg-yellow-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
-            {/* ================= سایدبار مخاطبان (مثل واتساپ دسکتاپ) ================= */}
-            <div className={`w-full lg:w-[360px] bg-[#07070c]/95 backdrop-blur-3xl border-r border-white/[0.06] flex flex-col shrink-0 relative z-20 h-full ${partnerId ? 'hidden lg:flex' : 'flex'}`}>
+            {/* ================= دسکتاپ سایدبار اختصاصی فید ================= */}
+            <aside className="hidden lg:flex w-[295px] bg-[#060609]/95 backdrop-blur-2xl border-r border-white/[0.06] flex-col relative z-20 shrink-0 p-5 shadow-[15px_0_40px_rgba(0,0,0,0.9)] h-full">
 
-                <div className="p-4 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-black/30">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#C2185B] to-pink-600 flex items-center justify-center text-white shadow-[0_0_15px_rgba(194,24,91,0.4)]">
-                            <MessageSquare size={20} />
-                        </div>
-                        <h2 className="text-white font-black text-sm tracking-wide">Messages</h2>
+                <button
+                    onClick={handleBackToOverview}
+                    className="mb-6 flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-white/[0.04] to-white/[0.01] hover:from-white/[0.08] hover:to-white/[0.03] border border-white/10 text-neutral-300 hover:text-white transition-all group shadow-inner shrink-0"
+                >
+                    <div className="w-8 h-8 rounded-xl bg-[#C2185B]/20 border border-[#C2185B]/30 flex items-center justify-center text-[#C2185B] group-hover:-translate-x-1 transition-transform">
+                        <ArrowLeft size={16} />
                     </div>
-                    <Link href="/en/feed/network" className="text-xs font-black uppercase tracking-wider text-[#C2185B] hover:text-pink-400 transition-colors bg-pink-500/10 px-3 py-1.5 rounded-xl border border-pink-500/20">
-                        + New Chat
-                    </Link>
+                    <div className="text-left">
+                        <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">Portal Navigation</p>
+                        <p className="text-xs font-black text-white flex items-center gap-1">Back to Overview <LayoutDashboard size={10} /></p>
+                    </div>
+                </button>
+
+                <div className="px-2 mb-4 shrink-0 flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#C2185B]">Social Feed Hub</span>
+                    <span className="w-2 h-2 rounded-full bg-[#C2185B] animate-pulse"></span>
                 </div>
 
-                <div className="p-3 shrink-0">
-                    <div className="relative">
-                        <input
-                            type="text"
-                            placeholder="Search conversations..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-neutral-900/90 border border-white/5 rounded-2xl px-4 py-3 pl-11 text-white text-xs placeholder-neutral-500 focus:outline-none focus:border-[#C2185B] shadow-inner"
-                        />
-                        <Search className="absolute left-4 top-[12px] w-4 h-4 text-neutral-500" />
-                    </div>
-                </div>
+                <nav className="flex-1 space-y-2.5 overflow-y-auto custom-scrollbar pr-1">
+                    {feedNavItems.map((item) => {
+                        if (item.isAction) {
+                            return (
+                                <button
+                                    key={item.name}
+                                    onClick={() => setIsCreateModalOpen(true)}
+                                    className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs transition-all duration-300 relative group overflow-hidden bg-[#08080c]/80 text-neutral-400 hover:text-white hover:bg-[#0c0c14] border border-white/[0.03] hover:border-white/10 text-left cursor-pointer"
+                                >
+                                    <span className="group-hover:scale-110 group-hover:text-white transition-all duration-300">
+                                        {item.icon}
+                                    </span>
+                                    <span className="tracking-wide">{item.name}</span>
+                                </button>
+                            );
+                        }
 
-                <div className="flex-1 overflow-y-auto p-2.5 space-y-1.5 custom-scrollbar">
-                    {filteredSidebar.map((chat) => {
-                        const isActive = chat.id === partnerId;
+                        const isActive = pathname === item.path || (item.path !== "/en/feed" && pathname.startsWith(item.path));
                         return (
                             <Link
-                                key={chat.id}
-                                href={`/en/feed/chats/screen?userId=${chat.id}`}
-                                className={`flex items-center gap-3.5 p-3.5 rounded-2xl transition-all ${isActive ? "bg-gradient-to-r from-[#C2185B]/25 to-[#0a0a0f] border border-[#C2185B]/40 shadow-lg" : "hover:bg-white/[0.03]"
+                                key={item.name}
+                                href={item.path}
+                                className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs transition-all duration-300 relative group overflow-hidden ${isActive
+                                    ? "bg-gradient-to-r from-[#1c1a12] to-[#0a0a0e] text-white shadow-[inset_0_2px_5px_rgba(0,0,0,0.9),0_0_20px_rgba(194,24,91,0.15)] border border-[#C2185B]/30 translate-x-1"
+                                    : "bg-[#08080c]/80 text-neutral-400 hover:text-white hover:bg-[#0c0c14] border border-white/[0.03] hover:border-white/10"
                                     }`}
                             >
-                                <div className="w-12 h-12 rounded-2xl bg-neutral-800 border border-white/10 overflow-hidden flex items-center justify-center shrink-0 shadow-md">
-                                    {chat.avatar_url ? (
-                                        <img src={chat.avatar_url} alt="" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <span className="text-[#C2185B] font-black text-base">{chat.first_name.charAt(0)}</span>
-                                    )}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <h4 className="text-white font-black text-xs tracking-wide truncate">{chat.first_name} {chat.last_name}</h4>
-                                    <p className="text-neutral-400 text-[11px] truncate mt-1 font-medium">{chat.lastMessage || "No messages yet"}</p>
-                                </div>
+                                {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#C2185B] rounded-r-full shadow-[0_0_10px_#C2185B]"></div>}
+                                <span className={`transition-all duration-300 ${isActive ? "scale-110 text-[#C2185B]" : "group-hover:scale-110 group-hover:text-white"}`}>
+                                    {item.icon}
+                                </span>
+                                <span className="tracking-wide">{item.name}</span>
                             </Link>
                         );
                     })}
-                </div>
-            </div>
+                </nav>
 
-            {/* ================= صفحه اصلی چت (تمام‌صفحه با چسبندگی کامل پایین) ================= */}
-            <div className={`flex-1 flex flex-col h-full bg-[#050509]/80 backdrop-blur-md relative z-10 overflow-hidden ${!partnerId ? 'hidden lg:flex' : 'flex'}`}>
-
-                {/* هیدر چت مخاطب */}
-                <div className="flex items-center justify-between bg-[#07070c]/90 border-b border-white/[0.06] px-6 py-4 backdrop-blur-2xl shrink-0 z-10 shadow-sm">
-                    <div className="flex items-center gap-4">
-                        <Link href="/en/feed/chats/list" className="lg:hidden w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white">
-                            <ArrowLeft size={18} />
-                        </Link>
-                        <div className="w-11 h-11 rounded-2xl bg-neutral-800 border border-white/10 overflow-hidden flex items-center justify-center shrink-0 shadow-inner">
-                            {partner?.avatar_url ? (
-                                <img src={partner.avatar_url} alt="" className="w-full h-full object-cover" />
-                            ) : (
-                                <span className="text-[#C2185B] font-black text-base">{partner?.first_name?.charAt(0) || "U"}</span>
-                            )}
-                        </div>
-                        <div>
-                            <h3 className="text-white font-black text-sm tracking-wide">
-                                {partner?.first_name} {partner?.last_name}
-                            </h3>
-                            <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest flex items-center gap-1.5 mt-0.5">
-                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span> Active Now
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* لیست پیام‌ها (اسکرول‌پذیر مستقل) */}
-                <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-5 custom-scrollbar bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-900/30 via-[#030305] to-[#030305]">
-                    {messages.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center h-full text-center">
-                            <div className="w-16 h-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mb-3 text-[#C2185B] shadow-lg">
-                                <Sparkles size={28} />
-                            </div>
-                            <p className="text-white font-black text-sm tracking-wide">No messages yet</p>
-                            <p className="text-neutral-500 text-xs font-bold mt-1">Send a message to start the conversation!</p>
-                        </div>
-                    ) : (
-                        messages.map((msg) => {
-                            const isMe = msg.sender_id === currentUserId;
-                            return (
-                                <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"} group/msg`}>
-                                    <div className={`max-w-[85%] sm:max-w-[65%] rounded-2xl p-4 shadow-xl relative transition-all ${isMe
-                                        ? "bg-gradient-to-br from-[#C2185B] to-pink-700 text-white rounded-tr-none shadow-[0_8px_25px_rgba(194,24,91,0.3)]"
-                                        : "bg-[#11111a] border border-white/10 text-neutral-100 rounded-tl-none shadow-lg"
-                                        }`}>
-
-                                        {/* نمایش پیام ریپلای شده */}
-                                        {msg.reply_to_text && (
-                                            <div className={`mb-2.5 p-2.5 rounded-xl border-l-2 text-xs font-medium opacity-90 ${isMe ? "bg-black/20 border-white" : "bg-white/5 border-[#C2185B]"}`}>
-                                                <p className="truncate">{msg.reply_to_text}</p>
-                                            </div>
-                                        )}
-
-                                        {msg.attachment_url && (
-                                            <div className="mb-3 rounded-2xl overflow-hidden border border-white/10 bg-black/80 shadow-md">
-                                                {msg.attachment_type === 'image' ? (
-                                                    <img src={msg.attachment_url} alt="" className="max-h-72 w-full object-cover" />
-                                                ) : msg.attachment_type === 'reel' || msg.attachment_type === 'video' || msg.attachment_url.includes('/reels/') || msg.attachment_url.endsWith('.mp4') ? (
-                                                    <div className="flex flex-col">
-                                                        <div className="relative bg-black rounded-xl overflow-hidden max-h-80 flex items-center justify-center">
-                                                            <video
-                                                                src={msg.attachment_url}
-                                                                controls
-                                                                playsInline
-                                                                className="max-h-72 w-full object-contain rounded-xl bg-black"
-                                                            />
-                                                        </div>
-                                                        <div className="p-2.5 bg-black/40 flex items-center justify-between gap-2 border-t border-white/5">
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#C2185B] flex items-center gap-1">
-                                                                <Video size={12} /> Safi Reel
-                                                            </span>
-                                                            <Link
-                                                                href="/en/feed/reels"
-                                                                className="text-[10px] font-bold text-neutral-300 hover:text-white px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
-                                                            >
-                                                                Watch in Reels
-                                                            </Link>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <a href={msg.attachment_url} target="_blank" rel="noreferrer" className="p-3.5 block text-xs font-bold text-pink-300 underline">
-                                                        Download Attachment
-                                                    </a>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        <p className="text-xs sm:text-sm font-medium leading-relaxed whitespace-pre-wrap">{msg.message_text}</p>
-
-                                        <div className={`flex items-center justify-end gap-1.5 mt-2 text-[10px] font-bold ${isMe ? "text-pink-200" : "text-neutral-400"}`}>
-                                            <span>{msg.created_at ? msg.created_at.split('T')[1]?.substring(0, 5) : ""}</span>
-                                            {isMe && (
-                                                <span>{msg.is_read ? <CheckCheck size={13} className="text-white" /> : <Check size={13} />}</span>
-                                            )}
-                                        </div>
-
-                                        {/* دکمه ریپلای شناور روی پیام */}
-                                        <button
-                                            onClick={() => setReplyingTo(msg)}
-                                            className={`absolute top-2 ${isMe ? "-left-9" : "-right-9"} opacity-0 group-hover/msg:opacity-100 transition-opacity p-2 bg-neutral-800 text-neutral-200 hover:text-white rounded-full shadow-lg border border-white/10`}
-                                            title="Reply"
-                                        >
-                                            <CornerUpLeft size={14} />
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })
-                    )}
-                    <div ref={messagesEndRef} />
-                </div>
-
-                {/* پنل ریپلای فعال */}
-                {replyingTo && (
-                    <div className="px-6 py-3 bg-[#0a0a0f] border-t border-white/10 flex items-center justify-between shrink-0 shadow-inner">
-                        <div className="flex items-center gap-3.5 min-w-0">
-                            <div className="w-1.5 h-9 bg-[#C2185B] rounded-full shrink-0 shadow-[0_0_10px_#C2185B]"></div>
-                            <div className="min-w-0">
-                                <p className="text-[10px] font-black uppercase tracking-wider text-[#C2185B]">Replying to message</p>
-                                <p className="text-xs text-neutral-200 truncate mt-0.5">{replyingTo.message_text}</p>
-                            </div>
-                        </div>
-                        <button onClick={() => setReplyingTo(null)} className="text-neutral-400 hover:text-white p-1.5 rounded-full bg-white/5">
-                            <X size={16} />
-                        </button>
-                    </div>
-                )}
-
-                {/* باکس ارسال پیام فیکس‌شده در پایین‌ترین نقطه */}
-                <form onSubmit={handleSendMessage} className="bg-[#07070c]/95 border-t border-white/[0.06] p-4 sm:p-5 backdrop-blur-2xl flex items-center gap-3.5 shrink-0 shadow-2xl">
-
-                    <label className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:border-[#C2185B] transition-all cursor-pointer shrink-0 shadow-sm">
-                        <Paperclip size={20} />
-                        <input type="file" accept="image/*,application/*" onChange={handleFileUpload} className="hidden" />
-                    </label>
-
-                    <input
-                        type="text"
-                        placeholder={isUploading ? "Uploading file..." : "Type a message..."}
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        disabled={isUploading}
-                        className="flex-1 bg-neutral-900/90 border border-white/10 rounded-2xl px-5 py-3.5 text-white text-xs sm:text-sm placeholder-neutral-500 focus:outline-none focus:border-[#C2185B] shadow-inner transition-colors"
-                    />
-
+                <div className="mt-auto pt-4 border-t border-white/[0.06] shrink-0">
                     <button
-                        type="submit"
-                        disabled={isUploading || !newMessage.trim()}
-                        className="w-12 h-12 bg-gradient-to-br from-[#C2185B] to-yellow-500 text-black rounded-2xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(194,24,91,0.4)] shrink-0 cursor-pointer"
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl bg-gradient-to-r from-[#C2185B] to-yellow-500 text-black font-black text-xs uppercase tracking-wider shadow-[0_0_25px_rgba(194,24,91,0.4)] hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
                     >
-                        <Send size={18} className="text-black ml-0.5 font-bold" />
+                        <SquarePen size={16} strokeWidth={2.5} /> Create New Post
+                    </button>
+                </div>
+            </aside>
+
+            {/* ================= محتوای اصلی فید ================= */}
+            <main className={`flex-1 h-full overflow-y-auto custom-scrollbar relative z-10 ${isChatPage ? 'pb-0' : isReelsPage ? 'pb-16 lg:pb-0' : 'pb-28 lg:pb-0'}`}>
+                {children}
+            </main>
+
+            {/* ================= موبایل نویگیشن بار پایین ================= */}
+            {!isChatPage && (
+                <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#060609]/95 backdrop-blur-2xl border-t border-white/10 z-50 px-6 flex justify-between items-center shadow-[0_-10px_30px_rgba(0,0,0,0.8)]">
+
+                    {/* فید */}
+                    <Link href="/en/feed" className="flex items-center justify-center flex-1 h-full relative group">
+                        <Home size={22} className={pathname === "/en/feed" ? "text-white stroke-[2.5]" : "text-neutral-400 stroke-[1.8] group-hover:text-white"} />
+                        {pathname === "/en/feed" && <span className="absolute bottom-1 w-1 h-1 bg-[#C2185B] rounded-full shadow-[0_0_8px_#C2185B]"></span>}
+                    </Link>
+
+                    {/* ریلز */}
+                    <Link href="/en/feed/reels" className="flex items-center justify-center flex-1 h-full relative group">
+                        <Video size={22} className={isReelsPage ? "text-white stroke-[2.5]" : "text-neutral-400 stroke-[1.8] group-hover:text-white"} />
+                        {isReelsPage && <span className="absolute bottom-1 w-1 h-1 bg-[#C2185B] rounded-full shadow-[0_0_8px_#C2185B]"></span>}
+                    </Link>
+
+                    {/* دکمه ایجاد (پلاس) */}
+                    <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center justify-center flex-1 h-full focus:outline-none group">
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#C2185B] to-yellow-500 p-0.5 shadow-lg group-hover:scale-105 transition-transform">
+                            <div className="w-full h-full bg-[#060609] rounded-[14px] flex items-center justify-center">
+                                <SquarePen size={18} className="text-white" />
+                            </div>
+                        </div>
                     </button>
 
-                </form>
+                    {/* شبکه */}
+                    <Link href="/en/feed/network" className="flex items-center justify-center flex-1 h-full relative group">
+                        <Users size={22} className={pathname.includes("/en/feed/network") ? "text-white stroke-[2.5]" : "text-neutral-400 stroke-[1.8] group-hover:text-white"} />
+                        {pathname.includes("/en/feed/network") && <span className="absolute bottom-1 w-1 h-1 bg-[#C2185B] rounded-full shadow-[0_0_8px_#C2185B]"></span>}
+                    </Link>
 
-            </div>
+                    {/* دکمه منو */}
+                    <button onClick={() => setIsMenuDrawerOpen(true)} className="flex items-center justify-center flex-1 h-full focus:outline-none group">
+                        <Menu size={22} className="text-neutral-400 group-hover:text-white stroke-[1.8]" />
+                    </button>
+                </div>
+            )}
+
+            {/* ================= کشوی منوی موبایل (Drawer) ================= */}
+            {isMenuDrawerOpen && (
+                <div className="fixed inset-0 z-[10000] flex justify-end bg-black/80 backdrop-blur-md animate-fadeIn">
+
+                    <div className="absolute inset-0" onClick={() => setIsMenuDrawerOpen(false)}></div>
+
+                    <div className="w-[300px] h-full bg-[#07070c] border-l border-white/10 p-6 flex flex-col relative z-10 shadow-2xl animate-slideLeft">
+
+                        <div className="flex items-center justify-between pb-6 border-b border-white/10 mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-2xl bg-[#C2185B]/20 text-[#C2185B] flex items-center justify-center border border-[#C2185B]/30">
+                                    <Menu size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-black uppercase tracking-wider text-white">Menu Hub</h3>
+                                    <p className="text-[10px] text-neutral-400">Quick Navigation</p>
+                                </div>
+                            </div>
+                            <button onClick={() => setIsMenuDrawerOpen(false)} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-neutral-400 hover:text-white">
+                                <X size={16} />
+                            </button>
+                        </div>
+
+                        <div className="space-y-3 flex-1 overflow-y-auto custom-scrollbar">
+                            <Link
+                                href={myProfilePath}
+                                onClick={() => setIsMenuDrawerOpen(false)}
+                                className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-[#C2185B]/40 hover:bg-white/[0.06] transition-all group"
+                            >
+                                <div className="w-10 h-10 rounded-xl bg-[#C2185B]/20 text-[#C2185B] flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <User size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-black uppercase tracking-wider text-white">My Profile</h4>
+                                    <p className="text-[10px] text-neutral-400 mt-0.5">View & edit personal profile</p>
+                                </div>
+                            </Link>
+
+                            <Link
+                                href="/en/feed/chats/list"
+                                onClick={() => setIsMenuDrawerOpen(false)}
+                                className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-[#C2185B]/40 hover:bg-white/[0.06] transition-all group"
+                            >
+                                <div className="w-10 h-10 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <MessageSquare size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-black uppercase tracking-wider text-white">Messages</h4>
+                                    <p className="text-[10px] text-neutral-400 mt-0.5">Direct chat hub</p>
+                                </div>
+                            </Link>
+
+                            <Link
+                                href="/en/feed/like-comment-status"
+                                onClick={() => setIsMenuDrawerOpen(false)}
+                                className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-[#C2185B]/40 hover:bg-white/[0.06] transition-all group"
+                            >
+                                <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <Activity size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-black uppercase tracking-wider text-white">Likes & Comments</h4>
+                                    <p className="text-[10px] text-neutral-400 mt-0.5">Track engagement status</p>
+                                </div>
+                            </Link>
+
+                            <button
+                                onClick={() => { setIsMenuDrawerOpen(false); handleBackToOverview(); }}
+                                className="w-full flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-yellow-500/40 hover:bg-white/[0.06] transition-all text-left group"
+                            >
+                                <div className="w-10 h-10 rounded-xl bg-yellow-500/20 text-yellow-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <LayoutDashboard size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-black uppercase tracking-wider text-white">Back to Overview</h4>
+                                    <p className="text-[10px] text-neutral-400 mt-0.5">Return to portal dashboard</p>
+                                </div>
+                            </button>
+                        </div>
+
+                        <div className="mt-auto pt-4 border-t border-white/10 text-center">
+                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-neutral-500">Safi Academy Ecosystem</span>
+                        </div>
+
+                    </div>
+                </div>
+            )}
+
+            {/* ================= پاپ‌آپ ایجاد پست / ریلز ================= */}
+            {isCreateModalOpen && (
+                <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fadeIn">
+                    <div className="w-full max-w-md bg-[#0a0a0f] border border-white/10 rounded-[2.5rem] p-6 shadow-2xl relative overflow-hidden">
+
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#C2185B]/20 rounded-full blur-3xl pointer-events-none"></div>
+                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <div className="flex items-center justify-between mb-6 relative z-10">
+                            <div className="flex items-center gap-2.5">
+                                <div className="w-9 h-9 rounded-xl bg-[#C2185B]/20 border border-[#C2185B]/40 flex items-center justify-center text-[#C2185B]">
+                                    <PlusCircle size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-black uppercase tracking-wider text-white">Create Content</h3>
+                                    <p className="text-[10px] text-neutral-400 font-bold">Choose what you want to share</p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setIsCreateModalOpen(false)}
+                                className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
+                            >
+                                <X size={16} />
+                            </button>
+                        </div>
+
+                        <div className="space-y-3.5 relative z-10">
+                            <Link
+                                href="/en/feed/create/post"
+                                onClick={() => setIsCreateModalOpen(false)}
+                                className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-pink-500/10 to-transparent border border-pink-500/30 hover:border-pink-500/60 hover:bg-pink-500/20 transition-all group"
+                            >
+                                <div className="w-12 h-12 rounded-xl bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-pink-400 group-hover:scale-110 transition-transform">
+                                    <SquarePen size={22} />
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-black uppercase tracking-wider text-white group-hover:text-pink-300 transition-colors">Create Post</h4>
+                                    <p className="text-[11px] text-neutral-400 mt-0.5">Share text, photos, and ideas with the community</p>
+                                </div>
+                            </Link>
+
+                            <Link
+                                href="/en/feed/create/reels"
+                                onClick={() => setIsCreateModalOpen(false)}
+                                className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-purple-500/10 to-transparent border border-purple-500/30 hover:border-purple-500/60 hover:bg-purple-500/20 transition-all group"
+                            >
+                                <div className="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                                    <Video size={22} />
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-black uppercase tracking-wider text-white group-hover:text-purple-300 transition-colors">Create Reel</h4>
+                                    <p className="text-[11px] text-neutral-400 mt-0.5">Upload short vertical videos and showcase skills</p>
+                                </div>
+                            </Link>
+                        </div>
+
+                        <div className="mt-6 pt-4 border-t border-white/10 text-center relative z-10">
+                            <button
+                                onClick={() => setIsCreateModalOpen(false)}
+                                className="text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            )}
 
         </div>
-    );
-}
-
-export default function ChatScreenPage() {
-    return (
-        <Suspense fallback={
-            <div className="w-full h-screen flex items-center justify-center bg-[#030305]">
-                <div className="w-12 h-12 border-4 border-[#C2185B] border-t-transparent rounded-full animate-spin"></div>
-            </div>
-        }>
-            <ChatScreenContent />
-        </Suspense>
     );
 }
