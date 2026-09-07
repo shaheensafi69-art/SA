@@ -1,232 +1,216 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { Plus, Loader2 } from "lucide-react";
-import CreateStoryModal from "./CreateStoryModal";
-import StoryViewerModal, { StoryRecord } from "./StoryViewerModal";
-
-interface StoryGroup {
-  userId: string;
-  userName: string;
-  avatarUrl: string;
-  stories: StoryRecord[];
-  hasUnseen: boolean;
-}
 
 interface StoryBarProps {
   currentUserId: string | null;
 }
 
+interface RealStory {
+  id: string;
+  user_id: string;
+  name: string;
+  avatar: string;
+  previewImage: string;
+}
+
 export default function StoryBar({ currentUserId }: StoryBarProps) {
-  const [storyGroups, setStoryGroups] = useState<StoryGroup[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [activeViewerGroup, setActiveViewerGroup] = useState<StoryGroup | null>(null);
-  const [currentUserProfile, setCurrentUserProfile] = useState<{
-    first_name: string;
-    avatar_url: string;
-  } | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const [stories, setStories] = useState<RealStory[]>([]);
+  const [currentUserAvatar, setCurrentUserAvatar] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const supabase = createClient();
 
-  const fetchStories = async () => {
-    try {
-      setLoading(true);
-      const nowIso = new Date().toISOString();
+  useEffect(() => {
+    fetchStories();
+  }, [currentUserId]);
 
-      // Fetch active stories
-      const { data: storiesData, error } = await supabase
+  const fetchStories = async () => {
+    setIsLoading(true);
+    try {
+      // ۱. دریافت عکس پروفایل کاربر فعلی (برای کارت Create Story)
+      if (currentUserId) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("avatar_url")
+          .eq("id", currentUserId)
+          .single();
+
+        if (profile?.avatar_url) {
+          setCurrentUserAvatar(profile.avatar_url);
+        }
+      }
+
+      // ۲. دریافت استوری‌های واقعی (با منطق ۲۴ ساعت)
+      const now = new Date().toISOString();
+      // محاسبه دقیق زمان ۲۴ ساعت گذشته
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+      const { data: fetchedStories, error } = await supabase
         .from("user_stories")
         .select(`
           id,
           user_id,
           media_url,
-          media_type,
-          caption,
-          duration_seconds,
           created_at,
-          expires_at
+          profiles:user_id (
+            first_name,
+            last_name,
+            avatar_url
+          )
         `)
-        .gt("expires_at", nowIso)
-        .order("created_at", { ascending: true });
+        .gte("created_at", twentyFourHoursAgo) // منطق ۲۴ ساعت: فقط استوری‌های ۲۴ ساعت اخیر
+        .gt("expires_at", now) // شرط انقضای پیش‌فرض در دیتابیس
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
 
-      if (!storiesData || storiesData.length === 0) {
-        setStoryGroups([]);
-        return;
+      // ۳. فیلتر کردن استوری‌ها (از هر کاربر فقط یک کارت - جدیدترین استوری - نشان داده شود)
+      const uniqueUsers = new Set();
+      const formattedStories: RealStory[] = [];
+
+      for (const story of (fetchedStories || [])) {
+        // برای جلوگیری از خطاهای تایپ اسکریپت با روابط Supabase
+        const profileData = Array.isArray(story.profiles) ? story.profiles[0] : story.profiles;
+
+        if (!uniqueUsers.has(story.user_id) && story.user_id !== currentUserId) {
+          uniqueUsers.add(story.user_id);
+          formattedStories.push({
+            id: story.id,
+            user_id: story.user_id,
+            name: `${profileData?.first_name || 'User'} ${profileData?.last_name || ''}`.trim(),
+            avatar: profileData?.avatar_url || '',
+            previewImage: story.media_url,
+          });
+        }
       }
 
-      // Fetch profiles for users with active stories
-      const userIds = Array.from(new Set(storiesData.map((s) => s.user_id)));
-      const { data: profilesData } = await supabase
-        .from("profiles")
-        .select("id, first_name, last_name, avatar_url")
-        .in("id", userIds);
-
-      const profileMap = new Map(
-        (profilesData || []).map((p) => [
-          p.id,
-          {
-            first_name: p.first_name || "",
-            last_name: p.last_name || "",
-            avatar_url: p.avatar_url || "/placeholder-avatar.png",
-          },
-        ])
-      );
-
-      // Group stories by user_id
-      const groupsMap = new Map<string, StoryRecord[]>();
-      storiesData.forEach((s) => {
-        const fullStoryRecord: StoryRecord = {
-          ...s,
-          user_profile: profileMap.get(s.user_id),
-        };
-
-        if (!groupsMap.has(s.user_id)) {
-          groupsMap.set(s.user_id, []);
-        }
-        groupsMap.get(s.user_id)!.push(fullStoryRecord);
-      });
-
-      const groups: StoryGroup[] = Array.from(groupsMap.entries()).map(
-        ([uId, uStories]) => {
-          const prof = profileMap.get(uId);
-          const name = prof
-            ? `${prof.first_name} ${prof.last_name}`.trim()
-            : "User";
-          const avatar = prof?.avatar_url || "/placeholder-avatar.png";
-
-          return {
-            userId: uId,
-            userName: name,
-            avatarUrl: avatar,
-            stories: uStories,
-            hasUnseen: true,
-          };
-        }
-      );
-
-      setStoryGroups(groups);
-    } catch (err) {
-      console.error("Failed to load user stories:", err);
+      setStories(formattedStories);
+    } catch (error) {
+      console.error("Error fetching real stories:", error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchStories();
-
-    if (currentUserId) {
-      supabase
-        .from("profiles")
-        .select("first_name, avatar_url")
-        .eq("id", currentUserId)
-        .single()
-        .then(({ data }) => {
-          if (data) setCurrentUserProfile(data);
-        });
+  // تابع برای اسکرول کردن به سمت راست (با کلیک روی آیکون فلش)
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
     }
-  }, [currentUserId]);
+  };
 
-  const myStoryGroup = storyGroups.find((g) => g.userId === currentUserId);
-  const otherStoryGroups = storyGroups.filter((g) => g.userId !== currentUserId);
+  if (isLoading) {
+    // یک حالت لودینگ ساده تا زمانی که استوری‌ها فچ شوند
+    return (
+      <div className="w-full h-[230px] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // دیفالت آواتار در صورت نداشتن عکس پروفایل
+  const defaultAvatar = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=400&auto=format&fit=crop";
 
   return (
-    <div className="w-full bg-neutral-900/60 backdrop-blur-xl border border-neutral-800/80 rounded-2xl p-4 mb-6 shadow-xl">
-      <div className="flex items-center gap-4 overflow-x-auto pb-1 scrollbar-none">
-        {/* Your Story Button */}
-        <div className="flex flex-col items-center gap-1.5 shrink-0">
-          <div className="relative cursor-pointer group">
-            <div
-              onClick={() => {
-                if (myStoryGroup) {
-                  setActiveViewerGroup(myStoryGroup);
-                } else {
-                  setIsCreateOpen(true);
-                }
-              }}
-              className={`w-16 h-16 rounded-full p-0.5 border-2 ${
-                myStoryGroup
-                  ? "border-yellow-500"
-                  : "border-dashed border-yellow-500/60"
-              } group-hover:border-yellow-400 transition-colors flex items-center justify-center bg-neutral-950`}
-            >
-              <img
-                src={currentUserProfile?.avatar_url || "/placeholder-avatar.png"}
-                alt="Your Avatar"
-                className="w-full h-full rounded-full object-cover group-hover:scale-105 transition-transform"
-              />
-            </div>
-            {/* Plus Icon to always allow adding a new story */}
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsCreateOpen(true);
-              }}
-              title="Add new story"
-              className="absolute bottom-0 right-0 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center text-black border-2 border-neutral-900 group-hover:scale-110 transition-transform shadow-md"
-            >
-              <Plus size={14} strokeWidth={3} />
-            </div>
+    <div className="relative w-full group/slider">
+      <div
+        ref={scrollRef}
+        className="flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-2 snap-x"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {/* ۱. کارت ایجاد استوری (Create Story) - با دیتای کاربر فعلی */}
+        <div className="relative w-[110px] h-[200px] sm:w-[130px] sm:h-[230px] shrink-0 rounded-[1rem] overflow-hidden cursor-pointer group snap-start bg-[#242526] shadow-md border border-white/5">
+          {/* نیمه بالایی: عکس کاربر */}
+          <div className="h-[65%] w-full bg-neutral-800 relative overflow-hidden flex items-center justify-center text-white text-xs">
+            <img
+              src={currentUserAvatar || defaultAvatar}
+              alt="My Avatar"
+              className="w-full h-full object-cover group-hover:scale-105 group-hover:opacity-80 transition-all duration-300"
+            />
           </div>
-          <span className="text-[11px] font-medium text-neutral-300 max-w-[68px] truncate">
-            Your Story
-          </span>
+          {/* نیمه پایینی: رنگ تیره و دکمه پلاس */}
+          <div className="h-[35%] w-full flex flex-col items-center justify-end pb-3 relative">
+            <div className="absolute -top-5 w-10 h-10 bg-[#0866ff] rounded-full border-4 border-[#242526] flex items-center justify-center text-white transition-colors group-hover:bg-blue-500">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6v12m-6-6h12"></path>
+              </svg>
+            </div>
+            <span className="text-white text-[13px] font-semibold mt-4">Create story</span>
+          </div>
         </div>
 
-        {/* Loading Spinner */}
-        {loading && (
-          <div className="flex items-center justify-center p-4">
-            <Loader2 size={24} className="animate-spin text-yellow-500" />
-          </div>
-        )}
+        {/* ۲. لیست استوری‌های دوستان (ریل تایم از دیتابیس) */}
+        {stories.map((story) => (
+          <Link
+            href={`/en/feed/stories/${story.user_id}`} // مسیر مستقیم به صفحه stories/[id]/page.tsx
+            key={story.id}
+            className="relative w-[110px] h-[200px] sm:w-[130px] sm:h-[230px] shrink-0 rounded-[1rem] overflow-hidden cursor-pointer group snap-start border border-white/5 shadow-md block"
+          >
+            {/* عکس پس‌زمینه (پریویو استوری) */}
+            <div className="absolute inset-0 bg-neutral-900 flex items-center justify-center">
+              {story.previewImage ? (
+                <img
+                  src={story.previewImage}
+                  alt={story.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              ) : (
+                <span className="text-white/20 text-xs">No Media</span>
+              )}
+            </div>
 
-        {/* Other Users' Story Circles */}
-        {!loading &&
-          otherStoryGroups.map((group) => (
-            <div
-              key={group.userId}
-              className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group"
-              onClick={() => setActiveViewerGroup(group)}
-            >
-              <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-yellow-500 via-amber-400 to-yellow-300 group-hover:scale-105 transition-transform shadow-md shadow-yellow-500/10">
-                <div className="w-full h-full rounded-full p-0.5 bg-neutral-900">
+            {/* گرادیانت تیره برای خوانایی متن‌ها */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/20 pointer-events-none"></div>
+
+            {/* پروفایل کاربر در بالا سمت چپ با حلقه آبی */}
+            <div className="absolute top-3 left-3 z-10">
+              <div className="w-10 h-10 rounded-full border-[3.5px] border-[#0866ff] overflow-hidden bg-neutral-800 shadow-sm flex items-center justify-center">
+                {story.avatar ? (
                   <img
-                    src={group.avatarUrl}
-                    alt={group.userName}
-                    className="w-full h-full rounded-full object-cover"
+                    src={story.avatar}
+                    alt={story.name}
+                    className="w-full h-full object-cover"
                   />
-                </div>
+                ) : (
+                  <span className="text-white font-bold text-sm">{story.name.charAt(0)}</span>
+                )}
               </div>
-              <span className="text-[11px] font-medium text-neutral-300 max-w-[68px] truncate">
-                {group.userName}
+            </div>
+
+            {/* نام کاربر در پایین سمت چپ */}
+            <div className="absolute bottom-3 left-3 right-3 z-10">
+              <span className="text-white text-[13px] font-semibold leading-tight line-clamp-2 drop-shadow-md">
+                {story.name}
               </span>
             </div>
-          ))}
+          </Link>
+        ))}
       </div>
 
-      {/* Modal to Create Story */}
-      {currentUserId && (
-        <CreateStoryModal
-          userId={currentUserId}
-          isOpen={isCreateOpen}
-          onClose={() => setIsCreateOpen(false)}
-          onStoryCreated={fetchStories}
-        />
+      {/* دکمه فلش سمت راست برای اسکرول (فقط در دسکتاپ و روی هاور ظاهر می‌شود) */}
+      {stories.length > 3 && (
+        <button
+          onClick={scrollRight}
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 bg-neutral-800/90 hover:bg-neutral-700 text-white rounded-full flex items-center justify-center z-20 shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-white/10 opacity-0 group-hover/slider:opacity-100 transition-opacity duration-300 hidden md:flex"
+        >
+          <svg className="w-6 h-6 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
       )}
 
-      {/* Modal to View Story */}
-      {activeViewerGroup && currentUserId && (
-        <StoryViewerModal
-          stories={activeViewerGroup.stories}
-          currentUserId={currentUserId}
-          isOpen={!!activeViewerGroup}
-          onClose={() => setActiveViewerGroup(null)}
-        />
-      )}
+      {/* استایل مخفی کردن اسکرول‌بار در مرورگرهای مختلف */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+      `}} />
     </div>
   );
 }

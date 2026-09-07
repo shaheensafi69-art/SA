@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import StoryBar from "@/components/feed/StoryBar";
 
@@ -58,7 +58,11 @@ export default function StudentFeedPage() {
   const [activePostId, setActivePostId] = useState<string | null>(null);
 
   const router = useRouter();
+  const params = useParams(); // گرفتن آیدی استوری از URL
   const supabase = createClient();
+
+  // آیدی کاربری که قرار است استوری او باز شود
+  const storyUserId = params?.id as string | undefined;
 
   const extractMood = (title: string) => {
     if (title.startsWith('[') && title.includes(']')) {
@@ -232,6 +236,24 @@ export default function StudentFeedPage() {
     }
   };
 
+  const handleShare = async (post: PostItem) => {
+    const shareUrl = `${window.location.origin}/en/feed?post=${post.id}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: post.cleanTitle || 'Academy Post',
+          text: `Check out this post from ${post.authorName}`,
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('Link copied to clipboard!');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="w-full h-[80vh] flex items-center justify-center bg-transparent">
@@ -295,25 +317,37 @@ export default function StudentFeedPage() {
         {/* ================= سمت راست: فید پست‌ها ================= */}
         <div className="col-span-1 lg:col-span-8 xl:col-span-9 space-y-6 w-full max-w-3xl mx-auto xl:max-w-4xl">
 
-          {/* User Stories Bar */}
-          <StoryBar currentUserId={currentUserId} />
+          {/* هدر جذاب: سرچ انیمیشنی در سمت چپ و عنوان در سمت راست */}
+          <div className="flex items-center justify-between mt-2 mb-4">
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 bg-[#0a0a0f]/80 border border-white/5 p-5 sm:p-8 rounded-[2rem] backdrop-blur-xl shadow-2xl">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Academy Feed</h1>
-              <p className="text-xs text-neutral-400 font-medium mt-1.5">Share your setups, ideas, and discuss with peers.</p>
+            {/* سرچ باکس انیمیشنی دست چپ */}
+            <div className="relative flex items-center justify-start w-full max-w-[200px] sm:max-w-xs h-12 group">
+              <div className="absolute left-0 flex items-center bg-white/5 border border-white/10 backdrop-blur-md rounded-[1.5rem] overflow-hidden transition-all duration-500 ease-in-out w-12 h-12 group-hover:w-full focus-within:w-full hover:bg-white/10 focus-within:bg-white/10 hover:border-[#C2185B]/50 focus-within:border-[#C2185B]/50 shadow-lg z-20">
+                <div className="w-12 h-12 flex items-center justify-center shrink-0 text-neutral-400 group-hover:text-white focus-within:text-[#C2185B] transition-colors cursor-pointer">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="w-full bg-transparent text-white text-sm font-medium outline-none pr-4 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300 placeholder-neutral-500"
+                />
+              </div>
             </div>
+
+            {/* عنوان دست راست (مخفی در گوشی) */}
+            <h1 className="hidden sm:block text-3xl sm:text-4xl font-black bg-gradient-to-l from-[#C2185B] via-pink-400 to-indigo-400 bg-clip-text text-transparent tracking-tight text-right">
+              Academy Feed
+            </h1>
+
           </div>
 
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search posts, topics, or authors..."
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="w-full bg-[#0a0a0f]/60 border border-white/5 rounded-[1.5rem] px-5 py-4 pl-14 text-white placeholder-neutral-500 font-medium focus:outline-none focus:border-[#C2185B] transition-colors shadow-lg"
-            />
-            <svg className="absolute left-5 top-[18px] w-5 h-5 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          {/* User Stories Bar */}
+          <div className="w-full relative z-10 mb-6">
+            <StoryBar currentUserId={currentUserId} />
           </div>
 
           <div className="space-y-6 pb-24 lg:pb-10">
@@ -397,13 +431,21 @@ export default function StudentFeedPage() {
                       <svg className="w-4 h-4" fill={post.isLikedByMe ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.514"></path></svg>
                       <span>Like</span>
                     </button>
-                    <div className="w-3 sm:w-4"></div>
+                    <div className="w-1 sm:w-2"></div>
                     <button
                       onClick={() => setActivePostId(post.id)}
                       className="flex-1 flex items-center justify-center gap-2 py-3 rounded-[1rem] transition-all font-black text-xs text-neutral-400 bg-white/[0.02] hover:bg-white/5 hover:text-white"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                       <span>Comment</span>
+                    </button>
+                    <div className="w-1 sm:w-2"></div>
+                    <button
+                      onClick={() => handleShare(post)}
+                      className="flex-1 flex items-center justify-center gap-2 py-3 rounded-[1rem] transition-all font-black text-xs text-neutral-400 bg-white/[0.02] hover:bg-white/5 hover:text-white"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                      <span>Share</span>
                     </button>
                   </div>
                 </div>
@@ -422,6 +464,14 @@ export default function StudentFeedPage() {
             setActivePostId(null);
             fetchFeedAndUsers();
           }}
+        />
+      )}
+
+      {/* ================= STORY VIEWER OVERLAY ================= */}
+      {storyUserId && (
+        <StoryViewerModal
+          userId={storyUserId}
+          onClose={() => router.push("/en/feed")}
         />
       )}
     </div>
@@ -517,16 +567,12 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
   return (
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 pb-[100px] sm:p-4 bg-black/80 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
       <div className="bg-[#0a0a0f] border border-white/10 rounded-t-[2rem] sm:rounded-[2rem] w-full max-w-2xl max-h-[85vh] sm:max-h-[90vh] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden animate-[slideUp_0.3s_ease-out]">
-
-        {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-[#0a0a0f]/90">
           <h3 className="text-xl font-black text-white tracking-tight">Discussion</h3>
           <button onClick={onClose} className="p-2.5 bg-white/5 hover:bg-white/10 rounded-full transition-colors text-neutral-400 hover:text-white">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
         </div>
-
-        {/* Body */}
         <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
           {isLoading ? (
             <div className="flex justify-center py-10"><div className="w-8 h-8 border-2 border-[#C2185B] border-t-transparent rounded-full animate-spin"></div></div>
@@ -539,8 +585,6 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
             buildCommentTree(null, 0)
           )}
         </div>
-
-        {/* Footer (Input) */}
         <div className="p-5 sm:p-6 border-t border-white/5 bg-[#0a0a0f]/95 backdrop-blur-xl">
           {replyingToName && (
             <div className="flex items-center justify-between mb-3 px-3 py-2 bg-[#C2185B]/10 rounded-xl border border-[#C2185B]/20">
@@ -551,7 +595,6 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
               <button onClick={() => { setReplyingToId(null); setReplyingToName(null); }} className="text-neutral-400 hover:text-white text-xs font-bold bg-white/5 px-3 py-1 rounded-lg">Cancel</button>
             </div>
           )}
-
           <div className="flex items-end gap-3 pb-2 sm:pb-0">
             <textarea
               value={newComment}
@@ -573,6 +616,219 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// =====================================================================
+// COMPONENT: STORY VIEWER MODAL (OVERLAY)
+// =====================================================================
+function StoryViewerModal({ userId, onClose }: { userId: string, onClose: () => void }) {
+  const supabase = createClient();
+  const [stories, setStories] = useState<any[]>([]);
+  const [profile, setProfile] = useState<any>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const getTimeAgo = (dateString: string) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    if (diffInSeconds < 60) return `${Math.max(0, diffInSeconds)}s`;
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) return `${diffInMinutes}m`;
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours}h`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays}d`;
+  };
+
+  useEffect(() => {
+    if (!userId) return;
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("first_name, last_name, avatar_url")
+          .eq("id", userId)
+          .single();
+        setProfile(profileData);
+
+        const now = new Date().toISOString();
+
+        // ----------------------------------------------------
+        // منطق ۲۴ ساعت: فقط استوری‌های ۲۴ ساعت اخیر
+        // ----------------------------------------------------
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+        const { data: storiesData, error: storiesError } = await supabase
+          .from("user_stories")
+          .select("*")
+          .eq("user_id", userId)
+          .gte("created_at", twentyFourHoursAgo) // فیلتر استوری‌های گذشته
+          .gt("expires_at", now) // فیلتر استوری‌های منقضی شده
+          .order("created_at", { ascending: true });
+
+        if (storiesError) throw storiesError;
+        if (!storiesData || storiesData.length === 0) {
+          setError("No active stories found.");
+        } else {
+          setStories(storiesData);
+        }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [userId, supabase]);
+
+  const handleNext = useCallback(() => {
+    if (currentIndex < stories.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+      setProgress(0);
+    } else {
+      onClose(); // زمانی که استوری تمام شد به صفحه /en/feed برمی‌گردد
+    }
+  }, [currentIndex, stories.length, onClose]);
+
+  const handlePrev = useCallback(() => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+      setProgress(0);
+    } else {
+      setProgress(0);
+    }
+  }, [currentIndex]);
+
+  useEffect(() => {
+    if (stories.length === 0 || isPaused) return;
+    const currentDuration = (stories[currentIndex]?.duration_seconds || 5) * 1000;
+    let lastTime = performance.now();
+    let reqId: number;
+
+    const animate = (time: number) => {
+      const delta = time - lastTime;
+      const progressDelta = (delta / currentDuration) * 100;
+      setProgress((prev) => {
+        const nextProgress = prev + progressDelta;
+        if (nextProgress >= 100) {
+          handleNext();
+          return 0;
+        }
+        return nextProgress;
+      });
+      lastTime = time;
+      reqId = requestAnimationFrame(animate);
+    };
+    reqId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(reqId);
+  }, [currentIndex, isPaused, stories, handleNext]);
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-md flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-[#C2185B] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (error || stories.length === 0) {
+    return (
+      <div className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-md flex flex-col items-center justify-center text-white">
+        <p className="text-neutral-500 font-bold mb-6">{error || "Story unavailable."}</p>
+        <button onClick={onClose} className="px-6 py-3 bg-white/10 rounded-[1.2rem]">Return</button>
+      </div>
+    );
+  }
+
+  const currentStory = stories[currentIndex];
+
+  return (
+    <div className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex items-center justify-center overflow-hidden font-sans animate-[fadeIn_0.3s_ease-out]">
+
+      {/* Blurred Background effect */}
+      <div
+        className="absolute inset-0 opacity-30 blur-3xl scale-110 pointer-events-none hidden sm:block transition-all duration-700"
+        style={{
+          backgroundImage: `url(${currentStory.media_url})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      ></div>
+
+      <div
+        className="relative w-full h-full sm:w-[400px] sm:h-[90vh] sm:max-h-[850px] bg-black sm:rounded-[2.5rem] overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.8)] sm:border border-white/10 transition-transform duration-300"
+        onPointerDown={() => setIsPaused(true)}
+        onPointerUp={() => setIsPaused(false)}
+        onPointerLeave={() => setIsPaused(false)}
+      >
+        <div className="absolute inset-0 flex items-center justify-center bg-black">
+          {currentStory.media_type === 'video' ? (
+            <video src={currentStory.media_url} autoPlay playsInline muted className="w-full h-full object-cover" />
+          ) : (
+            <img src={currentStory.media_url} alt="Story" className="w-full h-full object-cover select-none pointer-events-none" draggable={false} />
+          )}
+        </div>
+
+        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/80 to-transparent pointer-events-none z-10"></div>
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none z-10"></div>
+
+        <div className="absolute top-0 inset-x-0 p-4 sm:p-5 z-20 flex flex-col gap-4 pointer-events-none">
+          <div className="flex items-center gap-1.5 w-full">
+            {stories.map((story, idx) => (
+              <div key={story.id} className="h-0.5 sm:h-1 flex-1 bg-white/30 rounded-full overflow-hidden backdrop-blur-sm">
+                <div
+                  className="h-full bg-white rounded-full transition-all duration-75 ease-linear"
+                  style={{ width: idx < currentIndex ? '100%' : idx === currentIndex ? `${progress}%` : '0%' }}
+                ></div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between w-full pointer-events-auto">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full overflow-hidden border border-white/20 bg-neutral-800 shrink-0">
+                {profile?.avatar_url ? (
+                  <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="w-full h-full flex items-center justify-center text-white text-sm font-black">{profile?.first_name?.charAt(0) || 'U'}</span>
+                )}
+              </div>
+              <div className="flex flex-col drop-shadow-lg">
+                <span className="text-white font-bold text-[15px] tracking-wide leading-tight">
+                  {profile?.first_name} {profile?.last_name}
+                </span>
+                <span className="text-white/70 text-[11px] font-semibold mt-0.5">
+                  {getTimeAgo(currentStory.created_at)}
+                </span>
+              </div>
+            </div>
+
+            <button onClick={(e) => { e.stopPropagation(); onClose(); }} className="w-9 h-9 flex items-center justify-center text-white/80 hover:text-white bg-black/20 hover:bg-black/50 rounded-full backdrop-blur-xl transition-all border border-transparent hover:border-white/10">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <div className="absolute inset-0 flex z-10">
+          <div className="w-1/3 h-full cursor-pointer" onClick={(e) => { e.stopPropagation(); handlePrev(); }}></div>
+          <div className="w-2/3 h-full cursor-pointer" onClick={(e) => { e.stopPropagation(); handleNext(); }}></div>
+        </div>
+
+        {currentStory.caption && (
+          <div className="absolute bottom-8 inset-x-6 z-20 pointer-events-none">
+            <p className="text-white text-sm sm:text-[15px] font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-relaxed">
+              {currentStory.caption}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
