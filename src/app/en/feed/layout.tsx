@@ -59,7 +59,7 @@ export default function FeedLayout({ children }: { children: React.ReactNode }) 
   ];
 
   return (
-    <div className="fixed inset-0 z-[9999] flex h-screen w-screen bg-[#030305] text-white font-sans overflow-hidden selection:bg-[#C2185B] selection:text-white">
+    <div className="fixed inset-0 z-[9999] flex h-full w-full bg-[#030305] text-white font-sans overflow-hidden selection:bg-[#C2185B] selection:text-white">
 
       {/* هاله‌های نوری پس‌زمینه پریمیوم */}
       <div className="absolute top-[-15%] left-[-15%] w-[50vw] h-[50vw] bg-[#C2185B]/15 rounded-full blur-[150px] pointer-events-none z-0"></div>
@@ -134,7 +134,7 @@ export default function FeedLayout({ children }: { children: React.ReactNode }) 
       </aside>
 
       {/* ================= محتوای اصلی فید ================= */}
-      <main className={`flex-1 h-full overflow-y-auto custom-scrollbar relative z-10 ${isChatPage ? 'pb-0' : isReelsPage ? 'pb-16 lg:pb-0' : 'pb-28 lg:pb-0'}`}>
+      <main className={`flex-1 min-w-0 h-full relative z-10 ${isChatPage ? 'overflow-hidden flex flex-col pb-0' : isReelsPage ? 'overflow-y-auto custom-scrollbar pb-16 lg:pb-0' : 'overflow-y-auto custom-scrollbar pb-28 lg:pb-0'}`}>
         {children}
       </main>
 

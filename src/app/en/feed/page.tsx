@@ -317,12 +317,17 @@ export default function StudentFeedPage() {
         {/* ================= سمت راست: فید پست‌ها ================= */}
         <div className="col-span-1 lg:col-span-8 xl:col-span-9 space-y-6 w-full max-w-3xl mx-auto xl:max-w-4xl">
 
-          {/* هدر جذاب: سرچ انیمیشنی در سمت چپ و عنوان در سمت راست */}
-          <div className="flex items-center justify-between mt-2 mb-4">
+          {/* هدر جذاب: عنوان در سمت چپ و سرچ انیمیشنی در سمت راست */}
+          <div className="flex items-center justify-between mt-2 mb-4 gap-4">
 
-            {/* سرچ باکس انیمیشنی دست چپ */}
-            <div className="relative flex items-center justify-start w-full max-w-[200px] sm:max-w-xs h-12 group">
-              <div className="absolute left-0 flex items-center bg-white/5 border border-white/10 backdrop-blur-md rounded-[1.5rem] overflow-hidden transition-all duration-500 ease-in-out w-12 h-12 group-hover:w-full focus-within:w-full hover:bg-white/10 focus-within:bg-white/10 hover:border-[#C2185B]/50 focus-within:border-[#C2185B]/50 shadow-lg z-20">
+            {/* عنوان سمت چپ */}
+            <h1 className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-[#C2185B] via-pink-400 to-indigo-400 bg-clip-text text-transparent tracking-tight text-left">
+              Academy Feed
+            </h1>
+
+            {/* سرچ باکس انیمیشنی دست راست */}
+            <div className="relative flex items-center justify-end w-44 sm:w-64 h-12 group shrink-0">
+              <div className="absolute right-0 flex items-center bg-white/5 border border-white/10 backdrop-blur-md rounded-[1.5rem] overflow-hidden transition-all duration-500 ease-in-out w-12 h-12 group-hover:w-full focus-within:w-full hover:bg-white/10 focus-within:bg-white/10 hover:border-[#C2185B]/50 focus-within:border-[#C2185B]/50 shadow-lg z-20 flex-row-reverse">
                 <div className="w-12 h-12 flex items-center justify-center shrink-0 text-neutral-400 group-hover:text-white focus-within:text-[#C2185B] transition-colors cursor-pointer">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -330,23 +335,18 @@ export default function StudentFeedPage() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Search..."
+                  placeholder="Search feed..."
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
-                  className="w-full bg-transparent text-white text-sm font-medium outline-none pr-4 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300 placeholder-neutral-500"
+                  className="w-full bg-transparent text-white text-sm font-medium outline-none pl-4 pr-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300 placeholder-neutral-500"
                 />
               </div>
             </div>
 
-            {/* عنوان دست راست (مخفی در گوشی) */}
-            <h1 className="hidden sm:block text-3xl sm:text-4xl font-black bg-gradient-to-l from-[#C2185B] via-pink-400 to-indigo-400 bg-clip-text text-transparent tracking-tight text-right">
-              Academy Feed
-            </h1>
-
           </div>
 
-          {/* User Stories Bar */}
-          <div className="w-full relative z-10 mb-6">
+          {/* User Stories Bar - در یک باکس جذاب شیشه‌ای */}
+          <div className="w-full relative z-10 mb-6 bg-[#0a0a0f]/80 border border-white/5 rounded-[2rem] sm:rounded-[2.5rem] p-3.5 sm:p-5 backdrop-blur-xl shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
             <StoryBar currentUserId={currentUserId} />
           </div>
 

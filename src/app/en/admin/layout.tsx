@@ -74,7 +74,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Faculty", path: "/en/admin/manage-teachers", icon: <UserCheck size={22} />, disabled: false },
     { name: "Courses", path: "/en/admin/courses", icon: <BookOpen size={22} />, disabled: false },
     { name: "Classes", path: "/en/admin/classes", icon: <Presentation size={22} />, disabled: false },
-    { name: "Scholarships", path: "/en/admin/scholarships", icon: <GraduationCap size={22} />, disabled: false },
+    { name: "Scholarships", path: "/en/admin/scholarships/create", icon: <GraduationCap size={22} />, disabled: false },
     { name: "Blogs", path: "/en/admin/blogs/create", icon: <Newspaper size={22} />, disabled: false },
     { name: "Finance", path: "/en/admin/finance", icon: <CircleDollarSign size={22} />, disabled: false },
     { name: "Honors", path: "/en/admin/awards", icon: <Trophy size={22} />, disabled: false },

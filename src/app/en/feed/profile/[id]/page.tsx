@@ -8,8 +8,10 @@ import {
   ArrowLeft, UserPlus, Clock, UserCheck, UserMinus,
   ShieldCheck, Trophy, Users, FileText, Mail, Globe,
   ThumbsUp, MessageSquare, Trash2, Send, X, BookOpen,
-  Award, Flame, Wallet, Calendar, Share2, Link as LinkIcon, Activity, Video, Play
+  Award, Flame, Wallet, Calendar, Share2, Link as LinkIcon, Activity, Video, Play, Camera,
+  Eye, Heart
 } from "lucide-react";
+import { uploadFileToR2 } from "@/utils/upload";
 
 // ================= TYPES =================
 interface ProfileData {
@@ -20,6 +22,7 @@ interface ProfileData {
   country: string;
   email: string;
   avatar_url: string;
+  cover_image_url?: string;
   role: string;
   total_score: number;
   wallet_balance: number;
@@ -119,6 +122,34 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
   // UI States
   const [activeTab, setActiveTab] = useState<'posts' | 'reels' | 'learning' | 'achievements'>('posts');
   const [activePostId, setActivePostId] = useState<string | null>(null);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !currentUserId || currentUserId !== targetUserId) return;
+
+    setIsUploadingCover(true);
+    try {
+      const uploadedUrl = await uploadFileToR2(file, 'avatars');
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({ cover_image_url: uploadedUrl })
+        .eq("id", currentUserId);
+
+      if (error) {
+        console.error("Supabase update cover_image_url error:", error);
+      }
+
+      setProfileData((prev) => prev ? { ...prev, cover_image_url: uploadedUrl } : null);
+    } catch (err) {
+      console.error("Cover upload error:", err);
+      alert("Failed to upload cover photo. Please try again.");
+    } finally {
+      setIsUploadingCover(false);
+    }
+  };
 
   const extractMood = (title: string) => {
     if (title.startsWith('[') && title.includes(']')) return title.substring(1, title.indexOf(']'));
@@ -297,9 +328,46 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
       <div className="sm:px-8">
         <div className="bg-[#0a0a0f] sm:bg-[#0a0a0f]/80 sm:border border-white/10 sm:rounded-[2.5rem] backdrop-blur-xl sm:shadow-2xl relative overflow-hidden mb-6 sm:mb-8 pb-6 sm:pb-8">
 
-          <div className="h-32 sm:h-48 w-full bg-gradient-to-r from-[#0a0a0f] via-[#C2185B]/30 to-indigo-900/20 relative">
-            <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
-            <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#0a0a0f] sm:from-[#0a0a0f]/90 to-transparent"></div>
+          {/* Cover Photo Container */}
+          <div className="h-44 sm:h-64 md:h-72 w-full relative overflow-hidden bg-neutral-900 group/cover">
+            {profileData.cover_image_url ? (
+              <img
+                src={profileData.cover_image_url}
+                alt="Profile Cover"
+                className="w-full h-full object-cover object-center group-hover/cover:scale-105 transition-transform duration-700"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-r from-[#0a0a0f] via-[#C2185B]/25 to-indigo-950/40 relative">
+                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-pink-500/15 via-transparent to-transparent"></div>
+              </div>
+            )}
+            {/* Gradient overlays for contrast and seamless blend */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] sm:from-[#0a0a0f]/90 via-black/20 to-transparent"></div>
+
+            {/* Upload Cover Photo Button (Only for Profile Owner) */}
+            {isMyProfile && (
+              <label className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 px-3.5 py-2 sm:px-4 sm:py-2 bg-black/60 hover:bg-black/85 backdrop-blur-md border border-white/20 hover:border-[#C2185B] rounded-2xl flex items-center gap-2 text-white text-xs font-bold transition-all cursor-pointer shadow-xl hover:scale-105 active:scale-95">
+                {isUploadingCover ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-[#C2185B] border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-[11px] sm:text-xs">Uploading...</span>
+                  </>
+                ) : (
+                  <>
+                    <Camera size={16} className="text-[#C2185B]" />
+                    <span className="text-[11px] sm:text-xs font-semibold">Change Cover</span>
+                  </>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCoverUpload}
+                  disabled={isUploadingCover}
+                  className="hidden"
+                />
+              </label>
+            )}
           </div>
 
           <div className="px-5 sm:px-10 relative z-10 -mt-12 sm:-mt-20">
@@ -395,9 +463,20 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
               <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-widest mb-4 flex items-center gap-2">
                 <UserCheck size={16} className="text-[#C2185B]" /> Biography
               </h3>
-              <p className="text-neutral-300 text-sm leading-relaxed whitespace-pre-wrap mb-6 bg-white/5 p-4 rounded-2xl">
-                {profileData.bio || "No biography provided yet."}
-              </p>
+              <div className="mb-6 bg-white/5 p-4 rounded-2xl border border-white/5">
+                <p className={`text-neutral-300 text-sm leading-relaxed whitespace-pre-wrap transition-all ${!isBioExpanded ? 'line-clamp-3' : ''}`}>
+                  {profileData.bio || "No biography provided yet."}
+                </p>
+                {profileData.bio && profileData.bio.length > 90 && (
+                  <button
+                    type="button"
+                    onClick={() => setIsBioExpanded(!isBioExpanded)}
+                    className="mt-2.5 text-xs font-bold text-[#C2185B] hover:text-pink-400 transition-colors flex items-center gap-1 focus:outline-none cursor-pointer"
+                  >
+                    {isBioExpanded ? "Show less" : "View more"}
+                  </button>
+                )}
+              </div>
 
               <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
                 <InfoRow icon={<Globe size={16} />} label="Location" value={profileData.country || "Global"} />
@@ -538,12 +617,24 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                           ) : (
                             <video src={reel.video_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                           )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-3">
-                            <span className="text-[8px] font-black text-pink-300 uppercase tracking-widest bg-pink-500/20 px-2 py-0.5 rounded w-max mb-1">{reel.category}</span>
-                            <h4 className="text-white font-bold text-xs line-clamp-1">{reel.title}</h4>
-                            <div className="flex items-center gap-3 mt-1 text-[9px] text-neutral-300 font-bold">
-                              <span>👁 {reel.views_count}</span>
-                              <span>❤️ {reel.likes_count}</span>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-3.5">
+                            <span className="text-[9px] font-black text-pink-300 uppercase tracking-widest bg-[#C2185B]/30 border border-[#C2185B]/40 px-2 py-0.5 rounded-md w-max mb-1.5 shadow-sm">
+                              {reel.category}
+                            </span>
+                            <h4 className="text-white font-bold text-xs sm:text-sm line-clamp-1 drop-shadow-md">
+                              {reel.title}
+                            </h4>
+                            <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/10 text-xs font-bold">
+                              {/* Views on left */}
+                              <div className="flex items-center gap-1.5 text-neutral-300">
+                                <Eye size={17} className="text-cyan-400 shrink-0" />
+                                <span className="text-[11px] font-black tracking-wide">{reel.views_count ?? 0}</span>
+                              </div>
+                              {/* Likes on right */}
+                              <div className="flex items-center gap-1.5 text-pink-400">
+                                <Heart size={17} className="text-red-500 fill-red-500 shrink-0" />
+                                <span className="text-[11px] font-black tracking-wide text-white">{reel.likes_count ?? 0}</span>
+                              </div>
                             </div>
                           </div>
                           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">

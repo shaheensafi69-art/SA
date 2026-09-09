@@ -14,6 +14,7 @@ type UserProfile = {
   country: string;
   bio: string;
   avatar_url: string;
+  cover_image_url?: string;
 };
 
 export default function SettingsPage() {
@@ -32,6 +33,7 @@ export default function SettingsPage() {
     country: "",
     bio: "",
     avatar_url: "",
+    cover_image_url: "",
   });
 
   // استیت‌های تغییر رمز عبور
@@ -50,7 +52,7 @@ export default function SettingsPage() {
     setIsLoading(true);
     const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
-    
+
     if (!session?.user) return;
 
     const { data: profileData } = await supabase
@@ -65,11 +67,12 @@ export default function SettingsPage() {
         last_name: profileData.last_name || "",
         father_name: profileData.father_name || "",
         date_of_birth: profileData.date_of_birth || "",
-        email: session.user.email || profileData.email || "", 
+        email: session.user.email || profileData.email || "",
         phone_number: profileData.phone_number || "",
         country: profileData.country || "",
         bio: profileData.bio || "",
         avatar_url: profileData.avatar_url || "",
+        cover_image_url: profileData.cover_image_url || "",
       });
     }
     setIsLoading(false);
@@ -107,6 +110,38 @@ export default function SettingsPage() {
     }
   };
 
+  // ================= تابع آپلود کاور فوتو =================
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsSaving(true);
+    showNotification("success", "Uploading cover photo...");
+
+    const supabase = createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) return;
+
+    try {
+      const newCoverUrl = await uploadFileToR2(file, 'avatars');
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ cover_image_url: newCoverUrl })
+        .eq('id', session.user.id);
+
+      if (updateError) throw updateError;
+
+      setProfile(prev => ({ ...prev, cover_image_url: newCoverUrl }));
+      showNotification("success", "Cover photo updated successfully!");
+    } catch (error: any) {
+      console.error("Cover photo upload error:", error);
+      showNotification("error", "Failed to upload cover photo to Cloudflare R2.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   // ================= تابع ذخیره اطلاعات پروفایل =================
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,7 +158,7 @@ export default function SettingsPage() {
           first_name: profile.first_name,
           last_name: profile.last_name,
           father_name: profile.father_name,
-          date_of_birth: profile.date_of_birth || null, 
+          date_of_birth: profile.date_of_birth || null,
           phone_number: profile.phone_number,
           country: profile.country,
           bio: profile.bio,
@@ -143,7 +178,7 @@ export default function SettingsPage() {
   // ================= تابع تغییر رمز عبور =================
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (passwords.newPassword.length < 6) {
       showNotification("error", "Password must be at least 6 characters.");
       return;
@@ -180,7 +215,7 @@ export default function SettingsPage() {
 
   return (
     <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-12">
-      
+
       {/* ================= پس‌زمینه نوری زنده ================= */}
       <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-amber-600/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-yellow-600/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
@@ -195,9 +230,8 @@ export default function SettingsPage() {
 
       {/* ================= نوتیفیکیشن شناور (Dynamic Toast) ================= */}
       {notification && (
-        <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3.5 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-3 animate-[fadeInDown_0.4s_ease-out] border backdrop-blur-2xl ${
-          notification.type === "success" ? "bg-emerald-900/80 border-emerald-500/30 text-emerald-400" : "bg-red-900/80 border-red-500/30 text-red-400"
-        }`}>
+        <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3.5 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-3 animate-[fadeInDown_0.4s_ease-out] border backdrop-blur-2xl ${notification.type === "success" ? "bg-emerald-900/80 border-emerald-500/30 text-emerald-400" : "bg-red-900/80 border-red-500/30 text-red-400"
+          }`}>
           <span className="text-lg">{notification.type === "success" ? "✅" : "⚠️"}</span>
           <span className="font-bold text-sm tracking-wide">{notification.message}</span>
         </div>
@@ -211,36 +245,33 @@ export default function SettingsPage() {
           {/* ساختار کاملاً عمودی (flex-col) برای تمام دستگاه‌ها */}
           <div className="flex flex-col bg-neutral-900/40 backdrop-blur-2xl p-3 rounded-[2.5rem] border border-white/5 shadow-2xl space-y-2 md:sticky md:top-32 animate-[fadeIn_0.3s_ease-out]">
             <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] px-4 pt-4 pb-2">Settings Menu</p>
-            
+
             <button
               onClick={() => setActiveTab("profile")}
-              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
-                activeTab === "profile" 
-                  ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-[0_10px_25px_rgba(245,158,11,0.25)] scale-[1.02]" 
-                  : "text-neutral-400 hover:bg-white/5 hover:text-white"
-              }`}
+              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${activeTab === "profile"
+                ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-[0_10px_25px_rgba(245,158,11,0.25)] scale-[1.02]"
+                : "text-neutral-400 hover:bg-white/5 hover:text-white"
+                }`}
             >
               <span className="text-xl">👤</span> Personal Info
             </button>
 
             <button
               onClick={() => setActiveTab("security")}
-              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
-                activeTab === "security" 
-                  ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-[0_10px_25px_rgba(245,158,11,0.25)] scale-[1.02]" 
-                  : "text-neutral-400 hover:bg-white/5 hover:text-white"
-              }`}
+              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${activeTab === "security"
+                ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-[0_10px_25px_rgba(245,158,11,0.25)] scale-[1.02]"
+                : "text-neutral-400 hover:bg-white/5 hover:text-white"
+                }`}
             >
               <span className="text-xl">🔒</span> Security
             </button>
 
             <button
               onClick={() => setActiveTab("preferences")}
-              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
-                activeTab === "preferences" 
-                  ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-[0_10px_25px_rgba(245,158,11,0.25)] scale-[1.02]" 
-                  : "text-neutral-400 hover:bg-white/5 hover:text-white"
-              }`}
+              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${activeTab === "preferences"
+                ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-[0_10px_25px_rgba(245,158,11,0.25)] scale-[1.02]"
+                : "text-neutral-400 hover:bg-white/5 hover:text-white"
+                }`}
             >
               <span className="text-xl">⚙️</span> Preferences
             </button>
@@ -253,7 +284,7 @@ export default function SettingsPage() {
             <div className="bg-neutral-900/40 rounded-[2.5rem] border border-white/5 p-8 animate-pulse h-[600px]"></div>
           ) : (
             <div className="bg-neutral-900/40 rounded-[2.5rem] border border-white/5 backdrop-blur-2xl p-6 md:p-10 shadow-2xl relative overflow-hidden">
-              
+
               {/* هاله نوری ظریف داخل فرم */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-[80px] pointer-events-none"></div>
 
@@ -261,51 +292,78 @@ export default function SettingsPage() {
               {activeTab === "profile" && (
                 <div className="animate-[fadeIn_0.3s_ease-out] relative z-10">
                   <h2 className="text-2xl font-black text-white mb-8 border-b border-white/5 pb-4">Personal Identity</h2>
-                  
-                  {/* بخش تغییر عکس پروفایل زنده */}
-                  <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-10">
-                    <div className="relative group cursor-pointer">
-                      {/* حلقه نورانی متحرک دور آواتار */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-600 rounded-[2rem] blur opacity-30 group-hover:opacity-60 transition-opacity duration-500 animate-pulse"></div>
-                      <div className="relative w-28 h-28 rounded-[2rem] border border-white/10 overflow-hidden bg-neutral-900 shadow-2xl flex items-center justify-center z-10 transition-transform duration-500 group-hover:scale-105">
-                        {profile.avatar_url ? (
-                          <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-4xl text-neutral-600 font-black">{profile.first_name.charAt(0) || "U"}</span>
-                        )}
-                        {/* هاله آپلود روی عکس */}
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                          <svg className="w-8 h-8 text-white drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+
+                  {/* بخش تغییر عکس پروفایل و کاور فوتو */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+
+                    {/* آواتار */}
+                    <div className="flex items-center gap-5 p-4 rounded-3xl bg-black/30 border border-white/5">
+                      <div className="relative group cursor-pointer shrink-0">
+                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-600 rounded-[1.8rem] blur opacity-30 group-hover:opacity-60 transition-opacity duration-500 animate-pulse"></div>
+                        <div className="relative w-20 h-20 rounded-[1.8rem] border border-white/10 overflow-hidden bg-neutral-900 shadow-2xl flex items-center justify-center z-10 transition-transform duration-500 group-hover:scale-105">
+                          {profile.avatar_url ? (
+                            <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-3xl text-neutral-600 font-black">{profile.first_name.charAt(0) || "U"}</span>
+                          )}
+                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                            <svg className="w-6 h-6 text-white drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                          </div>
                         </div>
+                        <input type="file" accept="image/*" onChange={handleAvatarUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" disabled={isSaving} />
                       </div>
-                      <input type="file" accept="image/*" onChange={handleAvatarUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" disabled={isSaving} />
+                      <div>
+                        <h3 className="text-white font-black text-sm mb-0.5">Avatar</h3>
+                        <p className="text-neutral-500 text-[11px] font-medium leading-relaxed">Tap to upload profile photo (avatars bucket).</p>
+                      </div>
                     </div>
-                    <div className="text-center sm:text-left mt-2 sm:mt-4">
-                      <h3 className="text-white font-black text-lg mb-1">Profile Photo</h3>
-                      <p className="text-neutral-500 text-xs font-bold leading-relaxed max-w-xs">Tap the image to upload a new avatar. Recommended size: 500x500px (PNG, JPG).</p>
+
+                    {/* کاور فوتو */}
+                    <div className="flex items-center gap-5 p-4 rounded-3xl bg-black/30 border border-white/5">
+                      <div className="relative group cursor-pointer shrink-0">
+                        <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-indigo-600 rounded-[1.8rem] blur opacity-25 group-hover:opacity-50 transition-opacity duration-500 animate-pulse"></div>
+                        <div className="relative w-28 h-20 rounded-[1.5rem] border border-white/10 overflow-hidden bg-neutral-900 shadow-2xl flex items-center justify-center z-10 transition-transform duration-500 group-hover:scale-105">
+                          {profile.cover_image_url ? (
+                            <img src={profile.cover_image_url} alt="Cover" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-[#0a0a0f] via-pink-900/30 to-indigo-950/40 flex items-center justify-center">
+                              <span className="text-[10px] text-neutral-500 font-bold">No Cover</span>
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                            <svg className="w-6 h-6 text-white drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                          </div>
+                        </div>
+                        <input type="file" accept="image/*" onChange={handleCoverUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" disabled={isSaving} />
+                      </div>
+                      <div>
+                        <h3 className="text-white font-black text-sm mb-0.5">Cover Photo</h3>
+                        <p className="text-neutral-500 text-[11px] font-medium leading-relaxed">Tap to upload cover banner (16:9 or landscape).</p>
+                      </div>
                     </div>
+
                   </div>
 
                   {/* فرم اطلاعات فردی فول آپشن */}
                   <form onSubmit={handleSaveProfile} className="space-y-6">
-                    
+
                     <h4 className="text-[10px] font-black text-amber-500 uppercase tracking-widest border-l-2 border-amber-500 pl-2">Basic Details</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">First Name</label>
-                        <input required type="text" value={profile.first_name} onChange={(e) => setProfile({...profile, first_name: e.target.value})} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
+                        <input required type="text" value={profile.first_name} onChange={(e) => setProfile({ ...profile, first_name: e.target.value })} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
                       </div>
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Last Name</label>
-                        <input required type="text" value={profile.last_name} onChange={(e) => setProfile({...profile, last_name: e.target.value})} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
+                        <input required type="text" value={profile.last_name} onChange={(e) => setProfile({ ...profile, last_name: e.target.value })} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
                       </div>
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Father's Name</label>
-                        <input type="text" value={profile.father_name} onChange={(e) => setProfile({...profile, father_name: e.target.value})} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
+                        <input type="text" value={profile.father_name} onChange={(e) => setProfile({ ...profile, father_name: e.target.value })} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
                       </div>
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Date of Birth</label>
-                        <input type="date" value={profile.date_of_birth} onChange={(e) => setProfile({...profile, date_of_birth: e.target.value})} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3.5 text-white text-sm font-mono focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
+                        <input type="date" value={profile.date_of_birth} onChange={(e) => setProfile({ ...profile, date_of_birth: e.target.value })} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3.5 text-white text-sm font-mono focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
                       </div>
                     </div>
 
@@ -317,28 +375,28 @@ export default function SettingsPage() {
                       </div>
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Phone Number</label>
-                        <input type="tel" placeholder="+1 234 567 890" value={profile.phone_number} onChange={(e) => setProfile({...profile, phone_number: e.target.value})} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm font-mono focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
+                        <input type="tel" placeholder="+1 234 567 890" value={profile.phone_number} onChange={(e) => setProfile({ ...profile, phone_number: e.target.value })} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm font-mono focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
                       </div>
                       <div className="space-y-1.5 md:col-span-2">
                         <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Country / Region</label>
-                        <input type="text" placeholder="e.g. United Kingdom" value={profile.country} onChange={(e) => setProfile({...profile, country: e.target.value})} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
+                        <input type="text" placeholder="e.g. United Kingdom" value={profile.country} onChange={(e) => setProfile({ ...profile, country: e.target.value })} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
                       </div>
                     </div>
 
                     <h4 className="text-[10px] font-black text-amber-500 uppercase tracking-widest border-l-2 border-amber-500 pl-2 pt-2">About You</h4>
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Bio / Headline</label>
-                      <textarea 
+                      <textarea
                         value={profile.bio}
-                        onChange={(e) => setProfile({...profile, bio: e.target.value})}
+                        onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
                         placeholder="E.g. Aspiring Forex Trader & Software Engineer..."
                         className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner resize-none h-28 custom-scrollbar"
                       />
                     </div>
 
                     <div className="pt-6 mt-6 border-t border-white/5">
-                      <button 
-                        type="submit" 
+                      <button
+                        type="submit"
                         disabled={isSaving}
                         className="w-full md:w-auto px-10 py-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-black uppercase tracking-widest text-xs rounded-2xl hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100 shadow-[0_10px_30px_rgba(245,158,11,0.3)] flex items-center justify-center"
                       >
@@ -354,32 +412,32 @@ export default function SettingsPage() {
                 <div className="animate-[fadeIn_0.3s_ease-out] relative z-10">
                   <h2 className="text-2xl font-black text-white mb-2">Vault Security</h2>
                   <p className="text-neutral-500 text-sm mb-8 font-medium border-b border-white/5 pb-6">Update your password to keep your assets and data heavily secured.</p>
-                  
+
                   <form onSubmit={handleUpdatePassword} className="space-y-6 max-w-md">
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">New Secure Password</label>
-                      <input 
+                      <input
                         required type="password" minLength={6}
                         value={passwords.newPassword}
-                        onChange={(e) => setPasswords({...passwords, newPassword: e.target.value})}
+                        onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
                         placeholder="••••••••"
                         className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-lg tracking-widest focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner"
                       />
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Confirm Password</label>
-                      <input 
+                      <input
                         required type="password" minLength={6}
                         value={passwords.confirmPassword}
-                        onChange={(e) => setPasswords({...passwords, confirmPassword: e.target.value})}
+                        onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
                         placeholder="••••••••"
                         className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-lg tracking-widest focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner"
                       />
                     </div>
 
                     <div className="pt-6">
-                      <button 
-                        type="submit" 
+                      <button
+                        type="submit"
                         disabled={isSaving || !passwords.newPassword}
                         className="w-full py-4 bg-white/5 text-white border border-white/10 font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-white/10 hover:border-white/20 transition-all disabled:opacity-50"
                       >
@@ -395,7 +453,7 @@ export default function SettingsPage() {
                 <div className="animate-[fadeIn_0.3s_ease-out] relative z-10">
                   <h2 className="text-2xl font-black text-white mb-2">Notification Center</h2>
                   <p className="text-neutral-500 text-sm mb-8 font-medium border-b border-white/5 pb-6">Manage how the Academy communicates with you.</p>
-                  
+
                   <div className="space-y-4">
                     {/* Toggle 1 */}
                     <div className="flex items-center justify-between p-6 bg-black/40 border border-white/5 rounded-[1.5rem] hover:border-white/10 transition-colors">

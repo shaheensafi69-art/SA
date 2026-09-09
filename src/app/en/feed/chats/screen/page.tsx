@@ -1,338 +1,556 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-    Rss, Users, SquarePen, User, Video,
-    MessageSquare, ArrowLeft, LayoutDashboard, Sparkles, X, PlusCircle, Home, Compass, Search, Menu, Activity
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { uploadFileToR2 } from "@/utils/upload";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import {
+  ArrowLeft, Send, Image as ImageIcon, Check, CheckCheck,
+  Sparkles, X, CornerUpLeft, Paperclip, Video, ExternalLink,
+  User, ShieldCheck, Loader2
+} from "lucide-react";
 
-export default function FeedLayout({ children }: { children: React.ReactNode }) {
-    const router = useRouter();
-    const pathname = usePathname() || "";
-    const [userProfile, setUserProfile] = useState<any>(null);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [isMenuDrawerOpen, setIsMenuDrawerOpen] = useState(false);
+interface MessageItem {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  message_text: string;
+  attachment_url: string | null;
+  attachment_type: string | null;
+  is_delivered: boolean;
+  is_read: boolean;
+  delivered_at?: string | null;
+  read_at?: string | null;
+  created_at: string;
+}
 
-    const isReelsPage = pathname.includes('/en/feed/reels');
-    const isChatPage = pathname.includes('/en/feed/chats/screen');
+interface PartnerProfile {
+  id: string;
+  first_name: string;
+  last_name: string;
+  avatar_url: string | null;
+  role: string;
+}
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            const supabase = createClient();
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                const { data: profile } = await supabase
-                    .from("profiles")
-                    .select("id, role, first_name, last_name, avatar_url")
-                    .eq("id", user.id)
-                    .single();
-                if (profile) setUserProfile(profile);
+function ChatScreenContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const partnerId = searchParams.get("userId");
+  const supabase = createClient();
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [messages, setMessages] = useState<MessageItem[]>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [partner, setPartner] = useState<PartnerProfile | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<MessageItem | null>(null);
+  const [sendError, setSendError] = useState<string | null>(null);
+
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Prevent and reset any window-level scroll displacement
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    if (!partnerId) {
+      router.push("/en/feed/chats/list");
+      return;
+    }
+    initChat();
+  }, [partnerId]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    // Only scroll the internal message container, NEVER scrollIntoView to prevent shifting parent window
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  };
+
+  const initChat = async () => {
+    setIsLoading(true);
+    setSendError(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        router.push("/en/login");
+        return;
+      }
+      const userId = session.user.id;
+      setCurrentUserId(userId);
+
+      // 1. Fetch partner profile
+      const { data: partnerRes, error: partnerErr } = await supabase
+        .from("profiles")
+        .select("id, first_name, last_name, avatar_url, role")
+        .eq("id", partnerId)
+        .maybeSingle();
+
+      if (partnerErr || !partnerRes) {
+        console.error("Partner profile fetch error:", partnerErr);
+      } else {
+        setPartner(partnerRes);
+      }
+
+      // 2. Fetch existing direct messages between user and partner
+      const { data: msgRes, error: msgErr } = await supabase
+        .from("direct_messages")
+        .select("*")
+        .or(`and(sender_id.eq.${userId},receiver_id.eq.${partnerId}),and(sender_id.eq.${partnerId},receiver_id.eq.${userId})`)
+        .order("created_at", { ascending: true });
+
+      if (msgErr) {
+        console.error("Error fetching messages:", msgErr);
+      } else if (msgRes) {
+        setMessages(msgRes);
+      }
+
+      // 3. Mark received unread messages as read
+      await supabase
+        .from("direct_messages")
+        .update({ is_read: true, read_at: new Date().toISOString() })
+        .eq("sender_id", partnerId)
+        .eq("receiver_id", userId)
+        .eq("is_read", false);
+
+      // 4. Setup Realtime subscription for incoming messages
+      const channel = supabase
+        .channel(`chat_room_${userId}_${partnerId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'direct_messages',
+          },
+          (payload) => {
+            const incoming = payload.new as MessageItem;
+            if (
+              (incoming.sender_id === userId && incoming.receiver_id === partnerId) ||
+              (incoming.sender_id === partnerId && incoming.receiver_id === userId)
+            ) {
+              setMessages((prev) => {
+                if (prev.some((m) => m.id === incoming.id)) return prev;
+                return [...prev, incoming];
+              });
+              if (incoming.receiver_id === userId) {
+                supabase
+                  .from("direct_messages")
+                  .update({ is_read: true, read_at: new Date().toISOString() })
+                  .eq("id", incoming.id);
+              }
             }
-        };
-        fetchUser();
-    }, []);
+          }
+        )
+        .subscribe();
 
-    const handleBackToOverview = () => {
-        const role = userProfile?.role?.toLowerCase();
-        if (role === 'admin') {
-            router.push('/en/admin/dashboard');
-        } else if (role === 'teacher') {
-            router.push('/en/teacher/dashboard');
-        } else {
-            router.push('/en/dashboard');
-        }
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    } catch (e) {
+      console.error("Error initializing chat:", e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSendMessage = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!newMessage.trim() || !currentUserId || !partnerId) return;
+
+    const rawText = newMessage.trim();
+    const formattedText = replyingTo
+      ? `💬 Replying to "${replyingTo.message_text.slice(0, 60)}${replyingTo.message_text.length > 60 ? '...' : ''}":\n${rawText}`
+      : rawText;
+
+    setNewMessage("");
+    setReplyingTo(null);
+    setSendError(null);
+
+    // Optimistic UI update
+    const tempId = `temp_${Date.now()}`;
+    const tempMsg: MessageItem = {
+      id: tempId,
+      sender_id: currentUserId,
+      receiver_id: partnerId,
+      message_text: formattedText,
+      attachment_url: null,
+      attachment_type: null,
+      is_delivered: true,
+      is_read: false,
+      created_at: new Date().toISOString(),
     };
+    setMessages((prev) => [...prev, tempMsg]);
 
-    const myProfilePath = userProfile?.id ? `/en/feed/profile/${userProfile.id}` : "/en/feed/profile";
+    try {
+      const { data, error } = await supabase
+        .from("direct_messages")
+        .insert({
+          sender_id: currentUserId,
+          receiver_id: partnerId,
+          message_text: formattedText,
+          is_delivered: true,
+          is_read: false,
+        })
+        .select()
+        .single();
 
-    const feedNavItems = [
-        { name: "Feed Stream", path: "/en/feed", icon: <Rss size={20} /> },
-        { name: "Explore Reels", path: "/en/feed/reels", icon: <Video size={20} /> },
-        { name: "Global Network", path: "/en/feed/network", icon: <Users size={20} /> },
-        { name: "Create Post", path: "#", isAction: true, icon: <SquarePen size={20} /> },
-        { name: "Messages", path: "/en/feed/chats/list", icon: <MessageSquare size={20} /> },
-        { name: "Likes & Comments", path: "/en/feed/like-comment-status", icon: <Activity size={20} /> },
-        { name: "My Profile", path: myProfilePath, icon: <User size={20} /> },
-    ];
+      if (error) {
+        console.error("Failed to insert message:", error);
+        throw error;
+      }
 
+      if (data) {
+        setMessages((prev) => prev.map((m) => (m.id === tempId ? data : m)));
+      }
+    } catch (err: any) {
+      console.error("Send error:", err);
+      setSendError("Failed to deliver message. Please try again.");
+      setMessages((prev) => prev.filter((m) => m.id !== tempId));
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !currentUserId || !partnerId) return;
+
+    setIsUploading(true);
+    setSendError(null);
+    try {
+      const fileUrl = await uploadFileToR2(file, 'feed');
+      const isImage = file.type.startsWith('image/');
+      const defaultText = isImage ? "📷 Photo" : `📎 Attachment: ${file.name}`;
+
+      const { data, error } = await supabase
+        .from("direct_messages")
+        .insert({
+          sender_id: currentUserId,
+          receiver_id: partnerId,
+          message_text: defaultText,
+          attachment_url: fileUrl,
+          attachment_type: isImage ? "image" : "file",
+          is_delivered: true,
+          is_read: false,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        setMessages((prev) => [...prev, data]);
+      }
+    } catch (err) {
+      console.error("Attachment upload error:", err);
+      setSendError("Failed to upload attachment.");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  if (isLoading) {
     return (
-        <div className="fixed inset-0 z-[9999] flex h-screen w-screen bg-[#030305] text-white font-sans overflow-hidden selection:bg-[#C2185B] selection:text-white">
-
-            {/* هاله‌های نوری پس‌زمینه پریمیوم */}
-            <div className="absolute top-[-15%] left-[-15%] w-[50vw] h-[50vw] bg-[#C2185B]/15 rounded-full blur-[150px] pointer-events-none z-0"></div>
-            <div className="absolute bottom-[-15%] right-[-15%] w-[50vw] h-[50vw] bg-yellow-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-
-            {/* ================= دسکتاپ سایدبار اختصاصی فید ================= */}
-            <aside className="hidden lg:flex w-[295px] bg-[#060609]/95 backdrop-blur-2xl border-r border-white/[0.06] flex-col relative z-20 shrink-0 p-5 shadow-[15px_0_40px_rgba(0,0,0,0.9)] h-full">
-
-                <button
-                    onClick={handleBackToOverview}
-                    className="mb-6 flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-white/[0.04] to-white/[0.01] hover:from-white/[0.08] hover:to-white/[0.03] border border-white/10 text-neutral-300 hover:text-white transition-all group shadow-inner shrink-0"
-                >
-                    <div className="w-8 h-8 rounded-xl bg-[#C2185B]/20 border border-[#C2185B]/30 flex items-center justify-center text-[#C2185B] group-hover:-translate-x-1 transition-transform">
-                        <ArrowLeft size={16} />
-                    </div>
-                    <div className="text-left">
-                        <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">Portal Navigation</p>
-                        <p className="text-xs font-black text-white flex items-center gap-1">Back to Overview <LayoutDashboard size={10} /></p>
-                    </div>
-                </button>
-
-                <div className="px-2 mb-4 shrink-0 flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#C2185B]">Social Feed Hub</span>
-                    <span className="w-2 h-2 rounded-full bg-[#C2185B] animate-pulse"></span>
-                </div>
-
-                <nav className="flex-1 space-y-2.5 overflow-y-auto custom-scrollbar pr-1">
-                    {feedNavItems.map((item) => {
-                        if (item.isAction) {
-                            return (
-                                <button
-                                    key={item.name}
-                                    onClick={() => setIsCreateModalOpen(true)}
-                                    className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs transition-all duration-300 relative group overflow-hidden bg-[#08080c]/80 text-neutral-400 hover:text-white hover:bg-[#0c0c14] border border-white/[0.03] hover:border-white/10 text-left cursor-pointer"
-                                >
-                                    <span className="group-hover:scale-110 group-hover:text-white transition-all duration-300">
-                                        {item.icon}
-                                    </span>
-                                    <span className="tracking-wide">{item.name}</span>
-                                </button>
-                            );
-                        }
-
-                        const isActive = pathname === item.path || (item.path !== "/en/feed" && pathname.startsWith(item.path));
-                        return (
-                            <Link
-                                key={item.name}
-                                href={item.path}
-                                className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs transition-all duration-300 relative group overflow-hidden ${isActive
-                                    ? "bg-gradient-to-r from-[#1c1a12] to-[#0a0a0e] text-white shadow-[inset_0_2px_5px_rgba(0,0,0,0.9),0_0_20px_rgba(194,24,91,0.15)] border border-[#C2185B]/30 translate-x-1"
-                                    : "bg-[#08080c]/80 text-neutral-400 hover:text-white hover:bg-[#0c0c14] border border-white/[0.03] hover:border-white/10"
-                                    }`}
-                            >
-                                {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#C2185B] rounded-r-full shadow-[0_0_10px_#C2185B]"></div>}
-                                <span className={`transition-all duration-300 ${isActive ? "scale-110 text-[#C2185B]" : "group-hover:scale-110 group-hover:text-white"}`}>
-                                    {item.icon}
-                                </span>
-                                <span className="tracking-wide">{item.name}</span>
-                            </Link>
-                        );
-                    })}
-                </nav>
-
-                <div className="mt-auto pt-4 border-t border-white/[0.06] shrink-0">
-                    <button
-                        onClick={() => setIsCreateModalOpen(true)}
-                        className="flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl bg-gradient-to-r from-[#C2185B] to-yellow-500 text-black font-black text-xs uppercase tracking-wider shadow-[0_0_25px_rgba(194,24,91,0.4)] hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
-                    >
-                        <SquarePen size={16} strokeWidth={2.5} /> Create New Post
-                    </button>
-                </div>
-            </aside>
-
-            {/* ================= محتوای اصلی فید ================= */}
-            <main className={`flex-1 h-full overflow-y-auto custom-scrollbar relative z-10 ${isChatPage ? 'pb-0' : isReelsPage ? 'pb-16 lg:pb-0' : 'pb-28 lg:pb-0'}`}>
-                {children}
-            </main>
-
-            {/* ================= موبایل نویگیشن بار پایین ================= */}
-            {!isChatPage && (
-                <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#060609]/95 backdrop-blur-2xl border-t border-white/10 z-50 px-6 flex justify-between items-center shadow-[0_-10px_30px_rgba(0,0,0,0.8)]">
-
-                    {/* فید */}
-                    <Link href="/en/feed" className="flex items-center justify-center flex-1 h-full relative group">
-                        <Home size={22} className={pathname === "/en/feed" ? "text-white stroke-[2.5]" : "text-neutral-400 stroke-[1.8] group-hover:text-white"} />
-                        {pathname === "/en/feed" && <span className="absolute bottom-1 w-1 h-1 bg-[#C2185B] rounded-full shadow-[0_0_8px_#C2185B]"></span>}
-                    </Link>
-
-                    {/* ریلز */}
-                    <Link href="/en/feed/reels" className="flex items-center justify-center flex-1 h-full relative group">
-                        <Video size={22} className={isReelsPage ? "text-white stroke-[2.5]" : "text-neutral-400 stroke-[1.8] group-hover:text-white"} />
-                        {isReelsPage && <span className="absolute bottom-1 w-1 h-1 bg-[#C2185B] rounded-full shadow-[0_0_8px_#C2185B]"></span>}
-                    </Link>
-
-                    {/* دکمه ایجاد (پلاس) */}
-                    <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center justify-center flex-1 h-full focus:outline-none group">
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#C2185B] to-yellow-500 p-0.5 shadow-lg group-hover:scale-105 transition-transform">
-                            <div className="w-full h-full bg-[#060609] rounded-[14px] flex items-center justify-center">
-                                <SquarePen size={18} className="text-white" />
-                            </div>
-                        </div>
-                    </button>
-
-                    {/* شبکه */}
-                    <Link href="/en/feed/network" className="flex items-center justify-center flex-1 h-full relative group">
-                        <Users size={22} className={pathname.includes("/en/feed/network") ? "text-white stroke-[2.5]" : "text-neutral-400 stroke-[1.8] group-hover:text-white"} />
-                        {pathname.includes("/en/feed/network") && <span className="absolute bottom-1 w-1 h-1 bg-[#C2185B] rounded-full shadow-[0_0_8px_#C2185B]"></span>}
-                    </Link>
-
-                    {/* دکمه منو */}
-                    <button onClick={() => setIsMenuDrawerOpen(true)} className="flex items-center justify-center flex-1 h-full focus:outline-none group">
-                        <Menu size={22} className="text-neutral-400 group-hover:text-white stroke-[1.8]" />
-                    </button>
-                </div>
-            )}
-
-            {/* ================= کشوی منوی موبایل (Drawer) ================= */}
-            {isMenuDrawerOpen && (
-                <div className="fixed inset-0 z-[10000] flex justify-end bg-black/80 backdrop-blur-md animate-fadeIn">
-
-                    <div className="absolute inset-0" onClick={() => setIsMenuDrawerOpen(false)}></div>
-
-                    <div className="w-[300px] h-full bg-[#07070c] border-l border-white/10 p-6 flex flex-col relative z-10 shadow-2xl animate-slideLeft">
-
-                        <div className="flex items-center justify-between pb-6 border-b border-white/10 mb-6">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-2xl bg-[#C2185B]/20 text-[#C2185B] flex items-center justify-center border border-[#C2185B]/30">
-                                    <Menu size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="text-sm font-black uppercase tracking-wider text-white">Menu Hub</h3>
-                                    <p className="text-[10px] text-neutral-400">Quick Navigation</p>
-                                </div>
-                            </div>
-                            <button onClick={() => setIsMenuDrawerOpen(false)} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-neutral-400 hover:text-white">
-                                <X size={16} />
-                            </button>
-                        </div>
-
-                        <div className="space-y-3 flex-1 overflow-y-auto custom-scrollbar">
-                            <Link
-                                href={myProfilePath}
-                                onClick={() => setIsMenuDrawerOpen(false)}
-                                className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-[#C2185B]/40 hover:bg-white/[0.06] transition-all group"
-                            >
-                                <div className="w-10 h-10 rounded-xl bg-[#C2185B]/20 text-[#C2185B] flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <User size={20} />
-                                </div>
-                                <div>
-                                    <h4 className="text-xs font-black uppercase tracking-wider text-white">My Profile</h4>
-                                    <p className="text-[10px] text-neutral-400 mt-0.5">View & edit personal profile</p>
-                                </div>
-                            </Link>
-
-                            <Link
-                                href="/en/feed/chats/list"
-                                onClick={() => setIsMenuDrawerOpen(false)}
-                                className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-[#C2185B]/40 hover:bg-white/[0.06] transition-all group"
-                            >
-                                <div className="w-10 h-10 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <MessageSquare size={20} />
-                                </div>
-                                <div>
-                                    <h4 className="text-xs font-black uppercase tracking-wider text-white">Messages</h4>
-                                    <p className="text-[10px] text-neutral-400 mt-0.5">Direct chat hub</p>
-                                </div>
-                            </Link>
-
-                            <Link
-                                href="/en/feed/like-comment-status"
-                                onClick={() => setIsMenuDrawerOpen(false)}
-                                className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-[#C2185B]/40 hover:bg-white/[0.06] transition-all group"
-                            >
-                                <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <Activity size={20} />
-                                </div>
-                                <div>
-                                    <h4 className="text-xs font-black uppercase tracking-wider text-white">Likes & Comments</h4>
-                                    <p className="text-[10px] text-neutral-400 mt-0.5">Track engagement status</p>
-                                </div>
-                            </Link>
-
-                            <button
-                                onClick={() => { setIsMenuDrawerOpen(false); handleBackToOverview(); }}
-                                className="w-full flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-yellow-500/40 hover:bg-white/[0.06] transition-all text-left group"
-                            >
-                                <div className="w-10 h-10 rounded-xl bg-yellow-500/20 text-yellow-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <LayoutDashboard size={20} />
-                                </div>
-                                <div>
-                                    <h4 className="text-xs font-black uppercase tracking-wider text-white">Back to Overview</h4>
-                                    <p className="text-[10px] text-neutral-400 mt-0.5">Return to portal dashboard</p>
-                                </div>
-                            </button>
-                        </div>
-
-                        <div className="mt-auto pt-4 border-t border-white/10 text-center">
-                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-neutral-500">Safi Academy Ecosystem</span>
-                        </div>
-
-                    </div>
-                </div>
-            )}
-
-            {/* ================= پاپ‌آپ ایجاد پست / ریلز ================= */}
-            {isCreateModalOpen && (
-                <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fadeIn">
-                    <div className="w-full max-w-md bg-[#0a0a0f] border border-white/10 rounded-[2.5rem] p-6 shadow-2xl relative overflow-hidden">
-
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#C2185B]/20 rounded-full blur-3xl pointer-events-none"></div>
-                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-                        <div className="flex items-center justify-between mb-6 relative z-10">
-                            <div className="flex items-center gap-2.5">
-                                <div className="w-9 h-9 rounded-xl bg-[#C2185B]/20 border border-[#C2185B]/40 flex items-center justify-center text-[#C2185B]">
-                                    <PlusCircle size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="text-sm font-black uppercase tracking-wider text-white">Create Content</h3>
-                                    <p className="text-[10px] text-neutral-400 font-bold">Choose what you want to share</p>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => setIsCreateModalOpen(false)}
-                                className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
-                            >
-                                <X size={16} />
-                            </button>
-                        </div>
-
-                        <div className="space-y-3.5 relative z-10">
-                            <Link
-                                href="/en/feed/create/post"
-                                onClick={() => setIsCreateModalOpen(false)}
-                                className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-pink-500/10 to-transparent border border-pink-500/30 hover:border-pink-500/60 hover:bg-pink-500/20 transition-all group"
-                            >
-                                <div className="w-12 h-12 rounded-xl bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-pink-400 group-hover:scale-110 transition-transform">
-                                    <SquarePen size={22} />
-                                </div>
-                                <div>
-                                    <h4 className="text-xs font-black uppercase tracking-wider text-white group-hover:text-pink-300 transition-colors">Create Post</h4>
-                                    <p className="text-[11px] text-neutral-400 mt-0.5">Share text, photos, and ideas with the community</p>
-                                </div>
-                            </Link>
-
-                            <Link
-                                href="/en/feed/create/reels"
-                                onClick={() => setIsCreateModalOpen(false)}
-                                className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-purple-500/10 to-transparent border border-purple-500/30 hover:border-purple-500/60 hover:bg-purple-500/20 transition-all group"
-                            >
-                                <div className="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
-                                    <Video size={22} />
-                                </div>
-                                <div>
-                                    <h4 className="text-xs font-black uppercase tracking-wider text-white group-hover:text-purple-300 transition-colors">Create Reel</h4>
-                                    <p className="text-[11px] text-neutral-400 mt-0.5">Upload short vertical videos and showcase skills</p>
-                                </div>
-                            </Link>
-                        </div>
-
-                        <div className="mt-6 pt-4 border-t border-white/10 text-center relative z-10">
-                            <button
-                                onClick={() => setIsCreateModalOpen(false)}
-                                className="text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-            )}
-
-        </div>
+      <div className="w-full h-full flex flex-col items-center justify-center bg-[#030305]">
+        <div className="w-12 h-12 border-4 border-[#C2185B] border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(194,24,91,0.5)]"></div>
+        <p className="text-neutral-500 font-bold text-xs uppercase tracking-widest mt-4">Connecting to conversation...</p>
+      </div>
     );
+  }
+
+  const partnerName = partner
+    ? `${partner.first_name || 'User'} ${partner.last_name || ''}`.trim()
+    : "Direct Chat";
+
+  return (
+    <div className="w-full h-full flex flex-col bg-[#030305] overflow-hidden font-sans relative">
+
+      {/* Subtle background glow */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[#C2185B]/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-500/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+      {/* ================= HEADER ================= */}
+      <header className="shrink-0 w-full px-4 sm:px-6 py-3 bg-[#07070c]/95 backdrop-blur-2xl border-b border-white/[0.08] z-20 shadow-md">
+        <div className="max-w-4xl mx-auto flex items-center justify-between w-full">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+            
+            {/* Back button */}
+            <Link
+              href="/en/feed/chats/list"
+              className="w-10 h-10 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white transition-all shadow-sm shrink-0"
+              title="Back to Conversations"
+            >
+              <ArrowLeft size={18} />
+            </Link>
+
+            {/* Partner Info */}
+            <Link
+              href={`/en/feed/profile/${partnerId}`}
+              className="flex items-center gap-3 min-w-0 group cursor-pointer"
+            >
+              <div className="relative shrink-0">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-neutral-800 border-2 border-white/10 group-hover:border-[#C2185B] overflow-hidden flex items-center justify-center transition-colors shadow-inner">
+                  {partner?.avatar_url ? (
+                    <img src={partner.avatar_url} alt={partnerName} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-[#C2185B] font-black text-sm sm:text-base">{partner?.first_name?.charAt(0) || "U"}</span>
+                  )}
+                </div>
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#07070c] shadow-[0_0_8px_#10b981]"></div>
+              </div>
+
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-white font-black text-sm sm:text-base tracking-tight truncate group-hover:text-pink-300 transition-colors">
+                    {partnerName}
+                  </h2>
+                  {partner?.role && partner.role !== 'student' && (
+                    <span className="px-2 py-0.5 rounded-md bg-[#C2185B]/20 border border-[#C2185B]/40 text-[#C2185B] text-[9px] font-black uppercase tracking-wider hidden sm:inline-block">
+                      {partner.role}
+                    </span>
+                  )}
+                </div>
+                <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest flex items-center gap-1.5 mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online
+                </p>
+              </div>
+            </Link>
+          </div>
+
+          {/* View Profile Link */}
+          <Link
+            href={`/en/feed/profile/${partnerId}`}
+            className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5 shrink-0"
+          >
+            <User size={14} className="text-[#C2185B]" />
+            <span className="hidden sm:inline">Profile</span>
+          </Link>
+        </div>
+      </header>
+
+      {/* Error alert toast */}
+      {sendError && (
+        <div className="px-4 py-2 bg-red-500/20 border-b border-red-500/30 text-red-400 text-xs font-bold text-center flex items-center justify-center gap-2 shrink-0">
+          <span>⚠️ {sendError}</span>
+          <button onClick={() => setSendError(null)} className="underline hover:text-white">Dismiss</button>
+        </div>
+      )}
+
+      {/* ================= MESSAGES CONTAINER ================= */}
+      <div
+        ref={messagesContainerRef}
+        className="flex-1 min-h-0 w-full overflow-y-auto px-4 sm:px-6 py-5 custom-scrollbar bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-950/40 via-[#030305] to-[#030305] z-10"
+      >
+        <div className="max-w-4xl mx-auto w-full space-y-4">
+          {messages.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full min-h-[250px] text-center p-6">
+              <div className="w-16 h-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-[#C2185B] shadow-xl">
+                <Sparkles size={28} />
+              </div>
+              <h3 className="text-white font-black text-base tracking-wide">Start the conversation</h3>
+              <p className="text-neutral-400 text-xs font-medium mt-1.5 max-w-xs">
+                Send a direct message to {partnerName}. Messages are private and securely delivered.
+              </p>
+            </div>
+          ) : (
+            messages.map((msg) => {
+              const isMe = msg.sender_id === currentUserId;
+
+              return (
+                <div
+                  key={msg.id}
+                  className={`flex ${isMe ? "justify-end" : "justify-start"} group/msg`}
+                >
+                  <div
+                    className={`max-w-[85%] sm:max-w-[70%] rounded-[1.6rem] p-3.5 sm:p-4 shadow-xl relative transition-all ${
+                      isMe
+                        ? "bg-gradient-to-br from-[#C2185B] to-pink-700 text-white rounded-tr-none shadow-[0_8px_25px_rgba(194,24,91,0.3)]"
+                        : "bg-[#0f0f18] border border-white/10 text-neutral-100 rounded-tl-none shadow-lg"
+                    }`}
+                  >
+                    {/* Attachment Rendering */}
+                    {msg.attachment_url && (
+                      <div className="mb-3 rounded-2xl overflow-hidden border border-white/10 bg-black/80 shadow-md">
+                        {msg.attachment_type === 'image' || msg.attachment_url.match(/\.(jpeg|jpg|gif|png|webp)/i) ? (
+                          <a href={msg.attachment_url} target="_blank" rel="noreferrer" className="block cursor-pointer">
+                            <img
+                              src={msg.attachment_url}
+                              alt="Attachment"
+                              className="max-h-72 w-full object-cover hover:opacity-95 transition-opacity"
+                            />
+                          </a>
+                        ) : msg.attachment_type === 'reel' || msg.attachment_type === 'video' || msg.attachment_url.match(/\.(mp4|mov|webm)/i) ? (
+                          <div className="flex flex-col">
+                            <video
+                              src={msg.attachment_url}
+                              controls
+                              playsInline
+                              className="max-h-72 w-full object-contain rounded-t-xl bg-black"
+                            />
+                            <div className="p-2.5 bg-black/40 flex items-center justify-between border-t border-white/5">
+                              <span className="text-[10px] font-black uppercase tracking-widest text-[#C2185B] flex items-center gap-1">
+                                <Video size={12} /> Video Media
+                              </span>
+                              <a
+                                href={msg.attachment_url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-[10px] font-bold text-neutral-300 hover:text-white px-2 py-0.5 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
+                              >
+                                Open Full
+                              </a>
+                            </div>
+                          </div>
+                        ) : (
+                          <a
+                            href={msg.attachment_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="p-3.5 flex items-center gap-2 text-xs font-bold text-pink-300 hover:underline"
+                          >
+                            <Paperclip size={16} /> Download File
+                          </a>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Message Text */}
+                    <p className="text-xs sm:text-sm font-medium leading-relaxed whitespace-pre-wrap break-words">
+                      {msg.message_text}
+                    </p>
+
+                    {/* Footer: Time & Status */}
+                    <div
+                      className={`flex items-center justify-end gap-1.5 mt-1.5 text-[10px] font-bold ${
+                        isMe ? "text-pink-200" : "text-neutral-500"
+                      }`}
+                    >
+                      <span>
+                        {msg.created_at
+                          ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                          : ""}
+                      </span>
+                      {isMe && (
+                        <span>
+                          {msg.is_read ? (
+                            <CheckCheck size={14} className="text-white inline" />
+                          ) : (
+                            <Check size={14} className="text-pink-200 inline" />
+                          )}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Reply Button on Hover */}
+                    <button
+                      onClick={() => setReplyingTo(msg)}
+                      className={`absolute top-2 ${isMe ? "-left-9" : "-right-9"} opacity-0 group-hover/msg:opacity-100 transition-opacity p-2 bg-neutral-900 text-neutral-300 hover:text-white rounded-full shadow-lg border border-white/10 cursor-pointer`}
+                      title="Reply to message"
+                    >
+                      <CornerUpLeft size={13} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+
+      {/* ================= REPLY BANNER ================= */}
+      {replyingTo && (
+        <div className="shrink-0 w-full px-4 sm:px-6 py-2 bg-[#0a0a0f] border-t border-white/10 z-20 shadow-inner">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-1.5 h-8 bg-[#C2185B] rounded-full shrink-0 shadow-[0_0_10px_#C2185B]"></div>
+              <div className="min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-wider text-[#C2185B]">Replying to message</p>
+                <p className="text-xs text-neutral-300 truncate mt-0.5">{replyingTo.message_text}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setReplyingTo(null)}
+              className="text-neutral-400 hover:text-white p-1.5 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+            >
+              <X size={15} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ================= BOTTOM INPUT BAR ================= */}
+      <form
+        onSubmit={handleSendMessage}
+        className="shrink-0 w-full bg-[#07070c]/95 border-t border-white/[0.08] px-4 sm:px-6 py-3 sm:py-3.5 backdrop-blur-2xl z-20 shadow-2xl"
+      >
+        <div className="max-w-4xl mx-auto flex items-center gap-2.5 sm:gap-3.5 w-full">
+          {/* Attachment Upload Button */}
+          <label
+            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:border-[#C2185B] transition-all cursor-pointer shrink-0 shadow-sm ${
+              isUploading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            title="Send file or photo"
+          >
+            {isUploading ? (
+              <Loader2 size={20} className="text-[#C2185B] animate-spin" />
+            ) : (
+              <Paperclip size={20} />
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,video/*,application/pdf"
+              onChange={handleFileUpload}
+              disabled={isUploading}
+              className="hidden"
+            />
+          </label>
+
+          {/* Text Input */}
+          <input
+            type="text"
+            placeholder={isUploading ? "Uploading attachment..." : "Type a message..."}
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            disabled={isUploading}
+            className="flex-1 bg-neutral-900/90 border border-white/10 rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 text-white text-xs sm:text-sm placeholder-neutral-500 focus:outline-none focus:border-[#C2185B] shadow-inner transition-colors"
+          />
+
+          {/* Send Button */}
+          <button
+            type="submit"
+            disabled={isUploading || !newMessage.trim()}
+            className="w-11 h-11 sm:w-12 sm:h-12 bg-gradient-to-br from-[#C2185B] to-yellow-500 text-black font-bold rounded-2xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 transition-all shadow-[0_0_20px_rgba(194,24,91,0.4)] shrink-0 cursor-pointer"
+            title="Send message"
+          >
+            <Send size={18} className="text-black font-black" />
+          </button>
+        </div>
+      </form>
+
+    </div>
+  );
+}
+
+export default function ChatScreenPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full h-full flex items-center justify-center bg-[#030305]">
+          <div className="w-12 h-12 border-4 border-[#C2185B] border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(194,24,91,0.5)]"></div>
+        </div>
+      }
+    >
+      <ChatScreenContent />
+    </Suspense>
+  );
 }
