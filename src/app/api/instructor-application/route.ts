@@ -35,7 +35,6 @@ export async function POST(req: NextRequest) {
 
     const supabase = await createClient();
 
-    // 1. If user is logged in, try upserting into teacher_info
     let targetUserId = userId || null;
     if (!targetUserId) {
       const { data: { user } } = await supabase.auth.getUser();
@@ -44,6 +43,47 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    let applicationRecordId = '';
+
+    // 1. Primary: Try inserting directly into dedicated instructor_applications table
+    try {
+      const { data: appData, error: appError } = await supabase
+        .from('instructor_applications')
+        .insert({
+          user_id: targetUserId,
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          phone: phone || null,
+          country: country || null,
+          date_of_birth: dateOfBirth || null,
+          category,
+          course_title: courseTitle,
+          course_description: courseDescription || null,
+          experience_level: experienceLevel || null,
+          teaching_format: teachingFormat || null,
+          language: language || 'English',
+          bio: bio || null,
+          achievements: achievements || null,
+          portfolio_url: portfolioUrl || null,
+          sample_video_url: sampleVideoUrl || null,
+          resume_url: resumeUrl || null,
+          avatar_url: avatarUrl,
+          status: 'pending'
+        })
+        .select()
+        .single();
+
+      if (!appError && appData) {
+        applicationRecordId = appData.id;
+      } else if (appError) {
+        console.warn('Note on instructor_applications insert:', appError.message);
+      }
+    } catch (appErr) {
+      console.warn('instructor_applications table might not exist yet:', appErr);
+    }
+
+    // 2. If user is logged in, sync to teacher_info if available
     if (targetUserId) {
       try {
         await supabase.from('teacher_info').upsert({
@@ -60,7 +100,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 2. Insert into tickets table for Admin review
+    // 3. Fallback/Sync: Insert into tickets table for Admin dashboard visibility
     const applicationSummary = {
       fullName: `${firstName} ${lastName}`,
       email,
@@ -107,6 +147,7 @@ ${applicationSummary.courseDescription}
 - Key Achievements: ${applicationSummary.achievements}
 
 🔗 **Links & Audition Materials:**
+- Avatar Photo: ${applicationSummary.avatarUrl || 'None'}
 - Portfolio / LinkedIn: ${applicationSummary.portfolioUrl}
 - Sample Lecture / Demo Video: ${applicationSummary.sampleVideoUrl}
 - Resume / CV Document: ${applicationSummary.resumeUrl || 'None attached'}
@@ -135,7 +176,7 @@ ${applicationSummary.courseDescription}
           attachment_url: resumeUrl || null
         });
 
-        // 3. If targetUserId exists, send in-app notification
+        // If targetUserId exists, send in-app notification
         if (targetUserId) {
           await supabase.from('user_notifications').insert({
             user_id: targetUserId,
@@ -152,45 +193,80 @@ ${applicationSummary.courseDescription}
     }
 
     // 4. Send Instant Telegram Alert to Management
-    const TELEGRAM_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN;
-    const TELEGRAM_CHAT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID || process.env.TELEGRAM_CHAT_ID;
+    const TELEGRAM_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN || '8668673040:AAEI6Q4r28KWiTAGwvQrT0Y9j6S92KhtwiI';
+    const TELEGRAM_CHAT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID || process.env.TELEGRAM_CHAT_ID || '5195615040';
 
     if (TELEGRAM_TOKEN && TELEGRAM_CHAT_ID) {
+      const escapeHtml = (str: string = '') =>
+        str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+      const appRefId = applicationRecordId ? `APP-${applicationRecordId.slice(0, 8)}` : (ticketId ? `TCK-${ticketId.slice(0, 8)}` : `APP-${Date.now().toString().slice(-6)}`);
+
       const telegramMessage = `
-🎓 *NEW INSTRUCTOR APPLICATION* 🎓
+🎓 <b>درخواست جدید تدریس در آکادمی صافی</b> 🎓
+━━━━━━━━━━━━━━━━━━━━━
+🆔 <b>کد پیگیری:</b> <code>${escapeHtml(appRefId)}</code>
 
-👤 *Name:* ${firstName} ${lastName}
-📧 *Email:* ${email}
-📱 *Phone:* ${phone || 'N/A'}
-🌍 *Country:* ${country || 'N/A'}
-📂 *Category:* ${category}
-🎯 *Course:* ${courseTitle}
-⏳ *Experience:* ${experienceLevel || 'N/A'}
-🗣 *Format:* ${teachingFormat || 'N/A'} (${language || 'English'})
+👤 <b>مشخصات متقاضی:</b>
+• <b>نام و تخلص:</b> ${escapeHtml(firstName)} ${escapeHtml(lastName)}
+• <b>ایمیل:</b> ${escapeHtml(email)}
+• <b>شماره تماس:</b> ${escapeHtml(phone || 'ثبت نشده')}
+• <b>کشور محل سکونت:</b> ${escapeHtml(country || 'ثبت نشده')}
+• <b>تاریخ تولد:</b> ${escapeHtml(dateOfBirth || 'ثبت نشده')}
 
-🔗 *Portfolio:* ${portfolioUrl || 'N/A'}
-🎥 *Audition Video:* ${sampleVideoUrl || 'N/A'}
-📄 *CV / Resume:* ${resumeUrl || 'N/A'}
+📚 <b>دوره و تخصص:</b>
+• <b>حوزه تدریس:</b> ${escapeHtml(category)}
+• <b>عنوان دوره:</b> ${escapeHtml(courseTitle)}
+• <b>سابقه تدریس:</b> ${escapeHtml(experienceLevel || 'ثبت نشده')}
+• <b>فرمت تدریس:</b> ${escapeHtml(teachingFormat || 'ثبت نشده')}
+• <b>زبان آموزش:</b> ${escapeHtml(language || 'English')}
+
+📝 <b>توضیحات دوره:</b>
+${escapeHtml(courseDescription || 'توضیحاتی درج نشده است')}
+
+🏆 <b>بیوگرافی و دستاوردها:</b>
+${escapeHtml(bio || 'ثبت نشده')}
+${achievements ? `\n🏅 <b>دستاوردها:</b>\n${escapeHtml(achievements)}` : ''}
+
+🔗 <b>مدارک و لینک‌ها:</b>
+• <b>عکس پروفایل:</b> ${avatarUrl ? `<a href="${avatarUrl}">مشاهده عکس پرسنلی</a>` : 'ندارد'}
+• <b>فایل رزومه / CV:</b> ${resumeUrl ? `<a href="${resumeUrl}">دانلود رزومه (PDF/DOC)</a>` : 'ندارد'}
+• <b>پورتفولیو / لینکدین:</b> ${portfolioUrl ? `<a href="${portfolioUrl}">مشاهده پورتفولیو</a>` : 'ارائه نشده'}
+• <b>ویدیوی دمو / تدریس:</b> ${sampleVideoUrl ? `<a href="${sampleVideoUrl}">مشاهده ویدیو نمونه</a>` : 'ارائه نشده'}
+━━━━━━━━━━━━━━━━━━━━━
+⏰ <b>زمان ثبت:</b> ${new Date().toISOString()}
       `.trim();
 
       try {
-        await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+        const tgRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             chat_id: TELEGRAM_CHAT_ID,
             text: telegramMessage,
-            parse_mode: 'Markdown'
+            parse_mode: 'HTML',
+            disable_web_page_preview: false
           })
         });
+
+        if (!tgRes.ok) {
+          const tgErrData = await tgRes.text();
+          console.error('Telegram notification responded with error:', tgErrData);
+        } else {
+          console.log('Telegram notification sent successfully to chat:', TELEGRAM_CHAT_ID);
+        }
       } catch (tgError) {
         console.error('Error sending Telegram notification:', tgError);
       }
     }
 
+    const finalAppId = applicationRecordId
+      ? `APP-${applicationRecordId.slice(0, 8)}`
+      : (ticketId ? `TCK-${ticketId.slice(0, 8)}` : `APP-${Date.now().toString().slice(-6)}`);
+
     return NextResponse.json({
       success: true,
-      applicationId: ticketId || `APP-${Date.now().toString().slice(-6)}`,
+      applicationId: finalAppId,
       message: 'Your instructor application has been submitted successfully.'
     });
   } catch (error: any) {

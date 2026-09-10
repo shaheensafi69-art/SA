@@ -3,17 +3,17 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { 
-  Shield, 
-  Lock, 
-  Eye, 
-  Server, 
-  Cookie, 
-  Share2, 
-  Scale, 
-  FileText, 
-  CheckCircle2, 
-  Mail, 
+import {
+  Shield,
+  Lock,
+  Eye,
+  Server,
+  Cookie,
+  Share2,
+  Scale,
+  FileText,
+  CheckCircle2,
+  Mail,
   ExternalLink,
   Globe,
   UserCheck,
@@ -90,7 +90,7 @@ export default function PrivacyPolicyPage() {
 
   return (
     <main className="w-full relative bg-[#020202] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-32">
-      
+
       {/* Dynamic Background Mesh */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
@@ -99,10 +99,10 @@ export default function PrivacyPolicyPage() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
-        
+
         {/* Top Hero Banner */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-emerald-400 mb-6"
@@ -110,7 +110,7 @@ export default function PrivacyPolicyPage() {
             <Shield size={14} className="animate-pulse" /> Official Data Charter & Privacy Policy
           </motion.div>
 
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -122,7 +122,7 @@ export default function PrivacyPolicyPage() {
             </span>
           </motion.h1>
 
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -132,7 +132,7 @@ export default function PrivacyPolicyPage() {
           </motion.p>
 
           {/* Metadata Pill Bar */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -175,10 +175,10 @@ export default function PrivacyPolicyPage() {
 
         {/* 2-Column Split: Sticky Sidebar TOC + Modular Policy Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          
+
           {/* Left Sidebar: Navigation & Contact Widget */}
           <div className="lg:col-span-4 lg:sticky lg:top-36 space-y-6">
-            
+
             {/* Table of Contents Card */}
             <div className="bg-neutral-900/80 border border-white/10 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
@@ -194,13 +194,12 @@ export default function PrivacyPolicyPage() {
                     <a
                       key={sec.id}
                       href={`#${sec.id}`}
-                      className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
-                        isActive 
-                          ? "bg-emerald-500 text-black shadow-lg shadow-emerald-500/20 font-black" 
-                          : sec.isHighlight 
-                            ? "bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20" 
-                            : "text-neutral-400 hover:text-white hover:bg-white/5"
-                      }`}
+                      className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${isActive
+                        ? "bg-emerald-500 text-black shadow-lg shadow-emerald-500/20 font-black"
+                        : sec.isHighlight
+                          ? "bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20"
+                          : "text-neutral-400 hover:text-white hover:bg-white/5"
+                        }`}
                     >
                       <div className="flex items-center gap-2.5">
                         <Icon className="w-4 h-4 shrink-0" />
@@ -223,7 +222,7 @@ export default function PrivacyPolicyPage() {
                 Reach our designated compliance officer for GDPR access, data modification, or third-party inquiries.
               </p>
               <a
-                href="mailto:support@safi-academy.com"
+                href="mailto:info@safiacademy.org"
                 className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-emerald-400 transition-colors"
               >
                 <span>Email Privacy Team</span>
@@ -235,7 +234,7 @@ export default function PrivacyPolicyPage() {
 
           {/* Right Column: Modular Content Cards */}
           <div className="lg:col-span-8 space-y-8">
-            
+
             {/* Section 1: Data Controller */}
             <div id="controller" className="scroll-mt-36 bg-neutral-900/60 border border-white/10 hover:border-white/20 rounded-3xl p-8 md:p-10 backdrop-blur-xl transition-all shadow-xl">
               <div className="flex items-center gap-3 mb-6">

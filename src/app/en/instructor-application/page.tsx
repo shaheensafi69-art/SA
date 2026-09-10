@@ -123,7 +123,7 @@ export default function InstructorApplicationPage() {
     try {
       const uploadData = new FormData();
       uploadData.append("file", file);
-      uploadData.append("folder", "instructor-resumes");
+      uploadData.append("folder", "instructor_resumes");
 
       const res = await fetch("/api/upload", {
         method: "POST",
@@ -157,7 +157,7 @@ export default function InstructorApplicationPage() {
     try {
       const uploadData = new FormData();
       uploadData.append("file", file);
-      uploadData.append("folder", "instructor-avatars");
+      uploadData.append("folder", "instructor_image");
 
       const res = await fetch("/api/upload", {
         method: "POST",
@@ -460,10 +460,10 @@ export default function InstructorApplicationPage() {
                       <div
                         key={step}
                         className={`w-9 h-9 rounded-xl flex items-center justify-center font-mono text-xs font-bold transition-all ${currentStep === step
-                            ? "bg-amber-500 text-black shadow-lg shadow-amber-500/20"
-                            : currentStep > step
-                              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                              : "bg-white/5 text-neutral-500 border border-white/5"
+                          ? "bg-amber-500 text-black shadow-lg shadow-amber-500/20"
+                          : currentStep > step
+                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                            : "bg-white/5 text-neutral-500 border border-white/5"
                           }`}
                       >
                         {currentStep > step ? <Check size={14} /> : step}
