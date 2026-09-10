@@ -2,24 +2,24 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { 
-  ArrowRight, 
-  ExternalLink, 
-  ShieldCheck, 
-  Mail, 
-  Globe, 
-  Monitor, 
-  Phone, 
-  MapPin, 
-  FileText, 
-  Shield, 
-  Clock, 
-  Building2, 
-  CheckCircle2, 
-  Info, 
-  Sparkles, 
-  Lock, 
-  Check, 
+import {
+  ArrowRight,
+  ExternalLink,
+  ShieldCheck,
+  Mail,
+  Globe,
+  Monitor,
+  Phone,
+  MapPin,
+  FileText,
+  Shield,
+  Clock,
+  Building2,
+  CheckCircle2,
+  Info,
+  Sparkles,
+  Lock,
+  Check,
   ChevronRight,
   Award,
   Users
@@ -153,7 +153,7 @@ export default function BusinessFormationPage() {
 
   return (
     <main className="w-full relative bg-[#020202] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-24">
-      
+
       {/* Ambient Lighting & Grid Background */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
@@ -162,7 +162,7 @@ export default function BusinessFormationPage() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
-        
+
         {/* Affiliate & FTC Compliance Disclosure Banner */}
         <div className="mb-12 bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 md:p-5 flex items-start gap-4 backdrop-blur-md">
           <Info className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
@@ -178,7 +178,7 @@ export default function BusinessFormationPage() {
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs font-bold uppercase tracking-wider text-amber-400">
               <Sparkles className="w-3.5 h-3.5" /> Recommended US Corporate Service Provider
             </div>
-            
+
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15]">
               Form & Protect Your <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-600">
@@ -212,7 +212,7 @@ export default function BusinessFormationPage() {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-4 pt-4">
-              <a 
+              <a
                 href={AFFILIATE_URL}
                 target="_blank"
                 rel="sponsored noopener noreferrer"
@@ -222,7 +222,7 @@ export default function BusinessFormationPage() {
                 <ExternalLink className="w-4 h-4" />
               </a>
 
-              <a 
+              <a
                 href="#services"
                 className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-bold text-sm rounded-xl border border-white/10 transition-colors"
               >
@@ -231,12 +231,12 @@ export default function BusinessFormationPage() {
               </a>
             </div>
           </div>
-          
+
           {/* Hero Visual: Glassmorphism Compliance & Formation Card */}
           <div className="lg:col-span-5 flex justify-center">
             <div className="w-full max-w-md bg-neutral-900/80 border border-white/10 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden group">
               <div className="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-              
+
               <div className="flex items-center justify-between pb-6 border-b border-white/10 mb-6">
                 <div>
                   <span className="text-xs font-semibold text-neutral-400 uppercase tracking-widest block">Entity Status</span>
@@ -327,12 +327,12 @@ export default function BusinessFormationPage() {
             </p>
             <div className="w-20 h-1 bg-amber-500 mx-auto mt-6 rounded-full"></div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service, idx) => {
               const Icon = service.icon;
               return (
-                <motion.div 
+                <motion.div
                   key={idx}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -377,7 +377,7 @@ export default function BusinessFormationPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {formationSteps.map((step, idx) => (
-              <div 
+              <div
                 key={idx}
                 className="bg-neutral-900/40 border border-white/5 rounded-2xl p-6 relative flex flex-col justify-between"
               >
@@ -399,7 +399,7 @@ export default function BusinessFormationPage() {
         {/* Why Safi Academy Recommends Section */}
         <div className="bg-gradient-to-br from-neutral-900/90 via-neutral-950 to-[#0c0c12] border border-white/10 rounded-[2.5rem] p-8 md:p-14 shadow-2xl relative overflow-hidden mb-32">
           <div className="absolute -top-20 -right-20 w-80 h-80 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none"></div>
-          
+
           <div className="text-center max-w-3xl mx-auto mb-16 relative z-10">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-3">
               Independent Editorial Assessment
@@ -416,7 +416,7 @@ export default function BusinessFormationPage() {
             {whyWeRecommend.map((item, idx) => {
               const Icon = item.icon;
               return (
-                <div 
+                <div
                   key={idx}
                   className="flex flex-col items-start p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/15 transition-all"
                 >
@@ -444,7 +444,7 @@ export default function BusinessFormationPage() {
 
           <div className="space-y-4">
             {faqs.map((faq, idx) => (
-              <div 
+              <div
                 key={idx}
                 className="bg-neutral-900/50 border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-colors"
               >
@@ -461,7 +461,7 @@ export default function BusinessFormationPage() {
         </div>
 
         {/* Compliant CTA Section */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -478,11 +478,11 @@ export default function BusinessFormationPage() {
           <p className="text-sm md:text-base text-neutral-400 leading-relaxed mb-8 max-w-2xl">
             Get started directly through Registered Agents Inc to initiate your state entity formation, secure your registered address, and establish your US business presence.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            <a 
-              href={AFFILIATE_URL} 
-              target="_blank" 
+            <a
+              href={AFFILIATE_URL}
+              target="_blank"
               rel="sponsored noopener noreferrer"
               className="inline-flex items-center justify-center gap-3 px-9 py-4 bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm uppercase tracking-wider rounded-xl transition-all shadow-[0_10px_30px_rgba(245,158,11,0.25)] hover:shadow-[0_15px_40px_rgba(245,158,11,0.4)] hover:scale-105 active:scale-95 group"
             >
