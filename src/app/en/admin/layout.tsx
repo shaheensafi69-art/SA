@@ -5,7 +5,8 @@ import {
   X, Sparkles, LogOut, Bell, ShieldCheck, LayoutDashboard,
   Users, UserCheck, BookOpen, Presentation, CircleDollarSign,
   Trophy, Megaphone, Video, Headset, Settings, Grid, Rss,
-  Newspaper, GraduationCap // آیکون‌های جدید اضافه شدند
+  Newspaper, GraduationCap, // آیکون‌های جدید اضافه شدند
+  ClipboardCheck
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -66,9 +67,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     router.replace("/en/login");
   };
 
-  // اضافه شدن Blogs و Scholarships به لیست منوها
+  // اضافه شدن Blogs و Scholarships و Applications به لیست منوها
   const menuItems = [
     { name: "Overview", path: "/en/admin", icon: <LayoutDashboard size={22} />, disabled: false },
+    { name: "Applications", path: "/en/admin/application-form", icon: <ClipboardCheck size={22} />, disabled: false },
     { name: "Academy Feed", path: "/en/feed", icon: <Rss size={22} />, disabled: false },
     { name: "Students", path: "/en/admin/manage-students", icon: <Users size={22} />, disabled: false },
     { name: "Faculty", path: "/en/admin/manage-teachers", icon: <UserCheck size={22} />, disabled: false },
@@ -87,6 +89,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const getMenuColor = (name: string) => {
     switch (name) {
       case "Overview": return "from-rose-500/20 to-rose-500/5 text-rose-400 border-rose-500/30";
+      case "Applications": return "from-amber-500/20 to-amber-500/5 text-amber-400 border-amber-500/30";
       case "Academy Feed": return "from-pink-500/20 to-pink-500/5 text-pink-400 border-pink-500/30";
       case "Students": return "from-blue-500/20 to-blue-500/5 text-blue-400 border-blue-500/30";
       case "Faculty": return "from-indigo-500/20 to-indigo-500/5 text-indigo-400 border-indigo-500/30";
