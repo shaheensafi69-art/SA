@@ -30,13 +30,13 @@ import {
 // Replace this URL with your unique AWIN / Registered Agents Inc affiliate link
 // once your application is approved.
 // ============================================================================
-const AFFILIATE_URL = "https://www.registeredagentsinc.com/";
+const AFFILIATE_URL = "https://www.registeredagentsinc.com/business-formation/";
 
 export default function BusinessFormationPage() {
   const services = [
     {
       title: "Registered Agent in All 50 States",
-      desc: "Every US entity legally requires a registered agent with a physical street address in the state of formation. Registered Agents Inc acts as your legal point of contact, keeping your personal home address off public state records.",
+      desc: "Every US entity legally requires a registered agent with a physical street address in the state of formation. Registered Agents Inc acts as your legal point of contact, helping keep your personal home address off public state records where permitted by law.",
       icon: MapPin,
       badge: "Core Requirement"
     },
@@ -47,8 +47,8 @@ export default function BusinessFormationPage() {
       badge: "Entity Setup"
     },
     {
-      title: "FinCEN BOI Reporting",
-      desc: "Assistance with mandatory federal Beneficial Ownership Information (BOI) reporting required by the Financial Crimes Enforcement Network (FinCEN), preventing severe non-compliance penalties.",
+      title: "FinCEN BOI Guidance & Updates",
+      desc: "Guidance on federal Beneficial Ownership Information (BOI) reporting regulations. Under current federal court rulings and regulatory stays, many domestic US entities are currently exempt or enjoy paused reporting requirements, while certain foreign reporting companies remain subject to mandatory disclosure. Registered Agents Inc monitors official FinCEN rules and offers compliant reporting assistance where applicable by law.",
       icon: ShieldCheck,
       badge: "Federal Compliance"
     },
@@ -80,7 +80,7 @@ export default function BusinessFormationPage() {
     },
     {
       title: "Total Founder Privacy",
-      desc: "They strictly do not sell customer data or marketing lists. Your personal home address stays off public databases, protecting you from solicitations and identity risks.",
+      desc: "They strictly do not sell customer data or marketing lists. Your personal residential address can be kept off public records where permitted by law, protecting founder privacy and reducing unsolicited junk mail.",
       icon: Lock
     },
     {
@@ -114,7 +114,7 @@ export default function BusinessFormationPage() {
     {
       step: "02",
       title: "Register via Registered Agents Inc",
-      desc: "Use our referral link to choose your LLC or Corporation package and designate Registered Agents Inc as your licensed registered agent."
+      desc: "Use our referral link to choose your LLC or Corporation package and designate Registered Agents Inc as your registered agent."
     },
     {
       step: "03",
@@ -124,7 +124,7 @@ export default function BusinessFormationPage() {
     {
       step: "04",
       title: "Stay 100% Compliant",
-      desc: "Receive digital mail scans, monitor annual reporting deadlines, and submit your FinCEN BOI filings through their secure client portal."
+      desc: "Receive digital mail scans, monitor annual reporting deadlines, and stay updated on FinCEN BOI reporting rules applicable to your specific entity."
     }
   ];
 
@@ -138,12 +138,16 @@ export default function BusinessFormationPage() {
       a: "Yes. Non-US residents can legally form and own a US business (such as an LLC). Registered Agents Inc provides the physical US registered address and scans all state correspondence into your digital portal, making it accessible from anywhere in the world."
     },
     {
+      q: "Are all US companies currently required to submit FinCEN BOI reports?",
+      a: "No. Following ongoing federal court rulings and regulatory updates from FinCEN, many domestic entities formed in the United States currently qualify for exemptions or paused reporting timelines, while certain foreign-registered reporting companies remain subject to mandatory disclosure. Registered Agents Inc tracks official FinCEN rules and facilitates compliant filings where legally required."
+    },
+    {
       q: "Does using the Safi Academy referral link cost extra?",
       a: "No. Pricing remains identical (and often includes promotional pricing or bundled savings). Safi Academy may receive a referral commission from Registered Agents Inc if you choose to sign up through our link, which helps us continue providing free educational resources."
     },
     {
       q: "How does Registered Agents Inc protect founder privacy?",
-      a: "When forming a company or acting as your registered agent, Registered Agents Inc allows you to list their commercial address on public state records rather than your personal home address. Furthermore, they maintain a strict policy of never selling customer data to third parties."
+      a: "When forming a company or acting as your registered agent, Registered Agents Inc allows you to list their commercial registered office on public state documents where permitted by law rather than your personal home address. Furthermore, they maintain a strict policy of never selling customer data to third parties."
     }
   ];
 
@@ -190,11 +194,11 @@ export default function BusinessFormationPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <div className="flex items-center gap-2.5 text-sm text-neutral-200">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Licensed in All 50 US States</span>
+                <span>Registered Agent Services Available in All 50 States</span>
               </div>
               <div className="flex items-center gap-2.5 text-sm text-neutral-200">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Personal Address Privacy Shield</span>
+                <span>Personal Address Privacy (Where Permitted by Law)</span>
               </div>
               <div className="flex items-center gap-2.5 text-sm text-neutral-200">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
@@ -202,7 +206,7 @@ export default function BusinessFormationPage() {
               </div>
               <div className="flex items-center gap-2.5 text-sm text-neutral-200">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>FinCEN BOI & Annual Report Support</span>
+                <span>FinCEN BOI Updates & Annual Report Support</span>
               </div>
             </div>
 
@@ -211,7 +215,7 @@ export default function BusinessFormationPage() {
               <a 
                 href={AFFILIATE_URL}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="sponsored noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold text-sm uppercase tracking-wider rounded-xl transition-all shadow-[0_10px_25px_rgba(245,158,11,0.25)] hover:shadow-[0_15px_35px_rgba(245,158,11,0.4)] hover:-translate-y-0.5 active:translate-y-0"
               >
                 <span>Visit Registered Agents Inc</span>
@@ -267,7 +271,7 @@ export default function BusinessFormationPage() {
                     </div>
                     <div>
                       <div className="text-sm font-bold text-white">Address Privacy</div>
-                      <div className="text-xs text-neutral-400">Owner Data Shielded</div>
+                      <div className="text-xs text-neutral-400">Owner Data Shielded (Where Permitted by Law)</div>
                     </div>
                   </div>
                   <CheckCircle2 className="w-5 h-5 text-emerald-400" />
@@ -279,8 +283,8 @@ export default function BusinessFormationPage() {
                       <FileText className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-white">FinCEN BOI Ready</div>
-                      <div className="text-xs text-neutral-400">Beneficial Ownership Filing</div>
+                      <div className="text-sm font-bold text-white">FinCEN BOI Guidance</div>
+                      <div className="text-xs text-neutral-400">Federal Exemption & Rules Tracking</div>
                     </div>
                   </div>
                   <CheckCircle2 className="w-5 h-5 text-purple-400" />
@@ -479,7 +483,7 @@ export default function BusinessFormationPage() {
             <a 
               href={AFFILIATE_URL} 
               target="_blank" 
-              rel="noopener noreferrer"
+              rel="sponsored noopener noreferrer"
               className="inline-flex items-center justify-center gap-3 px-9 py-4 bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm uppercase tracking-wider rounded-xl transition-all shadow-[0_10px_30px_rgba(245,158,11,0.25)] hover:shadow-[0_15px_40px_rgba(245,158,11,0.4)] hover:scale-105 active:scale-95 group"
             >
               <span>Get Started on Registered Agents Inc</span>
