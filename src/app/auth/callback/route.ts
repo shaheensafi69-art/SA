@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   const origin = requestUrl.origin
 
   const cookieStore = cookies()
-  
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
         remove(name: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value: '', ...options })
-          } catch (error) {}
+          } catch (error) { }
         },
       },
     }
@@ -75,6 +75,8 @@ export async function GET(request: Request) {
     authUser?.user_metadata?.role === 'teacher' ||
     (next && next.includes('teacher-onboarding'))
 
+  const canonicalOrigin = "https://safiacademy.org"
+
   if (isTeacherFlow || authUser) {
     const candidateEmail = (authUser?.email || requestUrl.searchParams.get('email') || '').trim().toLowerCase()
 
@@ -92,7 +94,7 @@ export async function GET(request: Request) {
         if (application) {
           const secureToken = generateOnboardingToken(application.id, application.email)
           console.log(`[Auth Callback] Matched teacher application ${application.id} for ${candidateEmail}`);
-          return NextResponse.redirect(`${origin}/en/teacher-onboarding?appId=${application.id}&token=${secureToken}`)
+          return NextResponse.redirect(`${canonicalOrigin}/en/teacher-onboarding?appId=${application.id}&token=${secureToken}`)
         }
       } catch (matchErr) {
         console.error('[Auth Callback] Error resolving candidate dossier:', matchErr)
@@ -100,7 +102,7 @@ export async function GET(request: Request) {
     }
 
     if (next && next.startsWith('/')) {
-      return NextResponse.redirect(`${origin}${next}`)
+      return NextResponse.redirect(`${canonicalOrigin}${next}`)
     }
   }
 

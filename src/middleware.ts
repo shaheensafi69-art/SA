@@ -9,9 +9,9 @@ export async function middleware(request: NextRequest) {
 
   // 🚫 فیلتر مهم: درخواست‌های API، مسیر کالبک احراز هویت و فایل‌های استاتیک باید بدون دستکاری رد شوند
   if (
-    pathname.startsWith('/api') || 
-    pathname.startsWith('/_next') || 
-    pathname.startsWith('/auth/callback') || 
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/auth/callback') ||
     pathname.includes('.')
   ) {
     return NextResponse.next();
@@ -26,8 +26,8 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() { 
-          return request.cookies.getAll(); 
+        getAll() {
+          return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
@@ -68,18 +68,18 @@ export async function middleware(request: NextRequest) {
   const isTeacherOnboarding = pathname.includes('/teacher-onboarding') || pathname.includes('/teacher-register');
   const isAuthPage = (pathname.includes('/login') || pathname.includes('/register')) && !isTeacherOnboarding;
   const isAdminRoute = pathname.includes('/admin');
-  
+
   // مسیرهای محافظت‌شده مدرس: فقط مسیرهای داخل /teacher که آنبوردینگ نیستند
   const isTeacherRoute = (pathname === `/${currentLocale}/teacher` || pathname.startsWith(`/${currentLocale}/teacher/`)) && !isTeacherOnboarding;
   const isStudentRoute = pathname.includes('/dashboard');
-  
+
   const isProtectedRoute = isAdminRoute || isTeacherRoute || isStudentRoute;
 
   // ==========================================
   // مدیریت دسترسی‌ها (Role-Based Access Control)
   // ==========================================
   if (isProtectedRoute || isAuthPage) {
-    
+
     // اگر کاربر مهمان است و می‌خواهد به صفحات محافظت‌شده برود -> لاگین
     if (!user && isProtectedRoute) {
       const loginUrl = request.nextUrl.clone();
@@ -94,7 +94,7 @@ export async function middleware(request: NextRequest) {
         .select('role')
         .eq('id', user.id)
         .single();
-        
+
       const userRole = profile?.role || 'student';
 
       const getCorrectDashboardRoot = () => {

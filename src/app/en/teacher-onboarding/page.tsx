@@ -145,9 +145,8 @@ function TeacherOnboardingForm() {
       }
 
       const queryParam = activeAppId
-        ? `appId=${encodeURIComponent(activeAppId)}${
-            activeToken ? `&token=${encodeURIComponent(activeToken)}` : ""
-          }`
+        ? `appId=${encodeURIComponent(activeAppId)}${activeToken ? `&token=${encodeURIComponent(activeToken)}` : ""
+        }`
         : `email=${encodeURIComponent(activeEmail)}`;
 
       try {
@@ -503,13 +502,12 @@ function TeacherOnboardingForm() {
         {/* Step 1 Indicator */}
         <div className="flex flex-col items-center space-y-1">
           <div
-            className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black transition-all ${
-              step === 1
-                ? "bg-amber-400 text-black shadow-[0_0_15px_#f59e0b]"
-                : step > 1
+            className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black transition-all ${step === 1
+              ? "bg-amber-400 text-black shadow-[0_0_15px_#f59e0b]"
+              : step > 1
                 ? "bg-emerald-500 text-black"
                 : "bg-white/10 text-neutral-400"
-            }`}
+              }`}
           >
             {step > 1 ? <Check size={16} /> : "1"}
           </div>
@@ -521,13 +519,12 @@ function TeacherOnboardingForm() {
         {/* Step 2 Indicator */}
         <div className="flex flex-col items-center space-y-1">
           <div
-            className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black transition-all ${
-              step === 2
-                ? "bg-amber-400 text-black shadow-[0_0_15px_#f59e0b]"
-                : step > 2
+            className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black transition-all ${step === 2
+              ? "bg-amber-400 text-black shadow-[0_0_15px_#f59e0b]"
+              : step > 2
                 ? "bg-emerald-500 text-black"
                 : "bg-white/10 text-neutral-400"
-            }`}
+              }`}
           >
             {step > 2 ? <Check size={16} /> : "2"}
           </div>
@@ -539,11 +536,10 @@ function TeacherOnboardingForm() {
         {/* Step 3 Indicator */}
         <div className="flex flex-col items-center space-y-1">
           <div
-            className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black transition-all ${
-              step === 3
-                ? "bg-amber-400 text-black shadow-[0_0_15px_#f59e0b]"
-                : "bg-white/10 text-neutral-400"
-            }`}
+            className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black transition-all ${step === 3
+              ? "bg-amber-400 text-black shadow-[0_0_15px_#f59e0b]"
+              : "bg-white/10 text-neutral-400"
+              }`}
           >
             3
           </div>
@@ -579,11 +575,10 @@ function TeacherOnboardingForm() {
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                   />
                   <div
-                    className={`w-24 h-24 rounded-full flex items-center justify-center overflow-hidden transition-all shadow-lg ${
-                      photoPreview
-                        ? "border-2 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.4)]"
-                        : "border-2 border-dashed border-white/20 bg-black/50 hover:bg-black/30"
-                    }`}
+                    className={`w-24 h-24 rounded-full flex items-center justify-center overflow-hidden transition-all shadow-lg ${photoPreview
+                      ? "border-2 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.4)]"
+                      : "border-2 border-dashed border-white/20 bg-black/50 hover:bg-black/30"
+                      }`}
                   >
                     {photoPreview ? (
                       <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />

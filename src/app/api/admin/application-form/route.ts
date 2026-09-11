@@ -99,13 +99,12 @@ export async function PATCH(req: NextRequest) {
 
     if (updateError) throw updateError;
 
-    // Determine site origin for onboarding link
-    const origin = req.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "https://safiacademy.vercel.app";
-    const cleanOrigin = origin.replace(/\/en\/?$/, "");
+    // Canonical public domain for instructor onboarding link
+    const canonicalDomain = "https://safiacademy.org";
 
     // Generate tamper-proof cryptographic token
     const secureToken = generateOnboardingToken(application.id, application.email);
-    const onboardingUrl = `${cleanOrigin}/en/teacher-onboarding?appId=${application.id}&token=${secureToken}`;
+    const onboardingUrl = `${canonicalDomain}/en/teacher-onboarding?appId=${application.id}&token=${secureToken}`;
 
     let emailResult: { success: boolean; method: string; error?: string } = {
       success: false,
