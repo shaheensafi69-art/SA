@@ -77,13 +77,19 @@ export default function AdminApplicationDetailPage() {
       if (!id) return;
       setLoading(true);
       try {
-        const res = await fetch(`/api/admin/application-form?id=${id}`);
+        const res = await fetch(`/api/admin/application-form?id=${id}&_t=${Date.now()}`, {
+          cache: "no-store",
+          headers: {
+            "Pragma": "no-cache",
+            "Cache-Control": "no-cache"
+          }
+        });
         const data = await res.json();
         if (data.application) {
           setApplication(data.application);
           setAdminNotes(data.application.admin_notes || "");
         } else {
-          setFeedback({ text: "Application not found in database.", type: "error" });
+          setFeedback({ text: data.error || "Application not found in database.", type: "error" });
         }
       } catch (err: any) {
         console.error("Fetch detail error:", err);

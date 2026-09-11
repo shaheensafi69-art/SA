@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 import { sendInstructorDecisionEmail } from "@/utils/email";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status");
     const id = searchParams.get("id");
@@ -17,7 +20,10 @@ export async function GET(req: NextRequest) {
         .single();
 
       if (error) throw error;
-      return NextResponse.json({ application: data });
+      return NextResponse.json(
+        { application: data },
+        { headers: { "Cache-Control": "no-store, max-age=0, must-revalidate" } }
+      );
     }
 
     let query = supabase
@@ -32,12 +38,15 @@ export async function GET(req: NextRequest) {
     const { data, error } = await query;
     if (error) throw error;
 
-    return NextResponse.json({ applications: data || [] });
+    return NextResponse.json(
+      { applications: data || [] },
+      { headers: { "Cache-Control": "no-store, max-age=0, must-revalidate" } }
+    );
   } catch (error: any) {
     console.error("Error fetching applications:", error);
     return NextResponse.json(
       { error: error?.message || "Failed to fetch applications" },
-      { status: 500 }
+      { status: 500, headers: { "Cache-Control": "no-store, max-age=0, must-revalidate" } }
     );
   }
 }
@@ -54,7 +63,7 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // 1. Fetch the target application
     const { data: application, error: fetchError } = await supabase
@@ -224,7 +233,7 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const { error } = await supabase
       .from("instructor_applications")
       .delete()

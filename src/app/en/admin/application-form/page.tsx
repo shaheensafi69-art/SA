@@ -64,13 +64,22 @@ export default function AdminApplicationFormPage() {
   const fetchApplications = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/application-form?status=${statusFilter}`);
+      const res = await fetch(`/api/admin/application-form?status=${statusFilter}&_t=${Date.now()}`, {
+        cache: "no-store",
+        headers: {
+          "Pragma": "no-cache",
+          "Cache-Control": "no-cache"
+        }
+      });
       const data = await res.json();
       if (data.applications) {
         setApplications(data.applications);
+      } else if (data.error) {
+        setFeedbackMessage({ text: data.error, type: "error" });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to load instructor applications:", err);
+      setFeedbackMessage({ text: "Failed to load instructor applications.", type: "error" });
     } finally {
       setLoading(false);
     }
@@ -138,13 +147,14 @@ export default function AdminApplicationFormPage() {
   };
 
   const filteredApplications = applications.filter(app => {
-    const q = searchQuery.toLowerCase();
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
     const matchesQuery =
-      app.first_name?.toLowerCase().includes(q) ||
-      app.last_name?.toLowerCase().includes(q) ||
-      app.email?.toLowerCase().includes(q) ||
-      app.course_title?.toLowerCase().includes(q) ||
-      app.category?.toLowerCase().includes(q);
+      (app.first_name || "").toLowerCase().includes(q) ||
+      (app.last_name || "").toLowerCase().includes(q) ||
+      (app.email || "").toLowerCase().includes(q) ||
+      (app.course_title || "").toLowerCase().includes(q) ||
+      (app.category || "").toLowerCase().includes(q);
 
     return matchesQuery;
   });
