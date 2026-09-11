@@ -8,7 +8,20 @@ export const revalidate = 0;
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { appId, token, password } = body;
+    const {
+      appId,
+      token,
+      password,
+      first_name,
+      last_name,
+      father_name,
+      date_of_birth,
+      country,
+      phone_number,
+      avatar_url,
+      bio,
+      achievements
+    } = body;
 
     if (!appId || !token || !password) {
       return NextResponse.json(
@@ -35,26 +48,36 @@ export async function POST(req: NextRequest) {
 
     if (fetchErr || !app) {
       return NextResponse.json(
-        { error: "Instructor application record not found." },
+        { error: "Instructor application record not found in database." },
         { status: 404 }
       );
     }
 
-    // 2. Validate token again on server
+    // 2. Validate cryptographic token on server
     const validation = verifyOnboardingToken(token, app);
     if (!validation.valid) {
       return NextResponse.json(
-        { error: validation.error || "Access Denied: Invalid or expired security token." },
+        { error: validation.error || "Access Denied: Invalid or expired faculty onboarding token." },
         { status: 403 }
       );
     }
 
     const email = app.email.trim().toLowerCase();
+    const finalFirstName = (first_name || app.first_name || "").trim();
+    const finalLastName = (last_name || app.last_name || "").trim();
+    const finalFatherName = (father_name || "").trim();
+    const finalDob = date_of_birth || app.date_of_birth || null;
+    const finalCountry = (country || app.country || "").trim();
+    const finalPhone = (phone_number || app.phone || "").trim();
+    const finalAvatar = avatar_url || app.avatar_url || null;
+    const finalBio = (bio || app.bio || "").trim();
+    const finalAchievements = (achievements || app.achievements || "").trim();
+
     let userId = app.user_id;
 
     // 3. Create or update user in Supabase Auth via Admin Client
     if (!userId) {
-      // Check if user with this email already exists in Supabase Auth
+      // Check if an auth user with this email already exists
       const { data: usersList } = await supabase.auth.admin.listUsers();
       const existingAuthUser = (usersList?.users || []).find(
         (u: any) => u.email?.toLowerCase() === email
@@ -68,8 +91,8 @@ export async function POST(req: NextRequest) {
             password,
             email_confirm: true,
             user_metadata: {
-              first_name: app.first_name,
-              last_name: app.last_name,
+              first_name: finalFirstName,
+              last_name: finalLastName,
               role: "teacher"
             }
           }
@@ -82,8 +105,8 @@ export async function POST(req: NextRequest) {
             password,
             email_confirm: true,
             user_metadata: {
-              first_name: app.first_name,
-              last_name: app.last_name,
+              first_name: finalFirstName,
+              last_name: finalLastName,
               role: "teacher"
             }
           });
@@ -101,8 +124,8 @@ export async function POST(req: NextRequest) {
           password,
           email_confirm: true,
           user_metadata: {
-            first_name: app.first_name,
-            last_name: app.last_name,
+            first_name: finalFirstName,
+            last_name: finalLastName,
             role: "teacher"
           }
         }
@@ -110,59 +133,91 @@ export async function POST(req: NextRequest) {
       if (updateAuthErr) throw updateAuthErr;
     }
 
-    // 4. Update profiles table (role = 'teacher')
-    await supabase.from("profiles").upsert({
+    // 4. Update profiles table (role is strictly set to 'teacher')
+    const profilePayload: Record<string, any> = {
       id: userId,
-      first_name: app.first_name,
-      last_name: app.last_name,
-      email,
-      phone_number: app.phone || null,
-      country: app.country || null,
-      date_of_birth: app.date_of_birth || null,
-      avatar_url: app.avatar_url || null,
-      bio: app.bio || "",
+      first_name: finalFirstName,
+      last_name: finalLastName,
+      date_of_birth: finalDob,
+      country: finalCountry || null,
+      phone_number: finalPhone || null,
+      email: email,
+      avatar_url: finalAvatar,
+      bio: finalBio,
       role: "teacher"
-    });
+    };
+
+    if (finalFatherName) {
+      profilePayload.father_name = finalFatherName;
+    }
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .upsert(profilePayload);
+
+    if (profileError) {
+      console.error("Profile upsert error:", profileError);
+      throw profileError;
+    }
 
     // 5. Update teacher_info table
-    await supabase.from("teacher_info").upsert({
-      id: userId,
-      first_name: app.first_name,
-      last_name: app.last_name,
-      date_of_birth: app.date_of_birth || null,
-      bio: app.bio || "",
-      achievements: app.achievements || "",
-      avatar_url: app.avatar_url || null
-    });
+    const { error: teacherInfoError } = await supabase
+      .from("teacher_info")
+      .upsert({
+        id: userId,
+        first_name: finalFirstName,
+        last_name: finalLastName,
+        date_of_birth: finalDob,
+        bio: finalBio,
+        achievements: finalAchievements,
+        avatar_url: finalAvatar
+      });
 
-    // 6. Link user_id in instructor_applications table
+    if (teacherInfoError) {
+      console.warn("teacher_info upsert notice:", teacherInfoError);
+    }
+
+    // 6. Link user_id in instructor_applications table and update synced details
     await supabase
       .from("instructor_applications")
-      .update({ user_id: userId })
+      .update({
+        user_id: userId,
+        first_name: finalFirstName,
+        last_name: finalLastName,
+        phone: finalPhone || app.phone,
+        country: finalCountry || app.country,
+        date_of_birth: finalDob,
+        avatar_url: finalAvatar,
+        bio: finalBio,
+        achievements: finalAchievements
+      })
       .eq("id", app.id);
 
-    // 7. Post welcome notification
+    // 7. Post welcome notification to instructor
     try {
       await supabase.from("user_notifications").insert({
         user_id: userId,
         title: "🎉 Welcome to Safi Academy Faculty!",
-        message: `Your instructor account has been activated for "${app.course_title}". You now have full access to the faculty teaching command center.`,
+        message: `Your faculty account is fully activated. You are officially appointed to teach "${app.course_title}". Welcome to the Safi Academy teaching leadership team!`,
         notification_type: "system",
-        link_url: "/en/admin/live-classes",
+        link_url: "/en/teacher",
         is_read: false
       });
     } catch (notifErr) {
-      console.warn("Notification warning:", notifErr);
+      console.warn("Welcome notification notice:", notifErr);
     }
 
     return NextResponse.json({
       success: true,
-      message: "Faculty account successfully activated."
+      userId,
+      email,
+      role: "teacher",
+      message: "Faculty account activated successfully with Teacher privileges."
     });
   } catch (error: any) {
-    console.error("Teacher onboarding registration error:", error);
+    console.error("Error activating teacher account:", error);
     return NextResponse.json(
-      { error: error?.message || "Failed to complete faculty activation." },
+      { error: error?.message || "Internal server error activating teacher account." },
       { status: 500 }
     );
   }

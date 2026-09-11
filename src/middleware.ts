@@ -45,23 +45,32 @@ export async function middleware(request: NextRequest) {
   const user = session?.user ?? null;
 
   if (pathname === '/') {
-    return NextResponse.redirect(new URL(`/${defaultLocale}`, request.url));
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = `/${defaultLocale}`;
+    return NextResponse.redirect(redirectUrl);
   }
 
   const pathnameIsMissingLocale = locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
 
+  // حفظ کامل کوئری پارامترها (Query Params مانند appId و token) در صورت نبود لوکال
   if (pathnameIsMissingLocale && pathname !== '/') {
-    return NextResponse.redirect(new URL(`/${defaultLocale}${pathname}`, request.url));
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = `/${defaultLocale}${pathname}`;
+    return NextResponse.redirect(redirectUrl);
   }
 
   const currentLocale = pathname.split('/')[1] || defaultLocale;
 
   // مسیرهای اصلی سیستم (برای بررسی‌های دسترسی)
-  const isAuthPage = pathname.includes('/login') || pathname.includes('/register');
+  // مسیر ثبت‌نام و آنبوردینگ استاد نباید با پنل محافظت‌شده اشتباه گرفته شود
+  const isTeacherOnboarding = pathname.includes('/teacher-onboarding') || pathname.includes('/teacher-register');
+  const isAuthPage = (pathname.includes('/login') || pathname.includes('/register')) && !isTeacherOnboarding;
   const isAdminRoute = pathname.includes('/admin');
-  const isTeacherRoute = pathname.includes('/teacher');
+  
+  // مسیرهای محافظت‌شده مدرس: فقط مسیرهای داخل /teacher که آنبوردینگ نیستند
+  const isTeacherRoute = (pathname === `/${currentLocale}/teacher` || pathname.startsWith(`/${currentLocale}/teacher/`)) && !isTeacherOnboarding;
   const isStudentRoute = pathname.includes('/dashboard');
   
   const isProtectedRoute = isAdminRoute || isTeacherRoute || isStudentRoute;
@@ -73,7 +82,9 @@ export async function middleware(request: NextRequest) {
     
     // اگر کاربر مهمان است و می‌خواهد به صفحات محافظت‌شده برود -> لاگین
     if (!user && isProtectedRoute) {
-      return NextResponse.redirect(new URL(`/${currentLocale}/login`, request.url));
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = `/${currentLocale}/login`;
+      return NextResponse.redirect(loginUrl);
     }
 
     if (user) {
@@ -92,7 +103,7 @@ export async function middleware(request: NextRequest) {
         return `/${currentLocale}/dashboard`;
       };
 
-      // اگر لاگین است و می‌خواهد برود صفحه لاگین/رجیستر -> ریدایرکت به پنل اصلی خودش
+      // اگر لاگین است و می‌خواهد برود صفحه لاگین/رجیستر دانش‌آموز -> ریدایرکت به پنل اصلی خودش
       if (isAuthPage) {
         return NextResponse.redirect(new URL(getCorrectDashboardRoot(), request.url));
       }
