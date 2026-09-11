@@ -97,3 +97,226 @@ body {
 .inner-glow {
   box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02);
 }
+
+/* ======================================================== */
+/* استایل‌های اختصاصی رندر مقالات و اسکالرشیپ‌ها (Markdown) */
+/* ======================================================== */
+
+.safi-markdown-content {
+  color: #d4d4d8;
+  font-size: 1.05rem;
+  line-height: 1.85;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.safi-markdown-content h1 {
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  border-bottom: 1px solid rgba(234, 179, 8, 0.2);
+  padding-bottom: 0.75rem;
+}
+
+.safi-markdown-content h2 {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: 2.25rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.safi-markdown-content h2::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 1.35rem;
+  background: #eab308;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.safi-markdown-content h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #facc15;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
+
+.safi-markdown-content h4,
+.safi-markdown-content h5,
+.safi-markdown-content h6 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e4e4e7;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.safi-markdown-content p {
+  margin-bottom: 1.5rem;
+  color: #d4d4d8;
+  line-height: 1.85;
+}
+
+.safi-markdown-content strong,
+.safi-markdown-content b {
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.safi-markdown-content em,
+.safi-markdown-content i {
+  font-style: italic;
+  color: #e4e4e7;
+}
+
+.safi-markdown-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.safi-markdown-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.safi-markdown-content li {
+  margin-bottom: 0.5rem;
+  line-height: 1.75;
+  color: #d4d4d8;
+}
+
+.safi-markdown-content li::marker {
+  color: #eab308;
+}
+
+.safi-markdown-content a {
+  color: #facc15;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.safi-markdown-content a:hover {
+  color: #fef08a;
+  text-decoration-color: #fef08a;
+}
+
+.safi-markdown-content blockquote {
+  margin: 1.75rem 0;
+  padding: 1.25rem 1.5rem;
+  background: rgba(234, 179, 8, 0.05);
+  border-left: 4px solid #eab308;
+  border-radius: 0 1rem 1rem 0;
+  color: #f4f4f5;
+  font-style: italic;
+  box-shadow: inset 0 0 15px rgba(234, 179, 8, 0.02);
+}
+
+.safi-markdown-content code {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.875em;
+  color: #facc15;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.2em 0.45em;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.safi-markdown-content pre {
+  margin: 1.75rem 0;
+  padding: 1.25rem 1.5rem;
+  background: #07070a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  overflow-x: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.safi-markdown-content pre code {
+  background: transparent;
+  padding: 0;
+  border: none;
+  color: #fef08a;
+}
+
+.safi-markdown-content hr {
+  margin: 2.5rem 0;
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(234, 179, 8, 0.3), transparent);
+}
+
+.safi-markdown-content img {
+  border-radius: 1.5rem;
+  margin: 2rem auto;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+}
+
+/* بسته جدول با اسکرول افقی اختصاصی و ضد بیرون زدگی از باکس */
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin: 2rem 0;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 10, 15, 0.7);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  -webkit-overflow-scrolling: touch;
+}
+
+.safi-markdown-content table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.safi-markdown-content th {
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #facc15;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.safi-markdown-content td {
+  padding: 0.875rem 1.25rem;
+  color: #d4d4d8;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  line-height: 1.6;
+}
+
+.safi-markdown-content tr:last-child td {
+  border-bottom: none;
+}
+
+.safi-markdown-content tr:hover td {
+  background: rgba(234, 179, 8, 0.03);
+}
