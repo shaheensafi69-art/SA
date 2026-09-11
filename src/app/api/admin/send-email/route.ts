@@ -1,84 +1,54 @@
+import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { createAdminClient } from "@/utils/supabase/admin";
 
-interface SendInstructorEmailParams {
+export const dynamic = "force-dynamic";
+
+interface EmailRequestBody {
   to: string;
   name: string;
   courseTitle: string;
   type: "approved" | "rejected";
   onboardingUrl?: string;
   adminNotes?: string;
+  smtpConfig?: {
+    host?: string;
+    port?: number;
+    user?: string;
+    pass?: string;
+    from?: string;
+  };
 }
 
-export async function sendInstructorDecisionEmail({
-  to,
-  name,
-  courseTitle,
-  type,
-  onboardingUrl,
-  adminNotes
-}: SendInstructorEmailParams): Promise<{ success: boolean; method: string; error?: string }> {
-  const isApproved = type === "approved";
+export async function POST(req: NextRequest) {
+  try {
+    // 1. Authenticate request using CRON_SECRET_KEY or Bearer token
+    const authHeader = req.headers.get("authorization") || req.headers.get("x-secret-key");
+    const expectedSecret = process.env.CRON_SECRET_KEY || "Hhu9HU8RmfP8RJ4lep24KMmku2GVY2+7ch8zTpPCxsA=";
 
-  // Check valid email format (avoid crashing on test strings like "نتبایلنت")
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const cleanEmail = (to || "").trim();
-
-  if (!emailRegex.test(cleanEmail)) {
-    console.warn(`[Email Skipped] Invalid email address: "${cleanEmail}"`);
-    return {
-      success: false,
-      method: "validation_failed",
-      error: `Invalid email address format: "${cleanEmail}". Email must be in format user@example.com.`
-    };
-  }
-
-  // 1. If approved, trigger Supabase Auth invite via Cloud SMTP if possible
-  let supabaseInviteSent = false;
-  if (isApproved && onboardingUrl) {
-    try {
-      const supabaseAdmin = createAdminClient();
-      
-      // Check if user already exists in auth.users
-      const { data: userList } = await supabaseAdmin.auth.admin.listUsers();
-      const existingUser = userList?.users?.find(
-        u => u.email?.toLowerCase() === cleanEmail.toLowerCase()
+    const token = authHeader?.replace(/^Bearer\s+/i, "").trim();
+    if (!token || token !== expectedSecret) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized: Invalid secret key." },
+        { status: 401 }
       );
-
-      // If user exists but has not confirmed email, we can delete the stale test user so inviteUserByEmail succeeds
-      if (existingUser && !existingUser.email_confirmed_at) {
-        try {
-          await supabaseAdmin.auth.admin.deleteUser(existingUser.id);
-          console.log(`[Supabase Auth] Removed unconfirmed candidate record ${existingUser.id} for fresh re-invite.`);
-        } catch (delErr) {
-          console.warn("[Supabase Auth] Note deleting unconfirmed user:", delErr);
-        }
-      }
-
-      const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(cleanEmail, {
-        redirectTo: onboardingUrl,
-        data: {
-          role: "teacher",
-          full_name: name
-        }
-      });
-      if (!error) {
-        supabaseInviteSent = true;
-        console.log("[Supabase Auth Invite Dispatched] to:", cleanEmail);
-      } else {
-        console.warn("[Supabase Invite Note]:", error.message);
-      }
-    } catch (inviteErr: any) {
-      console.warn("[Supabase Invite Exception]:", inviteErr?.message);
     }
-  }
 
-  // 2. Prepare Rich HTML Email Templates
-  const subject = isApproved
-    ? `🎓 Official Faculty Appointment: Welcome to Safi Academy (${courseTitle || "Faculty"})`
-    : `A Personal Note on Your Safi Academy Faculty Proposal (${courseTitle || "Faculty"})`;
+    const body: EmailRequestBody = await req.json();
+    const { to, name, courseTitle, type, onboardingUrl, adminNotes, smtpConfig } = body;
 
-  const approvalHtml = `
+    if (!to || !type) {
+      return NextResponse.json(
+        { success: false, error: "Missing required fields: to, type" },
+        { status: 400 }
+      );
+    }
+
+    const isApproved = type === "approved";
+    const subject = isApproved
+      ? `🎓 Official Faculty Appointment: Welcome to Safi Academy (${courseTitle || "Faculty"})`
+      : `A Personal Note on Your Safi Academy Faculty Proposal (${courseTitle || "Faculty"})`;
+
+    const approvalHtml = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -112,13 +82,13 @@ export async function sendInstructorDecisionEmail({
       </div>
 
       <div class="body">
-        <p>Dear <strong>${name}</strong>,</p>
+        <p>Dear <strong>${name || "Applicant"}</strong>,</p>
 
         <p>On behalf of the Safi Academy Academic Advisory Council and Executive Faculty, it is our greatest pleasure to officially inform you that your application to teach at Safi Academy has been <strong style="color: #10b981;">OFFICIALLY APPROVED</strong>!</p>
 
         <div class="course-card">
           <div style="font-size: 11px; color: #fbbf24; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; margin-bottom: 5px;">Approved Teaching Track</div>
-          <div style="font-size: 18px; font-weight: 800; color: #ffffff;">${courseTitle}</div>
+          <div style="font-size: 18px; font-weight: 800; color: #ffffff;">${courseTitle || "Instructor Track"}</div>
         </div>
 
         <p>Your demonstrated domain expertise, audition lecture, and pedagogical philosophy stood out among hundreds of candidates. We are excited to collaborate with you to deliver high-impact, transformative education to students globally.</p>
@@ -134,19 +104,23 @@ export async function sendInstructorDecisionEmail({
           This activation link is embedded with a one-time cryptographic authorization signature generated specifically for your credentials. For security, direct access without this link is disabled.
         </div>
 
+        ${onboardingUrl ? `
         <div class="btn-wrap">
           <a href="${onboardingUrl}" class="btn">Activate Faculty Account & Set Password</a>
         </div>
+        ` : ""}
 
         <div class="persian-section">
           <strong style="color: #fbbf24; font-size: 14px; display: block; margin-bottom: 10px;">پیام شورای علمی آکادمی صافی:</strong>
           استاد فرهیخته و گرامی، با افتخار به اطلاع می‌رساند که پس از ارزیابی دقیق رزومه، نمونه تدریس و سرفصل‌های پیشنهادی شما، عضویت رسمی‌تان در هیئت علمی آکادمی صافی به تصویب رسید. خواهشمند است با کلیک بر روی دکمه طلایی بالا یا لینک ارائه‌شده، رمز عبور اختصاصی خود را تعیین و پنل تدریس را فعال نمایید.
         </div>
 
+        ${onboardingUrl ? `
         <p style="font-size: 11px; color: #71717a; margin-top: 25px; word-break: break-all;">
           If the button does not respond, copy and paste this secure link directly into your browser:<br>
           <a href="${onboardingUrl}" style="color: #fbbf24; text-decoration: underline;">${onboardingUrl}</a>
         </p>
+        ` : ""}
       </div>
 
       <div class="footer">
@@ -157,9 +131,9 @@ export async function sendInstructorDecisionEmail({
   </div>
 </body>
 </html>
-  `;
+    `;
 
-  const rejectionHtml = `
+    const rejectionHtml = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -186,13 +160,13 @@ export async function sendInstructorDecisionEmail({
       <div class="header">
         <div class="badge">Faculty Admissions Update</div>
         <h1 class="title">A Personal Letter on Your Proposal</h1>
-        <p class="subtitle">Safi Academy Academic Admissions &bull; Course: "${courseTitle}"</p>
+        <p class="subtitle">Safi Academy Academic Admissions &bull; Course: "${courseTitle || "Faculty Proposal"}"</p>
       </div>
 
       <div class="body">
-        <p>Dear <strong>${name}</strong>,</p>
+        <p>Dear <strong>${name || "Educator"}</strong>,</p>
 
-        <p>First and foremost, we want to express our deepest gratitude for the immense dedication, expertise, and sincere passion you shared in your proposal to lead <strong>"${courseTitle}"</strong> at Safi Academy.</p>
+        <p>First and foremost, we want to express our deepest gratitude for the immense dedication, expertise, and sincere passion you shared in your proposal to lead <strong>"${courseTitle || "your course"}"</strong> at Safi Academy.</p>
 
         <p>Our academic committee was genuinely inspired by your ambition to mentor the next generation of students and by your desire to make advanced, accessible education possible across international boundaries.</p>
 
@@ -230,108 +204,52 @@ export async function sendInstructorDecisionEmail({
   </div>
 </body>
 </html>
-  `;
+    `;
 
-  const htmlContent = isApproved ? approvalHtml : rejectionHtml;
+    const html = isApproved ? approvalHtml : rejectionHtml;
 
-  // 3. SMTP configuration parameters
-  const smtpHost = process.env.SMTP_HOST || "smtp.hostinger.com";
-  const smtpPort = Number(process.env.SMTP_PORT) || 465;
-  const smtpUser = process.env.SMTP_USER || "info@safiacademy.org";
-  const smtpPass = process.env.SMTP_PASS || "Jan##123@@";
-  const fromEmail = process.env.SMTP_FROM || `"Safi Academy" <info@safiacademy.org>`;
-  const cronSecret = process.env.CRON_SECRET_KEY || "Hhu9HU8RmfP8RJ4lep24KMmku2GVY2+7ch8zTpPCxsA=";
+    // Resolve SMTP settings (from env or passed payload)
+    const host = smtpConfig?.host || process.env.SMTP_HOST || "smtp.hostinger.com";
+    const port = Number(smtpConfig?.port || process.env.SMTP_PORT) || 465;
+    const user = smtpConfig?.user || process.env.SMTP_USER || "info@safiacademy.org";
+    const pass = smtpConfig?.pass || process.env.SMTP_PASS || "Jan##123@@";
+    const from = smtpConfig?.from || process.env.SMTP_FROM || `"Safi Academy" <info@safiacademy.org>`;
 
-  // 4. Try Direct SMTP first (Works natively in Production on Vercel AWS)
-  try {
     const transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: smtpPort === 465,
-      auth: {
-        user: smtpUser,
-        pass: smtpPass
-      },
-      connectionTimeout: 4000,
-      greetingTimeout: 4000,
-      socketTimeout: 5000,
+      host,
+      port,
+      secure: port === 465,
+      auth: { user, pass },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
       tls: {
         rejectUnauthorized: false
       }
     });
 
     const info = await transporter.sendMail({
-      from: fromEmail,
-      to: cleanEmail,
+      from,
+      to,
       subject,
-      html: htmlContent
+      html
     });
 
-    console.log(`[Hostinger SMTP Direct Dispatched] MessageId: ${info.messageId} | to: ${cleanEmail} | type: ${type}`);
-    return { success: true, method: "smtp_direct" };
-  } catch (directSmtpErr: any) {
-    console.warn("[Direct SMTP Failed (e.g. Local ISP Port Block)]:", directSmtpErr?.message);
+    console.log(`[Cloud Send-Email Success] to: ${to}, type: ${type}, msgId: ${info.messageId}`);
 
-    // 5. Automatic Cloud Bridge: Dispatch via HTTPS Port 443 to Vercel/Production Cloud
-    // Because home/office ISPs block outbound port 465, the local server dispatches over HTTPS to our cloud endpoint
-    const cloudEndpoints = [
-      "https://safiacademy.vercel.app/api/admin/send-email",
-      "https://www.safiacademy.org/api/admin/send-email"
-    ];
-
-    for (const endpoint of cloudEndpoints) {
-      try {
-        console.log(`[Attempting Cloud Email Relay via HTTPS]: ${endpoint}`);
-        const cloudRes = await fetch(endpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${cronSecret}`
-          },
-          body: JSON.stringify({
-            to: cleanEmail,
-            name,
-            courseTitle,
-            type,
-            onboardingUrl,
-            adminNotes,
-            smtpConfig: {
-              host: smtpHost,
-              port: smtpPort,
-              user: smtpUser,
-              pass: smtpPass,
-              from: fromEmail
-            }
-          }),
-          // Timeout after 15 seconds
-          signal: AbortSignal.timeout(15000)
-        });
-
-        const cloudData = await cloudRes.json();
-        if (cloudRes.ok && cloudData.success) {
-          console.log(`[Cloud Email Relay Succeeded] MsgId: ${cloudData.messageId} | to: ${cleanEmail} | type: ${type}`);
-          return { success: true, method: "cloud_relay" };
-        } else {
-          console.warn(`[Cloud Email Relay Endpoint Note (${endpoint})]:`, cloudData);
-        }
-      } catch (cloudErr: any) {
-        console.warn(`[Cloud Email Relay Endpoint Exception (${endpoint})]:`, cloudErr?.message);
-      }
-    }
-
-    // 6. If Supabase Cloud invite succeeded, treat overall process as a success for approval
-    if (supabaseInviteSent) {
-      return {
-        success: true,
-        method: "supabase_cloud",
-        error: undefined
-      };
-    }
-
-    return {
-      success: false,
-      method: "smtp_error",
-      error: directSmtpErr?.message || "Failed to deliver email through Hostinger SMTP."
-    };
+    return NextResponse.json({
+      success: true,
+      messageId: info.messageId,
+      method: "cloud_hostinger_smtp"
+    });
+  } catch (error: any) {
+    console.error("[Cloud Send-Email Error]:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: error?.message || "Internal server error dispatching email."
+      },
+      { status: 500 }
+    );
   }
 }

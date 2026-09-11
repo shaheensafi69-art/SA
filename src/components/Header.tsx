@@ -23,6 +23,7 @@ const translations: Record<string, any> = {
     home: "Home", learn: "Learn", academy: "Academy", corporate: "Corporate",
     courses: "Courses", blog: "Blog", scholarships: "Scholarships", 
     partners: "Our Partners", donate: "Donate", about: "About", contact: "Contact",
+    instructorApplication: "Teach With Us",
     business: "Business Setup", hosting: "Hosting Deals", development: "Development Services",
     dashboard: "Dashboard", signIn: "Sign In", getStarted: "Get Started", signOut: "Sign Out",
     welcome: "Welcome,", selectLang: "Select Language", editProfile: "Edit Profile", signedInAs: "Signed in as"
@@ -31,6 +32,7 @@ const translations: Record<string, any> = {
     home: "خانه", learn: "آموزش", academy: "آکادمی", corporate: "شرکتی",
     courses: "کورس‌ها", blog: "بلاگ", scholarships: "بورسیه‌ها",
     partners: "شرکای ما", donate: "کمک مالی", about: "درباره ما", contact: "تماس",
+    instructorApplication: "درخواست تدریس (استادی)",
     business: "ثبت شرکت", hosting: "هاستینگ و سرور", development: "خدمات توسعه نرم‌افزار",
     dashboard: "داشـبورد", signIn: "ورود", getStarted: "شروع کنید", signOut: "خروج",
     welcome: "خوش آمدید،", selectLang: "انتخاب زبان آکادمی", editProfile: "ویرایش پروفایل", signedInAs: "وارد شده با"
@@ -39,6 +41,7 @@ const translations: Record<string, any> = {
     home: "کورپاڼه", learn: "زده کړه", academy: "اکاډمۍ", corporate: "شرکتی",
     courses: "کورسونه", blog: "بلاګ", scholarships: "بورسیې",
     partners: "زموږ شریکان", donate: "مرسته", about: "زموږ په اړه", contact: "اړیکه",
+    instructorApplication: "د ښوونکي غوښتنلیک",
     business: "د شرکت ثبت", hosting: "د هوسټینګ وړاندیزونه", development: "د سافټویر جوړولو خدمتونه",
     dashboard: "ډشبورډ", signIn: "ننوتل", getStarted: "پیل کړئ", signOut: "وتل",
     welcome: "ښه راغلاست،", selectLang: "د اکاډمۍ ژبه غوره کړئ", editProfile: "پروفایل ایډیټ کړئ", signedInAs: "ننوتل شوی په توګه"
@@ -47,6 +50,7 @@ const translations: Record<string, any> = {
     home: "Startseite", learn: "Lernen", academy: "Akademie", corporate: "Unternehmen",
     courses: "Kurse", blog: "Blog", scholarships: "Stipendien",
     partners: "Unsere Partner", donate: "Spenden", about: "Über uns", contact: "Kontakt",
+    instructorApplication: "Dozent werden",
     business: "Unternehmensgründung", hosting: "Hosting-Angebote", development: "Entwicklungsdienste",
     dashboard: "Dashboard", signIn: "Anmelden", getStarted: "Loslegen", signOut: "Abmelden",
     welcome: "Willkommen,", selectLang: "Sprache auswählen", editProfile: "Profil bearbeiten", signedInAs: "Angemeldet als"
@@ -55,6 +59,7 @@ const translations: Record<string, any> = {
     home: "Accueil", learn: "Apprendre", academy: "Académie", corporate: "Entreprise",
     courses: "Cours", blog: "Blog", scholarships: "Bourses",
     partners: "Nos Partenaires", donate: "Faire un don", about: "À propos", contact: "Contact",
+    instructorApplication: "Devenir Formateur",
     business: "Création d'entreprise", hosting: "Offres d'hébergement", development: "Services de développement",
     dashboard: "Tableau de bord", signIn: "Se connecter", getStarted: "Commencer", signOut: "Se déconnecter",
     welcome: "Bienvenue,", selectLang: "Choisir la langue", editProfile: "Modifier le profil", signedInAs: "Connecté en tant que"
@@ -63,6 +68,7 @@ const translations: Record<string, any> = {
     home: "ہوم", learn: "سیکھیں", academy: "اکیڈمی", corporate: "کارپوریٹ",
     courses: "کورسز", blog: "بلاگ", scholarships: "اسکالرشپ",
     partners: "ہمارے شراکت دار", donate: "عطیہ", about: "ہمارے بارے میں", contact: "رابطہ",
+    instructorApplication: "استاد بنیں (درخواست)",
     business: "بزنس سیٹ اپ", hosting: "ہوسٹنگ ڈیلز", development: "ڈیولپمنٹ سروسز",
     dashboard: "ڈیش بورڈ", signIn: "سائن ان", getStarted: "شروع کریں", signOut: "سائن آؤٹ",
     welcome: "خوش آمدید،", selectLang: "اکیڈمی کی زبان منتخب کریں", editProfile: "پروفایل میں ترمیم کریں", signedInAs: "سائن ان بطور"
@@ -107,6 +113,7 @@ export default function Header() {
         { name: t.scholarships, path: "/scholarships", icon: <GraduationCap size={14} /> },
         { name: t.donate, path: "/donate", icon: <HandHeart size={14} /> },
         { name: t.about, path: "/about", icon: <Sparkles size={14} /> },
+        { name: t.instructorApplication, path: "/instructor-application", icon: <GraduationCap size={14} /> },
       ]
     },
     {

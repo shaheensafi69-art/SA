@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { sendInstructorDecisionEmail } from "@/utils/email";
+import { generateOnboardingToken } from "@/utils/onboardingSecurity";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -101,12 +102,20 @@ export async function PATCH(req: NextRequest) {
     // Determine site origin for onboarding link
     const origin = req.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "https://safiacademy.vercel.app";
     const cleanOrigin = origin.replace(/\/en\/?$/, "");
-    const onboardingUrl = `${cleanOrigin}/en/teacher-onboarding?appId=${application.id}&email=${encodeURIComponent(application.email)}`;
 
-    // 3. Automated Decision Email (Approval with Onboarding Link OR Emotional Rejection)
+    // Generate tamper-proof cryptographic token
+    const secureToken = generateOnboardingToken(application.id, application.email);
+    const onboardingUrl = `${cleanOrigin}/en/teacher-onboarding?appId=${application.id}&token=${secureToken}`;
+
+    let emailResult: { success: boolean; method: string; error?: string } = {
+      success: false,
+      method: "skipped"
+    };
+
+    // 3. Automated Decision Email (Approval with Cryptographic Link OR Emotional Rejection)
     if (status === "approved" || status === "rejected") {
       try {
-        await sendInstructorDecisionEmail({
+        emailResult = await sendInstructorDecisionEmail({
           to: application.email,
           name: `${application.first_name} ${application.last_name}`.trim(),
           courseTitle: application.course_title,
@@ -114,8 +123,13 @@ export async function PATCH(req: NextRequest) {
           onboardingUrl,
           adminNotes: adminNotes || application.admin_notes || ""
         });
-      } catch (mailErr) {
+      } catch (mailErr: any) {
         console.error("Failed to send decision email:", mailErr);
+        emailResult = {
+          success: false,
+          method: "exception",
+          error: mailErr?.message || "Email dispatch failed unexpectedly."
+        };
       }
     }
 
@@ -210,7 +224,10 @@ ${adminNotes ? `📝 <b>یادداشت ادمین:</b> ${escapeHtml(adminNotes)}
     return NextResponse.json({
       success: true,
       application: updatedApp,
-      message: `Application has been marked as ${status}.`
+      emailResult,
+      message: emailResult.success
+        ? `Application marked as ${status.toUpperCase()} and notification email dispatched successfully!`
+        : `Application marked as ${status.toUpperCase()}. ${emailResult.error ? `(Email Note: ${emailResult.error})` : ""}`
     });
   } catch (error: any) {
     console.error("Error updating application:", error);

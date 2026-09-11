@@ -112,8 +112,8 @@ export default function AdminApplicationFormPage() {
       }
 
       setFeedbackMessage({
-        text: `Application successfully marked as ${newStatus.toUpperCase()}! Notification email dispatched.`,
-        type: "success"
+        text: data.message || `Application successfully marked as ${newStatus.toUpperCase()}!`,
+        type: data.emailResult?.success ? "success" : "error"
       });
 
       setApplications(prev =>

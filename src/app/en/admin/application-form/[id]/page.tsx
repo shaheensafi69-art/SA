@@ -151,10 +151,10 @@ export default function AdminApplicationDetailPage() {
       setApplication(prev => prev ? { ...prev, status: newStatus, reviewed_at: new Date().toISOString() } : null);
       setActionModal(null);
       setFeedback({
-        text: newStatus === "approved"
+        text: data.message || (newStatus === "approved"
           ? "Candidate APPROVED! Automated faculty welcome email with onboarding link has been dispatched."
-          : "Candidate REJECTED. A respectful, emotional consideration email has been sent.",
-        type: "success"
+          : "Candidate REJECTED. A respectful, emotional consideration email has been sent."),
+        type: data.emailResult?.success ? "success" : "error"
       });
     } catch (err: any) {
       console.error("Decision error:", err);
