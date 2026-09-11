@@ -5,8 +5,7 @@ import {
   X, Sparkles, LogOut, Bell, ShieldCheck, LayoutDashboard,
   Users, UserCheck, BookOpen, Presentation, CircleDollarSign,
   Trophy, Megaphone, Video, Headset, Settings, Grid, Rss,
-  Newspaper, GraduationCap, // آیکون‌های جدید اضافه شدند
-  ClipboardCheck
+  Newspaper, GraduationCap, ClipboardList // آیکون‌های جدید اضافه شدند
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -67,10 +66,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     router.replace("/en/login");
   };
 
-  // اضافه شدن Blogs و Scholarships و Applications به لیست منوها
+  // اضافه شدن Blogs و Scholarships به لیست منوها
   const menuItems = [
     { name: "Overview", path: "/en/admin", icon: <LayoutDashboard size={22} />, disabled: false },
-    { name: "Applications", path: "/en/admin/application-form", icon: <ClipboardCheck size={22} />, disabled: false },
+    { name: "Applications", path: "/en/admin/application-form", icon: <ClipboardList size={22} />, disabled: false },
     { name: "Academy Feed", path: "/en/feed", icon: <Rss size={22} />, disabled: false },
     { name: "Students", path: "/en/admin/manage-students", icon: <Users size={22} />, disabled: false },
     { name: "Faculty", path: "/en/admin/manage-teachers", icon: <UserCheck size={22} />, disabled: false },

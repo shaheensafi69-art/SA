@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { sendInstructorDecisionEmail } from "@/utils/email";
 
 export async function GET(req: NextRequest) {
   try {
@@ -34,7 +35,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ applications: data || [] });
   } catch (error: any) {
     console.error("Error fetching applications:", error);
-    return NextResponse.json({ error: error?.message || "Failed to fetch applications" }, { status: 500 });
+    return NextResponse.json(
+      { error: error?.message || "Failed to fetch applications" },
+      { status: 500 }
+    );
   }
 }
 
@@ -44,12 +48,15 @@ export async function PATCH(req: NextRequest) {
     const { id, status, adminNotes } = body;
 
     if (!id || !status) {
-      return NextResponse.json({ error: "Application ID and Status are required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Application ID and status are required" },
+        { status: 400 }
+      );
     }
 
     const supabase = await createClient();
 
-    // 1. Fetch the application
+    // 1. Fetch the target application
     const { data: application, error: fetchError } = await supabase
       .from("instructor_applications")
       .select("*")
@@ -57,7 +64,10 @@ export async function PATCH(req: NextRequest) {
       .single();
 
     if (fetchError || !application) {
-      return NextResponse.json({ error: "Application not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Instructor application not found" },
+        { status: 404 }
+      );
     }
 
     const updates: Record<string, any> = {
@@ -69,7 +79,7 @@ export async function PATCH(req: NextRequest) {
       updates.admin_notes = adminNotes;
     }
 
-    // 2. Update application status
+    // 2. Update status in instructor_applications table
     const { data: updatedApp, error: updateError } = await supabase
       .from("instructor_applications")
       .update(updates)
@@ -79,16 +89,37 @@ export async function PATCH(req: NextRequest) {
 
     if (updateError) throw updateError;
 
-    // 3. If Approved and user_id exists: promote to teacher
+    // Determine site origin for onboarding link
+    const origin = req.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "https://safiacademy.vercel.app";
+    const cleanOrigin = origin.replace(/\/en\/?$/, "");
+    const onboardingUrl = `${cleanOrigin}/en/teacher-onboarding?appId=${application.id}&email=${encodeURIComponent(application.email)}`;
+
+    // 3. Automated Decision Email (Approval with Onboarding Link OR Emotional Rejection)
+    if (status === "approved" || status === "rejected") {
+      try {
+        await sendInstructorDecisionEmail({
+          to: application.email,
+          name: `${application.first_name} ${application.last_name}`.trim(),
+          courseTitle: application.course_title,
+          type: status,
+          onboardingUrl,
+          adminNotes: adminNotes || application.admin_notes || ""
+        });
+      } catch (mailErr) {
+        console.error("Failed to send decision email:", mailErr);
+      }
+    }
+
+    // 4. If Approved and user already has an existing account (user_id)
     if (status === "approved" && application.user_id) {
       try {
-        // Upgrade role to teacher
+        // Upgrade profile role to teacher
         await supabase
           .from("profiles")
           .update({ role: "teacher" })
           .eq("id", application.user_id);
 
-        // Upsert into teacher_info
+        // Upsert into teacher_info table
         await supabase
           .from("teacher_info")
           .upsert({
@@ -101,34 +132,34 @@ export async function PATCH(req: NextRequest) {
             avatar_url: application.avatar_url || null
           });
 
-        // Send in-app notification
+        // In-app notification
         await supabase.from("user_notifications").insert({
           user_id: application.user_id,
           title: "🎉 Congratulations! Instructor Application Approved",
-          message: `Your faculty proposal for "${application.course_title}" has been accepted! Your account has been upgraded to Instructor status. Welcome to the Safi Academy faculty!`,
+          message: `Your faculty proposal for "${application.course_title}" has been accepted! Your account is upgraded to Instructor status. Welcome to Safi Academy!`,
           notification_type: "system",
           link_url: "/en/admin/live-classes",
           is_read: false
         });
-      } catch (promotionErr) {
-        console.warn("Could not auto-promote user profile:", promotionErr);
+      } catch (promErr) {
+        console.warn("User promotion warning:", promErr);
       }
     } else if (status === "rejected" && application.user_id) {
       try {
         await supabase.from("user_notifications").insert({
           user_id: application.user_id,
           title: "Instructor Application Status Update",
-          message: `Thank you for your interest in teaching at Safi Academy. After reviewing your proposal for "${application.course_title}", we regret to inform you that we cannot proceed at this time.`,
+          message: `Thank you for your interest in teaching at Safi Academy. After reviewing your proposal for "${application.course_title}", we regret that we cannot proceed at this time.`,
           notification_type: "system",
           link_url: "/en/courses",
           is_read: false
         });
-      } catch (rejectNotifErr) {
-        console.warn("Could not send rejection notification:", rejectNotifErr);
+      } catch (rejNotifErr) {
+        console.warn("Rejection notification warning:", rejNotifErr);
       }
     }
 
-    // 4. Send Telegram status update notification to Management
+    // 5. Telegram Notification to Management
     const TELEGRAM_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN || "8668673040:AAEI6Q4r28KWiTAGwvQrT0Y9j6S92KhtwiI";
     const TELEGRAM_CHAT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID || process.env.TELEGRAM_CHAT_ID || "5195615040";
 
@@ -137,19 +168,19 @@ export async function PATCH(req: NextRequest) {
         str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
       const statusEmoji = status === "approved" ? "✅" : status === "rejected" ? "❌" : "⏳";
-      const statusText = status === "approved" ? "APPROVED (تایید شد)" : status === "rejected" ? "REJECTED (رد شد)" : "PENDING (در انتظار بررسی)";
+      const statusTitle = status === "approved" ? "APPROVED (تایید و ارسال لینک ثبت‌نام)" : status === "rejected" ? "REJECTED (رد با ارسال ایمیل احساسی)" : "PENDING";
 
-      const message = `
-${statusEmoji} <b>بروزرسانی وضعیت درخواست تدریس</b> ${statusEmoji}
+      const tgMsg = `
+${statusEmoji} <b>تغییر وضعیت درخواست تدریس</b> ${statusEmoji}
 ━━━━━━━━━━━━━━━━━━━━━
 🆔 <b>شناسه:</b> <code>${application.id}</code>
 👤 <b>متقاضی:</b> ${escapeHtml(application.first_name)} ${escapeHtml(application.last_name)}
 📧 <b>ایمیل:</b> ${escapeHtml(application.email)}
 🎯 <b>دوره:</b> ${escapeHtml(application.course_title)}
-📌 <b>وضعیت جدید:</b> <b>${statusText}</b>
+📌 <b>وضعیت جدید:</b> <b>${statusTitle}</b>
 ${adminNotes ? `📝 <b>یادداشت ادمین:</b> ${escapeHtml(adminNotes)}` : ""}
 ━━━━━━━━━━━━━━━━━━━━━
-⏰ زمان تغییر: ${new Date().toISOString()}
+⏰ زمان: ${new Date().toISOString()}
       `.trim();
 
       try {
@@ -158,23 +189,26 @@ ${adminNotes ? `📝 <b>یادداشت ادمین:</b> ${escapeHtml(adminNotes)}
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             chat_id: TELEGRAM_CHAT_ID,
-            text: message,
+            text: tgMsg,
             parse_mode: "HTML"
           })
         });
       } catch (tgErr) {
-        console.warn("Telegram status update warning:", tgErr);
+        console.warn("Telegram alert error:", tgErr);
       }
     }
 
     return NextResponse.json({
       success: true,
       application: updatedApp,
-      message: `Application marked as ${status}`
+      message: `Application has been marked as ${status}.`
     });
   } catch (error: any) {
     console.error("Error updating application:", error);
-    return NextResponse.json({ error: error?.message || "Failed to update application" }, { status: 500 });
+    return NextResponse.json(
+      { error: error?.message || "Failed to update application" },
+      { status: 500 }
+    );
   }
 }
 
@@ -184,7 +218,10 @@ export async function DELETE(req: NextRequest) {
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json({ error: "Application ID is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Application ID is required" },
+        { status: 400 }
+      );
     }
 
     const supabase = await createClient();
@@ -195,9 +232,15 @@ export async function DELETE(req: NextRequest) {
 
     if (error) throw error;
 
-    return NextResponse.json({ success: true, message: "Application deleted successfully" });
+    return NextResponse.json({
+      success: true,
+      message: "Application deleted successfully"
+    });
   } catch (error: any) {
     console.error("Error deleting application:", error);
-    return NextResponse.json({ error: error?.message || "Failed to delete application" }, { status: 500 });
+    return NextResponse.json(
+      { error: error?.message || "Failed to delete application" },
+      { status: 500 }
+    );
   }
 }

@@ -29,7 +29,8 @@ import {
   AlertCircle,
   Check,
   ChevronDown,
-  Loader2
+  Loader2,
+  Film
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
@@ -38,6 +39,7 @@ export default function InstructorApplicationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingResume, setIsUploadingResume] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
   const [applicationId, setApplicationId] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -61,6 +63,7 @@ export default function InstructorApplicationPage() {
     achievements: "",
     portfolioUrl: "",
     sampleVideoUrl: "",
+    videoFileName: "",
     resumeUrl: "",
     resumeFileName: "",
     avatarUrl: "",
@@ -107,7 +110,7 @@ export default function InstructorApplicationPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Upload Resume to Cloudflare R2 via /api/upload
+  // Upload Resume to Cloudflare R2 via /api/upload (folder: instructor_resumes)
   const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -148,7 +151,7 @@ export default function InstructorApplicationPage() {
     }
   };
 
-  // Upload Profile Avatar
+  // Upload Profile Avatar (folder: instructor_image)
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -172,6 +175,47 @@ export default function InstructorApplicationPage() {
       console.error("Avatar upload failed:", err);
     } finally {
       setIsUploadingAvatar(false);
+    }
+  };
+
+  // Upload Sample Video to Cloudflare R2 (folder: instructor_video)
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 200 * 1024 * 1024) {
+      alert("Video size exceeds 200MB limit. Please upload a smaller video or provide a link.");
+      return;
+    }
+
+    setIsUploadingVideo(true);
+    setErrorMessage("");
+
+    try {
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+      uploadData.append("folder", "instructor_video");
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: uploadData
+      });
+
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        throw new Error(data.error || "Failed to upload video");
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        sampleVideoUrl: data.url,
+        videoFileName: file.name
+      }));
+    } catch (err: any) {
+      console.error("Video upload failed:", err);
+      setErrorMessage(err.message || "Failed to upload video.");
+    } finally {
+      setIsUploadingVideo(false);
     }
   };
 
@@ -448,7 +492,7 @@ export default function InstructorApplicationPage() {
                       Step {currentStep} of 4: {
                         currentStep === 1 ? "Personal Profile" :
                           currentStep === 2 ? "Teaching Domain & Course" :
-                            currentStep === 3 ? "Experience & Audition" :
+                            currentStep === 3 ? "Experience & Audition Video" :
                               "Credentials & Review"
                       }
                     </h2>
@@ -750,7 +794,7 @@ export default function InstructorApplicationPage() {
                     </motion.div>
                   )}
 
-                  {/* STEP 3: Experience, Bio & Audition Video */}
+                  {/* STEP 3: Experience, Bio & Audition Video (Direct Upload + URL Option) */}
                   {currentStep === 3 && (
                     <motion.div
                       key="step3"
@@ -789,34 +833,77 @@ export default function InstructorApplicationPage() {
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        <div>
-                          <label className="text-xs font-bold text-neutral-300 mb-2 block uppercase tracking-wider">
-                            LinkedIn / GitHub / Portfolio Link
+                      <div>
+                        <label className="text-xs font-bold text-neutral-300 mb-2 block uppercase tracking-wider">
+                          LinkedIn / GitHub / Portfolio Link
+                        </label>
+                        <input
+                          type="url"
+                          name="portfolioUrl"
+                          value={formData.portfolioUrl}
+                          onChange={handleChange}
+                          placeholder="https://linkedin.com/in/username"
+                          className="w-full px-4 py-3.5 rounded-xl bg-neutral-900/90 border border-white/10 text-white text-sm focus:border-amber-400 focus:outline-none transition-colors"
+                        />
+                      </div>
+
+                      {/* Audition Video: Direct Upload to Cloudflare R2 (folder: instructor_video) OR URL */}
+                      <div className="p-5 rounded-2xl bg-neutral-900/80 border border-white/10 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-bold text-neutral-200 uppercase tracking-wider flex items-center gap-2">
+                            <Film className="w-4 h-4 text-amber-400" />
+                            Sample Lecture or Demo Video (Audition)
                           </label>
-                          <input
-                            type="url"
-                            name="portfolioUrl"
-                            value={formData.portfolioUrl}
-                            onChange={handleChange}
-                            placeholder="https://linkedin.com/in/username"
-                            className="w-full px-4 py-3.5 rounded-xl bg-neutral-900/90 border border-white/10 text-white text-sm focus:border-amber-400 focus:outline-none transition-colors"
-                          />
+                          <span className="text-[10px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
+                            Upload File or Link
+                          </span>
                         </div>
 
-                        <div>
-                          <label className="text-xs font-bold text-neutral-300 mb-2 block uppercase tracking-wider">
-                            Sample Lecture or Demo Video Link
-                          </label>
+                        {/* File Upload Zone for Video */}
+                        <div className="border border-dashed border-white/20 hover:border-amber-500/40 rounded-2xl p-4 text-center relative bg-white/[0.01]">
                           <input
-                            type="url"
-                            name="sampleVideoUrl"
-                            value={formData.sampleVideoUrl}
-                            onChange={handleChange}
-                            placeholder="https://youtube.com/watch?v=... or Loom / Drive link"
-                            className="w-full px-4 py-3.5 rounded-xl bg-neutral-900/90 border border-white/10 text-white text-sm focus:border-amber-400 focus:outline-none transition-colors"
+                            type="file"
+                            accept="video/*,.mp4,.mov,.webm,.mkv"
+                            onChange={handleVideoUpload}
+                            disabled={isUploadingVideo}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                           />
+                          <div className="flex items-center justify-center gap-3">
+                            {isUploadingVideo ? (
+                              <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
+                            ) : formData.sampleVideoUrl && formData.videoFileName ? (
+                              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                            ) : (
+                              <Upload className="w-5 h-5 text-amber-400" />
+                            )}
+                            <div className="text-xs text-left">
+                              {isUploadingVideo ? (
+                                <span className="text-amber-400 font-semibold">Uploading video to media vault...</span>
+                              ) : formData.sampleVideoUrl && formData.videoFileName ? (
+                                <span className="text-emerald-400 font-semibold">
+                                  Video Uploaded: <span className="font-mono text-white">{formData.videoFileName}</span>
+                                </span>
+                              ) : (
+                                <span>Click or drag to upload sample video (MP4, WEBM up to 200MB)</span>
+                              )}
+                            </div>
+                          </div>
                         </div>
+
+                        <div className="relative flex py-1 items-center">
+                          <div className="flex-grow border-t border-white/10"></div>
+                          <span className="flex-shrink mx-3 text-[10px] text-neutral-500 uppercase tracking-widest font-mono">OR PASTE EXTERNAL LINK</span>
+                          <div className="flex-grow border-t border-white/10"></div>
+                        </div>
+
+                        <input
+                          type="url"
+                          name="sampleVideoUrl"
+                          value={formData.sampleVideoUrl}
+                          onChange={handleChange}
+                          placeholder="https://youtube.com/watch?v=... or Loom / Google Drive link"
+                          className="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-white/10 text-white text-xs focus:border-amber-400 focus:outline-none transition-colors"
+                        />
                       </div>
 
                       <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-neutral-300 flex items-start gap-3">

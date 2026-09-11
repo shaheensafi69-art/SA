@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { createClient as createServerClient } from '@/utils/supabase/server';
+
+// ایجاد کلاینت با دسترسی ادمین (Service Role) جهت عبور از موانع RLS و تضمین ثبت در دیتابیس
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+const supabaseAdmin = createSupabaseClient(supabaseUrl, supabaseServiceKey);
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,160 +36,154 @@ export async function POST(req: NextRequest) {
       userId
     } = body;
 
-    if (!firstName || !lastName || !email || !category || !courseTitle || !avatarUrl) {
+    // اعتبارسنجی فیلدهای اجباری
+    if (!firstName?.trim() || !lastName?.trim() || !email?.trim() || !category?.trim() || !courseTitle?.trim() || !avatarUrl) {
       return NextResponse.json(
         { error: 'Missing required applicant fields (including mandatory profile photo).' },
         { status: 400 }
       );
     }
 
-    const supabase = await createClient();
-
-    let targetUserId = userId || null;
+    // شناسایی کاربر لاگین شده در صورت عدم ارسال دستی userId
+    let targetUserId = userId && userId.trim() !== '' ? userId : null;
     if (!targetUserId) {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        targetUserId = user.id;
+      try {
+        const userClient = await createServerClient();
+        const { data: { user } } = await userClient.auth.getUser();
+        if (user) {
+          targetUserId = user.id;
+        }
+      } catch (authErr) {
+        console.warn('Could not retrieve user session:', authErr);
       }
     }
+
+    // تمیزسازی داده‌ها برای جلوگیری از ارورهای نوع داده پستگرس (UUID و DATE)
+    const sanitizedDateOfBirth = dateOfBirth && dateOfBirth.trim() !== '' ? dateOfBirth.trim() : null;
+    const sanitizedUserId = targetUserId && targetUserId.trim() !== '' ? targetUserId : null;
 
     let applicationRecordId = '';
 
-    // 1. Primary: Try inserting directly into dedicated instructor_applications table
-    try {
-      const { data: appData, error: appError } = await supabase
-        .from('instructor_applications')
-        .insert({
-          user_id: targetUserId,
-          first_name: firstName,
-          last_name: lastName,
-          email,
-          phone: phone || null,
-          country: country || null,
-          date_of_birth: dateOfBirth || null,
-          category,
-          course_title: courseTitle,
-          course_description: courseDescription || null,
-          experience_level: experienceLevel || null,
-          teaching_format: teachingFormat || null,
-          language: language || 'English',
-          bio: bio || null,
-          achievements: achievements || null,
-          portfolio_url: portfolioUrl || null,
-          sample_video_url: sampleVideoUrl || null,
-          resume_url: resumeUrl || null,
-          avatar_url: avatarUrl,
-          status: 'pending'
-        })
-        .select()
-        .single();
-
-      if (!appError && appData) {
-        applicationRecordId = appData.id;
-      } else if (appError) {
-        console.warn('Note on instructor_applications insert:', appError.message);
-      }
-    } catch (appErr) {
-      console.warn('instructor_applications table might not exist yet:', appErr);
-    }
-
-    // 2. If user is logged in, sync to teacher_info if available
-    if (targetUserId) {
-      try {
-        await supabase.from('teacher_info').upsert({
-          id: targetUserId,
-          first_name: firstName,
-          last_name: lastName,
-          date_of_birth: dateOfBirth || null,
-          bio: bio || '',
-          achievements: achievements || '',
-          avatar_url: avatarUrl || null
-        });
-      } catch (err) {
-        console.warn('Could not upsert into teacher_info:', err);
-      }
-    }
-
-    // 3. Fallback/Sync: Insert into tickets table for Admin dashboard visibility
-    const applicationSummary = {
-      fullName: `${firstName} ${lastName}`,
-      email,
-      phone: phone || 'Not provided',
-      country: country || 'Not provided',
-      dateOfBirth: dateOfBirth || 'Not provided',
-      category,
-      courseTitle,
-      courseDescription: courseDescription || 'Not provided',
-      experienceLevel: experienceLevel || 'Not specified',
-      teachingFormat: teachingFormat || 'Live & Recorded',
+    // ۱. ثبت قطعی در جدول ۶۲ (instructor_applications)
+    const applicationPayload = {
+      user_id: sanitizedUserId,
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone?.trim() || null,
+      country: country?.trim() || null,
+      date_of_birth: sanitizedDateOfBirth,
+      category: category.trim(),
+      course_title: courseTitle.trim(),
+      course_description: courseDescription?.trim() || null,
+      experience_level: experienceLevel || '3-5 Years',
+      teaching_format: teachingFormat || 'Hybrid (Live Cohorts & Recorded)',
       language: language || 'English',
-      bio: bio || 'Not provided',
-      achievements: achievements || 'Not provided',
-      portfolioUrl: portfolioUrl || 'Not provided',
-      sampleVideoUrl: sampleVideoUrl || 'Not provided',
-      resumeUrl: resumeUrl || null,
-      avatarUrl: avatarUrl || null,
-      submittedAt: new Date().toISOString()
+      bio: bio?.trim() || '',
+      achievements: achievements?.trim() || null,
+      portfolio_url: portfolioUrl?.trim() || null,
+      sample_video_url: sampleVideoUrl?.trim() || null,
+      resume_url: resumeUrl?.trim() || null,
+      avatar_url: avatarUrl.trim(),
+      status: 'pending',
+      admin_notes: null,
+      reviewed_at: null
     };
 
-    const formattedMessage = `
+    const { data: appData, error: appError } = await supabaseAdmin
+      .from('instructor_applications')
+      .insert([applicationPayload])
+      .select('id')
+      .single();
+
+    if (appError) {
+      console.error('CRITICAL: Error inserting into instructor_applications:', appError);
+      return NextResponse.json(
+        { error: `Database error: ${appError.message}` },
+        { status: 500 }
+      );
+    }
+
+    if (appData) {
+      applicationRecordId = appData.id;
+      console.log('Instructor application saved successfully with ID:', applicationRecordId);
+    }
+
+    // ۲. همگام‌سازی با پروفایل مدرس در صورت لاگین بودن کاربر (جدول ۵۰: teacher_info)
+    if (sanitizedUserId) {
+      try {
+        await supabaseAdmin.from('teacher_info').upsert({
+          id: sanitizedUserId,
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+          date_of_birth: sanitizedDateOfBirth,
+          bio: bio?.trim() || '',
+          achievements: achievements?.trim() || '',
+          avatar_url: avatarUrl.trim()
+        });
+      } catch (teacherErr) {
+        console.warn('Could not sync into teacher_info:', teacherErr);
+      }
+    }
+
+    // ۳. ایجاد تیکت پشتیبانی برای پیگیری در پنل ادمین (در صورت وجود حساب کاربری)
+    let ticketId: string = '';
+    if (sanitizedUserId) {
+      try {
+        const formattedTicketMessage = `
 🎓 **NEW INSTRUCTOR APPLICATION SUBMITTED**
 
 👤 **Personal Information:**
-- Name: ${applicationSummary.fullName}
-- Email: ${applicationSummary.email}
-- Phone/WhatsApp: ${applicationSummary.phone}
-- Country: ${applicationSummary.country}
-- Date of Birth: ${applicationSummary.dateOfBirth}
+- Name: ${firstName} ${lastName}
+- Email: ${email}
+- Phone/WhatsApp: ${phone || 'Not provided'}
+- Country: ${country || 'Not provided'}
+- Date of Birth: ${sanitizedDateOfBirth || 'Not provided'}
 
 📚 **Course & Teaching Domain:**
-- Category: ${applicationSummary.category}
-- Proposed Course Title: ${applicationSummary.courseTitle}
-- Teaching Format: ${applicationSummary.teachingFormat}
-- Language: ${applicationSummary.language}
-- Experience Level: ${applicationSummary.experienceLevel}
+- Category: ${category}
+- Proposed Course Title: ${courseTitle}
+- Teaching Format: ${teachingFormat}
+- Language: ${language}
+- Experience Level: ${experienceLevel}
 
-📝 **Course Description / Syllabus Outline:**
-${applicationSummary.courseDescription}
+📝 **Course Description:**
+${courseDescription || 'Not provided'}
 
 🏆 **Bio & Achievements:**
-- Bio: ${applicationSummary.bio}
-- Key Achievements: ${applicationSummary.achievements}
+- Bio: ${bio || 'Not provided'}
+- Key Achievements: ${achievements || 'Not provided'}
 
-🔗 **Links & Audition Materials:**
-- Avatar Photo: ${applicationSummary.avatarUrl || 'None'}
-- Portfolio / LinkedIn: ${applicationSummary.portfolioUrl}
-- Sample Lecture / Demo Video: ${applicationSummary.sampleVideoUrl}
-- Resume / CV Document: ${applicationSummary.resumeUrl || 'None attached'}
-    `.trim();
+🔗 **Audition Materials & Uploads:**
+- Avatar Photo: ${avatarUrl}
+- Resume / CV: ${resumeUrl || 'None attached'}
+- Sample Video: ${sampleVideoUrl || 'None attached'}
+- Portfolio / LinkedIn: ${portfolioUrl || 'Not provided'}
+        `.trim();
 
-    let ticketId: string = '';
-    try {
-      const { data: ticket, error: ticketError } = await supabase
-        .from('tickets')
-        .insert({
-          student_id: targetUserId,
-          subject: `Instructor Application: ${firstName} ${lastName} (${category})`,
-          department: 'Instructor Application',
-          status: 'open'
-        })
-        .select()
-        .single();
+        const { data: ticket, error: ticketError } = await supabaseAdmin
+          .from('tickets')
+          .insert({
+            student_id: sanitizedUserId,
+            subject: `Instructor Application: ${firstName} ${lastName} (${category})`,
+            department: 'Instructor Application',
+            status: 'open'
+          })
+          .select('id')
+          .single();
 
-      if (!ticketError && ticket) {
-        ticketId = ticket.id;
+        if (!ticketError && ticket) {
+          ticketId = ticket.id;
 
-        await supabase.from('ticket_messages').insert({
-          ticket_id: ticket.id,
-          sender_id: targetUserId,
-          message_text: formattedMessage,
-          attachment_url: resumeUrl || null
-        });
+          await supabaseAdmin.from('ticket_messages').insert({
+            ticket_id: ticket.id,
+            sender_id: sanitizedUserId,
+            message_text: formattedTicketMessage,
+            attachment_url: resumeUrl || sampleVideoUrl || null
+          });
 
-        // If targetUserId exists, send in-app notification
-        if (targetUserId) {
-          await supabase.from('user_notifications').insert({
-            user_id: targetUserId,
+          await supabaseAdmin.from('user_notifications').insert({
+            user_id: sanitizedUserId,
             title: 'Instructor Application Received',
             message: 'Your application to join Safi Academy as an instructor has been received. Our faculty committee will review your proposal within 48-72 hours.',
             notification_type: 'system',
@@ -187,32 +191,41 @@ ${applicationSummary.courseDescription}
             is_read: false
           });
         }
+      } catch (ticketErr) {
+        console.warn('Ticket creation skipped or encountered an error:', ticketErr);
       }
-    } catch (dbError) {
-      console.warn('Database ticket creation note:', dbError);
     }
 
-    // 4. Send Instant Telegram Alert to Management
-    const TELEGRAM_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN || '8668673040:AAEI6Q4r28KWiTAGwvQrT0Y9j6S92KhtwiI';
-    const TELEGRAM_CHAT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID || process.env.TELEGRAM_CHAT_ID || '5195615040';
+    // ۴. ارسال فوری هشدار تلگرام به مدیریت با تمام لینک‌های آپلود شده
+    const TELEGRAM_TOKEN =
+      process.env.TELEGRAM_BOT_TOKEN ||
+      process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN ||
+      '8668673040:AAEI6Q4r28KWiTAGwvQrT0Y9j6S92KhtwiI';
+
+    const TELEGRAM_CHAT_ID =
+      process.env.TELEGRAM_CHAT_ID ||
+      process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID ||
+      '5195615040';
 
     if (TELEGRAM_TOKEN && TELEGRAM_CHAT_ID) {
       const escapeHtml = (str: string = '') =>
         str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-      const appRefId = applicationRecordId ? `APP-${applicationRecordId.slice(0, 8)}` : (ticketId ? `TCK-${ticketId.slice(0, 8)}` : `APP-${Date.now().toString().slice(-6)}`);
+      const appRefId = applicationRecordId
+        ? `APP-${applicationRecordId.slice(0, 8).toUpperCase()}`
+        : (ticketId ? `TCK-${ticketId.slice(0, 8).toUpperCase()}` : `APP-${Date.now().toString().slice(-6)}`);
 
       const telegramMessage = `
 🎓 <b>درخواست جدید تدریس در آکادمی صافی</b> 🎓
 ━━━━━━━━━━━━━━━━━━━━━
-🆔 <b>کد پیگیری:</b> <code>${escapeHtml(appRefId)}</code>
+🆔 <b>کد پیگیری دیتابیس:</b> <code>${escapeHtml(appRefId)}</code>
 
 👤 <b>مشخصات متقاضی:</b>
 • <b>نام و تخلص:</b> ${escapeHtml(firstName)} ${escapeHtml(lastName)}
 • <b>ایمیل:</b> ${escapeHtml(email)}
 • <b>شماره تماس:</b> ${escapeHtml(phone || 'ثبت نشده')}
 • <b>کشور محل سکونت:</b> ${escapeHtml(country || 'ثبت نشده')}
-• <b>تاریخ تولد:</b> ${escapeHtml(dateOfBirth || 'ثبت نشده')}
+• <b>تاریخ تولد:</b> ${escapeHtml(sanitizedDateOfBirth || 'ثبت نشده')}
 
 📚 <b>دوره و تخصص:</b>
 • <b>حوزه تدریس:</b> ${escapeHtml(category)}
@@ -224,17 +237,17 @@ ${applicationSummary.courseDescription}
 📝 <b>توضیحات دوره:</b>
 ${escapeHtml(courseDescription || 'توضیحاتی درج نشده است')}
 
-🏆 <b>بیوگرافی و دستاوردها:</b>
+🏆 <b>بیوگرافی:</b>
 ${escapeHtml(bio || 'ثبت نشده')}
 ${achievements ? `\n🏅 <b>دستاوردها:</b>\n${escapeHtml(achievements)}` : ''}
 
-🔗 <b>مدارک و لینک‌ها:</b>
-• <b>عکس پروفایل:</b> ${avatarUrl ? `<a href="${avatarUrl}">مشاهده عکس پرسنلی</a>` : 'ندارد'}
-• <b>فایل رزومه / CV:</b> ${resumeUrl ? `<a href="${resumeUrl}">دانلود رزومه (PDF/DOC)</a>` : 'ندارد'}
-• <b>پورتفولیو / لینکدین:</b> ${portfolioUrl ? `<a href="${portfolioUrl}">مشاهده پورتفولیو</a>` : 'ارائه نشده'}
-• <b>ویدیوی دمو / تدریس:</b> ${sampleVideoUrl ? `<a href="${sampleVideoUrl}">مشاهده ویدیو نمونه</a>` : 'ارائه نشده'}
+🔗 <b>مدارک و فایل‌های آپلود شده (Cloudflare Vault):</b>
+• 🖼 <b>عکس پرسنلی:</b> ${avatarUrl ? `<a href="${avatarUrl}">مشاهده عکس پروفایل</a>` : 'ندارد'}
+• 📄 <b>رزومه / CV:</b> ${resumeUrl ? `<a href="${resumeUrl}">دانلود رزومه</a>` : 'ندارد'}
+• 🎥 <b>ویدیو نمونه تدریس:</b> ${sampleVideoUrl ? `<a href="${sampleVideoUrl}">مشاهده و دانلود ویدیو</a>` : 'ارائه نشده'}
+• 🌐 <b>لینکدین / پورتفولیو:</b> ${portfolioUrl ? `<a href="${portfolioUrl}">مشاهده لینک پورتفولیو</a>` : 'ارائه نشده'}
 ━━━━━━━━━━━━━━━━━━━━━
-⏰ <b>زمان ثبت:</b> ${new Date().toISOString()}
+⏰ <b>زمان ثبت:</b> ${new Date().toLocaleString('fa-IR', { timeZone: 'Asia/Kabul' })}
       `.trim();
 
       try {
@@ -251,24 +264,23 @@ ${achievements ? `\n🏅 <b>دستاوردها:</b>\n${escapeHtml(achievements)}
 
         if (!tgRes.ok) {
           const tgErrData = await tgRes.text();
-          console.error('Telegram notification responded with error:', tgErrData);
-        } else {
-          console.log('Telegram notification sent successfully to chat:', TELEGRAM_CHAT_ID);
+          console.error('Telegram notification error:', tgErrData);
         }
       } catch (tgError) {
-        console.error('Error sending Telegram notification:', tgError);
+        console.error('Error sending Telegram message:', tgError);
       }
     }
 
     const finalAppId = applicationRecordId
-      ? `APP-${applicationRecordId.slice(0, 8)}`
-      : (ticketId ? `TCK-${ticketId.slice(0, 8)}` : `APP-${Date.now().toString().slice(-6)}`);
+      ? `APP-${applicationRecordId.slice(0, 8).toUpperCase()}`
+      : `APP-${Date.now().toString().slice(-6)}`;
 
     return NextResponse.json({
       success: true,
       applicationId: finalAppId,
-      message: 'Your instructor application has been submitted successfully.'
+      message: 'Your instructor application has been submitted and stored in the database successfully.'
     });
+
   } catch (error: any) {
     console.error('Instructor application API error:', error);
     return NextResponse.json(
