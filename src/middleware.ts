@@ -12,7 +12,9 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/auth/callback') ||
-    pathname.includes('.') || pathname === '/app-ads.txt' || pathname === '/ads.txt'
+    pathname.includes('.') ||
+    pathname === '/app-ads.txt' ||
+    pathname === '/ads.txt'
   ) {
     return NextResponse.next();
   }
@@ -126,6 +128,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|api/.*|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|app-ads\\.txt|ads\\.txt|api/.*|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json|txt)$).*)',
   ],
 };
