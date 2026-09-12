@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/auth/callback') ||
-    pathname.includes('.') || pathname === '/app-ads.txt'
+    pathname.includes('.') || pathname === '/app-ads.txt' || pathname === '/ads.txt'
   ) {
     return NextResponse.next();
   }
