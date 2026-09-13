@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
+import { trackPurchaseConversion } from "@/lib/gtag";
 
 type CourseOption = {
   id: string;
@@ -152,6 +153,11 @@ export default function CourseRegistrationForm({
       }
 
       setStatus("success");
+      trackPurchaseConversion({
+        value: finalPayableAmount || 1.0,
+        currency: "GBP",
+        transactionId: studentId || "",
+      });
     } catch (error: any) {
       console.error("Registration error:", error);
       setStatus("error");

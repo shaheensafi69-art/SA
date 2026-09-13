@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import PushAlertScript from "@/components/PushAlertScript";
 
@@ -22,6 +23,9 @@ export const metadata: Metadata = {
   icons: {
     apple: "/icon.png",
   },
+  other: {
+    "google-adsense-account": "ca-pub-6551903544426492",
+  },
 };
 
 export default function RootLayout({
@@ -32,6 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <head>
+        <meta name="google-adsense-account" content="ca-pub-6551903544426492" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -48,6 +53,33 @@ export default function RootLayout({
         }} />
       </head>
       <body className="min-h-full flex flex-col bg-neutral-950 text-white relative">
+        {/* Google AdSense */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6551903544426492"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
+        {/* Google tag (gtag.js) */}
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18447660056"
+        />
+        <Script
+          id="google-ads-tag"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+
+              gtag('config', 'AW-18447660056');
+            `,
+          }}
+        />
+
         <PushAlertScript />
 
         {/* ویدیوی SplashScreen کاملاً حذف شد */}
