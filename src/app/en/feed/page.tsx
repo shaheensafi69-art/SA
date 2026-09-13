@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import StoryBar from "@/components/feed/StoryBar";
+import InFeedNativeAd from "@/components/ads/InFeedNativeAd";
 
 interface PostItem {
   id: string;
@@ -357,8 +358,12 @@ export default function StudentFeedPage() {
                 <p className="text-neutral-500 font-bold text-sm tracking-wide">No posts found matching your criteria.</p>
               </div>
             ) : (
-              filteredPosts.map((post) => (
-                <div key={post.id} className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-5 sm:p-8 backdrop-blur-md space-y-5 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all">
+              filteredPosts.map((post, index) => (
+                <React.Fragment key={post.id}>
+                  {index > 0 && index % 4 === 0 && (
+                    <InFeedNativeAd adIndex={Math.floor(index / 4)} />
+                  )}
+                  <div className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-5 sm:p-8 backdrop-blur-md space-y-5 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all">
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 sm:gap-4">
@@ -449,6 +454,7 @@ export default function StudentFeedPage() {
                     </button>
                   </div>
                 </div>
+              </React.Fragment>
               ))
             )}
           </div>

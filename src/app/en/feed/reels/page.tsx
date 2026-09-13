@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback, Suspense } from "react";
+import React, { useEffect, useState, useRef, useCallback, Suspense } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
+import InReelNativeAd from "@/components/ads/InReelNativeAd";
 import {
     Heart,
     MessageCircle,
@@ -532,7 +533,7 @@ function ReelsContent() {
 
             {/* ================= FIXED TOP HEADER (STAYS PERMANENTLY FIXED ACROSS ALL VIDEOS AS YOU SCROLL) ================= */}
             <div className="absolute top-3 lg:top-5 left-0 right-0 z-40 flex flex-col items-center pointer-events-none px-3">
-                
+
                 {/* Temporary App Banner (auto-collapses after 4.5s or close button) */}
                 {showAppBanner && (
                     <div className="pointer-events-auto w-full max-w-md bg-black/80 backdrop-blur-2xl border border-white/15 rounded-2xl px-3.5 py-2 flex items-center justify-between shadow-2xl mb-2 animate-[fadeIn_0.3s_ease-out]">
@@ -671,148 +672,155 @@ function ReelsContent() {
                         const isDownloadingThis = downloadingReelId === reel.id;
 
                         return (
-                            <div
-                                key={reel.id}
-                                className="w-full h-full snap-start snap-always relative flex items-center justify-center bg-black group overflow-hidden"
-                            >
-                                {/* Video Element */}
-                                <video
-                                    ref={(el) => { videoRefs.current[index] = el; }}
-                                    src={reel.video_url}
-                                    poster={reel.thumbnail_url || undefined}
-                                    className="w-full h-full object-contain cursor-pointer bg-black"
-                                    loop
-                                    playsInline
-                                    muted={isMuted}
-                                    onClick={() => handleVideoTap(reel, index)}
-                                />
-
-                                {/* Double-Tap Floating Heart Animation (Instagram Style) */}
-                                {isHeartPopping && (
-                                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-30">
-                                        <div className="animate-[ping_0.6s_ease-out] text-[#C2185B] drop-shadow-[0_0_35px_rgba(194,24,91,0.9)]">
-                                            <Heart size={100} fill="#C2185B" className="stroke-[#ffffff] stroke-[1.5]" />
-                                        </div>
-                                    </div>
+                            <React.Fragment key={reel.id}>
+                                {index > 0 && index % 4 === 0 && (
+                                    <InReelNativeAd
+                                        adIndex={Math.floor(index / 4)}
+                                        onShare={() => setShareReel(reel)}
+                                    />
                                 )}
+                                <div
+                                    className="w-full h-full snap-start snap-always relative flex items-center justify-center bg-black group overflow-hidden"
+                                >
+                                    {/* Video Element */}
+                                    <video
+                                        ref={(el) => { videoRefs.current[index] = el; }}
+                                        src={reel.video_url}
+                                        poster={reel.thumbnail_url || undefined}
+                                        className="w-full h-full object-contain cursor-pointer bg-black"
+                                        loop
+                                        playsInline
+                                        muted={isMuted}
+                                        onClick={() => handleVideoTap(reel, index)}
+                                    />
 
-                                {/* Gradient Overlays for Readability */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/10 to-transparent pointer-events-none lg:rounded-[2rem]"></div>
-                                <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-black/60 to-transparent pointer-events-none"></div>
+                                    {/* Double-Tap Floating Heart Animation (Instagram Style) */}
+                                    {isHeartPopping && (
+                                        <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-30">
+                                            <div className="animate-[ping_0.6s_ease-out] text-[#C2185B] drop-shadow-[0_0_35px_rgba(194,24,91,0.9)]">
+                                                <Heart size={100} fill="#C2185B" className="stroke-[#ffffff] stroke-[1.5]" />
+                                            </div>
+                                        </div>
+                                    )}
 
-                                {/* ================= SAFE BOTTOM OFFSET FOR AUTHOR INFO (BOTTOM LEFT) ================= */}
-                                <div className="absolute bottom-20 lg:bottom-10 left-3.5 right-18 z-20 space-y-2 pointer-events-auto">
-                                    <div className="flex items-center gap-2.5">
-                                        <Link
-                                            href={`/en/feed/profile/${reel.user_id}`}
-                                            className="w-10 h-10 rounded-full bg-neutral-900 border-2 border-[#C2185B] overflow-hidden flex items-center justify-center shrink-0 shadow-lg hover:scale-105 transition-transform"
-                                        >
-                                            {reel.authorAvatar ? (
-                                                <img src={reel.authorAvatar} alt="" className="w-full h-full object-cover" />
-                                            ) : (
-                                                <span className="text-[#C2185B] font-black text-xs">{reel.authorName.charAt(0)}</span>
-                                            )}
-                                        </Link>
-                                        <div>
+                                    {/* Gradient Overlays for Readability */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/10 to-transparent pointer-events-none lg:rounded-[2rem]"></div>
+                                    <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-black/60 to-transparent pointer-events-none"></div>
+
+                                    {/* ================= SAFE BOTTOM OFFSET FOR AUTHOR INFO (BOTTOM LEFT) ================= */}
+                                    <div className="absolute bottom-20 lg:bottom-10 left-3.5 right-18 z-20 space-y-2 pointer-events-auto">
+                                        <div className="flex items-center gap-2.5">
                                             <Link
                                                 href={`/en/feed/profile/${reel.user_id}`}
-                                                className="text-white font-black text-xs sm:text-sm tracking-wide drop-shadow-md hover:underline block leading-tight"
+                                                className="w-10 h-10 rounded-full bg-neutral-900 border-2 border-[#C2185B] overflow-hidden flex items-center justify-center shrink-0 shadow-lg hover:scale-105 transition-transform"
                                             >
-                                                {reel.authorName}
-                                            </Link>
-                                            <span className="inline-block px-2 py-0.5 bg-[#C2185B]/40 backdrop-blur-sm border border-[#C2185B]/50 text-pink-100 text-[8px] sm:text-[9px] font-black uppercase tracking-wider rounded mt-0.5 shadow-sm">
-                                                {reel.category}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h3 className="text-white font-bold text-xs sm:text-sm drop-shadow-md line-clamp-1 leading-snug">{reel.title}</h3>
-                                        {reel.description && (
-                                            <div className="text-neutral-200 text-[11px] sm:text-xs font-medium mt-0.5 drop-shadow-md">
-                                                <p className={isExpanded ? "" : "line-clamp-2"}>{reel.description}</p>
-                                                {reel.description.length > 70 && (
-                                                    <button
-                                                        onClick={() => setExpandedDescriptions(prev => ({ ...prev, [reel.id]: !isExpanded }))}
-                                                        className="text-[#C2185B] font-black text-[10px] sm:text-[11px] mt-0.5 hover:text-pink-400 transition-colors bg-black/40 px-2 py-0.5 rounded-full"
-                                                    >
-                                                        {isExpanded ? "Show Less" : "Read More..."}
-                                                    </button>
+                                                {reel.authorAvatar ? (
+                                                    <img src={reel.authorAvatar} alt="" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <span className="text-[#C2185B] font-black text-xs">{reel.authorName.charAt(0)}</span>
                                                 )}
+                                            </Link>
+                                            <div>
+                                                <Link
+                                                    href={`/en/feed/profile/${reel.user_id}`}
+                                                    className="text-white font-black text-xs sm:text-sm tracking-wide drop-shadow-md hover:underline block leading-tight"
+                                                >
+                                                    {reel.authorName}
+                                                </Link>
+                                                <span className="inline-block px-2 py-0.5 bg-[#C2185B]/40 backdrop-blur-sm border border-[#C2185B]/50 text-pink-100 text-[8px] sm:text-[9px] font-black uppercase tracking-wider rounded mt-0.5 shadow-sm">
+                                                    {reel.category}
+                                                </span>
                                             </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* ================= SAFE BOTTOM OFFSET FOR ACTION BAR (BOTTOM RIGHT) ================= */}
-                                <div className="absolute bottom-20 lg:bottom-10 right-2.5 z-20 flex flex-col items-center gap-3.5 sm:gap-4.5">
-
-                                    {/* Like Button */}
-                                    <button
-                                        onClick={() => toggleLike(reel)}
-                                        className="flex flex-col items-center group/btn"
-                                        title={reel.isLikedByMe ? "Unlike" : "Like"}
-                                    >
-                                        <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-xl border flex items-center justify-center transition-all shadow-lg ${reel.isLikedByMe
-                                            ? "bg-[#C2185B] border-[#C2185B] text-white shadow-[0_0_20px_rgba(194,24,91,0.7)] scale-105"
-                                            : "bg-black/45 border-white/20 text-white hover:bg-black/70 hover:scale-105"
-                                            }`}>
-                                            <Heart size={20} fill={reel.isLikedByMe ? "currentColor" : "none"} />
                                         </div>
-                                        <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.likes_count}</span>
-                                    </button>
 
-                                    {/* Comment Button (Opens modal on mobile, focuses desktop panel) */}
-                                    <button
-                                        onClick={() => setActiveReelCommentsId(reel.id)}
-                                        className="flex flex-col items-center group/btn lg:hidden"
-                                        title="Comments"
-                                    >
-                                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-black/70 hover:scale-105 transition-all shadow-lg">
-                                            <MessageCircle size={20} />
-                                        </div>
-                                        <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.comments_count}</span>
-                                    </button>
-
-                                    {/* Desktop Comment Count Indicator */}
-                                    <div className="hidden lg:flex flex-col items-center opacity-85">
-                                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-lg">
-                                            <MessageCircle size={20} />
-                                        </div>
-                                        <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.comments_count}</span>
-                                    </div>
-
-                                    {/* Share Button */}
-                                    <button
-                                        onClick={() => handleOpenShare(reel)}
-                                        className="flex flex-col items-center group/btn"
-                                        title="Share Reel"
-                                    >
-                                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-[#C2185B] hover:border-[#C2185B] hover:scale-105 transition-all shadow-lg">
-                                            <Share2 size={18} />
-                                        </div>
-                                        <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">Share</span>
-                                    </button>
-
-                                    {/* Download Button (TikTok/Instagram Style) */}
-                                    <button
-                                        onClick={() => handleDownloadVideo(reel)}
-                                        disabled={isDownloadingThis}
-                                        className="flex flex-col items-center group/btn"
-                                        title="Download Video"
-                                    >
-                                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-black hover:border-yellow-500 hover:scale-105 transition-all shadow-lg disabled:opacity-50">
-                                            {isDownloadingThis ? (
-                                                <Loader2 size={18} className="animate-spin text-white" />
-                                            ) : (
-                                                <Download size={18} />
+                                        <div>
+                                            <h3 className="text-white font-bold text-xs sm:text-sm drop-shadow-md line-clamp-1 leading-snug">{reel.title}</h3>
+                                            {reel.description && (
+                                                <div className="text-neutral-200 text-[11px] sm:text-xs font-medium mt-0.5 drop-shadow-md">
+                                                    <p className={isExpanded ? "" : "line-clamp-2"}>{reel.description}</p>
+                                                    {reel.description.length > 70 && (
+                                                        <button
+                                                            onClick={() => setExpandedDescriptions(prev => ({ ...prev, [reel.id]: !isExpanded }))}
+                                                            className="text-[#C2185B] font-black text-[10px] sm:text-[11px] mt-0.5 hover:text-pink-400 transition-colors bg-black/40 px-2 py-0.5 rounded-full"
+                                                        >
+                                                            {isExpanded ? "Show Less" : "Read More..."}
+                                                        </button>
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
-                                        <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">Save</span>
-                                    </button>
+                                    </div>
 
+                                    {/* ================= SAFE BOTTOM OFFSET FOR ACTION BAR (BOTTOM RIGHT) ================= */}
+                                    <div className="absolute bottom-20 lg:bottom-10 right-2.5 z-20 flex flex-col items-center gap-3.5 sm:gap-4.5">
+
+                                        {/* Like Button */}
+                                        <button
+                                            onClick={() => toggleLike(reel)}
+                                            className="flex flex-col items-center group/btn"
+                                            title={reel.isLikedByMe ? "Unlike" : "Like"}
+                                        >
+                                            <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-xl border flex items-center justify-center transition-all shadow-lg ${reel.isLikedByMe
+                                                ? "bg-[#C2185B] border-[#C2185B] text-white shadow-[0_0_20px_rgba(194,24,91,0.7)] scale-105"
+                                                : "bg-black/45 border-white/20 text-white hover:bg-black/70 hover:scale-105"
+                                                }`}>
+                                                <Heart size={20} fill={reel.isLikedByMe ? "currentColor" : "none"} />
+                                            </div>
+                                            <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.likes_count}</span>
+                                        </button>
+
+                                        {/* Comment Button (Opens modal on mobile, focuses desktop panel) */}
+                                        <button
+                                            onClick={() => setActiveReelCommentsId(reel.id)}
+                                            className="flex flex-col items-center group/btn lg:hidden"
+                                            title="Comments"
+                                        >
+                                            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-black/70 hover:scale-105 transition-all shadow-lg">
+                                                <MessageCircle size={20} />
+                                            </div>
+                                            <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.comments_count}</span>
+                                        </button>
+
+                                        {/* Desktop Comment Count Indicator */}
+                                        <div className="hidden lg:flex flex-col items-center opacity-85">
+                                            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-lg">
+                                                <MessageCircle size={20} />
+                                            </div>
+                                            <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.comments_count}</span>
+                                        </div>
+
+                                        {/* Share Button */}
+                                        <button
+                                            onClick={() => handleOpenShare(reel)}
+                                            className="flex flex-col items-center group/btn"
+                                            title="Share Reel"
+                                        >
+                                            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-[#C2185B] hover:border-[#C2185B] hover:scale-105 transition-all shadow-lg">
+                                                <Share2 size={18} />
+                                            </div>
+                                            <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">Share</span>
+                                        </button>
+
+                                        {/* Download Button (TikTok/Instagram Style) */}
+                                        <button
+                                            onClick={() => handleDownloadVideo(reel)}
+                                            disabled={isDownloadingThis}
+                                            className="flex flex-col items-center group/btn"
+                                            title="Download Video"
+                                        >
+                                            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-black hover:border-yellow-500 hover:scale-105 transition-all shadow-lg disabled:opacity-50">
+                                                {isDownloadingThis ? (
+                                                    <Loader2 size={18} className="animate-spin text-white" />
+                                                ) : (
+                                                    <Download size={18} />
+                                                )}
+                                            </div>
+                                            <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">Save</span>
+                                        </button>
+
+                                    </div>
                                 </div>
-                            </div>
+                            </React.Fragment>
                         );
                     })
                 )}

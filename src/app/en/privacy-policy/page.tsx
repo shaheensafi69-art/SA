@@ -444,6 +444,35 @@ export default function PrivacyPolicyPage() {
                   </div>
                   <span className="text-amber-400 font-mono text-[11px] bg-amber-500/10 px-2.5 py-1 rounded-lg shrink-0">Outbound Only</span>
                 </div>
+
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                  <div>
+                    <strong className="text-white block">Google AdSense & Advertising Cookies</strong>
+                    <span className="text-neutral-400">Used by Google to serve ads based on user visits to this and other websites across the Internet.</span>
+                  </div>
+                  <span className="text-yellow-400 font-mono text-[11px] bg-yellow-500/10 px-2.5 py-1 rounded-lg shrink-0">Third-Party (Opt-Out Available)</span>
+                </div>
+              </div>
+
+              {/* Google AdSense & Third-Party Advertising Disclosure */}
+              <div className="mt-6 pt-6 border-t border-white/10 space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+                  <h4 className="text-sm font-black text-white uppercase tracking-wider">
+                    Google AdSense & Third-Party Advertising Compliance
+                  </h4>
+                </div>
+                <div className="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-3 text-xs leading-relaxed text-neutral-300">
+                  <p>
+                    Safi Academy uses <strong className="text-white">Google AdSense</strong> and accredited third-party advertising vendors to display relevant, non-intrusive advertisements on selected community and feed areas.
+                  </p>
+                  <ul className="list-disc list-inside space-y-2 text-neutral-400">
+                    <li><strong className="text-white">Third-Party Vendors:</strong> Google and other third-party advertising networks use cookies to serve advertisements based on a user's prior visits to Safi Academy or other websites across the web.</li>
+                    <li><strong className="text-white">DoubleClick DART Cookie:</strong> Google's use of advertising cookies enables it and its partners to serve relevant advertisements to users based on their visits to our platform and other sites on the Internet.</li>
+                    <li><strong className="text-white">Personalized Ad Opt-Out:</strong> Users can opt out of personalized advertising by visiting <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" className="text-yellow-400 underline font-bold">Google Ads Settings</a> or through <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-yellow-400 underline font-bold">AboutAds.info</a>.</li>
+                    <li><strong className="text-white">Privacy Safeguards:</strong> Safi Academy does not sell personal user identifiers to ad brokers and restricts ad formats to native, non-disruptive placements.</li>
+                  </ul>
+                </div>
               </div>
             </div>
 

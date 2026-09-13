@@ -352,6 +352,19 @@ export default function TermsOfServicePage() {
                     <li><strong className="text-white">Disclaimer of Vendor Liability:</strong> Safi International Capital LTD disclaims any liability for third-party filing mistakes, state rejections, processing delays, or service downtime.</li>
                   </ul>
                 </div>
+
+                {/* Google AdSense & Third-Party Advertising Network Terms */}
+                <div className="bg-black/40 border border-white/10 rounded-2xl p-5 space-y-3">
+                  <h4 className="font-bold text-white flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-yellow-400" />
+                    Google AdSense & Digital Advertising Network Terms:
+                  </h4>
+                  <ul className="list-disc list-inside text-neutral-400 space-y-2 pl-2 text-xs leading-relaxed">
+                    <li><strong className="text-white">Third-Party Commercial Display:</strong> Safi Academy displays advertisements served by Google AdSense and accredited digital ad networks. We do not manufacture, guarantee, or directly endorse the specific products or services advertised by third-party sponsors.</li>
+                    <li><strong className="text-white">Advertiser Interactions:</strong> Any transactions, communications, or engagements you undertake with commercial advertisers found on our platform are solely between you and the respective third-party vendor.</li>
+                    <li><strong className="text-white">Ad Delivery Standards:</strong> Advertisements on Safi Academy adhere to high standards of digital decorum and are integrated natively (such as non-intrusive in-feed cards and in-reel units) to preserve student learning focus.</li>
+                  </ul>
+                </div>
               </div>
             </div>
 
