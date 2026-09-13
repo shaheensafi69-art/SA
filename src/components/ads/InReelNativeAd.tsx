@@ -29,7 +29,7 @@ export default function InReelNativeAd({ adIndex = 0, onShare }: InReelNativeAdP
       </div>
 
       {/* Official Google AdSense In-article / Fluid Unit - Sized to Reel Screen */}
-      <div className="w-full max-w-[420px] px-4 flex-1 flex flex-col items-center justify-center relative z-10 my-auto">
+      <div className="w-full max-w-[540px] xl:max-w-[620px] px-4 flex-1 flex flex-col items-center justify-center relative z-10 my-auto">
         <div className="w-full bg-[#0d0e17]/90 border border-yellow-500/20 rounded-[2rem] p-4 sm:p-6 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] flex flex-col items-center justify-center min-h-[300px]">
           <GoogleAdSenseAd
             client="ca-pub-6551903544426492"

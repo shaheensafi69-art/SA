@@ -49,7 +49,7 @@ function ConfettiEffect() {
 // ==========================================
 // 1. TYPEWRITER COMPONENT FOR BRAND SIDEBAR
 // ==========================================
-export interface TypewriterProps {
+interface TypewriterProps {
   text: string | string[];
   speed?: number;
   cursor?: string;
@@ -59,7 +59,7 @@ export interface TypewriterProps {
   className?: string;
 }
 
-export function Typewriter({
+function Typewriter({
   text,
   speed = 100,
   cursor = "|",

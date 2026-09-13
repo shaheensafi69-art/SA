@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback, Suspense } from "react";
+import React, { useEffect, useState, useRef, useCallback, Suspense, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import InReelNativeAd from "@/components/ads/InReelNativeAd";
@@ -105,10 +105,13 @@ function ReelsContent() {
     // Top App Banner state (shows for a few seconds on entry, then collapses to a sleek icon)
     const [showAppBanner, setShowAppBanner] = useState(true);
 
+    // Desktop comments panel open/collapse state (allows wider viewer on desktop)
+    const [isDesktopCommentsOpen, setIsDesktopCommentsOpen] = useState(true);
+
     const router = useRouter();
     const searchParams = useSearchParams();
     const targetReelId = searchParams.get("id");
-    const supabase = createClient();
+    const supabase = useMemo(() => createClient(), []);
 
     // Auto-dismiss the top app banner after 4.5 seconds
     useEffect(() => {
@@ -135,8 +138,17 @@ function ReelsContent() {
     const fetchReelsData = async (tab: 'for_you' | 'friends') => {
         setIsLoading(true);
         try {
-            const { data: { session } } = await supabase.auth.getSession();
-            const userId = session?.user?.id || null;
+            let userId: string | null = null;
+            try {
+                const sessionPromise = supabase.auth.getSession();
+                const timeoutPromise = new Promise<{ data: { session: null } }>((resolve) =>
+                    setTimeout(() => resolve({ data: { session: null } }), 1200)
+                );
+                const res = await Promise.race([sessionPromise, timeoutPromise]);
+                userId = res?.data?.session?.user?.id || null;
+            } catch (authErr) {
+                console.warn("Auth check error in reels:", authErr);
+            }
             setCurrentUserId(userId);
 
             let loadedReels: ReelItem[] = [];
@@ -173,31 +185,40 @@ function ReelsContent() {
                 if (error) throw error;
                 loadedReels = await processReelsList(reelsRes || [], userId);
             } else {
-                // For You tab: Explore algorithm
-                const { data: reelsRes, error } = await supabase
-                    .from("reels")
-                    .select("*")
-                    .eq("is_published", true);
+                // For You tab: Explore algorithm with timeout guard
+                let reelsRes: any[] = [];
+                try {
+                    const fetchPromise = supabase
+                        .from("reels")
+                        .select("*")
+                        .eq("is_published", true);
+                    const timeoutPromise = new Promise<{ data: any[], error: any }>((resolve) =>
+                        setTimeout(() => resolve({ data: [], error: null }), 3500)
+                    );
+                    const res = await Promise.race([fetchPromise, timeoutPromise]);
+                    reelsRes = res?.data || [];
+                } catch (err) {
+                    console.warn("Reels fetch error:", err);
+                }
 
-                if (error) throw error;
+                // If DB returned items, rank them; otherwise fallback gracefully
+                if (reelsRes.length > 0) {
+                    const scoredReels = reelsRes.map(item => {
+                        const views = item.views_count || 0;
+                        const likes = item.likes_count || 0;
+                        const comments = item.comments_count || 0;
+                        const score = (likes * 3) + (comments * 5) + (views * 1) + (Math.random() * 10);
+                        return { item, score };
+                    });
 
-                // Rank reels using explore algorithm (likes, comments, views + engagement jitter)
-                const scoredReels = (reelsRes || []).map(item => {
-                    const views = item.views_count || 0;
-                    const likes = item.likes_count || 0;
-                    const comments = item.comments_count || 0;
-                    const score = (likes * 3) + (comments * 5) + (views * 1) + (Math.random() * 10);
-                    return { item, score };
-                });
-
-                scoredReels.sort((a, b) => b.score - a.score);
-                const sortedRaw = scoredReels.map(s => s.item);
-
-                loadedReels = await processReelsList(sortedRaw, userId);
+                    scoredReels.sort((a, b) => b.score - a.score);
+                    const sortedRaw = scoredReels.map(s => s.item);
+                    loadedReels = await processReelsList(sortedRaw, userId);
+                }
             }
 
             // If a specific reel ID was passed in URL query, bring it to the front
-            if (targetReelId) {
+            if (targetReelId && loadedReels.length > 0) {
                 const targetIdx = loadedReels.findIndex(r => r.id === targetReelId);
                 if (targetIdx > 0) {
                     const [targetItem] = loadedReels.splice(targetIdx, 1);
@@ -218,14 +239,22 @@ function ReelsContent() {
     const processReelsList = async (rawReels: any[], userId: string | null): Promise<ReelItem[]> => {
         if (rawReels.length === 0) return [];
 
-        const userIds = Array.from(new Set(rawReels.map(r => r.user_id)));
-        const reelIds = rawReels.map(r => r.id.toString());
+        const userIds = Array.from(new Set(rawReels.map(r => r.user_id).filter(Boolean)));
+        const reelIds = rawReels.map(r => (r.id || '').toString()).filter(Boolean);
 
-        // Batch 1: Profiles
-        const { data: profiles } = await supabase
-            .from("profiles")
-            .select("id, first_name, last_name, avatar_url")
-            .in("id", userIds);
+        // Batch 1: Profiles with timeout guard
+        let profiles: any[] = [];
+        try {
+            const profPromise = supabase
+                .from("profiles")
+                .select("id, first_name, last_name, avatar_url")
+                .in("id", userIds);
+            const timeoutPromise = new Promise<{ data: any[] }>((resolve) =>
+                setTimeout(() => resolve({ data: [] }), 2500)
+            );
+            const res = await Promise.race([profPromise, timeoutPromise]);
+            profiles = res?.data || [];
+        } catch (_) { }
 
         const profileMap = new Map<string, { name: string; avatar: string }>();
         profiles?.forEach(p => {
@@ -233,21 +262,27 @@ function ReelsContent() {
             profileMap.set(p.id, { name, avatar: p.avatar_url || "" });
         });
 
-        // Batch 2: Likes
+        // Batch 2: Likes with timeout guard
         let likedReelIds = new Set<string>();
-        if (userId) {
-            const { data: myLikes } = await supabase
-                .from("reel_likes")
-                .select("reel_id")
-                .eq("user_id", userId)
-                .in("reel_id", reelIds);
-
-            likedReelIds = new Set((myLikes || []).map(l => l.reel_id?.toString()));
+        if (userId && reelIds.length > 0) {
+            try {
+                const likesPromise = supabase
+                    .from("reel_likes")
+                    .select("reel_id")
+                    .eq("user_id", userId)
+                    .in("reel_id", reelIds);
+                const timeoutPromise = new Promise<{ data: any[] }>((resolve) =>
+                    setTimeout(() => resolve({ data: [] }), 2000)
+                );
+                const res = await Promise.race([likesPromise, timeoutPromise]);
+                const myLikes = res?.data || [];
+                likedReelIds = new Set(myLikes.map(l => l.reel_id?.toString()));
+            } catch (_) { }
         }
 
         return rawReels.map(item => {
-            const rId = item.id.toString();
-            const uId = item.user_id.toString();
+            const rId = (item.id || '').toString();
+            const uId = (item.user_id || '').toString();
             const prof = profileMap.get(uId) || { name: "Academy Member", avatar: "" };
 
             return {
@@ -543,7 +578,7 @@ function ReelsContent() {
     }
 
     return (
-        <div className="w-full h-full flex items-center justify-center bg-[#030305] lg:p-3 xl:p-4 gap-4 overflow-hidden relative font-sans select-none">
+        <div className="w-full h-full flex items-center justify-center bg-[#030305] sm:p-3 lg:p-4 gap-4 overflow-hidden relative font-sans select-none">
 
             {/* Floating Toast Notification (English Only) */}
             {toastMessage && (
@@ -555,15 +590,19 @@ function ReelsContent() {
                 </div>
             )}
 
-            {/* ================= CENTERED REELS PLAYER COLUMN (PHONE PROPORTIONS ON DESKTOP) ================= */}
-            <div className="relative w-full lg:max-w-[440px] xl:max-w-[480px] h-full flex flex-col bg-black lg:rounded-[2.5rem] lg:border border-white/10 overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.9)]">
+            {/* ================= CENTERED REELS PLAYER COLUMN (EXPANDED SPACIOUS VIEWER) ================= */}
+            <div className={`relative w-full ${
+                isDesktopCommentsOpen
+                    ? "sm:max-w-[540px] md:max-w-[580px] lg:max-w-[620px] xl:max-w-[640px] 2xl:max-w-[700px]"
+                    : "sm:max-w-[540px] md:max-w-[600px] lg:max-w-[660px] xl:max-w-[740px] 2xl:max-w-[800px]"
+            } h-full flex flex-col bg-black sm:rounded-[2.5rem] sm:border border-white/10 overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.9)] transition-all duration-300`}>
 
                 {/* ================= PERMANENT TOP CONTROLS (ALWAYS PINNED OVER EVERY REEL SCREEN) ================= */}
                 <div className="absolute top-3 lg:top-4 inset-x-0 z-40 flex flex-col items-center pointer-events-none px-3">
 
                     {/* Temporary App Banner (auto-collapses after 4.5s or close button) */}
                     {showAppBanner && (
-                        <div className="pointer-events-auto w-full max-w-sm bg-black/85 backdrop-blur-2xl border border-white/15 rounded-2xl px-3 py-1.5 flex items-center justify-between shadow-2xl mb-2 animate-[fadeIn_0.3s_ease-out]">
+                        <div className="pointer-events-auto w-full max-w-[520px] xl:max-w-[580px] bg-black/85 backdrop-blur-2xl border border-white/15 rounded-2xl px-3 py-1.5 flex items-center justify-between shadow-2xl mb-2 animate-[fadeIn_0.3s_ease-out]">
                             <div className="flex items-center gap-2">
                                 <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[#C2185B] to-yellow-500 flex items-center justify-center text-black font-black text-[9px] shadow-md">
                                     SA
@@ -593,7 +632,7 @@ function ReelsContent() {
                     )}
 
                     {/* Sleek Tabs & Controls Bar (Persistent on all reels) */}
-                    <div className="pointer-events-auto flex items-center justify-between w-full max-w-sm px-1">
+                    <div className="pointer-events-auto flex items-center justify-between w-full max-w-[540px] xl:max-w-[620px] px-2 sm:px-3">
                         {/* Switcher Pill */}
                         <div className="flex items-center bg-black/70 backdrop-blur-2xl border border-white/15 p-1 rounded-2xl shadow-2xl">
                             <button
@@ -807,25 +846,27 @@ function ReelsContent() {
                                             <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.likes_count}</span>
                                         </button>
 
-                                        {/* Comment Button (Opens modal on mobile) */}
+                                        {/* Comment Button (Opens drawer on mobile/tablet, toggles panel on desktop) */}
                                         <button
-                                            onClick={() => setActiveReelCommentsId(reel.id)}
-                                            className="flex flex-col items-center group/btn lg:hidden"
-                                            title="Comments"
+                                            onClick={() => {
+                                                if (typeof window !== "undefined" && window.innerWidth >= 1280) {
+                                                    setIsDesktopCommentsOpen(prev => !prev);
+                                                } else {
+                                                    setActiveReelCommentsId(reel.id);
+                                                }
+                                            }}
+                                            className="flex flex-col items-center group/btn"
+                                            title="Comments & Discussion"
                                         >
-                                            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-black/70 hover:scale-105 transition-all shadow-lg">
+                                            <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-xl border flex items-center justify-center text-white transition-all shadow-lg ${
+                                                isDesktopCommentsOpen
+                                                    ? "bg-[#C2185B]/30 border-[#C2185B] text-white hover:bg-[#C2185B]/50 hover:scale-105"
+                                                    : "bg-black/45 border-white/20 hover:bg-black/70 hover:scale-105"
+                                            }`}>
                                                 <MessageCircle size={20} />
                                             </div>
                                             <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.comments_count}</span>
                                         </button>
-
-                                        {/* Desktop Comment Count Indicator */}
-                                        <div className="hidden lg:flex flex-col items-center opacity-85">
-                                            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-lg">
-                                                <MessageCircle size={20} />
-                                            </div>
-                                            <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.comments_count}</span>
-                                        </div>
 
                                         {/* Share Button */}
                                         <button
@@ -866,13 +907,22 @@ function ReelsContent() {
             </div>
 
             {/* ================= DESKTOP COMMENTS SIDE PANEL ================= */}
-            {reels.length > 0 && (
-                <div className="hidden lg:flex w-[340px] xl:w-[380px] h-full bg-[#0a0a0f] border border-white/10 rounded-[2.5rem] flex-col overflow-hidden shadow-2xl shrink-0">
-                    <div className="p-5 xl:p-6 border-b border-white/5 bg-gradient-to-b from-[#12121a] to-[#0a0a0f]">
-                        <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-                            <MessageCircle size={18} className="text-[#C2185B]" /> Discussion
-                        </h3>
-                        <p className="text-[10px] text-neutral-400 font-bold mt-1">Comments update automatically as you scroll.</p>
+            {reels.length > 0 && isDesktopCommentsOpen && (
+                <div className="hidden xl:flex w-[340px] 2xl:w-[380px] h-full bg-[#0a0a0f] border border-white/10 rounded-[2.5rem] flex-col overflow-hidden shadow-2xl shrink-0 animate-[fadeIn_0.2s_ease-out]">
+                    <div className="p-4 sm:p-5 xl:p-6 border-b border-white/5 bg-gradient-to-b from-[#12121a] to-[#0a0a0f] flex items-center justify-between">
+                        <div>
+                            <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                                <MessageCircle size={18} className="text-[#C2185B]" /> Discussion
+                            </h3>
+                            <p className="text-[10px] text-neutral-400 font-bold mt-1">Comments update automatically as you scroll.</p>
+                        </div>
+                        <button
+                            onClick={() => setIsDesktopCommentsOpen(false)}
+                            className="w-7 h-7 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
+                            title="Hide comments to expand player"
+                        >
+                            <X size={14} />
+                        </button>
                     </div>
                     <SharedCommentsView
                         reelId={reels[activeVideoIndex]?.id}
