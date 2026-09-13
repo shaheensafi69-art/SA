@@ -2,12 +2,12 @@
 
 import { useEffect, useState, forwardRef } from "react";
 import Link from "next/link";
-import { 
-  ArrowRight, 
-  Building2, 
-  ExternalLink, 
-  Award, 
-  BookOpen, 
+import {
+  ArrowRight,
+  Building2,
+  ExternalLink,
+  Award,
+  BookOpen,
   ArrowUpRight,
   ShieldCheck,
   CheckCircle2,
@@ -115,7 +115,7 @@ const Interactive3DCard = forwardRef<HTMLDivElement, Interactive3DCardProps>(
               (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${title.replace(" ", "+")}&background=random&size=512`;
             }}
           />
-          
+
           {/* Darkening overlay for contrast */}
           <div className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-b from-black/30 via-black/40 to-black/90" />
 
@@ -130,7 +130,7 @@ const Interactive3DCard = forwardRef<HTMLDivElement, Interactive3DCardProps>(
 
           {/* Card Content (Header & Footer) */}
           <div className="relative flex flex-col justify-between rounded-2xl p-6 text-white z-10">
-            
+
             {/* Header section with link */}
             <div className="flex items-start justify-end">
               <motion.a
@@ -362,7 +362,7 @@ export default function AboutPage() {
             )
           `)
           .order("created_at", { ascending: true });
-        
+
         if (error) throw error;
         if (data) {
           setTeachers(data as unknown as TeacherInfo[]);
@@ -414,7 +414,7 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-yellow-500/30 overflow-hidden" dir="ltr">
-      
+
       {/* ================= AMBIENT BACKGROUND LIGHTING ================= */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
@@ -424,20 +424,20 @@ export default function AboutPage() {
 
       {/* ================= HERO SECTION ================= */}
       <section className="relative pt-32 md:pt-40 pb-20 px-6 md:px-12 max-w-7xl mx-auto z-10 text-center">
-        
+
         {/* Verification Pill */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-xs font-black uppercase tracking-widest mb-8 animate-[fadeInDown_0.5s_ease-out] shadow-[0_0_20px_rgba(234,179,8,0.2)]">
           <ShieldCheck size={16} />
           <span>Part of Safi International Capital LTD • London, UK</span>
         </div>
-        
+
         <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tight mb-8 leading-[1.08] animate-[fadeInUp_0.6s_ease-out]">
           Architecting The Future of <br className="hidden md:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-600 drop-shadow-2xl">
             Global Education.
           </span>
         </h1>
-        
+
         <p className="text-neutral-300 text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed mb-12 animate-[fadeInUp_0.7s_ease-out]">
           Safi Academy is the premier international institution within the Safi Ecosystem. Headquartered in London, we bridge the gap between real-world industry mastery and modern educational technology, empowering tens of thousands of global students to achieve financial, technological, and intellectual independence.
         </p>
@@ -542,7 +542,7 @@ export default function AboutPage() {
           {academicDisciplines.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <div 
+              <div
                 key={idx}
                 className="bg-neutral-900/60 border border-white/5 hover:border-yellow-500/30 p-8 rounded-3xl backdrop-blur-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 hover:shadow-xl hover:shadow-yellow-500/5"
               >
@@ -585,7 +585,7 @@ export default function AboutPage() {
           {techPillars.map((pillar, idx) => {
             const Icon = pillar.icon;
             return (
-              <div 
+              <div
                 key={idx}
                 className="bg-neutral-900/80 border border-white/5 rounded-3xl p-7 flex flex-col justify-between"
               >
@@ -664,22 +664,22 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {teachers.map((teacher) => (
               <div key={teacher.id} className="group bg-[#0a0a0e] border border-purple-500/15 hover:border-purple-500/40 rounded-[2.5rem] p-8 flex flex-col md:flex-row gap-8 items-center md:items-start transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(168,85,247,0.1)] relative overflow-hidden h-full">
-                
+
                 {/* Ambient Glow Effect */}
                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-fuchsia-500/10 rounded-full blur-[60px] pointer-events-none group-hover:bg-fuchsia-500/20 transition-all"></div>
 
                 {/* Avatar */}
                 <div className="w-32 h-32 md:w-40 md:h-40 shrink-0 rounded-[2rem] bg-gradient-to-br from-neutral-800 to-black border border-white/10 overflow-hidden shadow-xl p-1 relative z-10 group-hover:scale-105 transition-transform duration-500 mx-auto md:mx-0">
-                  <img 
-                    src={teacher.avatar_url || `https://ui-avatars.com/api/?name=${teacher.first_name}+${teacher.last_name}&background=random`} 
-                    alt={teacher.first_name} 
+                  <img
+                    src={teacher.avatar_url || `https://ui-avatars.com/api/?name=${teacher.first_name}+${teacher.last_name}&background=random`}
+                    alt={teacher.first_name}
                     className="w-full h-full object-cover rounded-[1.5rem]"
                   />
                 </div>
 
                 {/* Info & Badges Section */}
                 <div className="flex flex-col flex-1 text-center md:text-left relative z-10 h-full">
-                  
+
                   <h3 className="text-2xl font-black text-white mb-2">{teacher.first_name} {teacher.last_name}</h3>
                   <p className="text-xs text-neutral-400 font-medium leading-relaxed mb-4 line-clamp-3">
                     {teacher.bio}
@@ -710,7 +710,7 @@ export default function AboutPage() {
                       </span>
                     )}
                   </div>
-                  
+
                 </div>
 
               </div>
@@ -748,7 +748,7 @@ export default function AboutPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {ecosystemCompanies.map((company, i) => (
-            <a 
+            <a
               key={i}
               href={company.url}
               target="_blank"
@@ -759,15 +759,15 @@ export default function AboutPage() {
                 <div className="w-20 h-20 bg-black rounded-2xl border border-white/10 p-2 mb-6 shadow-lg group-hover:scale-110 transition-transform duration-500 flex items-center justify-center overflow-hidden shrink-0">
                   <img src={company.logo} alt={company.name} className="w-full h-full object-contain" />
                 </div>
-                
+
                 <h3 className={`text-xl font-black text-white mb-3 transition-colors duration-300 ${company.textGlow}`}>
                   {company.name}
                 </h3>
-                
+
                 <p className="text-sm text-neutral-400 leading-relaxed mb-8 flex-1">
                   {company.description}
                 </p>
-                
+
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 group-hover:text-white transition-colors mt-auto">
                   <ExternalLink className="w-4 h-4" /> Explore Platform
                 </div>
@@ -780,33 +780,33 @@ export default function AboutPage() {
       {/* ================= CORPORATE REGISTRATION DETAILS (THE BLUEPRINT) ================= */}
       <section className="relative py-28 px-6 md:px-12 bg-gradient-to-b from-[#050508] via-[#08080a] to-[#020202] z-10 border-t border-white/5">
         <div className="max-w-4xl mx-auto">
-          
+
           <div className="flex justify-center mb-16 relative">
             <div className="absolute inset-0 bg-yellow-500/20 blur-[100px] rounded-full"></div>
-            <img 
-              src="/logo-without-b.png" 
-              alt="Safi Ecosystem Logo" 
+            <img
+              src="/logo-without-b.png"
+              alt="Safi Ecosystem Logo"
               className="w-48 h-48 sm:w-64 sm:h-64 object-contain relative z-10 drop-shadow-[0_0_40px_rgba(234,179,8,0.4)]"
             />
           </div>
 
           <div className="space-y-12 text-neutral-300 text-sm sm:text-base leading-relaxed">
-            
+
             <div className="bg-white/[0.02] p-8 sm:p-14 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden">
               <div className="absolute -top-20 -right-20 w-64 h-64 bg-yellow-500/5 rounded-full blur-[80px]"></div>
-              
+
               <div className="w-14 h-14 bg-yellow-500/10 text-yellow-500 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
                 <Building2 className="w-7 h-7" />
               </div>
-              
+
               <h3 className="text-2xl sm:text-4xl font-black text-white mb-6">
                 Corporate Governance & UK Registry
               </h3>
-              
+
               <p className="text-neutral-300">
                 Safi Academy is the educational flagship of <strong className="text-white text-lg">Safi International Capital LTD</strong>, a premier corporate financial entity officially registered in the United Kingdom under Company Number <span className="text-yellow-400 font-bold bg-yellow-500/10 px-2.5 py-1 rounded-md font-mono">17063286</span>.
               </p>
-              
+
               <p className="mt-4 text-neutral-300">
                 Our global corporate headquarters is situated in the prestigious commercial heart of London at <strong className="text-white">71-75 Shelton Street, Covent Garden, London, WC2H 9JQ</strong>. Our filings and corporate structure are fully verifiable with the UK Registrar of Companies (Companies House Tracker ID: <span className="text-yellow-400 font-bold bg-yellow-500/10 px-2 py-0.5 rounded font-mono">114-030414</span>).
               </p>
@@ -853,7 +853,7 @@ export default function AboutPage() {
 
         <div className="space-y-4">
           {faqs.map((faq, idx) => (
-            <div 
+            <div
               key={idx}
               className="bg-neutral-900/60 border border-white/5 hover:border-white/15 rounded-2xl overflow-hidden transition-colors"
             >
@@ -862,10 +862,9 @@ export default function AboutPage() {
                 className="w-full px-7 py-5 text-left flex items-center justify-between gap-4 font-bold text-sm md:text-base text-white hover:text-yellow-400 transition-colors"
               >
                 <span>{faq.q}</span>
-                <ChevronDown 
-                  className={`w-4 h-4 text-yellow-400 shrink-0 transition-transform duration-300 ${
-                    openFaq === idx ? "rotate-180" : ""
-                  }`}
+                <ChevronDown
+                  className={`w-4 h-4 text-yellow-400 shrink-0 transition-transform duration-300 ${openFaq === idx ? "rotate-180" : ""
+                    }`}
                 />
               </button>
               {openFaq === idx && (
@@ -898,8 +897,8 @@ export default function AboutPage() {
               </div>
               <h4 className="text-sm font-bold text-white mb-1">Admissions & Support</h4>
               <p className="text-xs text-neutral-400 leading-relaxed">
-                support@safi-academy.com<br />
-                admissions@safi-academy.com
+                contact@safiacademy.org<br />
+                info@safiacademy.org
               </p>
             </div>
 
@@ -925,15 +924,15 @@ export default function AboutPage() {
             Join thousands of ambitious students worldwide who are acquiring elite skills, earning verifiable certifications, and thriving in the Safi Ecosystem.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link 
-              href="/en/register" 
+            <Link
+              href="/en/register"
               className="inline-block px-10 py-5 bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-black uppercase tracking-widest text-sm rounded-2xl hover:scale-105 transition-all shadow-[0_0_30px_rgba(234,179,8,0.4)]"
             >
               Enroll as a Student
             </Link>
 
-            <Link 
-              href="/en/instructor-application" 
+            <Link
+              href="/en/instructor-application"
               className="inline-block px-8 py-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold uppercase tracking-widest text-sm rounded-2xl transition-all"
             >
               Apply as Instructor

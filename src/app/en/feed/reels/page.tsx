@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef, useCallback, Suspense } from "react
 import { createClient } from "@/utils/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import InReelNativeAd from "@/components/ads/InReelNativeAd";
+import AuthRequiredModal from "@/components/feed/AuthRequiredModal";
 import {
     Heart,
     MessageCircle,
@@ -66,6 +67,8 @@ function ReelsContent() {
     const [reels, setReels] = useState<ReelItem[]>([]);
     const [activeTab, setActiveTab] = useState<'for_you' | 'friends'>('for_you');
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalAction, setAuthModalAction] = useState("interact with this reel");
 
     const [activeVideoIndex, setActiveVideoIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(true);
@@ -133,13 +136,17 @@ function ReelsContent() {
         setIsLoading(true);
         try {
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session?.user) return router.push("/en/login");
-            const userId = session.user.id;
+            const userId = session?.user?.id || null;
             setCurrentUserId(userId);
 
             let loadedReels: ReelItem[] = [];
 
             if (tab === 'friends') {
+                if (!userId) {
+                    setReels([]);
+                    setIsLoading(false);
+                    return;
+                }
                 // 1. Get accepted friends
                 const { data: friendships } = await supabase
                     .from("student_friends")
@@ -208,7 +215,7 @@ function ReelsContent() {
     };
 
     // Helper: Batch load profiles & likes
-    const processReelsList = async (rawReels: any[], userId: string): Promise<ReelItem[]> => {
+    const processReelsList = async (rawReels: any[], userId: string | null): Promise<ReelItem[]> => {
         if (rawReels.length === 0) return [];
 
         const userIds = Array.from(new Set(rawReels.map(r => r.user_id)));
@@ -227,13 +234,16 @@ function ReelsContent() {
         });
 
         // Batch 2: Likes
-        const { data: myLikes } = await supabase
-            .from("reel_likes")
-            .select("reel_id")
-            .eq("user_id", userId)
-            .in("reel_id", reelIds);
+        let likedReelIds = new Set<string>();
+        if (userId) {
+            const { data: myLikes } = await supabase
+                .from("reel_likes")
+                .select("reel_id")
+                .eq("user_id", userId)
+                .in("reel_id", reelIds);
 
-        const likedReelIds = new Set((myLikes || []).map(l => l.reel_id?.toString()));
+            likedReelIds = new Set((myLikes || []).map(l => l.reel_id?.toString()));
+        }
 
         return rawReels.map(item => {
             const rId = item.id.toString();
@@ -261,7 +271,11 @@ function ReelsContent() {
 
     // Toggle Like Handler
     const toggleLike = async (reel: ReelItem) => {
-        if (!currentUserId) return;
+        if (!currentUserId) {
+            setAuthModalAction("like this reel");
+            setShowAuthModal(true);
+            return;
+        }
 
         const willBeLiked = !reel.isLikedByMe;
         const newLikesCount = willBeLiked ? reel.likes_count + 1 : Math.max(0, reel.likes_count - 1);
@@ -324,6 +338,12 @@ function ReelsContent() {
 
         if (now - lastTap < 300) {
             // Double Tap Detected
+            if (!currentUserId) {
+                setAuthModalAction("like this reel");
+                setShowAuthModal(true);
+                lastTapTimeRef.current[reel.id] = 0;
+                return;
+            }
             setHeartAnimations(prev => ({ ...prev, [reel.id]: true }));
             setTimeout(() => {
                 setHeartAnimations(prev => ({ ...prev, [reel.id]: false }));
@@ -393,10 +413,14 @@ function ReelsContent() {
 
     // Open Share Modal & fetch user's friends
     const handleOpenShare = async (reel: ReelItem) => {
+        if (!currentUserId) {
+            setAuthModalAction("share this reel with peers");
+            setShowAuthModal(true);
+            return;
+        }
         setShareReel(reel);
         setIsLoadingFriends(true);
         try {
-            if (!currentUserId) return;
             const { data: friendships } = await supabase
                 .from("student_friends")
                 .select("sender_id, receiver_id")
@@ -771,7 +795,14 @@ function ReelsContent() {
 
                                         {/* Comment Button (Opens modal on mobile, focuses desktop panel) */}
                                         <button
-                                            onClick={() => setActiveReelCommentsId(reel.id)}
+                                            onClick={() => {
+                                                if (!currentUserId) {
+                                                    setAuthModalAction("join the comments");
+                                                    setShowAuthModal(true);
+                                                    return;
+                                                }
+                                                setActiveReelCommentsId(reel.id);
+                                            }}
                                             className="flex flex-col items-center group/btn lg:hidden"
                                             title="Comments"
                                         >
@@ -827,7 +858,7 @@ function ReelsContent() {
             </div>
 
             {/* ================= DESKTOP COMMENTS SIDE PANEL ================= */}
-            {reels.length > 0 && currentUserId && (
+            {reels.length > 0 && (
                 <div className="hidden lg:flex w-[380px] xl:w-[420px] h-full bg-[#0a0a0f] border border-white/5 rounded-[2rem] flex-col overflow-hidden shadow-2xl shrink-0">
                     <div className="p-6 border-b border-white/5 bg-gradient-to-b from-[#12121a] to-[#0a0a0f]">
                         <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
@@ -838,6 +869,10 @@ function ReelsContent() {
                     <SharedCommentsView
                         reelId={reels[activeVideoIndex]?.id}
                         currentUserId={currentUserId}
+                        onAuthRequired={() => {
+                            setAuthModalAction("comment on this reel");
+                            setShowAuthModal(true);
+                        }}
                         onCommentAdded={() => {
                             setReels(prev => prev.map((r, idx) => {
                                 if (idx === activeVideoIndex) {
@@ -1019,6 +1054,13 @@ function ReelsContent() {
                 </div>
             )}
 
+            {/* ================= AUTH REQUIRED MODAL ================= */}
+            <AuthRequiredModal
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                actionText={authModalAction}
+            />
+
         </div>
     );
 }
@@ -1026,7 +1068,7 @@ function ReelsContent() {
 // =====================================================================
 // COMPONENT: SHARED COMMENTS VIEW (Used in Desktop Panel & Mobile Modal)
 // =====================================================================
-function SharedCommentsView({ reelId, currentUserId, onCommentAdded }: { reelId: string, currentUserId: string, onCommentAdded: () => void }) {
+function SharedCommentsView({ reelId, currentUserId, onCommentAdded, onAuthRequired }: { reelId: string, currentUserId: string | null, onCommentAdded: () => void, onAuthRequired?: () => void }) {
     const [comments, setComments] = useState<ReelComment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSending, setIsSending] = useState(false);
@@ -1131,23 +1173,35 @@ function SharedCommentsView({ reelId, currentUserId, onCommentAdded }: { reelId:
 
             {/* Input Box */}
             <div className="p-4 sm:p-5 border-t border-white/5 bg-[#0a0a0f]">
-                <div className="flex items-center gap-3">
-                    <input
-                        type="text"
-                        placeholder="Add a comment..."
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                        className="flex-1 bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-3.5 text-white text-xs font-medium focus:outline-none focus:border-[#C2185B]/70 focus:bg-white/[0.05] transition-all shadow-inner"
-                    />
+                {currentUserId ? (
+                    <div className="flex items-center gap-3">
+                        <input
+                            type="text"
+                            placeholder="Add a comment..."
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                            className="flex-1 bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-3.5 text-white text-xs font-medium focus:outline-none focus:border-[#C2185B]/70 focus:bg-white/[0.05] transition-all shadow-inner"
+                        />
+                        <button
+                            onClick={handleSend}
+                            disabled={isSending || !newComment.trim()}
+                            className="w-12 h-12 bg-gradient-to-br from-[#C2185B] to-pink-700 text-white rounded-2xl flex items-center justify-center hover:to-pink-600 disabled:opacity-50 transition-all shrink-0 shadow-[0_0_15px_rgba(194,24,91,0.3)] hover:shadow-[0_0_20px_rgba(194,24,91,0.5)]"
+                        >
+                            {isSending ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <Send size={18} className="ml-1" />}
+                        </button>
+                    </div>
+                ) : (
                     <button
-                        onClick={handleSend}
-                        disabled={isSending || !newComment.trim()}
-                        className="w-12 h-12 bg-gradient-to-br from-[#C2185B] to-pink-700 text-white rounded-2xl flex items-center justify-center hover:to-pink-600 disabled:opacity-50 transition-all shrink-0 shadow-[0_0_15px_rgba(194,24,91,0.3)] hover:shadow-[0_0_20px_rgba(194,24,91,0.5)]"
+                        onClick={onAuthRequired}
+                        className="w-full py-3.5 px-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-[#C2185B]/40 text-neutral-400 hover:text-white text-xs font-bold transition-all flex items-center justify-between group cursor-pointer"
                     >
-                        {isSending ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <Send size={18} className="ml-1" />}
+                        <span>Sign in to join the conversation...</span>
+                        <span className="px-3 py-1 rounded-xl bg-gradient-to-r from-[#C2185B] to-yellow-500 text-black text-[10px] font-black uppercase tracking-wider group-hover:scale-105 transition-transform">
+                            Sign In
+                        </span>
                     </button>
-                </div>
+                )}
             </div>
         </>
     );

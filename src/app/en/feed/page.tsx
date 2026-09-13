@@ -6,6 +6,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import StoryBar from "@/components/feed/StoryBar";
 import InFeedNativeAd from "@/components/ads/InFeedNativeAd";
+import AuthRequiredModal from "@/components/feed/AuthRequiredModal";
 
 interface PostItem {
   id: string;
@@ -57,6 +58,8 @@ export default function StudentFeedPage() {
 
   // مدیریت کامنت‌ها
   const [activePostId, setActivePostId] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalAction, setAuthModalAction] = useState("interact with this post");
 
   const router = useRouter();
   const params = useParams(); // گرفتن آیدی استوری از URL
@@ -89,8 +92,7 @@ export default function StudentFeedPage() {
     setIsLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return router.push("/en/login");
-      const userId = session.user.id;
+      const userId = session?.user?.id || null;
       setCurrentUserId(userId);
 
       // ۱. دریافت پست‌ها
@@ -161,11 +163,16 @@ export default function StudentFeedPage() {
       setFilteredPosts(loadedPosts);
 
       // ۲. دریافت کاربران برای بخش Manage Friends (دسکتاپ)
-      const { data: profilesList } = await supabase
+      let profilesQuery = supabase
         .from("profiles")
         .select("id, first_name, last_name, avatar_url, role")
-        .neq("id", userId)
         .limit(8);
+
+      if (userId) {
+        profilesQuery = profilesQuery.neq("id", userId);
+      }
+
+      const { data: profilesList } = await profilesQuery;
 
       if (profilesList) {
         setExploreUsers(profilesList);
@@ -196,7 +203,11 @@ export default function StudentFeedPage() {
   };
 
   const toggleLike = async (post: PostItem) => {
-    if (!currentUserId) return;
+    if (!currentUserId) {
+      setAuthModalAction("like this post");
+      setShowAuthModal(true);
+      return;
+    }
 
     const updateList = (list: PostItem[]) =>
       list.map((p) => {
@@ -238,6 +249,11 @@ export default function StudentFeedPage() {
   };
 
   const handleShare = async (post: PostItem) => {
+    if (!currentUserId) {
+      setAuthModalAction("share this post");
+      setShowAuthModal(true);
+      return;
+    }
     const shareUrl = `${window.location.origin}/en/feed?post=${post.id}`;
     try {
       if (navigator.share) {
@@ -438,7 +454,14 @@ export default function StudentFeedPage() {
                     </button>
                     <div className="w-1 sm:w-2"></div>
                     <button
-                      onClick={() => setActivePostId(post.id)}
+                      onClick={() => {
+                        if (!currentUserId) {
+                          setAuthModalAction("comment on this post");
+                          setShowAuthModal(true);
+                          return;
+                        }
+                        setActivePostId(post.id);
+                      }}
                       className="flex-1 flex items-center justify-center gap-2 py-3 rounded-[1rem] transition-all font-black text-xs text-neutral-400 bg-white/[0.02] hover:bg-white/5 hover:text-white"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
@@ -480,6 +503,13 @@ export default function StudentFeedPage() {
           onClose={() => router.push("/en/feed")}
         />
       )}
+
+      {/* ================= AUTH REQUIRED MODAL ================= */}
+      <AuthRequiredModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        actionText={authModalAction}
+      />
     </div>
   );
 }

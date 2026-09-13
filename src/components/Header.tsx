@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ArrowRight, LogOut, LayoutDashboard, Settings, Mail, Globe, Sparkles, BookOpen, GraduationCap, Building2, HandHeart, X, Briefcase, BookMarked, Landmark, Server, Code2 } from "lucide-react";
+import { ChevronDown, ArrowRight, LogOut, LayoutDashboard, Settings, Mail, Globe, Sparkles, BookOpen, GraduationCap, Building2, HandHeart, X, Briefcase, BookMarked, Landmark, Server, Code2, Rss } from "lucide-react";
 
 // لیست زبان‌ها همراه با رنگ‌های پرچم آن‌ها برای ساخت افکت‌های نوری پشت هدر
 const languages = [
@@ -20,7 +20,7 @@ const languages = [
 // دیکشنری ۶ زبانه برای ترجمه داینامیک کل هدر
 const translations: Record<string, any> = {
   en: {
-    home: "Home", learn: "Learn", academy: "Academy", corporate: "Corporate",
+    home: "Home", feed: "Feed", learn: "Learn", academy: "Academy", corporate: "Corporate",
     courses: "Courses", blog: "Blog", scholarships: "Scholarships", 
     partners: "Our Partners", donate: "Donate", about: "About", contact: "Contact",
     instructorApplication: "Teach With Us",
@@ -29,7 +29,7 @@ const translations: Record<string, any> = {
     welcome: "Welcome,", selectLang: "Select Language", editProfile: "Edit Profile", signedInAs: "Signed in as"
   },
   fa: {
-    home: "خانه", learn: "آموزش", academy: "آکادمی", corporate: "شرکتی",
+    home: "خانه", feed: "فید سوشال", learn: "آموزش", academy: "آکادمی", corporate: "شرکتی",
     courses: "کورس‌ها", blog: "بلاگ", scholarships: "بورسیه‌ها",
     partners: "شرکای ما", donate: "کمک مالی", about: "درباره ما", contact: "تماس",
     instructorApplication: "درخواست تدریس (استادی)",
@@ -38,7 +38,7 @@ const translations: Record<string, any> = {
     welcome: "خوش آمدید،", selectLang: "انتخاب زبان آکادمی", editProfile: "ویرایش پروفایل", signedInAs: "وارد شده با"
   },
   ps: {
-    home: "کورپاڼه", learn: "زده کړه", academy: "اکاډمۍ", corporate: "شرکتی",
+    home: "کورپاڼه", feed: "سوشل فېډ", learn: "زده کړه", academy: "اکاډمۍ", corporate: "شرکتی",
     courses: "کورسونه", blog: "بلاګ", scholarships: "بورسیې",
     partners: "زموږ شریکان", donate: "مرسته", about: "زموږ په اړه", contact: "اړیکه",
     instructorApplication: "د ښوونکي غوښتنلیک",
@@ -47,7 +47,7 @@ const translations: Record<string, any> = {
     welcome: "ښه راغلاست،", selectLang: "د اکاډمۍ ژبه غوره کړئ", editProfile: "پروفایل ایډیټ کړئ", signedInAs: "ننوتل شوی په توګه"
   },
   de: {
-    home: "Startseite", learn: "Lernen", academy: "Akademie", corporate: "Unternehmen",
+    home: "Startseite", feed: "Feed", learn: "Lernen", academy: "Akademie", corporate: "Unternehmen",
     courses: "Kurse", blog: "Blog", scholarships: "Stipendien",
     partners: "Unsere Partner", donate: "Spenden", about: "Über uns", contact: "Kontakt",
     instructorApplication: "Dozent werden",
@@ -56,7 +56,7 @@ const translations: Record<string, any> = {
     welcome: "Willkommen,", selectLang: "Sprache auswählen", editProfile: "Profil bearbeiten", signedInAs: "Angemeldet als"
   },
   fr: {
-    home: "Accueil", learn: "Apprendre", academy: "Académie", corporate: "Entreprise",
+    home: "Accueil", feed: "Flux Social", learn: "Apprendre", academy: "Académie", corporate: "Entreprise",
     courses: "Cours", blog: "Blog", scholarships: "Bourses",
     partners: "Nos Partenaires", donate: "Faire un don", about: "À propos", contact: "Contact",
     instructorApplication: "Devenir Formateur",
@@ -65,7 +65,7 @@ const translations: Record<string, any> = {
     welcome: "Bienvenue,", selectLang: "Choisir la langue", editProfile: "Modifier le profil", signedInAs: "Connecté en tant que"
   },
   ur: {
-    home: "ہوم", learn: "سیکھیں", academy: "اکیڈمی", corporate: "کارپوریٹ",
+    home: "ہوم", feed: "سوشل فیڈ", learn: "سیکھیں", academy: "اکیڈمی", corporate: "کارپوریٹ",
     courses: "کورسز", blog: "بلاگ", scholarships: "اسکالرشپ",
     partners: "ہمارے شراکت دار", donate: "عطیہ", about: "ہمارے بارے میں", contact: "رابطہ",
     instructorApplication: "استاد بنیں (درخواست)",
@@ -92,6 +92,13 @@ export default function Header() {
       name: t.home,
       path: "",
       icon: <Sparkles size={15} />,
+      isDropdown: false
+    },
+    {
+      id: "feed",
+      name: t.feed,
+      path: "/feed",
+      icon: <Rss size={15} />,
       isDropdown: false
     },
     {

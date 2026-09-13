@@ -225,7 +225,7 @@ export default function TermsOfServicePage() {
                 Inquiries regarding platform licensing, commercial partnerships, or intellectual property rights.
               </p>
               <a
-                href="mailto:info@safiacademy.org"
+                href="mailto:contact@safiacademy.org"
                 className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-yellow-400 transition-colors"
               >
                 <span>Contact Legal Department</span>
@@ -494,10 +494,10 @@ export default function TermsOfServicePage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/5">
                 <div>
                   <div className="text-xs text-neutral-500 uppercase font-mono mb-1">Corporate Legal Email</div>
-                  <div className="text-base font-bold text-white font-mono">support@safi-academy.com</div>
+                  <div className="text-base font-bold text-white font-mono">contact@safiacademy.org</div>
                 </div>
                 <a
-                  href="mailto:support@safi-academy.com"
+                  href="mailto:contact@safiacademy.org"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs uppercase tracking-wider transition-all"
                 >
                   <Mail className="w-4 h-4" />

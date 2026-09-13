@@ -12,6 +12,7 @@ import {
   Eye, Heart
 } from "lucide-react";
 import { uploadFileToR2 } from "@/utils/upload";
+import AuthRequiredModal from "@/components/feed/AuthRequiredModal";
 
 // ================= TYPES =================
 interface ProfileData {
@@ -104,6 +105,8 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
 
   const [isLoading, setIsLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalAction, setAuthModalAction] = useState("interact with this profile");
 
   // Data States
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
@@ -169,9 +172,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
     setIsLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return router.push("/en/login");
-
-      const loggedInUserId = session.user.id;
+      const loggedInUserId = session?.user?.id || null;
       setCurrentUserId(loggedInUserId);
 
       const [
@@ -202,7 +203,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
       if (certsRes) setCertificates(certsRes as unknown as CertificateItem[]);
       if (streakRes) setStreak(streakRes as StreakItem);
 
-      if (loggedInUserId !== targetUserId) {
+      if (loggedInUserId && loggedInUserId !== targetUserId) {
         const { data: relData } = await supabase
           .from("student_friends")
           .select("*")
@@ -227,7 +228,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
           ]);
           if (likesRes) {
             likesCount = likesRes.length;
-            isLikedByMe = likesRes.some((l) => l.student_id === loggedInUserId);
+            isLikedByMe = loggedInUserId ? likesRes.some((l) => l.student_id === loggedInUserId) : false;
           }
           if (commentsRes) commentsCount = commentsRes.length;
         } catch (_) { }
@@ -250,7 +251,12 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
   };
 
   const handleConnectionAction = async () => {
-    if (!currentUserId || currentUserId === targetUserId) return;
+    if (!currentUserId) {
+      setAuthModalAction("connect with this academy member");
+      setShowAuthModal(true);
+      return;
+    }
+    if (currentUserId === targetUserId) return;
     setIsActionLoading(true);
     try {
       if (friendshipStatus === 'none') {
@@ -271,7 +277,11 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
   };
 
   const toggleLike = async (post: PostItem) => {
-    if (!currentUserId) return;
+    if (!currentUserId) {
+      setAuthModalAction("like this post");
+      setShowAuthModal(true);
+      return;
+    }
     setPosts((prev) => prev.map((p) => p.id === post.id ? { ...p, isLikedByMe: !p.isLikedByMe, likesCount: !p.isLikedByMe ? p.likesCount + 1 : Math.max(0, p.likesCount - 1) } : p));
     try {
       if (post.isLikedByMe) await supabase.from("discussion_likes").delete().eq("post_id", post.id).eq("student_id", currentUserId);
@@ -588,7 +598,17 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                             <ThumbsUp size={16} className={post.isLikedByMe ? "fill-current" : ""} />
                             <span>Like</span>
                           </button>
-                          <button onClick={() => setActivePostId(post.id)} className="flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-xl sm:rounded-[1rem] transition-all font-black text-xs text-neutral-400 bg-white/[0.02] hover:bg-white/5 hover:text-white border border-transparent">
+                          <button
+                            onClick={() => {
+                              if (!currentUserId) {
+                                setAuthModalAction("comment on this post");
+                                setShowAuthModal(true);
+                                return;
+                              }
+                              setActivePostId(post.id);
+                            }}
+                            className="flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-xl sm:rounded-[1rem] transition-all font-black text-xs text-neutral-400 bg-white/[0.02] hover:bg-white/5 hover:text-white border border-transparent"
+                          >
                             <MessageSquare size={16} />
                             <span>Comment</span>
                           </button>
@@ -739,6 +759,13 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
       {activePostId && currentUserId && (
         <CommentsModal postId={activePostId} currentUserId={currentUserId} onClose={() => { setActivePostId(null); fetchCompleteProfile(); }} />
       )}
+
+      {/* ================= AUTH REQUIRED MODAL ================= */}
+      <AuthRequiredModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        actionText={authModalAction}
+      />
     </div>
   );
 }

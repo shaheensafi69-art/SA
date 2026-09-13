@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import AuthRequiredModal from "@/components/feed/AuthRequiredModal";
 
 export default function FeedClientLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -15,6 +16,8 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isMenuDrawerOpen, setIsMenuDrawerOpen] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authActionText, setAuthActionText] = useState("create posts and access member features");
 
   const isReelsPage = pathname.includes('/en/feed/reels');
   const isChatPage = pathname.includes('/en/feed/chats/screen');
@@ -35,7 +38,20 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
     fetchUser();
   }, []);
 
+  const requireAuth = (actionText: string, callback?: () => void) => {
+    if (!userProfile) {
+      setAuthActionText(actionText);
+      setShowAuthModal(true);
+      return;
+    }
+    callback?.();
+  };
+
   const handleBackToOverview = () => {
+    if (!userProfile) {
+      router.push('/en');
+      return;
+    }
     const role = userProfile?.role?.toLowerCase();
     if (role === 'admin') {
       router.push('/en/admin/dashboard');
@@ -76,8 +92,8 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
             <ArrowLeft size={16} />
           </div>
           <div className="text-left">
-            <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">Portal Navigation</p>
-            <p className="text-xs font-black text-white flex items-center gap-1">Back to Overview <LayoutDashboard size={10} /></p>
+            <p className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">{userProfile ? "Portal Navigation" : "Back to Website"}</p>
+            <p className="text-xs font-black text-white flex items-center gap-1">{userProfile ? "Back to Overview" : "Safi Academy Home"} <LayoutDashboard size={10} /></p>
           </div>
         </button>
 
@@ -92,7 +108,23 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
               return (
                 <button
                   key={item.name}
-                  onClick={() => setIsCreateModalOpen(true)}
+                  onClick={() => requireAuth("create a post", () => setIsCreateModalOpen(true))}
+                  className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs transition-all duration-300 relative group overflow-hidden bg-[#08080c]/80 text-neutral-400 hover:text-white hover:bg-[#0c0c14] border border-white/[0.03] hover:border-white/10 text-left cursor-pointer"
+                >
+                  <span className="group-hover:scale-110 group-hover:text-white transition-all duration-300">
+                    {item.icon}
+                  </span>
+                  <span className="tracking-wide">{item.name}</span>
+                </button>
+              );
+            }
+
+            const isProtected = ["Messages", "Likes & Comments", "My Profile"].includes(item.name);
+            if (isProtected && !userProfile) {
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => requireAuth(`access ${item.name.toLowerCase()}`)}
                   className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs transition-all duration-300 relative group overflow-hidden bg-[#08080c]/80 text-neutral-400 hover:text-white hover:bg-[#0c0c14] border border-white/[0.03] hover:border-white/10 text-left cursor-pointer"
                 >
                   <span className="group-hover:scale-110 group-hover:text-white transition-all duration-300">
@@ -123,9 +155,22 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
           })}
         </nav>
 
-        <div className="mt-auto pt-4 border-t border-white/[0.06] shrink-0">
+        <div className="mt-auto pt-4 border-t border-white/[0.06] shrink-0 space-y-3">
+          {!userProfile && (
+            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-yellow-500/10 to-amber-500/5 border border-yellow-500/20 text-center">
+              <p className="text-[10px] text-yellow-400 font-black uppercase tracking-wider mb-2">Guest Explorer</p>
+              <div className="grid grid-cols-2 gap-2">
+                <Link href="/en/login" className="py-2 px-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-[11px] font-bold border border-white/10 transition-colors">
+                  Sign In
+                </Link>
+                <Link href="/en/register" className="py-2 px-2.5 rounded-xl bg-yellow-500 text-black text-[11px] font-extrabold hover:bg-yellow-400 transition-colors">
+                  Join Free
+                </Link>
+              </div>
+            </div>
+          )}
           <button
-            onClick={() => setIsCreateModalOpen(true)}
+            onClick={() => requireAuth("create a new post", () => setIsCreateModalOpen(true))}
             className="flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl bg-gradient-to-r from-[#C2185B] to-yellow-500 text-black font-black text-xs uppercase tracking-wider shadow-[0_0_25px_rgba(194,24,91,0.4)] hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
           >
             <SquarePen size={16} strokeWidth={2.5} /> Create New Post
@@ -155,7 +200,7 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
           </Link>
 
           {/* دکمه ایجاد (پلاس) */}
-          <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center justify-center flex-1 h-full focus:outline-none group">
+          <button onClick={() => requireAuth("create content", () => setIsCreateModalOpen(true))} className="flex items-center justify-center flex-1 h-full focus:outline-none group">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#C2185B] to-yellow-500 p-0.5 shadow-lg group-hover:scale-105 transition-transform">
               <div className="w-full h-full bg-[#060609] rounded-[14px] flex items-center justify-center">
                 <SquarePen size={18} className="text-white" />
@@ -332,6 +377,13 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
           </div>
         </div>
       )}
+
+      {/* ================= AUTH REQUIRED MODAL ================= */}
+      <AuthRequiredModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        actionText={authActionText}
+      />
 
     </div>
   );
