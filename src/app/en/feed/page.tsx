@@ -376,8 +376,8 @@ export default function StudentFeedPage() {
             ) : (
               filteredPosts.map((post, index) => (
                 <React.Fragment key={post.id}>
-                  {index > 0 && index % 4 === 0 && (
-                    <InFeedNativeAd adIndex={Math.floor(index / 4)} />
+                  {((index > 0 && index % 3 === 0) || (filteredPosts.length <= 3 && index === 1)) && (
+                    <InFeedNativeAd adIndex={Math.floor(index / 3)} />
                   )}
                   <div className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-5 sm:p-8 backdrop-blur-md space-y-5 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all">
 

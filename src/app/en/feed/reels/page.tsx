@@ -543,11 +543,11 @@ function ReelsContent() {
     }
 
     return (
-        <div className="w-full h-full flex flex-col lg:flex-row bg-[#030305] lg:p-4 gap-4 overflow-hidden relative font-sans select-none">
+        <div className="w-full h-full flex items-center justify-center bg-[#030305] lg:p-3 xl:p-4 gap-4 overflow-hidden relative font-sans select-none">
 
             {/* Floating Toast Notification (English Only) */}
             {toastMessage && (
-                <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[200] bg-[#0a0a0f]/95 border border-[#C2185B]/50 px-4 py-2.5 rounded-2xl shadow-[0_10px_30px_rgba(194,24,91,0.35)] backdrop-blur-xl flex items-center gap-2.5 animate-[fadeIn_0.2s_ease-out]">
+                <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[250] bg-[#0a0a0f]/95 border border-[#C2185B]/50 px-4 py-2.5 rounded-2xl shadow-[0_10px_30px_rgba(194,24,91,0.35)] backdrop-blur-xl flex items-center gap-2.5 animate-[fadeIn_0.2s_ease-out]">
                     <div className="w-5 h-5 rounded-full bg-[#C2185B] flex items-center justify-center text-white shrink-0 shadow-sm">
                         <Check size={12} className="stroke-[3]" />
                     </div>
@@ -555,101 +555,107 @@ function ReelsContent() {
                 </div>
             )}
 
-            {/* ================= FIXED TOP HEADER (STAYS PERMANENTLY FIXED ACROSS ALL VIDEOS AS YOU SCROLL) ================= */}
-            <div className="absolute top-3 lg:top-5 left-0 right-0 z-40 flex flex-col items-center pointer-events-none px-3">
+            {/* ================= CENTERED REELS PLAYER COLUMN (PHONE PROPORTIONS ON DESKTOP) ================= */}
+            <div className="relative w-full lg:max-w-[440px] xl:max-w-[480px] h-full flex flex-col bg-black lg:rounded-[2.5rem] lg:border border-white/10 overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.9)]">
 
-                {/* Temporary App Banner (auto-collapses after 4.5s or close button) */}
-                {showAppBanner && (
-                    <div className="pointer-events-auto w-full max-w-md bg-black/80 backdrop-blur-2xl border border-white/15 rounded-2xl px-3.5 py-2 flex items-center justify-between shadow-2xl mb-2 animate-[fadeIn_0.3s_ease-out]">
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-[#C2185B] to-yellow-500 flex items-center justify-center text-black font-black text-[10px] shadow-md">
-                                SA
+                {/* ================= PERMANENT TOP CONTROLS (ALWAYS PINNED OVER EVERY REEL SCREEN) ================= */}
+                <div className="absolute top-3 lg:top-4 inset-x-0 z-40 flex flex-col items-center pointer-events-none px-3">
+
+                    {/* Temporary App Banner (auto-collapses after 4.5s or close button) */}
+                    {showAppBanner && (
+                        <div className="pointer-events-auto w-full max-w-sm bg-black/85 backdrop-blur-2xl border border-white/15 rounded-2xl px-3 py-1.5 flex items-center justify-between shadow-2xl mb-2 animate-[fadeIn_0.3s_ease-out]">
+                            <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[#C2185B] to-yellow-500 flex items-center justify-center text-black font-black text-[9px] shadow-md">
+                                    SA
+                                </div>
+                                <div>
+                                    <p className="text-white font-black text-[10px] leading-tight">Safi Academy</p>
+                                    <p className="text-neutral-400 text-[8px] font-medium">Watch in Mobile App</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-white font-black text-[11px] leading-tight">Safi Academy</p>
-                                <p className="text-neutral-400 text-[9px] font-medium">Watch in Mobile App</p>
+                            <div className="flex items-center gap-1.5">
+                                <a
+                                    href="https://play.google.com/store/apps/details?id=org.safiacademy.app"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="px-2 py-0.5 bg-[#C2185B] hover:bg-[#ad1450] text-white text-[9px] font-black uppercase tracking-wider rounded-lg shadow-[0_0_10px_rgba(194,24,91,0.4)] transition-all flex items-center gap-1"
+                                >
+                                    <Smartphone size={10} /> App
+                                </a>
+                                <button
+                                    onClick={() => setShowAppBanner(false)}
+                                    className="w-5 h-5 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
+                                >
+                                    <X size={10} />
+                                </button>
                             </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                    )}
+
+                    {/* Sleek Tabs & Controls Bar (Persistent on all reels) */}
+                    <div className="pointer-events-auto flex items-center justify-between w-full max-w-sm px-1">
+                        {/* Switcher Pill */}
+                        <div className="flex items-center bg-black/70 backdrop-blur-2xl border border-white/15 p-1 rounded-2xl shadow-2xl">
+                            <button
+                                onClick={() => setActiveTab('for_you')}
+                                className={`px-3 py-1 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${activeTab === 'for_you'
+                                    ? "bg-[#C2185B] text-white shadow-[0_0_12px_rgba(194,24,91,0.5)] scale-102"
+                                    : "text-neutral-400 hover:text-white"
+                                    }`}
+                            >
+                                <Compass size={12} /> For You
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('friends')}
+                                className={`px-3 py-1 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${activeTab === 'friends'
+                                    ? "bg-[#C2185B] text-white shadow-[0_0_12px_rgba(194,24,91,0.5)] scale-102"
+                                    : "text-neutral-400 hover:text-white"
+                                    }`}
+                            >
+                                <Users size={12} /> Friends
+                            </button>
+                        </div>
+
+                        {/* Right Quick Controls */}
+                        <div className="flex items-center gap-1.5">
+                            {/* Persistent Mobile App Icon */}
                             <a
                                 href="https://play.google.com/store/apps/details?id=org.safiacademy.app"
                                 target="_blank"
                                 rel="noreferrer"
-                                className="px-2.5 py-1 bg-[#C2185B] hover:bg-[#ad1450] text-white text-[9px] font-black uppercase tracking-wider rounded-lg shadow-[0_0_10px_rgba(194,24,91,0.4)] transition-all flex items-center gap-1"
+                                className="w-8 h-8 rounded-xl bg-black/70 backdrop-blur-2xl border border-white/15 flex items-center justify-center text-pink-300 hover:text-white hover:bg-[#C2185B]/40 hover:border-[#C2185B] transition-all shadow-xl"
+                                title="Get Safi Academy App"
                             >
-                                <Smartphone size={11} /> Open App
+                                <Smartphone size={14} />
                             </a>
+
+                            {/* Mute / Unmute Button */}
                             <button
-                                onClick={() => setShowAppBanner(false)}
-                                className="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
+                                onClick={() => setIsMuted(!isMuted)}
+                                className="w-8 h-8 rounded-xl bg-black/70 backdrop-blur-2xl border border-white/15 flex items-center justify-center text-white hover:bg-black/90 transition-all shadow-xl"
+                                title={isMuted ? "Unmute" : "Mute"}
                             >
-                                <X size={12} />
+                                {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
                             </button>
                         </div>
                     </div>
-                )}
 
-                {/* Sleek Tabs & Controls Bar (Persistent on all reels) */}
-                <div className="pointer-events-auto flex items-center gap-2">
-                    {/* Switcher Pill */}
-                    <div className="flex items-center bg-black/60 backdrop-blur-2xl border border-white/15 p-1 rounded-2xl shadow-2xl">
-                        <button
-                            onClick={() => setActiveTab('for_you')}
-                            className={`px-3 py-1 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${activeTab === 'for_you'
-                                ? "bg-[#C2185B] text-white shadow-[0_0_12px_rgba(194,24,91,0.5)] scale-102"
-                                : "text-neutral-400 hover:text-white"
-                                }`}
-                        >
-                            <Compass size={12} /> For You
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('friends')}
-                            className={`px-3 py-1 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${activeTab === 'friends'
-                                ? "bg-[#C2185B] text-white shadow-[0_0_12px_rgba(194,24,91,0.5)] scale-102"
-                                : "text-neutral-400 hover:text-white"
-                                }`}
-                        >
-                            <Users size={12} /> Friends
-                        </button>
-                    </div>
-
-                    {/* Small Persistent Mobile App Icon (Opens Play Store) */}
-                    <a
-                        href="https://play.google.com/store/apps/details?id=org.safiacademy.app"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="w-8 h-8 rounded-xl bg-black/60 backdrop-blur-2xl border border-white/15 flex items-center justify-center text-pink-300 hover:text-white hover:bg-[#C2185B]/40 hover:border-[#C2185B] transition-all shadow-xl"
-                        title="Get Safi Academy App"
-                    >
-                        <Smartphone size={14} />
-                    </a>
-
-                    {/* Small Mute / Unmute Button */}
-                    <button
-                        onClick={() => setIsMuted(!isMuted)}
-                        className="w-8 h-8 rounded-xl bg-black/60 backdrop-blur-2xl border border-white/15 flex items-center justify-center text-white hover:bg-black/80 transition-all shadow-xl"
-                        title={isMuted ? "Unmute" : "Mute"}
-                    >
-                        {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-                    </button>
                 </div>
 
-            </div>
-
-            {/* ================= MAIN REELS CONTAINER ================= */}
-            <div
-                ref={containerRef}
-                className="flex-1 w-full h-full relative overflow-y-scroll snap-y snap-mandatory no-scrollbar bg-black lg:rounded-[2rem] lg:border border-white/5 shadow-2xl"
-                onScroll={(e) => {
-                    const clientH = e.currentTarget.clientHeight;
-                    if (clientH > 0) {
-                        const index = Math.round(e.currentTarget.scrollTop / clientH);
-                        if (index !== activeVideoIndex && index >= 0 && index < reels.length) {
-                            handleVideoIntersection(index);
+                {/* ================= SCROLLING REELS CONTAINER ================= */}
+                <div
+                    ref={containerRef}
+                    className="w-full h-full relative overflow-y-scroll snap-y snap-mandatory no-scrollbar bg-black"
+                    onScroll={(e) => {
+                        const clientH = e.currentTarget.clientHeight;
+                        if (clientH > 0) {
+                            const index = Math.round(e.currentTarget.scrollTop / clientH);
+                            if (index !== activeVideoIndex && index >= 0 && index < reels.length) {
+                                handleVideoIntersection(index);
+                            }
                         }
-                    }
-                }}
-            >
+                    }}
+                >
                 {/* Empty State */}
                 {reels.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-6 bg-[#030305]">
@@ -697,21 +703,29 @@ function ReelsContent() {
 
                         return (
                             <React.Fragment key={reel.id}>
-                                {index > 0 && index % 4 === 0 && (
+                                {((index > 0 && index % 3 === 0) || (reels.length <= 3 && index === 1)) && (
                                     <InReelNativeAd
-                                        adIndex={Math.floor(index / 4)}
+                                        adIndex={Math.floor(index / 3)}
                                         onShare={() => setShareReel(reel)}
                                     />
                                 )}
                                 <div
-                                    className="w-full h-full snap-start snap-always relative flex items-center justify-center bg-black group overflow-hidden"
+                                    className="w-full h-full snap-start snap-always relative flex items-center justify-center bg-black group overflow-hidden shrink-0"
                                 >
+                                    {/* Ambient blurred backdrop so videos fill player frame beautifully */}
+                                    {reel.thumbnail_url && (
+                                        <div
+                                            className="absolute inset-0 bg-cover bg-center filter blur-3xl opacity-35 scale-125 pointer-events-none"
+                                            style={{ backgroundImage: `url(${reel.thumbnail_url})` }}
+                                        />
+                                    )}
+
                                     {/* Video Element */}
                                     <video
                                         ref={(el) => { videoRefs.current[index] = el; }}
                                         src={reel.video_url}
                                         poster={reel.thumbnail_url || undefined}
-                                        className="w-full h-full object-contain cursor-pointer bg-black"
+                                        className="w-full h-full object-contain cursor-pointer bg-transparent relative z-10"
                                         loop
                                         playsInline
                                         muted={isMuted}
@@ -793,16 +807,9 @@ function ReelsContent() {
                                             <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.likes_count}</span>
                                         </button>
 
-                                        {/* Comment Button (Opens modal on mobile, focuses desktop panel) */}
+                                        {/* Comment Button (Opens modal on mobile) */}
                                         <button
-                                            onClick={() => {
-                                                if (!currentUserId) {
-                                                    setAuthModalAction("join the comments");
-                                                    setShowAuthModal(true);
-                                                    return;
-                                                }
-                                                setActiveReelCommentsId(reel.id);
-                                            }}
+                                            onClick={() => setActiveReelCommentsId(reel.id)}
                                             className="flex flex-col items-center group/btn lg:hidden"
                                             title="Comments"
                                         >
@@ -855,12 +862,13 @@ function ReelsContent() {
                         );
                     })
                 )}
+                </div>
             </div>
 
             {/* ================= DESKTOP COMMENTS SIDE PANEL ================= */}
             {reels.length > 0 && (
-                <div className="hidden lg:flex w-[380px] xl:w-[420px] h-full bg-[#0a0a0f] border border-white/5 rounded-[2rem] flex-col overflow-hidden shadow-2xl shrink-0">
-                    <div className="p-6 border-b border-white/5 bg-gradient-to-b from-[#12121a] to-[#0a0a0f]">
+                <div className="hidden lg:flex w-[340px] xl:w-[380px] h-full bg-[#0a0a0f] border border-white/10 rounded-[2.5rem] flex-col overflow-hidden shadow-2xl shrink-0">
+                    <div className="p-5 xl:p-6 border-b border-white/5 bg-gradient-to-b from-[#12121a] to-[#0a0a0f]">
                         <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
                             <MessageCircle size={18} className="text-[#C2185B]" /> Discussion
                         </h3>
@@ -886,10 +894,10 @@ function ReelsContent() {
             )}
 
             {/* ================= MOBILE COMMENTS MODAL ================= */}
-            {activeReelCommentsId && currentUserId && (
-                <div className="lg:hidden fixed inset-0 z-[100] flex items-end justify-center p-0 bg-black/85 backdrop-blur-md animate-[fadeIn_0.2s_ease-out]">
-                    <div className="bg-[#0a0a0f] border-t border-white/10 rounded-t-[2.5rem] w-full max-h-[80vh] flex flex-col shadow-2xl overflow-hidden">
-                        <div className="flex items-center justify-between p-5 border-b border-white/5 bg-[#0a0a0f]/90">
+            {activeReelCommentsId && (
+                <div className="lg:hidden fixed inset-0 z-[200] flex items-end justify-center p-0 bg-black/85 backdrop-blur-md animate-[fadeIn_0.2s_ease-out]">
+                    <div className="bg-[#0a0a0f] border-t border-white/10 rounded-t-[2.5rem] w-full max-h-[85vh] h-[75vh] flex flex-col shadow-2xl overflow-hidden pb-16">
+                        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/5 bg-[#0a0a0f]/95 shrink-0">
                             <h3 className="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
                                 <MessageCircle size={16} className="text-[#C2185B]" /> Comments
                             </h3>
@@ -900,6 +908,10 @@ function ReelsContent() {
                         <SharedCommentsView
                             reelId={activeReelCommentsId}
                             currentUserId={currentUserId}
+                            onAuthRequired={() => {
+                                setAuthModalAction("comment on this reel");
+                                setShowAuthModal(true);
+                            }}
                             onCommentAdded={() => {
                                 setReels(prev => prev.map(r => {
                                     if (r.id === activeReelCommentsId) {

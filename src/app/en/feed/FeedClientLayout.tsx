@@ -179,7 +179,7 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
       </aside>
 
       {/* ================= محتوای اصلی فید ================= */}
-      <main className={`flex-1 min-w-0 h-full relative z-10 ${isChatPage ? 'overflow-hidden flex flex-col pb-0' : isReelsPage ? 'overflow-y-auto custom-scrollbar pb-16 lg:pb-0' : 'overflow-y-auto custom-scrollbar pb-28 lg:pb-0'}`}>
+      <main className={`flex-1 min-w-0 h-full relative z-10 ${isChatPage || isReelsPage ? 'overflow-hidden flex flex-col pb-0' : 'overflow-y-auto custom-scrollbar pb-28 lg:pb-0'}`}>
         {children}
       </main>
 
