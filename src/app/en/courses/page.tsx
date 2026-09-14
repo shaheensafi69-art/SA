@@ -1,6 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
-import BackgroundWaves from "@/components/ui/background-waves";
 import {
   Wallet,
   ArrowRight,
@@ -18,7 +17,14 @@ import {
   HelpCircle,
   ChevronRight,
   Layers,
-  Flame
+  Flame,
+  Star,
+  Check,
+  X,
+  Laptop,
+  Briefcase,
+  Terminal,
+  FileCode2
 } from "lucide-react";
 
 export default async function CoursesPage() {
@@ -82,6 +88,42 @@ export default async function CoursesPage() {
   ];
 
   // --------------------------------------------------------------------------
+  // Comparison Table: Safi Academy vs Traditional vs YouTube
+  // --------------------------------------------------------------------------
+  const comparisonData = [
+    {
+      feature: "Curriculum Depth & Realism",
+      safi: "Production-grade, full-stack systems with real databases & edge deployment",
+      traditional: "Outdated academic theory with minimal modern tooling",
+      youtube: "Fragmented, incomplete toy examples without production architecture"
+    },
+    {
+      feature: "Senior Code Review & PR Audits",
+      safi: "Direct line-by-line code reviews from veteran software engineers",
+      traditional: "Graded by teaching assistants with generic comments",
+      youtube: "None (zero feedback on code quality or architecture)"
+    },
+    {
+      feature: "Accredited Verifiable Diploma",
+      safi: "Cryptographically verifiable credential shareable on LinkedIn",
+      traditional: "Paper degree requiring weeks to verify",
+      youtube: "No recognized proof of completion"
+    },
+    {
+      feature: "Career Support & Remote Job Pipeline",
+      safi: "Direct alumni network, portfolio audits & remote client referrals",
+      traditional: "Generic career fairs with limited remote tech access",
+      youtube: "None (students left to navigate job market alone)"
+    },
+    {
+      feature: "Cost & Accessibility",
+      safi: "Affordable with automatic wallet credits & 100% scholarships",
+      traditional: "$15,000 - $40,000+ tuition plus heavy student debt",
+      youtube: "Free upfront, but costs hundreds of hours in lost time"
+    }
+  ];
+
+  // --------------------------------------------------------------------------
   // 4-Stage Student Success Roadmap
   // --------------------------------------------------------------------------
   const successSteps = [
@@ -138,9 +180,26 @@ export default async function CoursesPage() {
   ];
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#020202] text-white font-sans selection:bg-amber-500 selection:text-black pb-28">
-      {/* Background Animated Canvas Waves */}
-      <BackgroundWaves />
+    <main className="relative min-h-screen overflow-hidden bg-[#030307] text-white font-sans selection:bg-amber-500 selection:text-black pb-28">
+      {/* ================================================================== */}
+      {/* LUXURY AMBIENT BACKGROUND SYSTEM (REPLACED CANVAS WAVES) */}
+      {/* ================================================================== */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Luminous Top Horizon Beam */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4/5 h-[1px] bg-gradient-to-r from-transparent via-amber-500/60 to-transparent"></div>
+
+        {/* High-Tech Cyber Grid Mask */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+
+        {/* Grainy Texture for Cinematic Depth */}
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-15 mix-blend-overlay"></div>
+
+        {/* Multi-Layered Luminous Orbs */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[60vw] h-[40vw] bg-gradient-to-b from-amber-500/12 via-yellow-600/6 to-transparent rounded-full blur-[160px]"></div>
+        <div className="absolute top-[25%] left-[-10%] w-[45vw] h-[45vw] bg-indigo-600/10 rounded-full blur-[180px]"></div>
+        <div className="absolute top-[50%] right-[-10%] w-[45vw] h-[45vw] bg-purple-600/10 rounded-full blur-[190px]"></div>
+        <div className="absolute bottom-[-10%] left-[15%] w-[40vw] h-[40vw] bg-emerald-600/8 rounded-full blur-[170px]"></div>
+      </div>
 
       <div className="relative z-10 px-4 py-20 sm:px-6 md:py-24 lg:px-12 xl:px-20 max-w-[1600px] mx-auto">
         {/* ================================================================== */}
@@ -155,9 +214,9 @@ export default async function CoursesPage() {
               </div>
             )}
 
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.25em] text-neutral-300 backdrop-blur-md mb-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-black uppercase tracking-[0.25em] text-amber-300 backdrop-blur-md mb-6 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
               <Sparkles size={14} className="text-amber-400" />
-              <span>World-Class Technical Curriculums</span>
+              <span>Safi Academy Accredited Curriculums</span>
             </div>
 
             <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-7xl leading-[1.08]">
@@ -170,6 +229,24 @@ export default async function CoursesPage() {
             <p className="mt-6 text-base sm:text-lg leading-relaxed text-neutral-300 font-normal max-w-2xl">
               Step away from passive tutorials. Safi Academy curriculums are engineered for ambitious builders who want production mastery, senior code reviews, and verifiable career credentials.
             </p>
+
+            {/* Quick Category Anchor Bar */}
+            {categories.length > 0 && (
+              <div className="mt-8 flex flex-wrap items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 mr-1">
+                  Quick Jump:
+                </span>
+                {categories.map((cat) => (
+                  <a
+                    key={cat as string}
+                    href={`#cat-${encodeURIComponent(cat as string)}`}
+                    className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/5 border border-white/10 hover:border-amber-500/40 hover:bg-amber-500/10 hover:text-amber-300 transition-all text-neutral-300 backdrop-blur-md"
+                  >
+                    {cat}
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
@@ -194,7 +271,7 @@ export default async function CoursesPage() {
         {/* ================================================================== */}
         {/* STATS STRIP: PROOF & ACCREDITATION */}
         {/* ================================================================== */}
-        <div className="mb-24 p-6 sm:p-8 rounded-[2.5rem] bg-black/40 border border-white/10 backdrop-blur-xl shadow-2xl grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div className="mb-24 p-6 sm:p-8 rounded-[2.5rem] bg-[#090812]/90 border border-white/10 backdrop-blur-xl shadow-2xl grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div>
             <div className="text-3xl sm:text-4xl font-black text-white">15,000+</div>
             <div className="text-xs text-neutral-400 uppercase tracking-wider font-bold mt-1">Students Enrolled</div>
@@ -241,11 +318,15 @@ export default async function CoursesPage() {
               const categoryCourses = courses.filter((c) => c.category === categoryName);
 
               return (
-                <section key={categoryName as string} className="relative">
+                <section
+                  key={categoryName as string}
+                  id={`cat-${encodeURIComponent(categoryName as string)}`}
+                  className="relative scroll-mt-28"
+                >
                   {/* Category Header */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 border-b border-white/10 pb-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-inner">
+                      <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center text-amber-400 shadow-inner">
                         <BookOpen size={22} />
                       </div>
                       <div>
@@ -258,9 +339,10 @@ export default async function CoursesPage() {
                       </div>
                     </div>
 
-                    <span className="text-xs font-semibold text-neutral-400">
-                      Accredited by Safi Academy Faculty
-                    </span>
+                    <div className="flex items-center gap-2 text-xs font-semibold text-neutral-400">
+                      <ShieldCheck size={14} className="text-emerald-400" />
+                      <span>Accredited Curriculum</span>
+                    </div>
                   </div>
 
                   {/* Course Cards Grid */}
@@ -274,7 +356,7 @@ export default async function CoursesPage() {
                       return (
                         <article
                           key={course.id}
-                          className="group flex h-full flex-col overflow-hidden rounded-[2.5rem] border border-white/10 bg-[#090810]/80 backdrop-blur-xl shadow-2xl transition-all duration-500 hover:border-amber-500/40 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(245,158,11,0.12)] relative"
+                          className="group flex h-full flex-col overflow-hidden rounded-[2.5rem] border border-white/10 bg-[#090812]/90 backdrop-blur-xl shadow-2xl transition-all duration-500 hover:border-amber-500/50 hover:-translate-y-2 hover:shadow-[0_25px_60px_rgba(245,158,11,0.15)] relative"
                         >
                           {/* Wallet Discount Badge */}
                           {hasDiscount && (
@@ -402,7 +484,67 @@ export default async function CoursesPage() {
         )}
 
         {/* ================================================================== */}
-        {/* 3. THE 4 PILLARS OF EXCELLENCE */}
+        {/* 3. COMPARISON TABLE: SAFI ACADEMY VS TRADITIONAL BOOTCAMPS */}
+        {/* ================================================================== */}
+        <div className="mb-32">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-3">
+              Uncompromising Quality
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">
+              How Safi Academy Outperforms Others
+            </h2>
+            <p className="text-sm md:text-base text-neutral-300 leading-relaxed">
+              Compare our production-first engineering training model against traditional university degrees and disconnected video tutorials.
+            </p>
+            <div className="w-20 h-1 bg-amber-500 mx-auto mt-6 rounded-full"></div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse bg-[#090812]/90 border border-white/10 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-xl">
+              <thead>
+                <tr className="border-b border-white/10 bg-white/[0.03]">
+                  <th className="py-5 px-6 text-xs font-black uppercase tracking-wider text-neutral-400">
+                    Feature & Dimension
+                  </th>
+                  <th className="py-5 px-6 text-xs font-black uppercase tracking-wider text-amber-400 bg-amber-500/10">
+                    Safi Academy Masterclass
+                  </th>
+                  <th className="py-5 px-6 text-xs font-black uppercase tracking-wider text-neutral-400">
+                    Traditional University Degree
+                  </th>
+                  <th className="py-5 px-6 text-xs font-black uppercase tracking-wider text-neutral-400">
+                    YouTube Tutorials
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5 text-xs sm:text-sm">
+                {comparisonData.map((row, idx) => (
+                  <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-5 px-6 font-bold text-white whitespace-nowrap">
+                      {row.feature}
+                    </td>
+                    <td className="py-5 px-6 font-semibold text-amber-200 bg-amber-500/5 leading-relaxed">
+                      <span className="flex items-start gap-2">
+                        <Check className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                        <span>{row.safi}</span>
+                      </span>
+                    </td>
+                    <td className="py-5 px-6 text-neutral-400 leading-relaxed">
+                      {row.traditional}
+                    </td>
+                    <td className="py-5 px-6 text-neutral-400 leading-relaxed">
+                      {row.youtube}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* ================================================================== */}
+        {/* 4. THE 4 PILLARS OF EXCELLENCE */}
         {/* ================================================================== */}
         <div className="bg-gradient-to-br from-[#0e0c18] via-[#090812] to-[#040408] border border-amber-500/25 rounded-[3rem] p-8 md:p-14 shadow-2xl relative overflow-hidden mb-32">
           <div className="text-center max-w-3xl mx-auto mb-16 relative z-10">
@@ -443,7 +585,7 @@ export default async function CoursesPage() {
         </div>
 
         {/* ================================================================== */}
-        {/* 4. 4-STAGE STUDENT SUCCESS ROADMAP */}
+        {/* 5. 4-STAGE STUDENT SUCCESS ROADMAP */}
         {/* ================================================================== */}
         <div className="mb-32">
           <div className="text-center max-w-2xl mx-auto mb-16">
@@ -481,7 +623,7 @@ export default async function CoursesPage() {
         </div>
 
         {/* ================================================================== */}
-        {/* 5. FREQUENTLY ASKED QUESTIONS */}
+        {/* 6. FREQUENTLY ASKED QUESTIONS */}
         {/* ================================================================== */}
         <div className="max-w-4xl mx-auto mb-32">
           <div className="text-center mb-14">
@@ -512,7 +654,7 @@ export default async function CoursesPage() {
         </div>
 
         {/* ================================================================== */}
-        {/* 6. GRAND FINALE ENROLLMENT & SCHOLARSHIP BANNER */}
+        {/* 7. GRAND FINALE ENROLLMENT & SCHOLARSHIP BANNER */}
         {/* ================================================================== */}
         <div className="w-full bg-gradient-to-br from-[#120f20] via-[#0d0a17] to-[#06050b] border border-amber-500/30 rounded-[3rem] p-8 md:p-16 shadow-2xl relative overflow-hidden text-center flex flex-col items-center">
           <div className="w-18 h-18 rounded-3xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-6 p-4 shadow-inner">
