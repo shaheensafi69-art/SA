@@ -40,15 +40,23 @@ const strategicPartners = [
   { name: "NEFE Financial", url: "/par/nefe.org-logo.png", domain: "nefe.org" },
 ];
 
-// ۲. لیست تاییدیه‌ها و مجوزهای ملی و دولتی
+// ۲. لیست تاییدیه‌ها و مجوزهای ملی و دولتی (بریتانیا، کشورهای معتبر اروپایی و افغانستان)
 const nationalRecognitions = [
-  { name: "US Department of Education", url: "https://img.logo.dev/ed.gov?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Dept. of Education (USA)" },
-  { name: "BMBF Germany", url: "https://img.logo.dev/bmbf.de?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of Education (Germany)" },
-  { name: "Ministry of National Education France", url: "https://img.logo.dev/education.gouv.fr?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of Education (France)" },
-  { name: "Government of Netherlands", url: "https://img.logo.dev/rijksoverheid.nl?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of Education (Netherlands)" },
-  { name: "SERI Switzerland", url: "https://img.logo.dev/sbfi.admin.ch?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "State Secretariat (Switzerland)" },
-  { name: "Ministry of Education AFG", url: "https://img.logo.dev/moe.gov.af?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of Education (AFG)" },
-  { name: "Ministry of Higher Education AFG", url: "https://img.logo.dev/old.mohe.gov.af?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Higher Education (AFG)" }
+  { name: "Department for Education UK", url: "https://img.logo.dev/gov.uk?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Dept. for Education (United Kingdom)", code: "UK" },
+  { name: "US Department of Education", url: "https://img.logo.dev/ed.gov?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Dept. of Education (United States)", code: "USA" },
+  { name: "BMBF Germany", url: "https://img.logo.dev/bmbf.de?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of Education & Research (Germany)", code: "DE" },
+  { name: "Ministry of National Education France", url: "https://img.logo.dev/education.gouv.fr?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of National Education (France)", code: "FR" },
+  { name: "Government of Netherlands", url: "https://img.logo.dev/rijksoverheid.nl?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of Education (Netherlands)", code: "NL" },
+  { name: "SERI Switzerland", url: "https://img.logo.dev/sbfi.admin.ch?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "State Secretariat for Education (Switzerland)", code: "CH" },
+  { name: "Ministry of Education and Merit Italy", url: "https://img.logo.dev/miur.gov.it?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of Education & Merit (Italy)", code: "IT" },
+  { name: "Ministry of Education Spain", url: "https://img.logo.dev/educacionfpydeportes.gob.es?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of Education (Spain)", code: "ES" },
+  { name: "Ministry of Education Sweden", url: "https://img.logo.dev/regeringen.se?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of Education & Research (Sweden)", code: "SE" },
+  { name: "Federal Ministry of Education Austria", url: "https://img.logo.dev/bmbwf.gv.at?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Federal Ministry of Education (Austria)", code: "AT" },
+  { name: "Ministry of Education Poland", url: "https://img.logo.dev/gov.pl?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of Education & Science (Poland)", code: "PL" },
+  { name: "Ministry of Education Finland", url: "https://img.logo.dev/okm.fi?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of Education & Culture (Finland)", code: "FI" },
+  { name: "Ministry of Education Norway", url: "https://img.logo.dev/regjeringen.no?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of Education & Research (Norway)", code: "NO" },
+  { name: "Ministry of Education AFG", url: "https://img.logo.dev/moe.gov.af?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Ministry of Education (Afghanistan)", code: "AF" },
+  { name: "Ministry of Higher Education AFG", url: "https://img.logo.dev/old.mohe.gov.af?token=pk_KFxIPBNeQa6ZPc2CP18vhQ&format=webp&retina=true", label: "Higher Education (Afghanistan)", code: "AF" }
 ];
 
 export default function Footer() {
@@ -86,7 +94,7 @@ export default function Footer() {
   return (
     <footer className="relative w-full border-t border-white/10 bg-[#030307] pt-24 pb-12 overflow-hidden font-sans z-10">
 
-      {/* ================= BACKGROUND GLOWS & CYBERNETIC GRID ================= */}
+      {/* ================= BACKGROUND GLOWS, HEARTBEAT AFGHAN FLAG & CYBERNETIC GRID ================= */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Subtle Cyber Grid Background */}
         <div 
@@ -103,9 +111,14 @@ export default function Footer() {
         <div className="bg-gradient-to-tr from-emerald-600/10 via-teal-500/5 to-transparent absolute right-1/6 bottom-1/4 h-[600px] w-[600px] rounded-full blur-[180px]" />
         <div className="bg-cyan-500/5 absolute bottom-0 left-10 h-72 w-72 rounded-full blur-[140px]" />
 
-        {/* Atmospheric Tri-Color Afghan Flag Wave Watermark */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] pointer-events-none select-none z-0">
-          <div className="w-[1100px] h-[600px] rounded-[180px] bg-gradient-to-r from-black via-red-600 to-emerald-600 blur-[150px] transform -rotate-6 scale-110" />
+        {/* 🌟 ضربان قلب پرچم افغانستان در پس‌زمینه تمام متون (Atmospheric Tri-Color Heartbeat Backlight) */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
+          <div 
+            className="w-[1000px] h-[550px] md:w-[1300px] md:h-[700px] rounded-[180px] bg-gradient-to-r from-black/80 via-red-600 to-emerald-600 blur-[130px] md:blur-[160px]"
+            style={{
+              animation: 'afghanHeartbeat 4.5s ease-in-out infinite'
+            }}
+          />
         </div>
       </div>
 
@@ -586,6 +599,28 @@ export default function Footer() {
         @keyframes marquee {
           0% { transform: translateX(0%); }
           100% { transform: translateX(-50%); }
+        }
+        @keyframes afghanHeartbeat {
+          0%, 100% {
+            transform: scale(0.96) rotate(-6deg);
+            opacity: 0.03;
+          }
+          18% {
+            transform: scale(1.08) rotate(-5deg);
+            opacity: 0.085;
+          }
+          32% {
+            transform: scale(1.01) rotate(-6deg);
+            opacity: 0.045;
+          }
+          48% {
+            transform: scale(1.15) rotate(-7deg);
+            opacity: 0.10;
+          }
+          70% {
+            transform: scale(0.98) rotate(-6deg);
+            opacity: 0.035;
+          }
         }
       `}} />
     </footer>
