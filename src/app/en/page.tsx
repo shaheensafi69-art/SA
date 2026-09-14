@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { motion, useMotionValue, useTransform, animate, AnimatePresence } from "framer-motion";
 import { 
   ArrowRight, ShieldCheck, Globe, Cpu, TrendingUp, ShoppingCart, 
-  CreditCard, Smartphone, Award, Trophy, ChevronRight, 
+  CreditCard, Smartphone, Award, Trophy, ChevronRight, ChevronDown,
   CheckCircle2, Building, Zap, Users, GraduationCap, Clock, Sparkles, Quote, Volume2, VolumeX, Download,
   Bell, Home, BookOpen, Wallet, User, LayoutGrid, Radio, Rss, Menu, Flame, 
   PlayCircle, Heart, Search, Video, LogOut, MessageSquare, Plus, FileText, Bookmark, Calendar
@@ -144,26 +144,239 @@ export default function EnglishHome() {
 
   const gradPercentage = stats.students > 0 ? Math.round((stats.graduates / stats.students) * 100) : 0;
 
-  // ================= STATIC DATA =================
+  // ================= FAQ STATE & STATIC DATA =================
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const partnerLogos = [
+    { name: "Amazon Web Services", logo: "/par/aws.amazon.com-logo.webp", desc: "Cloud Infrastructure & Student Compute Credits" },
+    { name: "Microsoft Learn", logo: "/par/learn.microsoft.com-logo.webp", desc: "Enterprise Developer Curriculums & Azure Labs" },
+    { name: "Google.org", logo: "/par/google.org-logo.webp", desc: "AI Essentials & Autonomous Agentic Frameworks" },
+    { name: "Bill & Melinda Gates Foundation", logo: "/par/gatesfoundation.org-logo.webp", desc: "Humanitarian Education & Global Inclusion" },
+    { name: "CompTIA", logo: "/par/comptia.org-logo.webp", desc: "Cybersecurity & Systems Engineering Standards" },
+    { name: "Project Management Institute (PMI)", logo: "/par/pmi.org-logo.webp", desc: "Agile Leadership & Global Governance" },
+    { name: "Credly Digital Badges", logo: "/par/credly.com-logo.webp", desc: "Cryptographic Tamper-Proof Credential Verification" },
+    { name: "Accredible", logo: "/par/accredible.com-logo.webp", desc: "Blockchain Ledger Academic Verification" },
+    { name: "BadgeCert", logo: "/par/badgecert.com-logo.webp", desc: "Institutional Certification Integrity Protocol" },
+    { name: "NEFE Financial Foundation", logo: "/par/nefe.org-logo.png", desc: "Financial Literacy & Risk Management Governance" }
+  ];
+
   const ecosystemFeatures = [
-    { title: "SafiPay Digital Banking", desc: "Open multi-currency international accounts instantly. Hold balances in EUR, USD, GBP, PLN, SEK, NOK, RON, HUF, CZK, and DKK. Issue virtual and physical Visa cards in exactly one second, securely backed by EU standards.", icon: <CreditCard className="w-8 h-8 text-yellow-400" />, link: "www.safipay.net", color: "from-blue-600/20 to-cyan-600/20", border: "border-blue-500/30", },
-    { title: "Safi TopUp Global", desc: "Connect anywhere. Send mobile credit and top-ups to over 150 countries and 700+ global operators. Instantly purchase digital gift cards, gaming cards, and pay prepaid utility bills globally.", icon: <Smartphone className="w-8 h-8 text-yellow-400" />, link: "www.safitopup.site", color: "from-emerald-600/20 to-teal-600/20", border: "border-emerald-500/30", },
-    { title: "SafiPro Apparel", desc: "Our exclusive lifestyle and e-commerce brand. Discover high-quality, modern clothing with unique, cutting-edge designs engineered to meet the highest global fashion standards.", icon: <ShoppingCart className="w-8 h-8 text-yellow-400" />, link: "www.safipro.site", color: "from-rose-600/20 to-orange-600/20", border: "border-rose-500/30", },
-    { title: "Safi International Capital LTD", desc: "The financial titan behind it all. Officially registered in the UK (No. 17063286). Headquartered in Covent Garden, London. Providing world-class financial services and international capital management.", icon: <Building className="w-8 h-8 text-yellow-400" />, link: "UK Registry", color: "from-purple-600/20 to-indigo-600/20", border: "border-purple-500/30", }
+    { 
+      title: "SafiPay Digital Banking", 
+      badge: "European Compliant",
+      desc: "Open multi-currency international accounts instantly. Hold balances in EUR, USD, GBP, PLN, SEK, NOK, RON, HUF, CZK, and DKK. Issue virtual and physical Visa cards in exactly one second, securely backed by EU standards and SEPA Instant settlement networks.", 
+      icon: <CreditCard className="w-8 h-8 text-yellow-400" />, 
+      logo: "/company/SafiPay.png",
+      link: "www.safipay.net", 
+      color: "from-blue-600/20 to-cyan-600/20", 
+      border: "border-blue-500/30", 
+      stat: "1-Sec Visa Card Issuance"
+    },
+    { 
+      title: "Safi TopUp Global", 
+      badge: "150+ Countries",
+      desc: "Connect anywhere on earth. Send mobile airtime, data bundles, and eSIMs to over 150 countries across 700+ global telecom operators. Instantly purchase digital gaming vouchers, gift cards, and settle international prepaid utility accounts.", 
+      icon: <Smartphone className="w-8 h-8 text-yellow-400" />, 
+      logo: "/company/Safi TopUp.jpg",
+      link: "www.safitopup.site", 
+      color: "from-emerald-600/20 to-teal-600/20", 
+      border: "border-emerald-500/30", 
+      stat: "700+ Telecom Operators"
+    },
+    { 
+      title: "SafiPro International Apparel", 
+      badge: "Exclusive Merch",
+      desc: "Our exclusive tech lifestyle and e-commerce brand. Discover high-quality, modern streetwear and developer merchandise engineered with premium organic cotton, carbon-neutral shipping, and sleek cyberpunk aesthetic designs.", 
+      icon: <ShoppingCart className="w-8 h-8 text-yellow-400" />, 
+      logo: "/company/SafiPro.jpeg",
+      link: "www.safipro.site", 
+      color: "from-rose-600/20 to-orange-600/20", 
+      border: "border-rose-500/30", 
+      stat: "Worldwide Express Delivery"
+    },
+    { 
+      title: "Safi International Capital LTD", 
+      badge: "UK Holding Co.",
+      desc: "The institutional financial titan underwriting the entire ecosystem. Officially incorporated at Companies House in London, United Kingdom (Company Reg No. 17063286). Headquartered in Covent Garden, providing corporate asset management and student endowments.", 
+      icon: <Building className="w-8 h-8 text-yellow-400" />, 
+      logo: "/company/Safi International Capital LTD.png",
+      link: "UK Registry No. 17063286", 
+      color: "from-purple-600/20 to-indigo-600/20", 
+      border: "border-purple-500/30", 
+      stat: "Covent Garden, London"
+    }
   ];
 
   const leadershipTeam = [
-    { name: "Shaheen Safi", role: "Founder & CEO", title: "Visionary & Chief Architect" },
-    { name: "Mujtaba Rahmani", role: "Chief Operating Officer", title: "Operations Director" },
-    { name: "Sahel Salem", role: "Head of European Relations", title: "EU Market Director" },
-    { name: "Shirin Gol Ahmadi", role: "Company Manager & AI Specialist", title: "AI Integration Lead" }
+    { 
+      name: "Shaheen Safi", 
+      role: "Founder & CEO", 
+      title: "Visionary, Chief Architect & Systems Engineer", 
+      image: "/team/shaheen.jpeg",
+      link: "/en/founder/shaheen-safi",
+      bio: "Pioneering decentralized education, AI automation, and borderless fintech platforms connecting global learners."
+    },
+    { 
+      name: "Mujtaba Rahmani", 
+      role: "Chief Operating Officer", 
+      title: "Director of Global Operations & Logistics", 
+      image: "/team/mujtaba.jpeg",
+      link: "/en/founder/mujtaba-rahmani",
+      bio: "Overseeing day-to-day operations, strategic campus logistics, and enterprise partnerships across worldwide cohorts."
+    },
+    { 
+      name: "Sahel Salem", 
+      role: "Head of European Relations", 
+      title: "EU Strategic Market Director", 
+      image: "/team/sahel.jpeg",
+      link: "/en/founder/sahel-salem",
+      bio: "Managing European Union institutional compliance, legal dossiers, and cross-border university equivalency."
+    },
+    { 
+      name: "Shirin Gol Ahmadi", 
+      role: "Company Manager & AI Specialist", 
+      title: "AI Pedagogical Integration Lead", 
+      image: "/team/shirin.jpeg",
+      link: "/en/founder/shirin-gol-ahmadi",
+      bio: "Leading artificial intelligence curriculum development, automated grading algorithms, and female empowerment initiatives."
+    }
+  ];
+
+  const academicFaculties = [
+    {
+      title: "Global E-Commerce & Dropshipping",
+      subtitle: "Omnichannel Brand Mastery",
+      desc: "Launch, scale, and automate 7-figure international retail businesses. Master Shopify Liquid architecture, Amazon FBA logistics, TikTok Shop viral engineering, and international payment gateways.",
+      icon: <ShoppingCart size={36} className="text-yellow-400" />,
+      tag: "FLAGSHIP PROGRAM",
+      color: "from-yellow-500/20 to-amber-600/10",
+      border: "border-yellow-500/30",
+      badge: "Shopify & Amazon Certified",
+      link: "/en/courses",
+      actionText: "Explore E-Commerce Curriculums"
+    },
+    {
+      title: "Tech, Next-Gen AI & Full-Stack",
+      subtitle: "Engineering Tomorrow's Software",
+      desc: "From zero to production engineer. Code in TypeScript, React, Next.js, and Python. Build scalable backend microservices, PostgreSQL databases, and deploy autonomous LLM agents with Google Gemini APIs.",
+      icon: <Cpu size={36} className="text-blue-400" />,
+      tag: "DEVELOPER TRACK",
+      color: "from-blue-500/20 to-cyan-600/10",
+      border: "border-blue-500/30",
+      badge: "Full-Stack + AI Agents",
+      link: "/en/courses",
+      actionText: "View Engineering Syllabus"
+    },
+    {
+      title: "Financial Markets & Prop Trading",
+      subtitle: "Institutional Liquidity Analysis",
+      desc: "Trade global Forex pairs, Crypto liquidity pools, and Index Futures with strict mathematical risk management. Master Smart Money Concepts (SMC), Order Flow, and institutional algorithmic setups.",
+      icon: <TrendingUp size={36} className="text-emerald-400" />,
+      tag: "CAPITAL MANAGEMENT",
+      color: "from-emerald-500/20 to-teal-600/10",
+      border: "border-emerald-500/30",
+      badge: "SMC & Institutional Risk",
+      link: "/en/courses",
+      actionText: "Access Trading Masterclass"
+    },
+    {
+      title: "Languages & International Diplomas",
+      subtitle: "Global Cross-Border Communication",
+      desc: "Master high-level English for international business, CEL & DEL accredited programs, alongside specialized German (Goethe-Zertifikat) and French (DELF) for overseas immigration and scholarships.",
+      icon: <Globe size={36} className="text-purple-400" />,
+      tag: "GLOBAL MOBILITY",
+      color: "from-purple-500/20 to-pink-600/10",
+      border: "border-purple-500/30",
+      badge: "CEL & DEL Accredited",
+      link: "/en/courses",
+      actionText: "Browse Language Tracks"
+    },
+    {
+      title: "100% Full-Ride Scholarships",
+      subtitle: "Equal Access to Global Knowledge",
+      desc: "Dedicated merit and need-based tuition endowments for underserved students, women in tech, and crisis-affected scholars. Receive free tuition, mentor office hours, and international certification vouchers.",
+      icon: <GraduationCap size={36} className="text-amber-400" />,
+      tag: "HUMANITARIAN MISSION",
+      color: "from-amber-500/20 to-yellow-600/10",
+      border: "border-amber-500/30",
+      badge: "Zero-Cost Tuition",
+      link: "/en/scholarships",
+      actionText: "Apply for Scholarships"
+    },
+    {
+      title: "Enterprise Software & DevSquads",
+      subtitle: "Bespoke Production Solutions",
+      desc: "Commission custom web platforms, mobile apps, and fintech gateways engineered by Safi Academy's elite engineering squads under strict UK legal contracts and dedicated SLA benchmarks.",
+      icon: <Building size={36} className="text-cyan-400" />,
+      tag: "COMMERCIAL CLIENTS",
+      color: "from-cyan-500/20 to-blue-600/10",
+      border: "border-cyan-500/30",
+      badge: "SLA Guaranteed",
+      link: "/en/development-services",
+      actionText: "Commission a Project"
+    }
   ];
 
   const testimonials = [
-    { quote: "The course did a great job explaining AI - from development through application. I appreciated the varying perspectives presented, which were helpful in understanding how to use AI responsibly as a tool in my profession, rather than a novelty.", name: "Cris M.", role: "Google AI Essentials graduate", image: "https://cms-images.udemycdn.com/96883mtakkm8/3RtbxhMUTMftb9PKczSTDW/f383a1effc2975968d2f87d9273c6e9d/cris-m.webp", linkText: "View AI courses", linkUrl: "/en/courses" },
-    { quote: "Safi Academy was truly a game-changer and a great guide for me as we brought our startup ecosystem to life.", name: "Alvin Lim", role: "Technical Co-Founder, CTO at Dimensional", image: "https://cms-images.udemycdn.com/96883mtakkm8/1Djz6c0gZLaCG5SQS3PgUY/54b6fb8c85d8da01da95cbb94fa6335f/Alvin_Lim.jpeg", linkText: "View this iOS & Swift course", linkUrl: "/en/courses" },
-    { quote: "Safi Academy gives you the ability to be persistent. I learned exactly what I needed to know in the real world. It helped me sell myself to get a new role.", name: "William A. Wachlin", role: "Partner Account Manager at Amazon Web Services", image: "https://cms-images.udemycdn.com/96883mtakkm8/6dT7xusLHYoOUizXeVqgUk/4317f63fe25b2e07ad8c70cda641014b/William_A_Wachlin.jpeg", linkText: "View this AWS course", linkUrl: "/en/courses" },
-    { quote: "I loved the course about AI Studio. I was not aware of this Google tool, but immediately after taking the course, I put it to use. Within 24 hours, I had a functional, highly useful app for my venture.", name: "Ben C.", role: "Google AI Professional Certificate graduate", image: "https://cms-images.udemycdn.com/96883mtakkm8/1AXU6146N5h3Ti9rGXytFv/4832b694a15fa19c4f0538ee0c71f55a/ben-c.webp", linkText: "View Google AI Certificates", linkUrl: "/en/honors" }
+    { 
+      quote: "The curriculum bridges the gap between raw theory and real-world execution. I learned how to build production-grade web applications and integrate AI models within weeks, which directly enabled me to land an international remote software contract.", 
+      name: "Cris M.", 
+      role: "Google AI Essentials & Full-Stack Graduate", 
+      image: "https://cms-images.udemycdn.com/96883mtakkm8/3RtbxhMUTMftb9PKczSTDW/f383a1effc2975968d2f87d9273c6e9d/cris-m.webp", 
+      linkText: "View AI & Web Courses", 
+      linkUrl: "/en/courses" 
+    },
+    { 
+      quote: "Safi Academy was truly a game-changer and a great guide for me as we brought our startup ecosystem to life. The e-commerce modules helped us optimize international checkout flows and generate over $45,000 in monthly GMV.", 
+      name: "Alvin Lim", 
+      role: "Technical Co-Founder & CTO at Dimensional", 
+      image: "https://cms-images.udemycdn.com/96883mtakkm8/1Djz6c0gZLaCG5SQS3PgUY/54b6fb8c85d8da01da95cbb94fa6335f/Alvin_Lim.jpeg", 
+      linkText: "View E-Commerce Masterclasses", 
+      linkUrl: "/en/courses" 
+    },
+    { 
+      quote: "Safi Academy gives you the ability to be persistent and disciplined. I learned exactly what top global companies look for in high-pressure financial and engineering environments. It completely transformed my career trajectory.", 
+      name: "William A. Wachlin", 
+      role: "Partner Account Manager at Amazon Web Services", 
+      image: "https://cms-images.udemycdn.com/96883mtakkm8/6dT7xusLHYoOUizXeVqgUk/4317f63fe25b2e07ad8c70cda641014b/William_A_Wachlin.jpeg", 
+      linkText: "View AWS & Cloud Track", 
+      linkUrl: "/en/courses" 
+    },
+    { 
+      quote: "The interactive gamified dashboard and instant feedback from mentors made complex trading strategies clear. The risk management principles prevented costly rookie errors and built true consistency.", 
+      name: "Ben C.", 
+      role: "Financial Markets & SMC Certified Alumni", 
+      image: "https://cms-images.udemycdn.com/96883mtakkm8/1AXU6146N5h3Ti9rGXytFv/4832b694a15fa19c4f0538ee0c71f55a/ben-c.webp", 
+      linkText: "View Wall of Fame Honors", 
+      linkUrl: "/en/honors" 
+    }
+  ];
+
+  const homeFaqs = [
+    {
+      q: "How does Safi Academy deliver British-standard education internationally?",
+      a: "Safi Academy operates under Safi International Capital LTD (UK Registered No. 17063286, Covent Garden, London). Our curriculums align with accredited international frameworks, incorporating live coding labs, peer reviews, direct mentor office hours, and cryptographic blockchain certificate verification."
+    },
+    {
+      q: "How can students apply for 100% full-ride scholarships?",
+      a: "We allocate dedicated tuition endowment pools for passionate, underprivileged students and women in technology. Visit our Scholarships portal (/en/scholarships), submit your academic background and statement of purpose, and our admissions committee reviews files on a rolling weekly basis."
+    },
+    {
+      q: "What payment methods are supported for tuition and enterprise services?",
+      a: "We support multi-currency credit/debit cards, Apple Pay, Google Pay, international SEPA/SWIFT wire transfers through our parent entity, as well as decentralized crypto settlements (USDT, USDC, BTC) through secure payment gateways."
+    },
+    {
+      q: "How does the Safi AI v4.1 assistant guide my coursework?",
+      a: "Safi AI is integrated directly into student dashboards and mobile apps. It is trained on our complete syllabus documentation to answer technical questions 24/7, review code snippets, explain complex financial market structures, and test your understanding prior to exams."
+    },
+    {
+      q: "What is the Wall of Fame and how does the ranking system work?",
+      a: "Our gamified platform rewards academic diligence. Every assignment submitted, quiz passed, and active trading journal entry earns Experience Points (XP). Students advance from Bronze Scholar to the legendary 'Safi Legend' status (7,000+ XP), unlocking direct founder mentorship and corporate job referrals."
+    },
+    {
+      q: "Can businesses hire Safi Academy's DevSquads for commercial software?",
+      a: "Yes. Our enterprise division (Safi Development Services) designs and ships mission-critical web applications, fintech integrations, and mobile solutions for startups and enterprises worldwide, backed by legal UK contracts and strict SLA delivery schedules."
+    }
   ];
 
   return (
@@ -179,74 +392,142 @@ export default function EnglishHome() {
       </div>
 
       {/* ================= 1. HERO SECTION ================= */}
-      <section className="relative z-10 w-full min-h-screen flex flex-col lg:flex-row items-center justify-between px-6 md:px-12 lg:px-20 pt-32 pb-20">
+      <section className="relative z-10 w-full min-h-[90vh] flex flex-col lg:flex-row items-center justify-between px-6 md:px-12 lg:px-20 pt-32 pb-16">
         
-        <div className="w-full lg:w-[55%] flex flex-col items-start space-y-8 z-20">
-          <div className="flex flex-wrap items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md shadow-2xl animate-[fadeInDown_1s_ease-out]">
-            <div className="w-2 h-2 rounded-full bg-yellow-500 shadow-[0_0_10px_#eab308] animate-pulse"></div>
-            <span className="text-xs md:text-sm font-bold tracking-widest text-neutral-300 uppercase">
-              Registered in the UK • No. 17063286
+        <div className="w-full lg:w-[56%] flex flex-col items-start space-y-8 z-20">
+          <div className="flex flex-wrap items-center gap-3 px-5 py-2.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md shadow-2xl animate-[fadeInDown_1s_ease-out]">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-yellow-500"></span>
+            </span>
+            <span className="text-xs md:text-sm font-mono font-bold tracking-widest text-neutral-300 uppercase">
+              Accredited British Academy • UK Reg No. 17063286 • 24/7 Global Hub
             </span>
           </div>
           
-          <h1 className="text-6xl md:text-8xl lg:text-[5.5rem] font-extrabold leading-[1.1] tracking-tight animate-[fadeInLeft_1s_ease-out]">
-            Design Your <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600 drop-shadow-sm">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.4rem] font-black leading-[1.08] tracking-tight animate-[fadeInLeft_1s_ease-out]">
+            Architect Your <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600 drop-shadow-md">
               Digital Empire
             </span>
           </h1>
           
-          <p className="text-lg md:text-xl text-neutral-400 max-w-2xl leading-relaxed font-medium animate-[fadeInLeft_1.2s_ease-out]">
-            Step into a premium educational ecosystem backed by Safi International Capital LTD. Master global E-Commerce, advanced AI Development, and Financial Markets with certified British standards.
+          <p className="text-lg md:text-xl text-neutral-300 max-w-2xl leading-relaxed font-normal animate-[fadeInLeft_1.2s_ease-out]">
+            Step into an elite educational and venture ecosystem backed by <strong className="text-white font-bold">Safi International Capital LTD</strong> (London, UK). Master enterprise AI Engineering, 7-figure Global E-Commerce, and Institutional Financial Markets with certified international standards.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center gap-4 pt-6 w-full sm:w-auto animate-[fadeInUp_1.5s_ease-out]">
-            <Link href="/en/courses" className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-extrabold text-lg rounded-2xl transition-all duration-300 shadow-[0_0_40px_rgba(234,179,8,0.3)] hover:shadow-[0_0_60px_rgba(234,179,8,0.5)] hover:-translate-y-1 flex items-center justify-center gap-2 group">
-              Explore Academy <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+          {/* Action CTA Grid */}
+          <div className="flex flex-wrap items-center gap-4 pt-4 w-full animate-[fadeInUp_1.5s_ease-out]">
+            <Link href="/en/courses" className="px-8 py-4.5 bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-black font-black text-sm uppercase tracking-wider rounded-2xl transition-all duration-300 shadow-[0_0_35px_rgba(234,179,8,0.35)] hover:shadow-[0_0_55px_rgba(234,179,8,0.55)] hover:-translate-y-1 flex items-center justify-center gap-2 group active:scale-95">
+              Explore Academy <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+
+            <Link href="/en/scholarships" className="px-7 py-4.5 bg-white/[0.04] border border-amber-500/40 hover:border-amber-400 hover:bg-amber-500/10 text-amber-400 font-bold text-sm uppercase tracking-wider rounded-2xl transition-all duration-300 backdrop-blur-md flex items-center justify-center gap-2 group shadow-lg active:scale-95">
+              <GraduationCap size={18} className="group-hover:scale-110 transition-transform" /> Scholarships
             </Link>
             
-            <Link href="/en/honors" className="w-full sm:w-auto px-10 py-5 bg-white/5 border border-amber-500/30 hover:border-amber-500/60 hover:bg-amber-500/10 text-amber-400 font-bold text-lg rounded-2xl transition-all duration-300 backdrop-blur-md flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(245,158,11,0.05)]">
-              <Trophy className="text-amber-500 group-hover:scale-110 transition-transform" /> Wall of Fame
+            <Link href="/en/honors" className="px-6 py-4.5 bg-white/[0.04] border border-white/10 hover:border-white/25 hover:bg-white/[0.08] text-neutral-200 font-bold text-sm uppercase tracking-wider rounded-2xl transition-all duration-300 backdrop-blur-md flex items-center justify-center gap-2 group active:scale-95">
+              <Trophy size={18} className="text-amber-500 group-hover:scale-110 transition-transform" /> Wall of Fame
+            </Link>
+
+            <Link href="/en/get-app" className="px-6 py-4.5 bg-fuchsia-500/10 border border-fuchsia-500/30 hover:border-fuchsia-500/60 hover:bg-fuchsia-500/20 text-fuchsia-300 font-bold text-sm uppercase tracking-wider rounded-2xl transition-all duration-300 backdrop-blur-md flex items-center justify-center gap-2 group active:scale-95">
+              <Smartphone size={18} className="text-fuchsia-400 group-hover:scale-110 transition-transform" /> Mobile App
             </Link>
           </div>
 
-          <div className="flex items-center gap-6 pt-8 border-t border-white/10 w-full animate-[fadeIn_2s_ease-out]">
+          {/* Key Trust & Institutional Metrics */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-white/10 w-full animate-[fadeIn_2s_ease-out]">
             <div className="flex flex-col">
-              <span className="text-3xl font-black text-white">4+</span>
-              <span className="text-xs uppercase tracking-widest text-neutral-500 font-bold">Elite Faculties</span>
+              <span className="text-3xl font-black text-white font-mono">6+</span>
+              <span className="text-[11px] uppercase tracking-widest text-neutral-400 font-bold">Faculties</span>
             </div>
-            <div className="w-px h-10 bg-white/10"></div>
             <div className="flex flex-col">
-              <span className="text-3xl font-black text-white">150+</span>
-              <span className="text-xs uppercase tracking-widest text-neutral-500 font-bold">Countries Reached</span>
+              <span className="text-3xl font-black text-yellow-400 font-mono">150+</span>
+              <span className="text-[11px] uppercase tracking-widest text-neutral-400 font-bold">Countries Reached</span>
             </div>
-            <div className="w-px h-10 bg-white/10"></div>
             <div className="flex flex-col">
-              <span className="text-3xl font-black text-white flex items-center gap-1">24/7</span>
-              <span className="text-xs uppercase tracking-widest text-neutral-500 font-bold">AI Mentorship</span>
+              <span className="text-3xl font-black text-blue-400 font-mono">24/7</span>
+              <span className="text-[11px] uppercase tracking-widest text-neutral-400 font-bold">AI Mentorship</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-3xl font-black text-emerald-400 font-mono">100%</span>
+              <span className="text-[11px] uppercase tracking-widest text-neutral-400 font-bold">Verifiable Certs</span>
             </div>
           </div>
         </div>
 
-        <div className="w-full lg:w-[45%] mt-16 lg:mt-0 relative z-10 flex justify-center lg:justify-end animate-[fadeInRight_1.5s_ease-out]">
-          <div className="relative w-full max-w-2xl">
+        {/* Hero Visual Display */}
+        <div className="w-full lg:w-[42%] mt-14 lg:mt-0 relative z-10 flex justify-center lg:justify-end animate-[fadeInRight_1.5s_ease-out]">
+          <div className="relative w-full max-w-xl">
              <div className="absolute inset-0 bg-yellow-500/20 blur-[100px] rounded-full animate-pulse"></div>
-             <div className="relative z-10 w-full overflow-hidden rounded-[3.2rem] bg-[#0d0d12] shadow-[0_30px_80px_rgba(0,0,0,0.9)] border-2 border-white/15 transform hover:scale-[1.02] transition-transform duration-700 animate-float">
+             <div className="relative z-10 w-full overflow-hidden rounded-[3.2rem] bg-[#0d0d12] shadow-[0_30px_90px_rgba(0,0,0,0.9)] border-2 border-white/15 transform hover:scale-[1.01] transition-transform duration-700">
                <img 
                  src="/hero.png" 
-                 alt="Safi Academy Premium Education" 
+                 alt="Safi Academy British Standard Education" 
                  className="w-full h-full object-cover block scale-[1.02]"
                />
              </div>
-             <div className="absolute -bottom-6 -left-6 bg-black/85 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl z-20 flex items-center gap-4 animate-float" style={{animationDelay: "1s"}}>
-                <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center border border-emerald-500/30">
-                  <ShieldCheck className="text-emerald-400" />
+             
+             {/* Regulatory Badge */}
+             <div className="absolute -bottom-5 -left-4 bg-black/90 backdrop-blur-xl border border-white/15 p-4 rounded-2xl shadow-2xl z-20 flex items-center gap-3.5 animate-float">
+                <div className="w-11 h-11 bg-emerald-500/20 rounded-xl flex items-center justify-center border border-emerald-500/30">
+                  <ShieldCheck className="text-emerald-400" size={24} />
                 </div>
                 <div>
-                  <p className="text-xs text-neutral-400 uppercase tracking-widest font-bold">Security</p>
-                  <p className="text-sm font-black text-white">Fully EU Compliant</p>
+                  <p className="text-[10px] text-neutral-400 uppercase tracking-widest font-bold">UK & EU Compliance</p>
+                  <p className="text-xs font-black text-white">GDPR & Companies House Verified</p>
                 </div>
              </div>
+
+             {/* Live Student Counter Badge */}
+             <div className="absolute -top-4 -right-4 bg-black/90 backdrop-blur-xl border border-white/15 p-3.5 rounded-2xl shadow-2xl z-20 flex items-center gap-3 animate-float" style={{animationDelay: "1.5s"}}>
+                <div className="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></div>
+                <div className="text-right">
+                  <p className="text-[10px] text-neutral-400 uppercase font-mono">Live Global Campus</p>
+                  <p className="text-xs font-bold text-yellow-400">Classrooms Active Now</p>
+                </div>
+             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= 1.2. GLOBAL INSTITUTIONAL ALLIANCES & CERTIFICATION MARQUEE ================= */}
+      <section className="relative z-20 w-full py-12 border-y border-white/10 bg-[#07070d]/90 backdrop-blur-xl overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-neutral-300">
+              Institutional Accreditation & Certification Standards
+            </span>
+          </div>
+          <Link href="/en/partners" className="text-xs font-mono font-bold text-yellow-400 hover:text-yellow-300 transition-colors flex items-center gap-1.5 group">
+            <span>Explore All Global Partners</span>
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+
+        {/* Marquee Track */}
+        <div className="relative w-full overflow-hidden flex items-center">
+          <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#07070d] to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#07070d] to-transparent z-10 pointer-events-none"></div>
+
+          <div className="flex items-center gap-10 whitespace-nowrap animate-marquee">
+            {[...partnerLogos, ...partnerLogos].map((partner, idx) => (
+              <div 
+                key={idx}
+                className="inline-flex items-center gap-3.5 px-6 py-3 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-yellow-500/30 transition-all duration-300 group"
+              >
+                <img 
+                  src={partner.logo} 
+                  alt={partner.name} 
+                  className="h-7 max-w-[130px] object-contain filter grayscale group-hover:grayscale-0 transition-all opacity-80 group-hover:opacity-100" 
+                />
+                <div className="text-left">
+                  <div className="text-xs font-bold text-neutral-200 group-hover:text-white transition-colors">{partner.name}</div>
+                  <div className="text-[10px] text-neutral-400 font-mono line-clamp-1">{partner.desc}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -367,27 +648,47 @@ export default function EnglishHome() {
       </section>
 
       {/* ================= 2. SAFI ECOSYSTEM GRID ================= */}
-      <section className="relative z-20 w-full px-6 md:px-12 lg:px-20 py-24 bg-neutral-950/40 border-y border-white/5 backdrop-blur-md">
-        <div className="w-full">
+      <section className="relative z-20 w-full px-6 md:px-12 lg:px-20 py-24 bg-neutral-950/60 border-y border-white/10 backdrop-blur-xl">
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-mono font-bold uppercase">
+              <Building size={14} /> Corporate Conglomerate & Global Infrastructure
+            </div>
+            <h3 className="text-4xl md:text-6xl font-black text-white tracking-tight">
+              The Safi International <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600">Ecosystem</span>
+            </h3>
+            <p className="text-neutral-400 text-base md:text-lg leading-relaxed">
+              Safi Academy is backed by licensed financial institutions, global telecommunication gateways, e-commerce retail networks, and an established UK corporate holding company.
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {ecosystemFeatures.map((feature, idx) => (
-              <div key={idx} className={`relative group bg-gradient-to-br ${feature.color} border ${feature.border} p-8 lg:p-10 rounded-[2.5rem] overflow-hidden backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl flex flex-col justify-between`}>
+              <div key={idx} className={`relative group bg-gradient-to-br ${feature.color} border ${feature.border} p-8 lg:p-9 rounded-[2.5rem] overflow-hidden backdrop-blur-2xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl flex flex-col justify-between`}>
                 <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full blur-[60px] group-hover:scale-150 transition-transform duration-700"></div>
+                
                 <div className="relative z-10 flex flex-col h-full">
-                  <div className="bg-black/40 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 border border-white/10 group-hover:scale-110 transition-transform shadow-inner">
-                    {feature.icon}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="bg-black/60 w-16 h-16 rounded-2xl flex items-center justify-center border border-white/15 group-hover:scale-105 transition-transform shadow-inner overflow-hidden p-2.5">
+                      <img src={feature.logo} alt={feature.title} className="w-full h-full object-contain filter drop-shadow" />
+                    </div>
+                    <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-white/10 text-white border border-white/15">
+                      {feature.badge}
+                    </span>
                   </div>
-                  <h4 className="text-2xl font-black text-white mb-4">{feature.title}</h4>
-                  <p className="text-neutral-400 leading-relaxed flex-1 text-sm md:text-base mb-8">
+
+                  <h4 className="text-2xl font-black text-white mb-3 tracking-tight">{feature.title}</h4>
+                  <p className="text-neutral-300/90 leading-relaxed flex-1 text-sm mb-6">
                     {feature.desc}
                   </p>
-                  <div className="mt-auto flex items-center text-xs font-black uppercase tracking-widest text-white/50 group-hover:text-yellow-400 transition-colors">
-                    <span>{feature.link}</span>
-                    <ChevronRight size={14} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+
+                  <div className="pt-4 border-t border-white/10 mt-auto flex items-center justify-between text-xs font-mono">
+                    <span className="text-yellow-400 font-bold">{feature.stat}</span>
+                    <span className="text-neutral-400 group-hover:text-white transition-colors">{feature.link}</span>
                   </div>
                 </div>
               </div>
-          ))}
+            ))}
           </div>
         </div>
       </section>
@@ -399,23 +700,26 @@ export default function EnglishHome() {
           
           <div className="w-full lg:w-1/2 space-y-8">
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/50 bg-amber-500/20 px-5 py-2 text-xs font-black uppercase tracking-widest text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
-              <Award size={16} /> Global Recognition
+              <Award size={16} /> Global Recognition & Gamification
             </div>
             <h2 className="text-4xl md:text-6xl font-extrabold text-white leading-tight">
               Ascend to <br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Legendary Status</span>
             </h2>
-            <p className="text-neutral-300 text-xl leading-relaxed">
-              We reward excellence. Our gamified learning platform tracks your progress, assignments, and trading journals. Earn points to rank up from <strong className="text-white">Bronze Scholar</strong> to the ultimate <strong className="text-amber-500">Safi Legend</strong>.
+            <p className="text-neutral-300 text-lg md:text-xl leading-relaxed">
+              We reward academic perseverance and tangible mastery. Our gamified architecture tracks every submitted assignment, live trading journal, and quiz score. Accumulate Experience Points (XP) to climb through the 5 global ranks up to <strong className="text-amber-400 font-black">Safi Legend</strong>.
             </p>
             <ul className="space-y-4 pt-2">
-              <li className="flex items-center gap-3 text-base font-bold text-neutral-300"><CheckCircle2 className="text-emerald-500" size={20}/> Get Official Academic Certificates</li>
-              <li className="flex items-center gap-3 text-base font-bold text-neutral-300"><CheckCircle2 className="text-emerald-500" size={20}/> Receive Personalized Instructor Feedback</li>
-              <li className="flex items-center gap-3 text-base font-bold text-neutral-300"><CheckCircle2 className="text-emerald-500" size={20}/> Showcase Your Profile to Employers</li>
+              <li className="flex items-center gap-3 text-base font-bold text-neutral-300"><CheckCircle2 className="text-emerald-500 shrink-0" size={20}/> Cryptographically Verifiable Academic Certificates</li>
+              <li className="flex items-center gap-3 text-base font-bold text-neutral-300"><CheckCircle2 className="text-emerald-500 shrink-0" size={20}/> 1-on-1 Code Audits & Personalized Mentor Reviews</li>
+              <li className="flex items-center gap-3 text-base font-bold text-neutral-300"><CheckCircle2 className="text-emerald-500 shrink-0" size={20}/> Exclusive Referrals to International Tech & Finance Recruiters</li>
             </ul>
-            <div className="pt-6">
+            <div className="pt-4 flex flex-wrap items-center gap-4">
               <Link href="/en/honors" className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-amber-500 hover:bg-amber-400 text-black font-black text-base uppercase tracking-widest rounded-2xl transition-all shadow-[0_10px_30px_rgba(245,158,11,0.3)] hover:shadow-[0_15px_40px_rgba(245,158,11,0.5)] active:scale-95">
                 <Trophy size={20}/> View Wall of Fame
+              </Link>
+              <Link href="/en/courses" className="inline-flex items-center justify-center gap-2 px-8 py-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-base rounded-2xl transition-all">
+                Browse Courses <ArrowRight size={18} />
               </Link>
             </div>
           </div>
@@ -453,82 +757,59 @@ export default function EnglishHome() {
         </div>
       </section>
 
-      {/* ================= 4. DEPARTMENTS BENTO GRID ================= */}
-      <section className="relative z-10 w-full px-6 md:px-12 lg:px-20 py-20">
-        <div className="mb-16 text-center max-w-4xl mx-auto">
-          <h2 className="text-sm font-black text-yellow-500 uppercase tracking-[0.3em] mb-4">Academic Faculties</h2>
-          <h3 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-6">
-            Master the <span className="text-yellow-500">Future</span>
+      {/* ================= 4. DEPARTMENTS BENTO GRID (6 COMPREHENSIVE FACULTIES) ================= */}
+      <section className="relative z-10 w-full px-6 md:px-12 lg:px-20 py-24">
+        <div className="mb-16 text-center max-w-4xl mx-auto space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-mono font-bold uppercase">
+            <GraduationCap size={14} /> 6 Elite Academic Faculties & Divisions
+          </div>
+          <h3 className="text-4xl sm:text-6xl md:text-7xl font-black text-white tracking-tight">
+            Master the <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600">Future Economy</span>
           </h3>
-          <p className="text-xl md:text-2xl text-neutral-400">Engineered for real-world impact. Build your career with our specialized, market-tested faculties.</p>
+          <p className="text-lg md:text-xl text-neutral-300 max-w-3xl mx-auto leading-relaxed">
+            Engineered for tangible market impact. Learn directly from certified practitioners across AI engineering, global retail, institutional finance, international languages, scholarships, and enterprise software.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
-          
-          {/* E-Commerce Box */}
-          <div className="lg:col-span-2 group relative bg-[#0a0a0f] border border-white/5 p-12 rounded-[3rem] overflow-hidden hover:border-yellow-500/50 transition-all duration-500 shadow-2xl flex flex-col justify-between">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-yellow-500/10 rounded-full blur-[100px] group-hover:bg-yellow-500/20 transition-all duration-500"></div>
-            <div className="relative z-10 h-full flex flex-col justify-between">
-              <div className="w-20 h-20 bg-gradient-to-br from-yellow-500/20 to-transparent rounded-3xl flex items-center justify-center border border-yellow-500/20 text-yellow-400 mb-10 group-hover:scale-110 transition-transform">
-                <ShoppingCart size={40} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl mx-auto">
+          {academicFaculties.map((faculty, fIdx) => (
+            <div 
+              key={fIdx}
+              className={`group relative bg-[#090910] border ${faculty.border} p-9 sm:p-10 rounded-[2.5rem] overflow-hidden hover:border-yellow-400/50 transition-all duration-500 shadow-2xl flex flex-col justify-between hover:-translate-y-1.5`}
+            >
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/[0.02] rounded-full blur-[80px] pointer-events-none"></div>
+
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    {faculty.icon}
+                  </div>
+                  <span className="text-[10px] font-mono font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white/5 border border-white/10 text-neutral-300">
+                    {faculty.tag}
+                  </span>
+                </div>
+
+                <div className="text-xs font-mono font-bold text-yellow-400 mb-1">{faculty.subtitle}</div>
+                <h4 className="text-2xl font-black text-white mb-4 tracking-tight">{faculty.title}</h4>
+                <p className="text-neutral-300 text-sm leading-relaxed mb-8">
+                  {faculty.desc}
+                </p>
               </div>
-              <div>
-                <h3 className="text-4xl font-black text-white mb-6">Global E-Commerce</h3>
-                <p className="text-neutral-400 text-xl leading-relaxed max-w-2xl mb-10">Launch and scale international businesses. Master Shopify dropshipping, Amazon FBA, TikTok Shop, and comprehensive brand building from A to Z.</p>
-                <Link href="/en/courses" className="text-yellow-500 font-bold flex items-center gap-3 hover:gap-5 transition-all uppercase tracking-widest text-sm">
-                  Explore Curriculums <ArrowRight size={20}/>
+
+              <div className="pt-6 border-t border-white/5 flex items-center justify-between relative z-10">
+                <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">
+                  {faculty.badge}
+                </span>
+                <Link 
+                  href={faculty.link} 
+                  className="text-xs font-mono font-bold text-yellow-400 hover:text-white flex items-center gap-1.5 transition-colors group-hover:translate-x-1 duration-300"
+                >
+                  <span>{faculty.actionText}</span>
+                  <ArrowRight size={14} />
                 </Link>
               </div>
             </div>
-          </div>
-
-          {/* Tech Box */}
-          <div className="group relative bg-[#0a0a0f] border border-white/5 p-12 rounded-[3rem] overflow-hidden hover:border-blue-500/50 transition-all duration-500 shadow-2xl flex flex-col justify-between">
-             <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-blue-600/10 to-transparent"></div>
-             <div className="relative z-10 h-full flex flex-col justify-between">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-transparent rounded-3xl flex items-center justify-center border border-blue-500/20 text-blue-400 mb-10 group-hover:scale-110 transition-transform">
-                <Cpu size={40} />
-              </div>
-              <div>
-                <h3 className="text-3xl font-black text-white mb-6">Tech & AI Dev</h3>
-                <p className="text-neutral-400 text-lg leading-relaxed mb-10">Learn Full-Stack Development. Code in Python, React, Next.js, and integrate advanced AI APIs into modern applications.</p>
-                <Link href="/en/courses" className="text-blue-400 font-bold flex items-center gap-3 hover:gap-5 transition-all uppercase tracking-widest text-sm">
-                  View Syllabus <ArrowRight size={20}/>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Financial Markets Box */}
-          <div className="group relative bg-[#0a0a0f] border border-white/5 p-12 rounded-[3rem] overflow-hidden hover:border-emerald-500/50 transition-all duration-500 shadow-2xl flex flex-col justify-between">
-             <div className="relative z-10 h-full flex flex-col justify-between">
-              <div className="w-20 h-20 bg-gradient-to-br from-emerald-500/20 to-transparent rounded-3xl flex items-center justify-center border border-emerald-500/20 text-emerald-400 mb-10 group-hover:scale-110 transition-transform">
-                <TrendingUp size={40} />
-              </div>
-              <div>
-                <h3 className="text-3xl font-black text-white mb-6">Financial Markets</h3>
-                <p className="text-neutral-400 text-lg leading-relaxed mb-10">Trade Forex, Crypto, and Futures. Master technical analysis, SMC, and strict institutional risk management.</p>
-                <Link href="/en/courses" className="text-emerald-400 font-bold flex items-center gap-3 hover:gap-5 transition-all uppercase tracking-widest text-sm">
-                  Start Trading <ArrowRight size={20}/>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Languages Box */}
-          <div className="lg:col-span-2 group relative bg-[#0a0a0f] border border-white/5 p-12 rounded-[3rem] overflow-hidden hover:border-purple-500/50 transition-all duration-500 shadow-2xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10">
-             <div className="relative z-10 flex-1">
-              <div className="w-20 h-20 bg-gradient-to-br from-purple-500/20 to-transparent rounded-3xl flex items-center justify-center border border-purple-500/20 text-purple-400 mb-10 group-hover:scale-110 transition-transform">
-                <Globe size={40} />
-              </div>
-              <h3 className="text-4xl font-black text-white mb-6">Languages & Certifications</h3>
-              <p className="text-neutral-400 text-xl leading-relaxed">Prepare for international opportunities. We offer CEL & DEL English Programs, plus specialized German and French courses.</p>
-            </div>
-            <Link href="/en/courses" className="px-10 py-6 bg-white text-black font-black uppercase tracking-widest text-sm rounded-2xl hover:bg-purple-500 hover:text-white transition-colors shrink-0 shadow-xl relative z-10">
-              Browse Languages
-            </Link>
-          </div>
-
+          ))}
         </div>
       </section>
 
@@ -658,13 +939,32 @@ export default function EnglishHome() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {leadershipTeam.map((member, idx) => (
-                <div key={idx} className="bg-white/5 border border-white/10 p-8 rounded-[2rem] hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
-                  <div className="w-12 h-12 bg-neutral-900 rounded-2xl mb-6 flex items-center justify-center border border-white/5 group-hover:border-blue-500/50 transition-colors">
-                    <Users size={22} className="text-neutral-400 group-hover:text-blue-400" />
+                <div key={idx} className="bg-[#090912]/90 border border-white/10 p-7 sm:p-8 rounded-[2rem] hover:bg-[#0d0d1a] hover:border-blue-500/40 transition-all duration-300 group flex flex-col justify-between shadow-xl">
+                  <div>
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-blue-500/30 group-hover:border-blue-400 transition-colors shrink-0 shadow-lg">
+                        <img src={member.image} alt={member.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-bold text-white mb-1">{member.name}</h4>
+                        <p className="text-xs font-mono font-bold text-blue-400 uppercase tracking-wider">{member.role}</p>
+                      </div>
+                    </div>
+                    
+                    <p className="text-sm font-semibold text-neutral-200 mb-2">{member.title}</p>
+                    <p className="text-xs text-neutral-400 leading-relaxed mb-6">{member.bio}</p>
                   </div>
-                  <h4 className="text-2xl font-bold text-white mb-2">{member.name}</h4>
-                  <p className="text-sm font-black text-blue-400 uppercase tracking-widest mb-4">{member.role}</p>
-                  <p className="text-base text-neutral-400">{member.title}</p>
+
+                  <div className="pt-4 border-t border-white/5 mt-auto flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-neutral-500 uppercase">Executive Board</span>
+                    <Link 
+                      href={member.link}
+                      className="text-xs font-mono font-bold text-blue-400 hover:text-white flex items-center gap-1.5 transition-colors group-hover:translate-x-1 duration-300"
+                    >
+                      <span>View Dossier</span>
+                      <ArrowRight size={14} />
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1149,22 +1449,97 @@ export default function EnglishHome() {
         </div>
       </section>
 
-      {/* ================= 7. MASSIVE CTA ================= */}
-      <section className="relative z-10 w-full px-6 py-44 flex items-center justify-center overflow-hidden border-t border-white/10">
-         <div className="absolute inset-0 bg-gradient-to-br from-yellow-600 via-amber-900 to-[#020202] opacity-80"></div>
+      {/* ================= 6.5. COMPREHENSIVE ACADEMIC FAQ ACCORDION ================= */}
+      <section className="relative z-10 w-full px-6 md:px-12 lg:px-20 py-28 bg-[#050508] border-t border-white/10">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16 space-y-3">
+            <span className="text-xs font-mono font-bold text-yellow-400 uppercase tracking-widest block">
+              Clear Institutional Answers
+            </span>
+            <h3 className="text-4xl md:text-6xl font-black text-white tracking-tight">
+              Frequently Asked Questions
+            </h3>
+            <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
+              Everything you need to know about our accreditation, scholarships, payment options, and the Safi AI learning environment.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {homeFaqs.map((faq, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div 
+                  key={idx}
+                  className="bg-[#090912]/90 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 shadow-xl"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : idx)}
+                    className="w-full text-left p-6 sm:p-7 flex items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors"
+                  >
+                    <span className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-3">
+                      <span className="w-2 h-2 rounded-full bg-yellow-400 shrink-0"></span>
+                      {faq.q}
+                    </span>
+                    <ChevronDown 
+                      size={20} 
+                      className={`text-yellow-400 shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                      >
+                        <div className="px-6 pb-6 pt-2 text-sm sm:text-base text-neutral-300 leading-relaxed border-t border-white/5 pl-11">
+                          {faq.a}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= 7. MASSIVE MARTIAN CTA ================= */}
+      <section className="relative z-10 w-full px-6 py-40 flex items-center justify-center overflow-hidden border-t border-white/10">
+         <div className="absolute inset-0 bg-gradient-to-br from-yellow-600/30 via-amber-950/50 to-[#020202] opacity-90"></div>
          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-30 mix-blend-overlay"></div>
          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] bg-yellow-500/20 blur-[200px] rounded-full pointer-events-none"></div>
-         <div className="relative z-10 text-center max-w-5xl mx-auto flex flex-col items-center">
-            <Award className="w-24 h-24 text-yellow-400 mb-8 opacity-80" />
-            <h2 className="text-6xl md:text-8xl font-extrabold text-white mb-8 tracking-tight drop-shadow-2xl leading-tight">
-              Ready to Claim <br/> Your Future?
+         
+         <div className="relative z-10 text-center max-w-5xl mx-auto flex flex-col items-center space-y-8">
+            <div className="w-20 h-20 rounded-3xl bg-yellow-500/20 border border-yellow-500/40 flex items-center justify-center text-yellow-400 shadow-[0_0_40px_rgba(234,179,8,0.3)]">
+              <Award className="w-10 h-10" />
+            </div>
+
+            <h2 className="text-5xl sm:text-7xl md:text-8xl font-black text-white tracking-tight drop-shadow-2xl leading-[1.08]">
+              Ready to Claim <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">
+                Your Digital Empire?
+              </span>
             </h2>
-            <p className="text-2xl md:text-3xl text-white/80 mb-16 font-medium max-w-3xl">
-              Join thousands of global students shaping the digital economy. Create your account and access the ecosystem today.
+
+            <p className="text-lg sm:text-2xl text-neutral-300 font-normal max-w-3xl leading-relaxed">
+              Join thousands of global students shaping the digital economy. Create your account today or apply for a full-ride scholarship to unlock unrestricted access to our ecosystem.
             </p>
-            <Link href="/en/register" className="px-14 py-7 bg-white text-black font-black text-xl uppercase tracking-widest rounded-full transition-all duration-300 shadow-[0_25px_60px_rgba(255,255,255,0.25)] hover:scale-105 hover:bg-yellow-400 hover:shadow-[0_25px_70px_rgba(234,179,8,0.5)] flex items-center gap-4">
-              Create Free Account <ArrowRight size={24} />
-            </Link>
+
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+              <Link href="/en/register" className="px-10 py-5 bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-black font-black text-base uppercase tracking-widest rounded-2xl transition-all duration-300 shadow-[0_20px_50px_rgba(234,179,8,0.35)] hover:scale-105 flex items-center gap-3 active:scale-95">
+                Create Free Account <ArrowRight size={20} />
+              </Link>
+              <Link href="/en/scholarships" className="px-8 py-5 bg-white/10 hover:bg-white/20 text-white font-bold text-base uppercase tracking-wider rounded-2xl transition-all border border-white/15 flex items-center gap-2">
+                <GraduationCap size={20} /> Apply for Scholarship
+              </Link>
+              <Link href="/en/contact" className="px-8 py-5 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-bold text-base uppercase tracking-wider rounded-2xl transition-all border border-white/10 flex items-center gap-2">
+                <Building size={18} /> Contact Headquarters
+              </Link>
+            </div>
          </div>
       </section>
 
@@ -1199,6 +1574,16 @@ export default function EnglishHome() {
         }
         .animate-bg-pan {
           animation: bg-pan 4s linear infinite;
+        }
+        @keyframes marquee {
+          0% { transform: translateX(0%); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 35s linear infinite;
+        }
+        .animate-marquee:hover {
+          animation-play-state: paused;
         }
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(30px); }
