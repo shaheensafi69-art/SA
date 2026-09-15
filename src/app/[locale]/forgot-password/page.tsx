@@ -11,7 +11,7 @@ import {
 
 export default function ForgotPasswordPage() {
   const pathname = usePathname() || "/en";
-  const locale = pathname.split("/")[1] || "en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [email, setEmail] = useState("");
   const [botTrap, setBotTrap] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
 
       // ارسال لینک بازیابی به ایمیل کاربر
       const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${window.location.origin}/${locale}/reset-password`,
+        redirectTo: `${window.location.origin}/${currentLocale}/reset-password`,
       });
 
       if (error) {
@@ -75,7 +75,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md relative z-10 animate-[fadeInUp_0.4s_ease-out]">
         
         {/* Back Button */}
-        <Link href={`/${locale}/login`} className="inline-flex items-center gap-2 text-neutral-400 hover:text-white mb-8 transition-colors group text-sm font-bold uppercase tracking-widest">
+        <Link href={`/${currentLocale}/login`} className="inline-flex items-center gap-2 text-neutral-400 hover:text-white mb-8 transition-colors group text-sm font-bold uppercase tracking-widest">
           <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-colors">
             <ArrowLeft size={16} />
           </div>

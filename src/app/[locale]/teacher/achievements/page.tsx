@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import { uploadFileToR2 } from "@/utils/upload";
 import { Loader2, Award, FileBadge, Medal, Send, User, BookOpen, Link as LinkIcon, Hash, CheckCircle2, AlertCircle, UploadCloud, Search, Wand2 } from "lucide-react";
 
@@ -28,6 +28,8 @@ type AwardItem = {
 };
 
 export default function TeacherAchievementsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   
@@ -68,7 +70,7 @@ export default function TeacherAchievementsPage() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
-        router.push("/en/login");
+        router.push(`/${currentLocale}/login`);
         return;
       }
 

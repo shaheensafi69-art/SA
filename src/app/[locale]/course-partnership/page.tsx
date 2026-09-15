@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -8,6 +9,8 @@ import {
 } from "lucide-react";
 
 export default function CoursePartnershipPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const benefits = [
     {
       title: "Passive Revenue Share",
@@ -170,7 +173,7 @@ export default function CoursePartnershipPage() {
                 </div>
 
                 <Link 
-                  href="/en/contact" 
+                  href={`/${currentLocale}/contact`} 
                   className="w-full flex items-center justify-center gap-2 py-3.5 bg-white/5 hover:bg-yellow-500 text-white hover:text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all border border-white/10 hover:border-yellow-500"
                 >
                   Request Details <ArrowRight size={16} />
@@ -206,7 +209,7 @@ export default function CoursePartnershipPage() {
           
           <div className="w-full md:w-1/3 flex justify-center md:justify-end relative z-10">
             <Link 
-              href="/en/contact" 
+              href={`/${currentLocale}/contact`} 
               className="inline-flex items-center justify-center gap-3 px-8 py-5 bg-yellow-500 text-black font-black text-sm uppercase tracking-widest rounded-2xl transition-all shadow-[0_10px_30px_rgba(234,179,8,0.3)] hover:shadow-[0_15px_40px_rgba(234,179,8,0.5)] hover:bg-yellow-400 hover:-translate-y-1 active:scale-95"
             >
               <Landmark size={20} /> Contact Investment Team

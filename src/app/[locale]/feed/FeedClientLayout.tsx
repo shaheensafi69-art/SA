@@ -13,14 +13,15 @@ import AuthRequiredModal from "@/components/feed/AuthRequiredModal";
 export default function FeedClientLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname() || "";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isMenuDrawerOpen, setIsMenuDrawerOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authActionText, setAuthActionText] = useState("create posts and access member features");
 
-  const isReelsPage = pathname.includes('/en/feed/reels');
-  const isChatPage = pathname.includes('/en/feed/chats/screen');
+  const isReelsPage = pathname.includes('/feed/reels');
+  const isChatPage = pathname.includes('/feed/chats/screen');
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -49,28 +50,28 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
 
   const handleBackToOverview = () => {
     if (!userProfile) {
-      router.push('/en');
+      router.push(`/${currentLocale}`);
       return;
     }
     const role = userProfile?.role?.toLowerCase();
     if (role === 'admin') {
-      router.push('/en/admin/dashboard');
+      router.push(`/${currentLocale}/admin`);
     } else if (role === 'teacher') {
-      router.push('/en/teacher/dashboard');
+      router.push(`/${currentLocale}/teacher`);
     } else {
-      router.push('/en/dashboard');
+      router.push(`/${currentLocale}/dashboard`);
     }
   };
 
-  const myProfilePath = userProfile?.id ? `/en/feed/profile/${userProfile.id}` : "/en/feed/profile";
+  const myProfilePath = userProfile?.id ? `/${currentLocale}/feed/profile/${userProfile.id}` : `/${currentLocale}/feed/profile`;
 
   const feedNavItems = [
-    { name: "Feed Stream", path: "/en/feed", icon: <Rss size={20} /> },
-    { name: "Explore Reels", path: "/en/feed/reels", icon: <Video size={20} /> },
-    { name: "Global Network", path: "/en/feed/network", icon: <Users size={20} /> },
+    { name: "Feed Stream", path: `/${currentLocale}/feed`, icon: <Rss size={20} /> },
+    { name: "Explore Reels", path: `/${currentLocale}/feed/reels`, icon: <Video size={20} /> },
+    { name: "Global Network", path: `/${currentLocale}/feed/network`, icon: <Users size={20} /> },
     { name: "Create Post", path: "#", isAction: true, icon: <SquarePen size={20} /> },
-    { name: "Messages", path: "/en/feed/chats/list", icon: <MessageSquare size={20} /> },
-    { name: "Likes & Comments", path: "/en/feed/like-comment-status", icon: <Activity size={20} /> },
+    { name: "Messages", path: `/${currentLocale}/feed/chats/list`, icon: <MessageSquare size={20} /> },
+    { name: "Likes & Comments", path: `/${currentLocale}/feed/like-comment-status`, icon: <Activity size={20} /> },
     { name: "My Profile", path: myProfilePath, icon: <User size={20} /> },
   ];
 
@@ -135,7 +136,7 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
               );
             }
 
-            const isActive = pathname === item.path || (item.path !== "/en/feed" && pathname.startsWith(item.path));
+            const isActive = pathname === item.path || (item.path !== `/${currentLocale}/feed` && pathname.startsWith(item.path));
             return (
               <Link
                 key={item.name}
@@ -160,10 +161,10 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
             <div className="p-3.5 rounded-2xl bg-gradient-to-r from-yellow-500/10 to-amber-500/5 border border-yellow-500/20 text-center">
               <p className="text-[10px] text-yellow-400 font-black uppercase tracking-wider mb-2">Guest Explorer</p>
               <div className="grid grid-cols-2 gap-2">
-                <Link href="/en/login" className="py-2 px-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-[11px] font-bold border border-white/10 transition-colors">
+                <Link href={`/${currentLocale}/login`} className="py-2 px-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-[11px] font-bold border border-white/10 transition-colors">
                   Sign In
                 </Link>
-                <Link href="/en/register" className="py-2 px-2.5 rounded-xl bg-yellow-500 text-black text-[11px] font-extrabold hover:bg-yellow-400 transition-colors">
+                <Link href={`/${currentLocale}/register`} className="py-2 px-2.5 rounded-xl bg-yellow-500 text-black text-[11px] font-extrabold hover:bg-yellow-400 transition-colors">
                   Join Free
                 </Link>
               </div>
@@ -188,13 +189,13 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
         <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#060609]/95 backdrop-blur-2xl border-t border-white/10 z-50 px-6 flex justify-between items-center shadow-[0_-10px_30px_rgba(0,0,0,0.8)]">
 
           {/* فید */}
-          <Link href="/en/feed" className="flex items-center justify-center flex-1 h-full relative group">
-            <Home size={22} className={pathname === "/en/feed" ? "text-white stroke-[2.5]" : "text-neutral-400 stroke-[1.8] group-hover:text-white"} />
-            {pathname === "/en/feed" && <span className="absolute bottom-1 w-1 h-1 bg-[#C2185B] rounded-full shadow-[0_0_8px_#C2185B]"></span>}
+          <Link href={`/${currentLocale}/feed`} className="flex items-center justify-center flex-1 h-full relative group">
+            <Home size={22} className={pathname === `/${currentLocale}/feed` ? "text-white stroke-[2.5]" : "text-neutral-400 stroke-[1.8] group-hover:text-white"} />
+            {pathname === `/${currentLocale}/feed` && <span className="absolute bottom-1 w-1 h-1 bg-[#C2185B] rounded-full shadow-[0_0_8px_#C2185B]"></span>}
           </Link>
 
           {/* ریلز */}
-          <Link href="/en/feed/reels" className="flex items-center justify-center flex-1 h-full relative group">
+          <Link href={`/${currentLocale}/feed/reels`} className="flex items-center justify-center flex-1 h-full relative group">
             <Video size={22} className={isReelsPage ? "text-white stroke-[2.5]" : "text-neutral-400 stroke-[1.8] group-hover:text-white"} />
             {isReelsPage && <span className="absolute bottom-1 w-1 h-1 bg-[#C2185B] rounded-full shadow-[0_0_8px_#C2185B]"></span>}
           </Link>
@@ -209,9 +210,9 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
           </button>
 
           {/* شبکه */}
-          <Link href="/en/feed/network" className="flex items-center justify-center flex-1 h-full relative group">
-            <Users size={22} className={pathname.includes("/en/feed/network") ? "text-white stroke-[2.5]" : "text-neutral-400 stroke-[1.8] group-hover:text-white"} />
-            {pathname.includes("/en/feed/network") && <span className="absolute bottom-1 w-1 h-1 bg-[#C2185B] rounded-full shadow-[0_0_8px_#C2185B]"></span>}
+          <Link href={`/${currentLocale}/feed/network`} className="flex items-center justify-center flex-1 h-full relative group">
+            <Users size={22} className={pathname.includes(`/${currentLocale}/feed/network`) ? "text-white stroke-[2.5]" : "text-neutral-400 stroke-[1.8] group-hover:text-white"} />
+            {pathname.includes(`/${currentLocale}/feed/network`) && <span className="absolute bottom-1 w-1 h-1 bg-[#C2185B] rounded-full shadow-[0_0_8px_#C2185B]"></span>}
           </Link>
 
           {/* دکمه منو */}
@@ -260,7 +261,7 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
               </Link>
 
               <Link
-                href="/en/feed/chats/list"
+                href={`/${currentLocale}/feed/chats/list`}
                 onClick={() => setIsMenuDrawerOpen(false)}
                 className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-[#C2185B]/40 hover:bg-white/[0.06] transition-all group"
               >
@@ -274,7 +275,7 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
               </Link>
 
               <Link
-                href="/en/feed/like-comment-status"
+                href={`/${currentLocale}/feed/like-comment-status`}
                 onClick={() => setIsMenuDrawerOpen(false)}
                 className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-[#C2185B]/40 hover:bg-white/[0.06] transition-all group"
               >
@@ -337,7 +338,7 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
 
             <div className="space-y-3.5 relative z-10">
               <Link
-                href="/en/feed/create/post"
+                href={`/${currentLocale}/feed/create/post`}
                 onClick={() => setIsCreateModalOpen(false)}
                 className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-pink-500/10 to-transparent border border-pink-500/30 hover:border-pink-500/60 hover:bg-pink-500/20 transition-all group"
               >
@@ -351,7 +352,7 @@ export default function FeedClientLayout({ children }: { children: React.ReactNo
               </Link>
 
               <Link
-                href="/en/feed/create/reels"
+                href={`/${currentLocale}/feed/create/reels`}
                 onClick={() => setIsCreateModalOpen(false)}
                 className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-purple-500/10 to-transparent border border-purple-500/30 hover:border-purple-500/60 hover:bg-purple-500/20 transition-all group"
               >

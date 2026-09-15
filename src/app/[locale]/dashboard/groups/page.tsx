@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useMemo, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { MessageSquare, ExternalLink, Search, Globe, User, ShieldCheck } from "lucide-react";
 
@@ -13,6 +15,9 @@ type GroupCard = {
 };
 
 export default function MyGroupsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
+  const router = useRouter();
   const [groups, setGroups] = useState<GroupCard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,7 +69,7 @@ export default function MyGroupsPage() {
   const fetchMyGroups = async () => {
     setIsLoading(true);
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    if (!session) return router.push(`/${currentLocale}/login`);
     const userId = session.user.id;
 
     try {

@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -17,6 +18,8 @@ type StudentProfile = {
 };
 
 export default function ManageStudentsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [isLoading, setIsLoading] = useState(true);
   const [students, setStudents] = useState<StudentProfile[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -129,7 +132,7 @@ export default function ManageStudentsPage() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div>
-            <Link href="/en/admin" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-emerald-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+            <Link href={`/${currentLocale}/admin`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-emerald-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">

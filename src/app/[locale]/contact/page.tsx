@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Mail, MapPin, Phone, MessageCircle, Send, Loader2, 
@@ -12,6 +13,9 @@ import {
 } from "lucide-react";
 
 export default function ContactPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
+
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [selectedSubject, setSelectedSubject] = useState("");
   const [messageLength, setMessageLength] = useState(0);
@@ -817,28 +821,28 @@ export default function ContactPage() {
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Link
-              href="/en/courses"
+              href={`/${currentLocale}/courses`}
               className="px-6 py-3.5 rounded-xl bg-yellow-500 text-black font-black text-xs uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-lg flex items-center gap-2"
             >
               <GraduationCap size={16} />
               Explore All Courses
             </Link>
             <Link
-              href="/en/scholarships"
+              href={`/${currentLocale}/scholarships`}
               className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-wider transition-all border border-white/10 flex items-center gap-2"
             >
               <FileText size={16} />
               Apply for Scholarships
             </Link>
             <Link
-              href="/en/development-services"
+              href={`/${currentLocale}/development-services`}
               className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-wider transition-all border border-white/10 flex items-center gap-2"
             >
               <Laptop size={16} />
               Software Services
             </Link>
             <Link
-              href="/en/partners"
+              href={`/${currentLocale}/partners`}
               className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-wider transition-all border border-white/10 flex items-center gap-2"
             >
               <HeartHandshake size={16} />

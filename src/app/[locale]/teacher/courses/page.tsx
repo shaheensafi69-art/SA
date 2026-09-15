@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -17,6 +18,8 @@ type ClassGroup = {
 };
 
 export default function TeacherCoursesPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [classGroups, setClassGroups] = useState<ClassGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -104,10 +107,10 @@ export default function TeacherCoursesPage() {
           
           {/* Action Links */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full lg:w-auto relative z-10">
-            <Link href="/en/teacher/classes/create" className="w-full sm:w-auto px-8 py-4 bg-black/50 hover:bg-[#111116] border border-white/10 hover:border-purple-500/30 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 active:scale-95 shadow-xl">
+            <Link href={`/${currentLocale}/teacher/classes/create`} className="w-full sm:w-auto px-8 py-4 bg-black/50 hover:bg-[#111116] border border-white/10 hover:border-purple-500/30 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 active:scale-95 shadow-xl">
               <Video size={18} className="text-purple-400" /> Create Class
             </Link>
-            <Link href="/en/teacher/courses/create" className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 rounded-2xl text-xs font-black text-white uppercase tracking-widest transition-all shadow-[0_15px_40px_rgba(217,70,239,0.3)] flex items-center justify-center gap-3 active:scale-95">
+            <Link href={`/${currentLocale}/teacher/courses/create`} className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 rounded-2xl text-xs font-black text-white uppercase tracking-widest transition-all shadow-[0_15px_40px_rgba(217,70,239,0.3)] flex items-center justify-center gap-3 active:scale-95">
               <PlusCircle size={18} /> Create Course
             </Link>
           </div>
@@ -182,14 +185,14 @@ export default function TeacherCoursesPage() {
                 <div className="mt-auto border-t border-white/5 pt-6 flex gap-3">
                   <Link 
                     // مسیر مستقیم به صفحه افزودن با پارامتر action=add برای باز شدن خودکار مودال
-                    href={`/en/teacher/courses/${cls.id}/students/add`} 
+                    href={`/${currentLocale}/teacher/courses/${cls.id}/students/add`} 
                     className="flex-1 flex items-center justify-center gap-2 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 border border-fuchsia-500/20 hover:border-fuchsia-500/40 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.1em] text-fuchsia-400 hover:text-fuchsia-300 py-4 rounded-2xl transition-all duration-300 active:scale-[0.98] shadow-lg"
                   >
                     <UserPlus size={16} /> Add Student
                   </Link>
                   <Link 
                     // مسیر صفحه مدیریت لیست شاگردان
-                    href={`/en/teacher/courses/${cls.id}/students`} 
+                    href={`/${currentLocale}/teacher/courses/${cls.id}/students`} 
                     className="flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.1em] text-neutral-400 hover:text-white py-4 rounded-2xl transition-all duration-300 active:scale-[0.98] shadow-lg shadow-black/50"
                   >
                     <Settings2 size={16} /> Manage

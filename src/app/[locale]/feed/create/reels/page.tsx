@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import { Video, Sparkles, Upload, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 export default function CreateReelPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("Technology");
@@ -23,7 +25,7 @@ export default function CreateReelPage() {
         const checkUser = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session?.user) {
-                router.push("/en/login");
+                router.push(`/${currentLocale}/login`);
             } else {
                 setCurrentUserId(session.user.id);
             }
@@ -66,7 +68,7 @@ export default function CreateReelPage() {
 
             if (insertError) throw insertError;
 
-            router.push("/en/feed/reels");
+            router.push(`/${currentLocale}/feed/reels`);
         } catch (err: any) {
             console.error("Error creating reel:", err);
             alert(err.message || "Failed to publish reel.");
@@ -81,7 +83,7 @@ export default function CreateReelPage() {
             {/* هیدر و دکمه بازگشت */}
             <div className="flex items-center justify-between mb-8 bg-[#0a0a0f]/80 border border-white/5 p-5 rounded-[2rem] backdrop-blur-xl shadow-2xl">
                 <div className="flex items-center gap-3">
-                    <Link href="/en/feed/reels" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white transition-colors">
+                    <Link href={`/${currentLocale}/feed/reels`} className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white transition-colors">
                         <ArrowLeft size={18} />
                     </Link>
                     <div>

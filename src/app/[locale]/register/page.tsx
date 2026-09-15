@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import {  useSearchParams , usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
 import { Loader2, Eye, EyeOff, Sparkles, ArrowRight, ArrowLeft, Mail, ShieldCheck } from "lucide-react";
@@ -116,6 +116,8 @@ function Typewriter({
 // 2. MULTI-STEP REGISTER FORM COMPONENT
 // ==========================================
 function RegisterFormContent() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const searchParams = useSearchParams();
   const refCode = searchParams?.get("ref") || "";
 
@@ -214,7 +216,7 @@ function RegisterFormContent() {
         email: formDataState.email,
         password: formDataState.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/en/login`,
+          emailRedirectTo: `${window.location.origin}/${currentLocale}/login`,
         }
       });
 
@@ -274,7 +276,7 @@ function RegisterFormContent() {
       {/* هدر */}
       {!isSuccess && (
         <div className="text-center mb-6 flex flex-col items-center animate-[fadeIn_0.5s_ease-out]">
-          <Link href="/en" className="inline-block mb-2 transition-transform hover:scale-105 duration-300">
+          <Link href={`/${currentLocale}`} className="inline-block mb-2 transition-transform hover:scale-105 duration-300">
              <div className="relative w-16 h-16 flex items-center justify-center mx-auto">
                <div className="absolute inset-0 bg-yellow-500/20 blur-[20px] rounded-full"></div>
                <img src="/logo-without-b.png" alt="Safi Academy Logo" className="relative z-10 w-full h-full object-contain drop-shadow-[0_8px_15px_rgba(234,179,8,0.3)]" />
@@ -357,7 +359,7 @@ function RegisterFormContent() {
             </div>
 
             <Link 
-              href="/en/login" 
+              href={`/${currentLocale}/login`} 
               className="mt-4 w-full py-4 bg-gradient-to-r from-yellow-400 to-amber-500 hover:scale-[1.02] rounded-xl text-black font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(234,179,8,0.25)] flex items-center justify-center gap-2 group"
             >
               Proceed to Login <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -490,7 +492,7 @@ function RegisterFormContent() {
         {!isSuccess && (
           <div className="mt-5 text-center text-xs">
             <span className="text-neutral-400">Already have an account?</span>{" "}
-            <Link href="/en/login" className="text-yellow-400 font-bold hover:text-yellow-300 transition-colors ml-1">
+            <Link href={`/${currentLocale}/login`} className="text-yellow-400 font-bold hover:text-yellow-300 transition-colors ml-1">
               Sign In
             </Link>
           </div>
@@ -505,6 +507,8 @@ function RegisterFormContent() {
 // 3. MAIN REGISTER PAGE WITH 3D ASTRONAUT & STARS BACKGROUND
 // ==========================================
 export default function RegisterPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   return (
     <div className="h-screen w-full bg-[#020202] text-white flex flex-col lg:grid lg:grid-cols-2 font-sans overflow-hidden relative">
       

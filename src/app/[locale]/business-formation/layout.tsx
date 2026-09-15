@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const currentLocale = locale || "en";
+  return {
   title: "US Business Formation & Registered Agent Services | Safi Academy",
   description: "Form your US LLC or Corporation across all 50 states. Learn about professional registered agent representation, founder address privacy where permitted by law, state compliance, and FinCEN BOI guidance.",
   keywords: [
@@ -17,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "US Business Formation & Registered Agent Services | Safi Academy",
     description: "Form your US LLC or Corporation across all 50 states. Professional registered agent representation, address privacy where permitted by law, and entity compliance support.",
-    url: "https://safiacademy.com/en/business-formation",
+    url: `https://safiacademy.org/${currentLocale}/business-formation`,
     siteName: "Safi Academy",
     type: "website",
   },
@@ -27,6 +34,7 @@ export const metadata: Metadata = {
     description: "Form your US LLC or Corporation across all 50 states with trusted registered agent representation and corporate compliance guidance.",
   }
 };
+}
 
 export default function BusinessFormationLayout({
   children,

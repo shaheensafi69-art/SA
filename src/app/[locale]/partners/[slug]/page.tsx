@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import {  useParams, useRouter , usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
@@ -19,6 +19,8 @@ type Partner = {
 };
 
 export default function EnglishPartnerDetailPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
@@ -71,7 +73,7 @@ export default function EnglishPartnerDetailPage() {
       <div className="min-h-screen bg-[#050508] flex flex-col items-center justify-center text-center px-6">
         <h1 className="text-6xl font-black text-white mb-4">404</h1>
         <p className="text-neutral-400 mb-8">Partner profile not found or is currently inactive.</p>
-        <Link href="/en/partners" className="px-6 py-3 rounded-xl font-bold text-black bg-gradient-to-r from-yellow-500 to-amber-500 hover:scale-105 transition-all">
+        <Link href={`/${currentLocale}/partners`} className="px-6 py-3 rounded-xl font-bold text-black bg-gradient-to-r from-yellow-500 to-amber-500 hover:scale-105 transition-all">
           Back to Network
         </Link>
       </div>
@@ -91,7 +93,7 @@ export default function EnglishPartnerDetailPage() {
       {/* ================= FLOATING BACK BUTTON ================= */}
       <div className="fixed top-28 left-4 md:left-12 z-50">
         <button 
-          onClick={() => router.push('/en/partners')}
+          onClick={() => router.push(`/${currentLocale}/partners`)}
           className="flex items-center gap-2 px-4 py-2.5 bg-black/50 backdrop-blur-xl border border-white/10 rounded-full text-xs font-black uppercase tracking-widest text-neutral-300 hover:text-white hover:bg-white/10 transition-all duration-300 shadow-xl group"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back

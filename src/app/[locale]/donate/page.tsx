@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -83,6 +84,8 @@ const PRESET_AMOUNTS = [
 ];
 
 export default function EnglishDonatePage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [amount, setAmount] = useState<number | "">(75);
   const [note, setNote] = useState("");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -252,7 +255,7 @@ export default function EnglishDonatePage() {
       {/* Floating Home Link */}
       <div className="fixed top-28 left-4 md:left-12 z-50">
         <Link
-          href="/en"
+          href={`/${currentLocale}`}
           className="flex items-center gap-2 px-4 py-2.5 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full text-xs font-black uppercase text-neutral-300 hover:text-white hover:bg-white/10 transition-all shadow-xl group"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Loader2, Trophy, Star, GraduationCap, Activity, Flame, ChevronRight } from "lucide-react";
 
 type HonorStudent = {
@@ -16,6 +17,8 @@ type HonorStudent = {
 };
 
 export default function WallOfFamePage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [students, setStudents] = useState<HonorStudent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -128,7 +131,7 @@ export default function WallOfFamePage() {
 
                 return (
                   <Link 
-                    href={`/en/honors/${student.id}`}
+                    href={`/${currentLocale}/honors/${student.id}`}
                     key={student.id} 
                     className={`flex flex-col items-center bg-[#0a0a0f]/90 p-6 sm:p-8 rounded-[2.5rem] backdrop-blur-3xl border ${borderColors} relative transform transition-all duration-500 hover:-translate-y-4 hover:scale-[1.02] group ${isFirst ? 'md:-translate-y-8 z-10' : 'opacity-90 hover:opacity-100'}`}
                   >
@@ -185,7 +188,7 @@ export default function WallOfFamePage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-16 pt-16 border-t border-white/5">
                 {students.slice(3).map((student, index) => (
                   <Link 
-                    href={`/en/honors/${student.id}`}
+                    href={`/${currentLocale}/honors/${student.id}`}
                     key={student.id} 
                     className="bg-[#0a0a0f]/60 hover:bg-[#0a0a0f]/90 border border-white/5 hover:border-amber-500/30 p-5 rounded-[2rem] flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_15px_40px_rgba(245,158,11,0.1)] group relative overflow-hidden"
                   >

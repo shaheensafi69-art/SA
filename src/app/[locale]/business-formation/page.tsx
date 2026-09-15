@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -33,6 +34,8 @@ import {
 const AFFILIATE_URL = "https://www.registeredagentsinc.com/business-formation/";
 
 export default function BusinessFormationPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const services = [
     {
       title: "Registered Agent in All 50 States",
@@ -491,7 +494,7 @@ export default function BusinessFormationPage() {
             </a>
 
             <Link
-              href="/en/courses"
+              href={`/${currentLocale}/courses`}
               className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-bold text-sm rounded-xl border border-white/10 transition-colors"
             >
               <span>View Academy Courses</span>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useParams, useRouter } from "next/navigation";
+import {  useParams, useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { Video, MessageCircle, Clock, Calendar, Users, Loader2, ArrowLeft, ExternalLink, User, ShieldCheck, Layers, BadgeAlert, Settings, GraduationCap, FileText, FolderArchive } from "lucide-react";
 
@@ -27,6 +27,8 @@ type LiveClassDetails = {
 };
 
 export default function LiveClassDetailsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   const router = useRouter();
   
@@ -125,7 +127,7 @@ export default function LiveClassDetailsPage() {
         <BadgeAlert size={64} className="text-red-500" />
         <h2 className="text-3xl font-black">Class Not Found</h2>
         <p className="text-neutral-500 text-sm">The live class you are looking for does not exist or was removed.</p>
-        <Link href="/en/teacher/live-classes" className="px-6 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-purple-400 font-bold flex items-center gap-2 transition-colors">
+        <Link href={`/${currentLocale}/teacher/live-classes`} className="px-6 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-purple-400 font-bold flex items-center gap-2 transition-colors">
           <ArrowLeft size={16} /> Return to Live Terminal
         </Link>
       </div>
@@ -145,7 +147,7 @@ export default function LiveClassDetailsPage() {
         <header className="bg-[#0a0a0f]/80 p-6 sm:p-8 rounded-[2.5rem] border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-32 bg-purple-500/10 blur-[60px] pointer-events-none"></div>
           
-          <Link href="/en/teacher/live-classes" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-purple-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 relative z-10">
+          <Link href={`/${currentLocale}/teacher/live-classes`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-purple-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 relative z-10">
             <ArrowLeft size={14} /> Live Classes Terminal
           </Link>
           
@@ -239,7 +241,7 @@ export default function LiveClassDetailsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
            
            {/* Manage Roster */}
-           <Link href={`/en/teacher/courses/${classId}/students`} className="bg-[#0a0a0f]/60 border border-white/5 hover:border-purple-500/30 rounded-[1.5rem] p-5 flex flex-col gap-4 transition-all duration-300 group shadow-xl">
+           <Link href={`/${currentLocale}/teacher/courses/${classId}/students`} className="bg-[#0a0a0f]/60 border border-white/5 hover:border-purple-500/30 rounded-[1.5rem] p-5 flex flex-col gap-4 transition-all duration-300 group shadow-xl">
              <div className="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
                <GraduationCap size={20} />
              </div>
@@ -250,7 +252,7 @@ export default function LiveClassDetailsPage() {
            </Link>
 
            {/* Class Settings */}
-           <Link href={`/en/teacher/live-classes/${classId}/edit`} className="bg-[#0a0a0f]/60 border border-white/5 hover:border-fuchsia-500/30 rounded-[1.5rem] p-5 flex flex-col gap-4 transition-all duration-300 group shadow-xl">
+           <Link href={`/${currentLocale}/teacher/live-classes/${classId}/edit`} className="bg-[#0a0a0f]/60 border border-white/5 hover:border-fuchsia-500/30 rounded-[1.5rem] p-5 flex flex-col gap-4 transition-all duration-300 group shadow-xl">
              <div className="w-12 h-12 bg-fuchsia-500/10 text-fuchsia-400 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
                <Settings size={20} />
              </div>

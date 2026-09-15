@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useParams, useRouter } from "next/navigation";
+import {  useParams, useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Trash2, Star, Loader2, UserCheck, CalendarDays, FileText, Save, Settings2, X, Mail, Phone, MapPin, Calendar, CreditCard, UserCircle } from "lucide-react";
 
@@ -25,6 +25,8 @@ type EnrolledStudent = {
 };
 
 export default function ClassStudentsManagePage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   const router = useRouter();
   const classId = params.id as string;
@@ -219,7 +221,7 @@ export default function ClassStudentsManagePage() {
         {/* ================= HEADER ================= */}
         <header className="flex flex-col md:flex-row justify-between md:items-center gap-6 bg-[#0a0a0f]/80 p-6 sm:p-8 rounded-[2rem] border border-white/5 backdrop-blur-3xl shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
           <div>
-            <Link href="/en/teacher/courses" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+            <Link href={`/${currentLocale}/teacher/courses`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
               <ArrowLeft size={14} /> Back to Hub
             </Link>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white mb-2">

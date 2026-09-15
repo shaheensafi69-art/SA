@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const currentLocale = locale || "en";
+  return {
   title: "Teach With Us - Apply as Certified Faculty Instructor | Safi Academy",
   description: "Join the global faculty of Safi Academy. Teach software engineering, AI, languages, or business, reach thousands of ambitious students worldwide, and earn competitive academic compensation.",
   keywords: [
@@ -14,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Teach With Us - Apply as Certified Faculty Instructor | Safi Academy",
     description: "Join our distinguished global faculty and mentor the next generation of digital leaders and engineers.",
-    url: "https://safiacademy.org/en/instructor-application",
+    url: `https://safiacademy.org/${currentLocale}/instructor-application`,
     siteName: "Safi Academy",
     type: "website",
   },
@@ -24,6 +31,7 @@ export const metadata: Metadata = {
     description: "Apply to become a verified instructor at Safi Academy and teach students across 50+ countries.",
   }
 };
+}
 
 export default function InstructorApplicationLayout({
   children,

@@ -2,10 +2,12 @@
 
 import { Suspense } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import {  useSearchParams , usePathname } from "next/navigation";
 import { Mail, ShieldCheck, ArrowRight } from "lucide-react";
 
 function VerifyEmailContent() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const searchParams = useSearchParams();
   const email = searchParams?.get("email") || "your email";
 
@@ -52,7 +54,7 @@ function VerifyEmailContent() {
 
         {/* Login Button */}
         <Link 
-          href="/en/login" 
+          href={`/${currentLocale}/login`} 
           className="mt-4 w-full py-4 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 hover:scale-[1.02] rounded-xl text-black font-black text-sm uppercase tracking-widest transition-all shadow-[0_0_30px_rgba(234,179,8,0.25)] flex items-center justify-center gap-2 group"
         >
           Proceed to Login <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -64,6 +66,8 @@ function VerifyEmailContent() {
 }
 
 export default function VerifyEmailPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   return (
     <div className="min-h-screen w-full bg-[#030305] text-white flex items-center justify-center font-sans overflow-hidden relative p-4">
       

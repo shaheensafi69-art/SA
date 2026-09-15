@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
+import { Trash2 } from "lucide-react";
 
 type UserProfile = {
   first_name: string;
@@ -18,6 +21,9 @@ type UserProfile = {
 };
 
 export default function SettingsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"profile" | "security" | "preferences">("profile");
@@ -53,7 +59,7 @@ export default function SettingsPage() {
     const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
 
-    if (!session?.user) return;
+    if (!session?.user) return router.push(`/${currentLocale}/login`);
 
     const { data: profileData } = await supabase
       .from("profiles")
@@ -445,6 +451,17 @@ export default function SettingsPage() {
                       </button>
                     </div>
                   </form>
+
+                  <div className="pt-8 mt-8 border-t border-red-500/20 max-w-md">
+                    <h3 className="text-sm font-black text-red-400 uppercase tracking-wider mb-2">Danger Zone</h3>
+                    <p className="text-xs text-neutral-400 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
+                    <Link
+                      href={`/${currentLocale}/delete-account`}
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-black uppercase tracking-widest transition-all hover:scale-105"
+                    >
+                      <Trash2 size={14} /> Delete Account
+                    </Link>
+                  </div>
                 </div>
               )}
 

@@ -8,11 +8,12 @@ export default async function CourseDetailPage({
   params,
   searchParams
 }: {
-  params: { id: string },
-  searchParams: { coupon?: string }
+  params: Promise<{ id: string; locale: string }>;
+  searchParams: Promise<{ coupon?: string }>;
 }) {
   const supabase = await createClient();
-  const { id } = await params;
+  const { id, locale } = await params;
+  const currentLocale = locale || "en";
   const appliedCouponCode = (await searchParams)?.coupon?.trim() || "";
 
   const { data: { session } } = await supabase.auth.getSession();
@@ -116,7 +117,7 @@ export default async function CourseDetailPage({
       <div className="mx-auto flex max-w-7xl flex-col gap-10 relative z-10 animate-[fadeIn_0.5s_ease-out]">
 
         <Link
-          href="/en/courses"
+          href={`/${currentLocale}/courses`}
           className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2.5 text-xs tracking-widest font-black uppercase text-neutral-300 transition-all duration-300 hover:border-yellow-500/40 hover:bg-yellow-500/10 hover:text-yellow-400 backdrop-blur-md"
         >
           <span className="text-base leading-none">←</span>
@@ -388,7 +389,7 @@ export default async function CourseDetailPage({
                       <p className="text-xs font-bold text-amber-500">Sign in to apply network discounts and use wallet balance.</p>
                     </div>
                     <Link
-                      href="/en/login"
+                      href={`/${currentLocale}/login`}
                       className="flex w-full items-center justify-center rounded-2xl bg-white px-6 py-4 text-sm font-black uppercase tracking-widest text-black transition-all duration-300 hover:bg-neutral-200"
                     >
                       Sign In to Enroll

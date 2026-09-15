@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 
 export default function CreatePostPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const supabase = createClient();
 
@@ -62,7 +64,7 @@ export default function CreatePostPage() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
-        router.push("/en/login");
+        router.push(`/${currentLocale}/login`);
         return;
       }
 
@@ -91,7 +93,7 @@ export default function CreatePostPage() {
       if (error) throw error;
 
       // ۴. بازگشت به فید (با مسیر جدید)
-      router.push("/en/feed");
+      router.push(`/${currentLocale}/feed`);
       router.refresh();
 
     } catch (error) {
@@ -108,7 +110,7 @@ export default function CreatePostPage() {
       {/* هدر صفحه و دکمه بازگشت */}
       <div className="flex items-center gap-4 mb-8">
         <Link
-          href="/en/feed"
+          href={`/${currentLocale}/feed`}
           className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-white transition-all shadow-lg"
         >
           <ArrowLeft size={20} />

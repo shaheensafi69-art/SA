@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import {  useSearchParams , usePathname } from "next/navigation";
 import Link from "next/link";
 import Script from "next/script";
 import { motion } from "framer-motion";
@@ -9,6 +9,8 @@ import { CheckCircle2, Heart, ArrowRight, Home, ShieldCheck } from "lucide-react
 import { trackPurchaseConversion } from "@/lib/gtag";
 
 function DonationSuccessContent() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id") || "";
 
@@ -79,13 +81,13 @@ function DonationSuccessContent() {
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
         <Link
-          href="/en"
+          href={`/${currentLocale}`}
           className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-black uppercase text-xs tracking-widest transition-all shadow-[0_0_30px_rgba(234,179,8,0.25)] hover:scale-105"
         >
           <Home size={16} /> Return Home
         </Link>
         <Link
-          href="/en/courses"
+          href={`/${currentLocale}/courses`}
           className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold uppercase text-xs tracking-widest transition-all"
         >
           Explore Courses <ArrowRight size={16} />
@@ -96,6 +98,8 @@ function DonationSuccessContent() {
 }
 
 export default function DonationSuccessPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   return (
     <main className="min-h-screen bg-[#050508] text-white font-sans selection:bg-yellow-500/30 overflow-hidden relative" dir="ltr">
       {/* Background ambient lighting */}

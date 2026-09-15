@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -30,6 +31,8 @@ type JournalEntry = {
 const FOREX_COURSE_ID = "d9fa8678-76b4-4705-b579-7860407d43e8";
 
 export default function TradingJournalPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [isLoading, setIsLoading] = useState(true);
   const [hasAccess, setHasAccess] = useState(false); // استیت کنترل دسترسی
   
@@ -223,7 +226,7 @@ export default function TradingJournalPage() {
           <p className="text-neutral-400 text-sm md:text-base leading-relaxed mb-10 max-w-md">
             The Professional Trading Journal is an exclusive tool reserved strictly for students enrolled in the <strong className="text-yellow-500">Financial Markets & Forex Trading</strong> masterclass.
           </p>
-          <Link href="/en/dashboard/courses" className="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-black uppercase tracking-widest text-xs rounded-2xl hover:scale-105 transition-all shadow-[0_10px_30px_rgba(245,158,11,0.3)]">
+          <Link href={`/${currentLocale}/dashboard/courses`} className="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-black uppercase tracking-widest text-xs rounded-2xl hover:scale-105 transition-all shadow-[0_10px_30px_rgba(245,158,11,0.3)]">
             Explore Courses
           </Link>
         </div>

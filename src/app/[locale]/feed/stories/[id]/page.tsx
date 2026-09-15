@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter, useParams } from "next/navigation";
+import {  useRouter, useParams , usePathname } from "next/navigation";
 
 // تایپ‌های دیتابیس
 interface Story {
@@ -38,6 +38,8 @@ const getTimeAgo = (dateString: string) => {
 };
 
 export default function StoryViewerPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
     const router = useRouter();
     const params = useParams();
     const storyAuthorId = params.id as string;
@@ -153,7 +155,7 @@ export default function StoryViewerPage() {
             setCurrentIndex((prev) => prev + 1);
             setProgress(0);
         } else {
-            router.push("/en/feed");
+            router.push(`/${currentLocale}/feed`);
         }
     }, [currentIndex, stories.length, router]);
 
@@ -198,7 +200,7 @@ export default function StoryViewerPage() {
         try {
             await supabase.from("user_stories").delete().eq("id", currentStory.id);
             if (stories.length === 1) {
-                router.push("/en/feed");
+                router.push(`/${currentLocale}/feed`);
             } else {
                 const updatedStories = stories.filter(s => s.id !== currentStory.id);
                 setStories(updatedStories);
@@ -258,7 +260,7 @@ export default function StoryViewerPage() {
             <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center text-white">
                 <svg className="w-16 h-16 text-neutral-800 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                 <p className="text-neutral-500 font-bold mb-6 tracking-wide">{error || "Story has expired or is unavailable."}</p>
-                <button onClick={() => router.push("/en/feed")} className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-[1.2rem] transition-colors font-bold text-sm backdrop-blur-md">
+                <button onClick={() => router.push(`/${currentLocale}/feed`)} className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-[1.2rem] transition-colors font-bold text-sm backdrop-blur-md">
                     Return to Feed
                 </button>
             </div>
@@ -371,7 +373,7 @@ export default function StoryViewerPage() {
                         </div>
 
                         <button
-                            onClick={(e) => { e.stopPropagation(); router.push('/en/feed'); }}
+                            onClick={(e) => { e.stopPropagation(); router.push(`/${currentLocale}/feed`); }}
                             className="w-9 h-9 flex items-center justify-center text-white/80 hover:text-white bg-black/20 hover:bg-black/50 rounded-full backdrop-blur-xl transition-all border border-transparent hover:border-white/10"
                         >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>

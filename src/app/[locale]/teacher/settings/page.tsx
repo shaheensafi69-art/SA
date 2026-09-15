@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import { 
   Loader2, Save, User, Mail, Phone, MapPin, 
   Calendar, BookOpen, Shield, Key, Camera, CheckCircle2, 
@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 
 export default function TeacherSettingsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
@@ -50,7 +52,7 @@ export default function TeacherSettingsPage() {
     
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) {
-      router.push("/en/login");
+      router.push(`/${currentLocale}/login`);
       return;
     }
 

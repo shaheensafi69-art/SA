@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, UserPlus, Clock, UserCheck, UserMinus,
@@ -99,6 +99,8 @@ interface StreakItem {
 
 // ================= MAIN COMPONENT =================
 export default function UserProfilePage({ params }: { params: { id: string } }) {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const supabase = createClient();
   const targetUserId = params.id;
@@ -313,7 +315,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
     return (
       <div className="w-full h-[80vh] flex flex-col items-center justify-center">
         <h2 className="text-2xl font-black text-white">Profile Not Found</h2>
-        <Link href="/en/feed" className="mt-4 text-[#C2185B] hover:underline font-bold">Return to Feed</Link>
+        <Link href={`/${currentLocale}/feed`} className="mt-4 text-[#C2185B] hover:underline font-bold">Return to Feed</Link>
       </div>
     );
   }
@@ -451,7 +453,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                   {/* دکمه مسیج (فقط وقتی باهم فرند هستند) */}
                   {friendshipStatus === 'friends' && (
                     <Link
-                      href={`/en/feed/chats/screen?userId=${targetUserId}`}
+                      href={`/${currentLocale}/feed/chats/screen?userId=${targetUserId}`}
                       className="px-6 py-3.5 sm:py-4 bg-gradient-to-r from-pink-600 to-[#C2185B] text-white border border-pink-500/40 rounded-2xl flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest shadow-[0_0_20px_rgba(194,24,91,0.4)] hover:scale-105 transition-all"
                     >
                       <MessageSquare size={16} /> Message
@@ -629,7 +631,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                       {reels.map((reel) => (
                         <Link
                           key={reel.id}
-                          href={`/en/feed/reels`}
+                          href={`/${currentLocale}/feed/reels`}
                           className="group relative bg-neutral-900 rounded-2xl overflow-hidden aspect-[9/16] border border-white/10 hover:border-[#C2185B] transition-all shadow-lg flex items-center justify-center"
                         >
                           {reel.thumbnail_url ? (

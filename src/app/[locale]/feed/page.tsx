@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter, useParams } from "next/navigation";
+import {  useRouter, useParams , usePathname } from "next/navigation";
 import Link from "next/link";
 import StoryBar from "@/components/feed/StoryBar";
 import InFeedNativeAd from "@/components/ads/InFeedNativeAd";
@@ -47,6 +47,8 @@ interface CommentItem {
 }
 
 export default function StudentFeedPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState<PostItem[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<PostItem[]>([]);
@@ -254,7 +256,7 @@ export default function StudentFeedPage() {
       setShowAuthModal(true);
       return;
     }
-    const shareUrl = `${window.location.origin}/en/feed?post=${post.id}`;
+    const shareUrl = `${window.location.origin}/${currentLocale}/feed?post=${post.id}`;
     try {
       if (navigator.share) {
         await navigator.share({
@@ -302,7 +304,7 @@ export default function StudentFeedPage() {
               {exploreUsers.map((user) => (
                 <Link
                   key={user.id}
-                  href={`/en/feed/profile/${user.id}`}
+                  href={`/${currentLocale}/feed/profile/${user.id}`}
                   className="flex items-center gap-4 p-3 rounded-[1.2rem] bg-white/[0.02] border border-white/5 hover:border-[#C2185B]/30 hover:bg-white/[0.04] hover:shadow-[0_4px_15px_rgba(194,24,91,0.1)] transition-all duration-300 group/item"
                 >
                   <div className="w-11 h-11 rounded-[1rem] bg-neutral-800 overflow-hidden border border-[#C2185B]/20 flex items-center justify-center shrink-0 group-hover/item:border-[#C2185B] transition-colors">
@@ -323,7 +325,7 @@ export default function StudentFeedPage() {
             </div>
 
             <Link
-              href="/en/feed/network"
+              href={`/${currentLocale}/feed/network`}
               className="mt-6 w-full py-4 bg-transparent border border-white/10 text-white font-black text-[10px] uppercase tracking-widest rounded-2xl flex items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all duration-300 relative z-10"
             >
               Manage Network →
@@ -383,7 +385,7 @@ export default function StudentFeedPage() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 sm:gap-4">
-                      <Link href={`/en/feed/profile/${post.studentId}`} className="w-10 h-10 sm:w-14 sm:h-14 rounded-[1.2rem] bg-neutral-800 border-2 border-[#C2185B]/30 overflow-hidden flex items-center justify-center hover:scale-105 hover:border-[#C2185B] transition-all shrink-0">
+                      <Link href={`/${currentLocale}/feed/profile/${post.studentId}`} className="w-10 h-10 sm:w-14 sm:h-14 rounded-[1.2rem] bg-neutral-800 border-2 border-[#C2185B]/30 overflow-hidden flex items-center justify-center hover:scale-105 hover:border-[#C2185B] transition-all shrink-0">
                         {post.authorAvatar ? (
                           <img src={post.authorAvatar} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
@@ -391,7 +393,7 @@ export default function StudentFeedPage() {
                         )}
                       </Link>
                       <div>
-                        <Link href={`/en/feed/profile/${post.studentId}`} className="text-white font-black text-xs sm:text-[15px] hover:text-[#C2185B] transition-colors tracking-wide">
+                        <Link href={`/${currentLocale}/feed/profile/${post.studentId}`} className="text-white font-black text-xs sm:text-[15px] hover:text-[#C2185B] transition-colors tracking-wide">
                           {post.authorName}
                         </Link>
                         <div className="flex items-center gap-1.5 mt-1">
@@ -500,7 +502,7 @@ export default function StudentFeedPage() {
       {storyUserId && (
         <StoryViewerModal
           userId={storyUserId}
-          onClose={() => router.push("/en/feed")}
+          onClose={() => router.push(`/${currentLocale}/feed`)}
         />
       )}
 
@@ -730,7 +732,7 @@ function StoryViewerModal({ userId, onClose }: { userId: string, onClose: () => 
       setCurrentIndex((prev) => prev + 1);
       setProgress(0);
     } else {
-      onClose(); // زمانی که استوری تمام شد به صفحه /en/feed برمی‌گردد
+      onClose(); // زمانی که استوری تمام شد به صفحه فید برمی‌گردد
     }
   }, [currentIndex, stories.length, onClose]);
 

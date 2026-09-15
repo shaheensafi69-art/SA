@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useParams, useRouter } from "next/navigation";
+import {  useParams, useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { 
@@ -24,6 +24,8 @@ type ProfileResult = {
 };
 
 export default function AdminAddStudentToClassPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   const router = useRouter();
   
@@ -127,7 +129,7 @@ export default function AdminAddStudentToClassPage() {
       if (enrollError) throw enrollError;
 
       // برگشت به صفحه کلاس
-      router.push(`/en/admin/classes/${classId}`);
+      router.push(`/${currentLocale}/admin/classes/${classId}`);
       
     } catch (error: any) {
       alert("Error enrolling student: " + error.message);
@@ -150,7 +152,7 @@ export default function AdminAddStudentToClassPage() {
           
           <div className="relative z-10 flex flex-col md:flex-row gap-6 justify-between md:items-end">
             <div>
-              <Link href={`/en/admin/classes/${classId}`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-rose-400 transition-colors mb-6 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
+              <Link href={`/${currentLocale}/admin/classes/${classId}`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-rose-400 transition-colors mb-6 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
                 <ArrowLeft size={14} /> Back to Class Roster
               </Link>
               

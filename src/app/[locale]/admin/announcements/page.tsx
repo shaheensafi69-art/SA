@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -15,6 +16,8 @@ type AnnouncementItem = {
 };
 
 export default function AdminAnnouncementsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [announcements, setAnnouncements] = useState<AnnouncementItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -82,9 +85,9 @@ export default function AdminAnnouncementsPage() {
       // ---- بخش هوشمندسازی لینک بر اساس دیتابیس و Routing سایت ----
       let targetUrl = "https://safiacademy.org"; 
       if (form.target_role === "student" || form.target_role === "all") {
-        targetUrl = "https://safiacademy.org/en/dashboard/announcements";
+        targetUrl = `https://safiacademy.org/${currentLocale}/dashboard/announcements`;
       } else if (form.target_role === "teacher") {
-        targetUrl = "https://safiacademy.org/en/teacher/announcements";
+        targetUrl = `https://safiacademy.org/${currentLocale}/teacher/announcements`;
       }
 
       // ۲. ارسال پوش نوتیفیکیشن به صورت مستقیم (PushAlert)
@@ -161,7 +164,7 @@ export default function AdminAnnouncementsPage() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/5 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div className="relative z-10">
-            <Link href="/en/admin" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-rose-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+            <Link href={`/${currentLocale}/admin`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-rose-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2 flex items-center gap-3">

@@ -7,17 +7,17 @@ import { createClient } from "@/utils/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowRight, LogOut, LayoutDashboard, Settings, Mail, Globe, Sparkles, BookOpen, GraduationCap, Building2, HandHeart, X, Briefcase, BookMarked, Landmark, Server, Code2, Rss } from "lucide-react";
 
-// لیست ۹ زبان رسمی آکادمی صافی با پرچم‌ها و گرادینت‌های اختصاصی
+// لیست ۹ زبان رسمی آکادمی صافی با پرچم‌های وکتور دایره‌ای و گرادینت‌های اختصاصی
 const languages = [
-  { code: "en", name: "English", flag: "🇬🇧", gradient: "from-blue-600 via-red-500 to-blue-600" },
-  { code: "fa", name: "فارسی / دری", flag: "🇦🇫", gradient: "from-emerald-500 via-white to-red-500" },
-  { code: "ps", name: "پښتو", flag: "🇦🇫", gradient: "from-neutral-800 via-red-600 to-emerald-600" },
-  { code: "ru", name: "Русский", flag: "🇷🇺", gradient: "from-blue-600 via-white to-red-600" },
-  { code: "tr", name: "Türkçe", flag: "🇹🇷", gradient: "from-red-600 via-white to-red-600" },
-  { code: "de", name: "Deutsch", flag: "🇩🇪", gradient: "from-neutral-800 via-red-600 to-yellow-500" },
-  { code: "fr", name: "Français", flag: "🇫🇷", gradient: "from-blue-600 via-white to-red-600" },
-  { code: "ar", name: "العربية", flag: "🇸🇦", gradient: "from-emerald-700 via-emerald-500 to-green-600" },
-  { code: "ur", name: "اردو", flag: "🇵🇰", gradient: "from-green-700 via-emerald-400 to-green-700" },
+  { code: "en", name: "English", flagUrl: "/flags/gb.svg", gradient: "from-blue-600 via-red-500 to-blue-600" },
+  { code: "fa", name: "فارسی / دری", flagUrl: "/flags/af.svg", gradient: "from-emerald-500 via-white to-red-500" },
+  { code: "ps", name: "پښتو", flagUrl: "/flags/af.svg", gradient: "from-neutral-800 via-red-600 to-emerald-600" },
+  { code: "ru", name: "Русский", flagUrl: "/flags/ru.svg", gradient: "from-blue-600 via-white to-red-600" },
+  { code: "tr", name: "Türkçe", flagUrl: "/flags/tr.svg", gradient: "from-red-600 via-white to-red-600" },
+  { code: "de", name: "Deutsch", flagUrl: "/flags/de.svg", gradient: "from-neutral-800 via-red-600 to-yellow-500" },
+  { code: "fr", name: "Français", flagUrl: "/flags/fr.svg", gradient: "from-blue-600 via-white to-red-600" },
+  { code: "ar", name: "العربية", flagUrl: "/flags/sa.svg", gradient: "from-emerald-700 via-emerald-500 to-green-600" },
+  { code: "ur", name: "اردو", flagUrl: "/flags/pk.svg", gradient: "from-green-700 via-emerald-400 to-green-700" },
 ];
 
 // دیکشنری ۹ زبانه برای ترجمه داینامیک کل هدر
@@ -313,14 +313,16 @@ export default function Header() {
         {/* ================= بخش اکشن‌ها و سوئیچر زبان ================= */}
         <div className="flex items-center gap-3 shrink-0 relative z-20">
           
-          {/* سوئیچر زبان (دسکتاپ) */}
+          {/* سوئیچر زبان (دسکتاپ با پرچم‌های دایره‌ای) */}
           <div className="relative group/lang hidden md:block h-10 flex items-center justify-center">
-            <button className="flex items-center gap-2 px-3.5 py-2.5 bg-white/[0.02] border border-white/5 hover:border-white/10 rounded-xl hover:bg-white/[0.06] hover:text-white text-neutral-300 transition-all duration-300 shadow-sm">
-              <span className="text-lg leading-none">{activeLang.flag}</span>
+            <button className="flex items-center gap-2 px-3 py-2 bg-white/[0.03] border border-white/10 hover:border-white/20 rounded-xl hover:bg-white/[0.08] hover:text-white text-neutral-300 transition-all duration-300 shadow-sm">
+              <div className="w-5 h-5 rounded-full overflow-hidden border border-white/25 shadow-sm shrink-0 flex items-center justify-center bg-black/40">
+                <img src={activeLang.flagUrl} alt={activeLang.name} className="w-full h-full object-cover" />
+              </div>
               <span className="text-xs font-black uppercase tracking-wider">{activeLang.code}</span>
               <ChevronDown size={12} className="group-hover/lang:rotate-180 transition-transform text-white/40" />
             </button>
-            <div className="absolute top-[85%] mt-2 p-2 bg-[#06060a]/95 backdrop-blur-3xl border border-white/10 rounded-2xl opacity-0 invisible group-hover/lang:opacity-100 group-hover/lang:visible transition-all duration-300 shadow-2xl transform origin-top-right scale-95 group-hover/lang:scale-100 z-50 w-56 flex flex-col gap-1 max-h-[380px] overflow-y-auto">
+            <div className="absolute top-[85%] mt-2 p-2 bg-[#06060a]/95 backdrop-blur-3xl border border-white/10 rounded-2xl opacity-0 invisible group-hover/lang:opacity-100 group-hover/lang:visible transition-all duration-300 shadow-2xl transform origin-top-right scale-95 group-hover/lang:scale-100 z-50 w-56 flex flex-col gap-1 max-h-[380px] overflow-y-auto custom-scrollbar">
               {languages.map((lang) => {
                 const isActive = lang.code === currentLocale;
                 return (
@@ -334,7 +336,10 @@ export default function Header() {
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-lg leading-none">{lang.flag}</span> {lang.name}
+                      <div className="w-5 h-5 rounded-full overflow-hidden border border-white/20 shadow-sm shrink-0 flex items-center justify-center bg-black/40">
+                        <img src={lang.flagUrl} alt={lang.name} className="w-full h-full object-cover" />
+                      </div>
+                      <span className="truncate">{lang.name}</span>
                     </div>
                     {isActive && (
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
@@ -489,7 +494,10 @@ export default function Header() {
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-lg leading-none">{lang.flag}</span> {lang.name}
+                        <div className="w-5 h-5 rounded-full overflow-hidden border border-white/20 shadow-sm shrink-0 flex items-center justify-center bg-black/40">
+                          <img src={lang.flagUrl} alt={lang.name} className="w-full h-full object-cover" />
+                        </div>
+                        <span className="truncate">{lang.name}</span>
                       </div>
                       {isActive && (
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>

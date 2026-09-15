@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Educational Tech Reels, Coding Shorts & Micro-Lessons | Safi Academy Reels",
     description: "Engage with bite-sized video tutorials, software demos, and expert advice on Safi Academy Reels.",
-    url: "https://safiacademy.org/en/feed/reels",
+    url: "https://safiacademy.org/feed/reels",
     siteName: "Safi Academy",
     type: "website",
   },

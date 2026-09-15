@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
@@ -20,6 +21,8 @@ type ClassItem = {
 };
 
 export default function AdminClassesPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -113,7 +116,7 @@ export default function AdminClassesPage() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/10 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div className="relative z-10">
-            <Link href="/en/admin" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-rose-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
+            <Link href={`/${currentLocale}/admin`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-rose-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
@@ -161,7 +164,7 @@ export default function AdminClassesPage() {
                     const statusNew = isClassNew(cls.created_at);
                     return (
                       <Link 
-                        href={`/en/admin/classes/${cls.id}`} 
+                        href={`/${currentLocale}/admin/classes/${cls.id}`} 
                         key={cls.id}
                         className="group flex flex-col bg-[#0a0a0f]/80 border border-white/5 rounded-[2rem] p-6 backdrop-blur-3xl shadow-xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(244,63,94,0.15)] hover:border-rose-500/30 relative overflow-hidden"
                       >

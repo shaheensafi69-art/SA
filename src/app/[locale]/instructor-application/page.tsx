@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -35,6 +36,8 @@ import {
 import { createClient } from "@/utils/supabase/client";
 
 export default function InstructorApplicationPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingResume, setIsUploadingResume] = useState(false);
@@ -998,7 +1001,7 @@ export default function InstructorApplicationPage() {
                           className="mt-1 w-4 h-4 rounded border-white/20 bg-neutral-900 text-amber-500 focus:ring-amber-400 cursor-pointer"
                         />
                         <label htmlFor="agreeTerms" className="text-xs text-neutral-300 leading-relaxed cursor-pointer">
-                          I certify that all information submitted is accurate. I agree to the <Link href="/en/terms" className="text-amber-400 underline" target="_blank">Terms of Service</Link> and understand that Safi Academy will review my credentials and contact me for a demo audition.
+                          I certify that all information submitted is accurate. I agree to the <Link href={`/${currentLocale}/terms`} className="text-amber-400 underline" target="_blank">Terms of Service</Link> and understand that Safi Academy will review my credentials and contact me for a demo audition.
                         </label>
                       </div>
                     </motion.div>
@@ -1079,7 +1082,7 @@ export default function InstructorApplicationPage() {
 
                 <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
                   <Link
-                    href="/en/courses"
+                    href={`/${currentLocale}/courses`}
                     className="px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-white transition-colors"
                   >
                     Browse Existing Courses

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
 import {
@@ -26,6 +26,8 @@ type TicketInfo = {
 };
 
 export default function AdminTicketChatScreen({ params }: { params: { id: string } }) {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const supabase = createClient();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -44,7 +46,7 @@ export default function AdminTicketChatScreen({ params }: { params: { id: string
     const initChat = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        router.push("/en/login");
+        router.push(`/${currentLocale}/login`);
         return;
       }
       setAdminId(user.id);
@@ -193,7 +195,7 @@ export default function AdminTicketChatScreen({ params }: { params: { id: string
       <header className="h-[80px] shrink-0 bg-[#060609]/90 backdrop-blur-3xl border-b border-white/[0.06] flex items-center justify-between px-6 sm:px-10 z-20 relative shadow-xl">
         <div className="flex items-center gap-5">
           <button
-            onClick={() => router.push("/en/admin/tickets")}
+            onClick={() => router.push(`/${currentLocale}/admin/tickets`)}
             className="w-10 h-10 rounded-full bg-white/[0.03] hover:bg-white/[0.08] flex items-center justify-center transition-all border border-white/[0.08]"
           >
             <ArrowLeft size={18} className="text-neutral-400 hover:text-white" />

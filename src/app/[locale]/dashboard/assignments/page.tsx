@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
 import { 
@@ -31,6 +33,9 @@ type AssignmentItem = {
 };
 
 export default function StudentHubPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [assignments, setAssignments] = useState<AssignmentItem[]>([]);
   const [todayClasses, setTodayClasses] = useState<ClassGroupForAttendance[]>([]);
@@ -49,7 +54,7 @@ export default function StudentHubPage() {
     const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
     
-    if (!session?.user) return;
+    if (!session?.user) return router.push(`/${currentLocale}/login`);
     const userId = session.user.id;
 
     try {

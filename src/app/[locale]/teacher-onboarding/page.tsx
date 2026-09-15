@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import {  useSearchParams, useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   GraduationCap,
@@ -75,6 +75,8 @@ function ConfettiEffect() {
 // 1. TEACHER MULTI-STEP ONBOARDING COMPONENT
 // ==========================================
 function TeacherOnboardingForm() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const searchParams = useSearchParams();
   const router = useRouter();
   const appId = searchParams.get("appId");
@@ -304,7 +306,7 @@ function TeacherOnboardingForm() {
 
       // 4. Redirect directly to Teacher Command Center
       setTimeout(() => {
-        router.push("/en/teacher");
+        router.push(`/${currentLocale}/teacher`);
       }, 2500);
     } catch (err: any) {
       console.error("Activation error:", err);
@@ -363,7 +365,7 @@ function TeacherOnboardingForm() {
 
         <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
           <Link
-            href="/en"
+            href={`/${currentLocale}`}
             className="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-xs transition-colors"
           >
             Return to Homepage
@@ -408,13 +410,13 @@ function TeacherOnboardingForm() {
 
         <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
           <Link
-            href="/en/teacher"
+            href={`/${currentLocale}/teacher`}
             className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_25px_rgba(245,158,11,0.3)] flex items-center justify-center gap-2"
           >
             Enter Faculty Portal <ArrowRight size={14} />
           </Link>
           <Link
-            href="/en/login"
+            href={`/${currentLocale}/login`}
             className="px-5 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-xs transition-colors"
           >
             Sign In with Password
@@ -459,7 +461,7 @@ function TeacherOnboardingForm() {
 
         <div className="pt-2">
           <Link
-            href="/en/teacher"
+            href={`/${currentLocale}/teacher`}
             className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(245,158,11,0.4)] flex items-center justify-center gap-2 group"
           >
             Launch Faculty Portal Now <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -476,7 +478,7 @@ function TeacherOnboardingForm() {
     <div className="w-full max-w-xl mx-auto px-4 py-4 relative z-10 animate-fade-in">
       {/* Header */}
       <div className="text-center mb-6 flex flex-col items-center">
-        <Link href="/en" className="inline-block mb-2 transition-transform hover:scale-105 duration-300">
+        <Link href={`/${currentLocale}`} className="inline-block mb-2 transition-transform hover:scale-105 duration-300">
           <div className="relative w-16 h-16 flex items-center justify-center mx-auto">
             <div className="absolute inset-0 bg-yellow-500/20 blur-[20px] rounded-full"></div>
             <img
@@ -903,6 +905,8 @@ function TeacherOnboardingForm() {
 // 2. MAIN TEACHER ONBOARDING PAGE
 // ==========================================
 export default function TeacherOnboardingPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   return (
     <div className="min-h-screen w-full bg-[#030307] text-white flex flex-col justify-center items-center font-sans overflow-x-hidden relative py-12 px-4">
       {/* Background Starfield and Golden Glows */}

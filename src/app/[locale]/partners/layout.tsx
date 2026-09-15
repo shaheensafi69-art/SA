@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const currentLocale = locale || "en";
+  return {
   title: "Strategic Global Academic, Cloud & Industry Partners | Safi Academy",
   description: "Discover Safi Academy's global network of accreditation partners, cloud providers, educational bodies, and industry leaders advancing world-class education worldwide.",
   keywords: [
@@ -14,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Strategic Global Academic, Cloud & Industry Partners | Safi Academy",
     description: "Partnering with world-leading educational organizations and technology innovators to empower global learners.",
-    url: "https://safiacademy.org/en/partners",
+    url: `https://safiacademy.org/${currentLocale}/partners`,
     siteName: "Safi Academy",
     type: "website",
   },
@@ -24,6 +31,7 @@ export const metadata: Metadata = {
     description: "Our accredited institutional and industry partners powering credentials, certificates, and student opportunities.",
   }
 };
+}
 
 export default function PartnersLayout({
   children,

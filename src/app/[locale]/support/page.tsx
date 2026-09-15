@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import { MessageCircle, Clock3, ChevronRight, Sparkles, LifeBuoy, ArrowLeft, Loader2 } from "lucide-react";
 
 type SupportTicket = {
@@ -14,6 +14,8 @@ type SupportTicket = {
 };
 
 export default function MinimalSupportPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false); // جلوگیری از کلیک‌های همزمان
@@ -48,7 +50,7 @@ export default function MinimalSupportPage() {
           setTickets(data as SupportTicket[]);
         }
       } else {
-        router.push("/en/login");
+        router.push(`/${currentLocale}/login`);
       }
       setIsLoading(false);
     };
@@ -83,7 +85,7 @@ export default function MinimalSupportPage() {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      router.push("/en/login");
+      router.push(`/${currentLocale}/login`);
       return;
     }
 
@@ -109,11 +111,11 @@ export default function MinimalSupportPage() {
     });
 
     // هدایت به صفحه چت با شناسه واقعی تیکت (دیگر از /new استفاده نمی‌کنیم)
-    router.push(`/en/support/chat/${newTicket.id}`);
+    router.push(`/${currentLocale}/support/chat/${newTicket.id}`);
   };
 
   const openChat = (ticketId: string) => {
-    router.push(`/en/support/chat/${ticketId}`);
+    router.push(`/${currentLocale}/support/chat/${ticketId}`);
   };
 
   return (
@@ -122,7 +124,7 @@ export default function MinimalSupportPage() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] max-w-[800px] h-[400px] bg-[#C2185B]/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
 
       <button
-        onClick={() => router.push("/en/dashboard")}
+        onClick={() => router.push(`/${currentLocale}/dashboard`)}
         className="absolute top-6 left-6 z-50 w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full flex items-center justify-center text-neutral-400 hover:text-white transition-all shadow-lg backdrop-blur-md"
       >
         <ArrowLeft size={18} />

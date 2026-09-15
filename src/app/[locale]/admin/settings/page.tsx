@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { 
   Loader2, ArrowLeft, Save, LogOut, User, Mail, FileText, Camera, 
@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 
 export default function AdminSettingsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const supabase = createClient();
   
@@ -45,7 +47,7 @@ export default function AdminSettingsPage() {
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session) {
-      router.push("/en/login");
+      router.push(`/${currentLocale}/login`);
       return;
     }
 
@@ -114,7 +116,7 @@ export default function AdminSettingsPage() {
 
     setIsLoggingOut(true);
     await supabase.auth.signOut();
-    router.push("/en/login");
+    router.push(`/${currentLocale}/login`);
   };
 
   return (
@@ -131,7 +133,7 @@ export default function AdminSettingsPage() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div className="relative z-10">
-            <Link href="/en/admin" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-indigo-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+            <Link href={`/${currentLocale}/admin`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-indigo-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
@@ -363,7 +365,7 @@ export default function AdminSettingsPage() {
             <div className="flex flex-col sm:flex-row justify-end gap-4 sticky bottom-4 sm:static z-20 pt-4">
               <button 
                 type="button"
-                onClick={() => router.push("/en/admin")}
+                onClick={() => router.push(`/${currentLocale}/admin`)}
                 className="w-full sm:w-auto px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest text-neutral-400 bg-white/5 border border-white/10 hover:bg-white/10 hover:text-white transition-all shadow-lg backdrop-blur-md"
               >
                 Cancel

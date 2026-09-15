@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import { uploadFileToR2 } from "@/utils/upload";
 import {
     GraduationCap,
@@ -20,6 +20,8 @@ import {
 import { createClient } from "@/utils/supabase/client";
 
 export default function CreateScholarshipPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
     const router = useRouter();
     const supabase = createClient();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -83,7 +85,7 @@ export default function CreateScholarshipPage() {
             if (error) throw error;
 
             alert("Scholarship added successfully!");
-            router.push("/en/admin/scholarships");
+            router.push(`/${currentLocale}/admin/scholarships`);
         } catch (error: any) {
             alert("Error: " + error.message);
         } finally {

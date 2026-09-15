@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -19,6 +20,8 @@ type QuizOverview = {
 };
 
 export default function TeacherQuizzesOverviewPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [isLoading, setIsLoading] = useState(true);
   const [quizzes, setQuizzes] = useState<QuizOverview[]>([]);
   const [filterType, setFilterType] = useState<"all" | "regular" | "chance">("all");
@@ -151,7 +154,7 @@ export default function TeacherQuizzesOverviewPage() {
           
           <div className="flex gap-4 relative z-10 w-full md:w-auto">
             <Link 
-              href="/en/teacher/quizzes/create" 
+              href={`/${currentLocale}/teacher/quizzes/create`} 
               className="flex-1 md:flex-none px-6 py-4 bg-gradient-to-r from-fuchsia-600 to-indigo-600 hover:from-fuchsia-500 hover:to-indigo-500 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-[0_10px_30px_rgba(217,70,239,0.3)] flex items-center justify-center gap-2 active:scale-95"
             >
               <Plus size={16} /> Deploy Exam
@@ -230,13 +233,13 @@ export default function TeacherQuizzesOverviewPage() {
                 {/* Action Buttons */}
                 <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row gap-3">
                   <Link 
-                    href={`/en/teacher/quizzes/${quiz.id}/questions`}
+                    href={`/${currentLocale}/teacher/quizzes/${quiz.id}/questions`}
                     className="flex-1 text-center py-3.5 bg-white/[0.02] hover:bg-white/5 border border-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest text-neutral-300 hover:text-white transition-all"
                   >
                     Question Bank
                   </Link>
                   <Link 
-                    href={`/en/teacher/quizzes/${quiz.id}/results`}
+                    href={`/${currentLocale}/teacher/quizzes/${quiz.id}/results`}
                     className={`flex-1 text-center py-3.5 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
                       quiz.stats.pending_reviews > 0 
                         ? "bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border-amber-500/30" 

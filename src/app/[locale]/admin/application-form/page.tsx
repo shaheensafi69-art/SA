@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -54,6 +55,8 @@ interface InstructorApplication {
 }
 
 export default function AdminApplicationFormPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [applications, setApplications] = useState<InstructorApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -191,7 +194,7 @@ export default function AdminApplicationFormPage() {
             <span>Refresh</span>
           </button>
           <Link
-            href="/en/instructor-application"
+            href={`/${currentLocale}/instructor-application`}
             target="_blank"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20"
           >
@@ -423,7 +426,7 @@ export default function AdminApplicationFormPage() {
                 {/* Bottom Actions */}
                 <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between gap-2">
                   <Link
-                    href={`/en/admin/application-form/${app.id}`}
+                    href={`/${currentLocale}/admin/application-form/${app.id}`}
                     className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs uppercase tracking-wider transition-all shadow-md shadow-amber-500/10 hover:scale-105 active:scale-95"
                   >
                     <Eye size={13} />

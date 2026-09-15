@@ -14,6 +14,7 @@ import { createClient } from "@/utils/supabase/client";
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname() || "";
+  const currentLocale = pathname.split("/")[1] || "en";
 
   const [isReady, setIsReady] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -22,7 +23,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const isLiveMeetRoute = pathname.includes('/admin/live-classes/') && pathname.split('/').length > 4;
 
   // 🟢 قفل کردن و مخفی کردن هیدر و نویگیشن بار موبایل در صفحه چت تیکت و لایو استودیو
-  const isTicketChatRoute = pathname.includes('/en/admin/tickets/chat');
+  const isTicketChatRoute = pathname.includes('/admin/tickets/chat');
   const isFullScreenRoute = isLiveMeetRoute || isTicketChatRoute;
 
   // بررسی اینکه آیا ادمین در بخش فید/سوشال قرار دارد
@@ -46,43 +47,43 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         if (profile) {
           if (profile.role !== "admin" && profile.role !== "super_admin") {
-            router.replace("/en/dashboard");
+            router.replace(`/${currentLocale}/dashboard`);
             return;
           }
           setUserProfile({ ...profile, id: user.id });
         }
         setIsReady(true);
       } else {
-        router.replace("/en/login");
+        router.replace(`/${currentLocale}/login`);
       }
     };
 
     fetchProfile();
-  }, [router]);
+  }, [router, currentLocale]);
 
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.replace("/en/login");
+    router.replace(`/${currentLocale}/login`);
   };
 
   // اضافه شدن Blogs و Scholarships به لیست منوها
   const menuItems = [
-    { name: "Overview", path: "/en/admin", icon: <LayoutDashboard size={22} />, disabled: false },
-    { name: "Applications", path: "/en/admin/application-form", icon: <ClipboardList size={22} />, disabled: false },
-    { name: "Academy Feed", path: "/en/feed", icon: <Rss size={22} />, disabled: false },
-    { name: "Students", path: "/en/admin/manage-students", icon: <Users size={22} />, disabled: false },
-    { name: "Faculty", path: "/en/admin/manage-teachers", icon: <UserCheck size={22} />, disabled: false },
-    { name: "Courses", path: "/en/admin/courses", icon: <BookOpen size={22} />, disabled: false },
-    { name: "Classes", path: "/en/admin/classes", icon: <Presentation size={22} />, disabled: false },
-    { name: "Scholarships", path: "/en/admin/scholarships/create", icon: <GraduationCap size={22} />, disabled: false },
-    { name: "Blogs", path: "/en/admin/blogs/create", icon: <Newspaper size={22} />, disabled: false },
-    { name: "Finance", path: "/en/admin/finance", icon: <CircleDollarSign size={22} />, disabled: false },
-    { name: "Honors", path: "/en/admin/awards", icon: <Trophy size={22} />, disabled: false },
-    { name: "Notices", path: "/en/admin/announcements", icon: <Megaphone size={22} />, disabled: false },
-    { name: "Live Studio", path: "/en/admin/live-classes", icon: <Video size={22} />, disabled: false },
-    { name: "Tickets", path: "/en/admin/tickets", icon: <Headset size={22} />, disabled: false },
-    { name: "Settings", path: "/en/admin/settings", icon: <Settings size={22} />, disabled: false },
+    { name: "Overview", path: `/${currentLocale}/admin`, icon: <LayoutDashboard size={22} />, disabled: false },
+    { name: "Applications", path: `/${currentLocale}/admin/application-form`, icon: <ClipboardList size={22} />, disabled: false },
+    { name: "Academy Feed", path: `/${currentLocale}/feed`, icon: <Rss size={22} />, disabled: false },
+    { name: "Students", path: `/${currentLocale}/admin/manage-students`, icon: <Users size={22} />, disabled: false },
+    { name: "Faculty", path: `/${currentLocale}/admin/manage-teachers`, icon: <UserCheck size={22} />, disabled: false },
+    { name: "Courses", path: `/${currentLocale}/admin/courses`, icon: <BookOpen size={22} />, disabled: false },
+    { name: "Classes", path: `/${currentLocale}/admin/classes`, icon: <Presentation size={22} />, disabled: false },
+    { name: "Scholarships", path: `/${currentLocale}/admin/scholarships/create`, icon: <GraduationCap size={22} />, disabled: false },
+    { name: "Blogs", path: `/${currentLocale}/admin/blogs/create`, icon: <Newspaper size={22} />, disabled: false },
+    { name: "Finance", path: `/${currentLocale}/admin/finance`, icon: <CircleDollarSign size={22} />, disabled: false },
+    { name: "Honors", path: `/${currentLocale}/admin/awards`, icon: <Trophy size={22} />, disabled: false },
+    { name: "Notices", path: `/${currentLocale}/admin/announcements`, icon: <Megaphone size={22} />, disabled: false },
+    { name: "Live Studio", path: `/${currentLocale}/admin/live-classes`, icon: <Video size={22} />, disabled: false },
+    { name: "Tickets", path: `/${currentLocale}/admin/tickets`, icon: <Headset size={22} />, disabled: false },
+    { name: "Settings", path: `/${currentLocale}/admin/settings`, icon: <Settings size={22} />, disabled: false },
   ];
 
   const getMenuColor = (name: string) => {
@@ -125,7 +126,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className="hidden lg:flex w-[295px] bg-[#060609]/90 backdrop-blur-2xl border-r border-white/[0.06] flex-col relative z-20 shrink-0 p-4 shadow-[15px_0_40px_rgba(0,0,0,0.9)]">
         <div className="mb-5 p-4 rounded-2xl bg-gradient-to-br from-[#0c0c14] to-[#07070a] shadow-[inset_0_2px_6px_rgba(0,0,0,0.9),0_6px_20px_rgba(0,0,0,0.5)] border border-white/5 shrink-0 relative group">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-rose-500 to-purple-500 rounded-2xl opacity-20 blur group-hover:opacity-40 transition duration-500"></div>
-          <Link href="/en/admin" className="flex items-center gap-3.5 relative z-10">
+          <Link href={`/${currentLocale}/admin`} className="flex items-center gap-3.5 relative z-10">
             <div className="relative flex items-center justify-center transform group-hover:rotate-6 group-hover:scale-110 transition-transform duration-300">
               <div className="absolute inset-0 bg-rose-500/30 blur-[10px] rounded-full"></div>
               <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(244,63,94,0.7)]" />
@@ -143,8 +144,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {menuItems.map((item) => {
             if (item.disabled) return null;
 
-            const isActive = item.path === "/en/admin"
-              ? pathname === "/en/admin"
+            const isActive = item.path === `/${currentLocale}/admin`
+              ? pathname === `/${currentLocale}/admin`
               : pathname.startsWith(item.path);
 
             return (
@@ -182,7 +183,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* ================= 2. DESKTOP FLOATING NOTIFICATION ================= */}
       <div className="hidden lg:flex absolute top-6 right-10 z-50">
-        <Link href="/en/admin/announcements" className="w-12 h-12 bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-rose-400 hover:border-rose-500/40 transition-all relative group shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
+        <Link href={`/${currentLocale}/admin/announcements`} className="w-12 h-12 bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-rose-400 hover:border-rose-500/40 transition-all relative group shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
           <Bell className="w-5 h-5 transition-transform group-hover:rotate-12 group-hover:scale-110" />
           <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_10px_#f43f5e]"></span>
         </Link>
@@ -196,7 +197,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-8 h-8 object-contain filter drop-shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
             <span className="relative z-10 font-black text-xs tracking-widest text-white uppercase">Safi Academy</span>
           </div>
-          <Link href="/en/admin/announcements" className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-rose-400 transition-colors relative shadow-inner">
+          <Link href={`/${currentLocale}/admin/announcements`} className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-rose-400 transition-colors relative shadow-inner">
             <Bell size={18} />
             <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_6px_#f43f5e]"></span>
           </Link>
@@ -211,18 +212,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* ================= 5. FLOATING MOBILE BOTTOM NAV ================= */}
       {!isFullScreenRoute && (
         <div className="lg:hidden fixed bottom-6 left-4 right-4 h-[75px] bg-[#09090e]/95 backdrop-blur-3xl border border-white/10 z-50 px-2 rounded-[2.5rem] flex justify-between items-center shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_20px_rgba(244,63,94,0.05)]">
-          <Link href="/en/admin" className="relative flex flex-col items-center justify-center w-[25%] h-full group">
-            {pathname === "/en/admin" && <div className="absolute inset-0 bg-gradient-to-t from-rose-500/20 to-transparent rounded-[2rem] opacity-100"></div>}
-            <LayoutDashboard size={22} className={`z-10 transition-all ${pathname === "/en/admin" ? "-translate-y-2 text-rose-400" : "text-neutral-500 group-hover:text-neutral-300"}`} />
-            <span className={`absolute bottom-2 text-[9px] font-black tracking-widest uppercase transition-all z-10 ${pathname === "/en/admin" ? "text-rose-400 opacity-100 translate-y-0" : "text-neutral-500 opacity-0 translate-y-2"}`}>Overview</span>
+          <Link href={`/${currentLocale}/admin`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
+            {pathname === `/${currentLocale}/admin` && <div className="absolute inset-0 bg-gradient-to-t from-rose-500/20 to-transparent rounded-[2rem] opacity-100"></div>}
+            <LayoutDashboard size={22} className={`z-10 transition-all ${pathname === `/${currentLocale}/admin` ? "-translate-y-2 text-rose-400" : "text-neutral-500 group-hover:text-neutral-300"}`} />
+            <span className={`absolute bottom-2 text-[9px] font-black tracking-widest uppercase transition-all z-10 ${pathname === `/${currentLocale}/admin` ? "text-rose-400 opacity-100 translate-y-0" : "text-neutral-500 opacity-0 translate-y-2"}`}>Overview</span>
           </Link>
-          <Link href="/en/admin/manage-students" className="relative flex flex-col items-center justify-center w-[25%] h-full group">
+          <Link href={`/${currentLocale}/admin/manage-students`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
             <Users size={22} className={`z-10 transition-all ${pathname.includes("/admin/manage-students") ? "-translate-y-2 text-blue-400" : "text-neutral-500 group-hover:text-neutral-300"}`} />
             <span className={`absolute bottom-2 text-[9px] font-black tracking-widest uppercase transition-all z-10 ${pathname.includes("/admin/manage-students") ? "text-blue-400 opacity-100 translate-y-0" : "text-neutral-500 opacity-0 translate-y-2"}`}>Students</span>
           </Link>
-          <Link href="/en/feed" className="relative flex flex-col items-center justify-center w-[25%] h-full group">
-            <Rss size={22} className={`z-10 transition-all ${pathname.startsWith("/en/feed") ? "-translate-y-2 text-pink-400" : "text-neutral-500 group-hover:text-neutral-300"}`} />
-            <span className={`absolute bottom-2 text-[9px] font-black tracking-widest uppercase transition-all z-10 ${pathname.startsWith("/en/feed") ? "text-pink-400 opacity-100 translate-y-0" : "text-neutral-500 opacity-0 translate-y-2"}`}>Feed</span>
+          <Link href={`/${currentLocale}/feed`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
+            <Rss size={22} className={`z-10 transition-all ${pathname.startsWith(`/${currentLocale}/feed`) ? "-translate-y-2 text-pink-400" : "text-neutral-500 group-hover:text-neutral-300"}`} />
+            <span className={`absolute bottom-2 text-[9px] font-black tracking-widest uppercase transition-all z-10 ${pathname.startsWith(`/${currentLocale}/feed`) ? "text-pink-400 opacity-100 translate-y-0" : "text-neutral-500 opacity-0 translate-y-2"}`}>Feed</span>
           </Link>
           <button onClick={() => setIsMobileMenuOpen(true)} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
             <Grid size={22} className="z-10 transition-all text-neutral-500 group-hover:text-neutral-300" />
@@ -246,8 +247,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex-1 overflow-y-auto p-5 custom-scrollbar">
             <div className="grid grid-cols-2 gap-3.5">
               {menuItems.map((item) => {
-                const isActive = item.path === "/en/admin"
-                  ? pathname === "/en/admin"
+                const isActive = item.path === `/${currentLocale}/admin`
+                  ? pathname === `/${currentLocale}/admin`
                   : pathname.startsWith(item.path);
 
                 const colorClasses = getMenuColor(item.name);

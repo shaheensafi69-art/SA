@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import {  useParams, useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   GraduationCap,
@@ -59,6 +59,8 @@ interface InstructorApplication {
 }
 
 export default function AdminApplicationDetailPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
@@ -228,7 +230,7 @@ export default function AdminApplicationDetailPage() {
         <h2 className="text-2xl font-black">Application Not Found</h2>
         <p className="text-xs text-neutral-400 mt-2 mb-6">The requested candidate dossier does not exist.</p>
         <Link
-          href="/en/admin/application-form"
+          href={`/${currentLocale}/admin/application-form`}
           className="px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold uppercase tracking-wider"
         >
           Return to Applications List
@@ -249,7 +251,7 @@ export default function AdminApplicationDetailPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/10">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => router.push("/en/admin/application-form")}
+            onClick={() => router.push(`/${currentLocale}/admin/application-form`)}
             className="p-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-400 hover:text-white transition-colors"
           >
             <ArrowLeft size={18} />
@@ -680,7 +682,7 @@ export default function AdminApplicationDetailPage() {
                     <Check size={14} /> Automated Onboarding Email
                   </div>
                   <p>
-                    An official congratulatory email containing their personal onboarding setup link (<code>/en/teacher-onboarding?appId=...</code>) will be dispatched from your connected domain.
+                    An official congratulatory email containing their personal onboarding setup link (<code>/{currentLocale}/teacher-onboarding?appId=...</code>) will be dispatched from your connected domain.
                   </p>
                 </div>
               ) : (

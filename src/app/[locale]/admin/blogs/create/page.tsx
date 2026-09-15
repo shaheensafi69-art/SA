@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import { uploadFileToR2 } from "@/utils/upload";
 import {
     PenTool,
@@ -18,6 +18,8 @@ import {
 import { createClient } from "@/utils/supabase/client";
 
 export default function CreateBlogPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
     const router = useRouter();
     const supabase = createClient();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -76,7 +78,7 @@ export default function CreateBlogPage() {
             if (error) throw error;
 
             alert("Blog created successfully!");
-            router.push("/en/admin/blogs");
+            router.push(`/${currentLocale}/admin/blogs`);
         } catch (error: any) {
             alert("Error: " + error.message);
         } finally {

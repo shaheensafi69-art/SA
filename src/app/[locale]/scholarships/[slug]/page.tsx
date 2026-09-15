@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import {  useParams, useRouter , usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
@@ -29,6 +29,8 @@ type Scholarship = {
 };
 
 export default function EnglishScholarshipDetailPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
@@ -85,7 +87,7 @@ export default function EnglishScholarshipDetailPage() {
       <div className="min-h-screen bg-[#050508] flex flex-col items-center justify-center text-center px-6">
         <h1 className="text-6xl font-black text-white mb-4">404</h1>
         <p className="text-neutral-400 mb-8">Scholarship opportunity not found or has expired.</p>
-        <Link href="/en/scholarships" className="px-6 py-3 rounded-xl font-bold text-black bg-gradient-to-r from-yellow-500 to-amber-500 hover:scale-105 transition-all">
+        <Link href={`/${currentLocale}/scholarships`} className="px-6 py-3 rounded-xl font-bold text-black bg-gradient-to-r from-yellow-500 to-amber-500 hover:scale-105 transition-all">
           Back to Scholarships
         </Link>
       </div>
@@ -112,7 +114,7 @@ export default function EnglishScholarshipDetailPage() {
       {/* ================= FLOATING BACK BUTTON ================= */}
       <div className="fixed top-28 left-4 md:left-12 z-50">
         <button 
-          onClick={() => router.push('/en/scholarships')}
+          onClick={() => router.push(`/${currentLocale}/scholarships`)}
           className="flex items-center gap-2 px-4 py-2.5 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full text-xs font-black uppercase tracking-widest text-neutral-300 hover:text-white hover:bg-white/10 transition-all duration-300 shadow-xl group"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back
@@ -352,7 +354,7 @@ export default function EnglishScholarshipDetailPage() {
                 Connect with Safi Academy mentors for document reviews, motivation letter refinement & guidance.
               </p>
               <Link 
-                href="/en/support" 
+                href={`/${currentLocale}/support`} 
                 className="inline-flex items-center gap-1.5 text-xs font-black text-yellow-400 hover:text-yellow-300 uppercase tracking-wider pt-1"
               >
                 Contact Student Desk →

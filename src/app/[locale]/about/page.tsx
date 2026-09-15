@@ -2,6 +2,7 @@
 
 import { useEffect, useState, forwardRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   ArrowRight,
   Building2,
@@ -344,6 +345,8 @@ const techPillars = [
 ];
 
 export default function AboutPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [teachers, setTeachers] = useState<TeacherInfo[]>([]);
   const [isLoadingTeachers, setIsLoadingTeachers] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -628,7 +631,7 @@ export default function AboutPage() {
               subtitle={member.role}
               imageUrl={member.image}
               actionText="Read Full Bio"
-              href={`/en/founder/${member.slug}`}
+              href={`/${currentLocale}/founder/${member.slug}`}
               borderClass={member.borderClass}
               textClass={member.textClass}
               badge="Executive Board"
@@ -721,7 +724,7 @@ export default function AboutPage() {
         {/* Join Faculty Callout */}
         <div className="text-center mt-14">
           <Link
-            href="/en/instructor-application"
+            href={`/${currentLocale}/instructor-application`}
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-fuchsia-600/20 hover:bg-fuchsia-600/30 border border-fuchsia-500/40 text-fuchsia-300 font-bold text-xs uppercase tracking-wider transition-all hover:scale-105 shadow-xl"
           >
             <GraduationCap className="w-4 h-4" />
@@ -925,14 +928,14 @@ export default function AboutPage() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
-              href="/en/register"
+              href={`/${currentLocale}/register`}
               className="inline-block px-10 py-5 bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-black uppercase tracking-widest text-sm rounded-2xl hover:scale-105 transition-all shadow-[0_0_30px_rgba(234,179,8,0.4)]"
             >
               Enroll as a Student
             </Link>
 
             <Link
-              href="/en/instructor-application"
+              href={`/${currentLocale}/instructor-application`}
               className="inline-block px-8 py-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold uppercase tracking-widest text-sm rounded-2xl transition-all"
             >
               Apply as Instructor

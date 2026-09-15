@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { Megaphone, BellRing, CalendarDays, Clock, Info } from "lucide-react";
 
@@ -14,6 +16,9 @@ type Announcement = {
 };
 
 export default function AnnouncementsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
@@ -23,7 +28,7 @@ export default function AnnouncementsPage() {
       const supabase = createClient();
       const { data: { session } } = await supabase.auth.getSession();
       
-      if (!session?.user) return;
+      if (!session?.user) return router.push(`/${currentLocale}/login`);
 
       try {
         // ۱. دریافت نقش کاربر فعلی تا فقط اعلان‌های مربوط به خودش را ببیند

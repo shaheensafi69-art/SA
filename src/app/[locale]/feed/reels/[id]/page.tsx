@@ -1,18 +1,20 @@
 "use client";
 
 import { useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import {  useParams, useRouter , usePathname } from "next/navigation";
 
 export default function SingleReelRedirect() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
     const params = useParams();
     const router = useRouter();
     const reelId = params?.id as string;
 
     useEffect(() => {
         if (reelId) {
-            router.replace(`/en/feed/reels?id=${encodeURIComponent(reelId)}`);
+            router.replace(`/${currentLocale}/feed/reels?id=${encodeURIComponent(reelId)}`);
         } else {
-            router.replace("/en/feed/reels");
+            router.replace(`/${currentLocale}/feed/reels`);
         }
     }, [reelId, router]);
 

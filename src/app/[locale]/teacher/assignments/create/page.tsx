@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2, ClipboardEdit, CalendarDays, AlignLeft, Target, Layers, AlertCircle, Save, Star } from "lucide-react";
 
@@ -12,6 +12,8 @@ type ClassOption = {
 };
 
 export default function CreateAssignmentPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,7 +40,7 @@ export default function CreateAssignmentPage() {
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session?.user) {
-      router.push("/en/login");
+      router.push(`/${currentLocale}/login`);
       return;
     }
 
@@ -89,7 +91,7 @@ export default function CreateAssignmentPage() {
       if (error) throw error;
 
       // هدایت به داشبورد تکالیف پس از موفقیت
-      router.push("/en/teacher/assignments");
+      router.push(`/${currentLocale}/teacher/assignments`);
       
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to issue the assignment.");
@@ -117,7 +119,7 @@ export default function CreateAssignmentPage() {
         {/* Header */}
         <header className="flex flex-col md:flex-row justify-between md:items-center gap-6 bg-[#0a0a0f]/80 p-6 sm:p-8 rounded-[2rem] border border-white/5 backdrop-blur-2xl shadow-xl">
           <div>
-            <Link href="/en/teacher/assignments" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+            <Link href={`/${currentLocale}/teacher/assignments`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
               <ArrowLeft size={14} /> Back to Terminal
             </Link>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">

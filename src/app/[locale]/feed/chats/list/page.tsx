@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { MessageSquare, Search, Users, ChevronRight, Sparkles, CheckCheck } from "lucide-react";
 
@@ -18,6 +18,8 @@ interface ChatPartner {
 }
 
 export default function ChatsListPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
     const [isLoading, setIsLoading] = useState(true);
     const [chats, setChats] = useState<ChatPartner[]>([]);
     const [friends, setFriends] = useState<ChatPartner[]>([]);
@@ -35,7 +37,7 @@ export default function ChatsListPage() {
         setIsLoading(true);
         try {
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session?.user) return router.push("/en/login");
+            if (!session?.user) return router.push(`/${currentLocale}/login`);
             const userId = session.user.id;
             setCurrentUserId(userId);
 
@@ -173,7 +175,7 @@ export default function ChatsListPage() {
                         {friends.map((friend) => (
                             <Link
                                 key={friend.id}
-                                href={`/en/feed/chats/screen?userId=${friend.id}`}
+                                href={`/${currentLocale}/feed/chats/screen?userId=${friend.id}`}
                                 className="flex flex-col items-center gap-2 shrink-0 group"
                             >
                                 <div className="w-16 h-16 rounded-[1.5rem] bg-neutral-800 border-2 border-white/10 overflow-hidden flex items-center justify-center group-hover:border-[#C2185B] transition-colors relative shadow-md">
@@ -205,7 +207,7 @@ export default function ChatsListPage() {
                     filteredChats.map((chat) => (
                         <Link
                             key={chat.id}
-                            href={`/en/feed/chats/screen?userId=${chat.id}`}
+                            href={`/${currentLocale}/feed/chats/screen?userId=${chat.id}`}
                             className="flex items-center gap-4 bg-[#0a0a0f]/80 border border-white/5 hover:border-[#C2185B]/30 p-4 sm:p-5 rounded-[2.2rem] backdrop-blur-xl shadow-lg hover:bg-white/[0.03] transition-all group"
                         >
                             <div className="w-14 h-14 rounded-2xl bg-neutral-800 border border-white/10 overflow-hidden flex items-center justify-center shrink-0 group-hover:border-[#C2185B] transition-colors shadow-inner">

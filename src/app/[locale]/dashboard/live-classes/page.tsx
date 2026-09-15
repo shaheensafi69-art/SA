@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { Globe, Video, MessageSquare, ExternalLink, Calendar, User, Clock, LockKeyhole, ShieldCheck } from "lucide-react";
 
@@ -17,6 +19,9 @@ type ClassGroup = {
 };
 
 export default function LiveClassesDashboard() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
+  const router = useRouter();
   const [classes, setClasses] = useState<ClassGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -30,7 +35,7 @@ export default function LiveClassesDashboard() {
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return;
+      if (!session?.user) return router.push(`/${currentLocale}/login`);
       
       const userId = session.user.id;
 

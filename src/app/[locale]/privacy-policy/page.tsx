@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -29,6 +30,8 @@ import {
 } from "lucide-react";
 
 export default function PrivacyPolicyPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [activeSection, setActiveSection] = useState("controller");
 
   const sections = [
@@ -552,7 +555,7 @@ export default function PrivacyPolicyPage() {
                   </div>
                 </div>
                 <Link
-                  href="/en/delete-account"
+                  href={`/${currentLocale}/delete-account`}
                   className="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-black text-xs uppercase tracking-wider transition-all whitespace-nowrap shadow-md flex items-center gap-1.5 shrink-0"
                 >
                   <span>Delete Account</span>

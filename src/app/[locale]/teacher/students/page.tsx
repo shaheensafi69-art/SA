@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { Users, Search, Loader2, ShieldAlert, ArrowLeft, Mail, Phone, MapPin, Calendar, CreditCard, UserCheck, FileText, X, Star, Eye } from "lucide-react";
 
@@ -24,6 +24,8 @@ type StudentProfile = {
 };
 
 export default function TeacherAllStudentsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [students, setStudents] = useState<StudentProfile[]>([]);
@@ -43,7 +45,7 @@ export default function TeacherAllStudentsPage() {
     // ۱. دریافت اطلاعات استاد لاگین شده
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) {
-      router.push("/en/login");
+      router.push(`/${currentLocale}/login`);
       return;
     }
 

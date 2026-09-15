@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldAlert,
@@ -32,6 +33,9 @@ import {
 } from "lucide-react";
 
 export default function AccountDeletionPortal() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
+
   // Form State
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
@@ -134,7 +138,7 @@ export default function AccountDeletionPortal() {
         {/* --- TOP BREADCRUMB & UK BADGE --- */}
         <div className="flex flex-wrap items-center justify-between gap-4 mb-10 pb-6 border-b border-white/10">
           <Link
-            href="/en"
+            href={`/${currentLocale}`}
             className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-all text-xs font-bold uppercase tracking-widest bg-white/[0.04] border border-white/10 px-4 py-2 rounded-full hover:bg-white/[0.08]"
           >
             <ArrowLeft size={14} /> Back to Homepage
@@ -237,7 +241,7 @@ export default function AccountDeletionPortal() {
                 </ol>
               </div>
               <Link
-                href="/en/get-app"
+                href={`/${currentLocale}/get-app`}
                 className="w-full py-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/10 text-xs font-bold uppercase tracking-wider text-center transition-all flex items-center justify-center gap-2"
               >
                 <span>Download App</span>

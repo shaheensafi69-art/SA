@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
@@ -25,6 +26,8 @@ type TicketItem = {
 };
 
 export default function AdminTicketsListPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [tickets, setTickets] = useState<TicketItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -286,7 +289,7 @@ export default function AdminTicketsListPage() {
 
               return (
                 <Link
-                  href={`/en/admin/tickets/chat/${ticket.id}`}
+                  href={`/${currentLocale}/admin/tickets/chat/${ticket.id}`}
                   key={ticket.id}
                   className="block relative bg-[#0c0c12]/80 backdrop-blur-xl border border-white/5 rounded-[1.5rem] p-4 sm:p-5 hover:bg-[#12121a] hover:border-white/10 hover:scale-[1.01] transition-all duration-300 shadow-md group overflow-hidden"
                 >

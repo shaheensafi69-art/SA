@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import { LineChart, Loader2, Search, ArrowUpRight, ArrowDownRight, Eye, X, Save, ShieldAlert, Star, MessageSquare, Image, Landmark } from "lucide-react";
 
 // شناسه ثابت کورس فارکس (فقط اساتید این دوره می‌توانند به ژورنال دسترسی داشته باشند)
@@ -35,6 +35,8 @@ type TradingJournal = {
 };
 
 export default function TeacherTradingJournalDashboard() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [journals, setJournals] = useState<TradingJournal[]>([]);
@@ -57,7 +59,7 @@ export default function TeacherTradingJournalDashboard() {
 
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) {
-      router.push("/en/login");
+      router.push(`/${currentLocale}/login`);
       return;
     }
 

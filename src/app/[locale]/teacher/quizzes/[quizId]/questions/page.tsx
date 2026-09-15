@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useParams, useRouter } from "next/navigation";
+import {  useParams, useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { 
   ArrowLeft, Loader2, Plus, Trash2, HelpCircle, 
@@ -23,6 +23,8 @@ type Question = {
 };
 
 export default function TeacherManageQuizQuestionsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   const router = useRouter();
   
@@ -189,7 +191,7 @@ export default function TeacherManageQuizQuestionsPage() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-fuchsia-500/5 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div className="relative z-10">
-            <Link href="/en/teacher/quizzes" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
+            <Link href={`/${currentLocale}/teacher/quizzes`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
               <ArrowLeft size={14} /> Back to Exam Hub
             </Link>
             <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white mb-2">

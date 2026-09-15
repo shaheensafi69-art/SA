@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { ClipboardCheck, PlusCircle, Calendar, Trash2, Eye, Loader2, Clock, FileText, BarChart3, Filter } from "lucide-react";
 
@@ -24,6 +24,8 @@ type ClassOption = {
 };
 
 export default function TeacherAssignmentsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
@@ -42,7 +44,7 @@ export default function TeacherAssignmentsPage() {
     
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) {
-      router.push("/en/login");
+      router.push(`/${currentLocale}/login`);
       return;
     }
 
@@ -161,7 +163,7 @@ export default function TeacherAssignmentsPage() {
           </div>
           
           <Link 
-            href="/en/teacher/assignments/create"
+            href={`/${currentLocale}/teacher/assignments/create`}
             className="w-full lg:w-auto px-8 py-4.5 bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 rounded-2xl text-xs font-black text-white uppercase tracking-widest transition-all shadow-[0_15px_40px_rgba(217,70,239,0.3)] flex items-center justify-center gap-3 active:scale-95 shrink-0"
           >
             <PlusCircle size={18} /> Create Assignment
@@ -241,7 +243,7 @@ export default function TeacherAssignmentsPage() {
                     <div className="flex items-center gap-2 self-end sm:self-auto">
                       {/* 🔥 هدایت به صفحه بررسی پاسخ‌های شاگردان */}
                       <Link 
-                        href={`/en/teacher/assignments/${task.id}/submissions`}
+                        href={`/${currentLocale}/teacher/assignments/${task.id}/submissions`}
                         className="p-3 bg-white/5 hover:bg-fuchsia-500/10 text-neutral-400 hover:text-white border border-white/5 hover:border-fuchsia-500/30 rounded-xl transition-all active:scale-95 shadow-md"
                         title="Review Submissions"
                       >

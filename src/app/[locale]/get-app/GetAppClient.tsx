@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -14,6 +15,8 @@ interface GetAppClientProps {
 }
 
 export default function GetAppClient({ latestApk, olderApks }: GetAppClientProps) {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [showOlderVersions, setShowOlderVersions] = useState(false);
 
   return (
@@ -28,7 +31,7 @@ export default function GetAppClient({ latestApk, olderApks }: GetAppClientProps
         
         {/* ================= HEADER ================= */}
         <div className="w-full mb-12 flex items-center justify-between">
-          <Link href="/en/teacher/dashboard" className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-white transition-all shadow-lg backdrop-blur-md">
+          <Link href={`/${currentLocale}/teacher/dashboard`} className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-white transition-all shadow-lg backdrop-blur-md">
             <ArrowLeft size={20} />
           </Link>
           <div className="px-5 py-2.5 bg-gradient-to-r from-fuchsia-500/10 to-purple-500/10 border border-fuchsia-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest text-fuchsia-400 flex items-center gap-2 shadow-inner">

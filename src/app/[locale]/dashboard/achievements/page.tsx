@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import { Award, Trophy, ScrollText, Medal } from "lucide-react";
 
 // ================= TYPES =================
@@ -23,6 +23,8 @@ type AwardItem = {
 };
 
 export default function AchievementsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [totalScore, setTotalScore] = useState(0);
@@ -35,7 +37,7 @@ export default function AchievementsPage() {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session?.user) {
-        router.push("/en/login");
+        router.push(`/${currentLocale}/login`);
         return;
       }
       const userId = session.user.id;

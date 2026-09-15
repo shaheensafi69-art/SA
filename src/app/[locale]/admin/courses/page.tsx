@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
@@ -16,6 +17,8 @@ type CourseItem = {
 };
 
 export default function AdminCoursesPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [courses, setCourses] = useState<CourseItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -77,7 +80,7 @@ export default function AdminCoursesPage() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-violet-500/5 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div className="relative z-10">
-            <Link href="/en/admin" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-violet-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+            <Link href={`/${currentLocale}/admin`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-violet-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
@@ -91,7 +94,7 @@ export default function AdminCoursesPage() {
           {/* Create Button */}
           <div className="relative z-10 shrink-0">
             <Link 
-              href="/en/admin/courses/create"
+              href={`/${currentLocale}/admin/courses/create`}
               className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-[0_10px_30px_rgba(139,92,246,0.3)] hover:shadow-[0_15px_40px_rgba(139,92,246,0.5)] active:scale-95 flex items-center justify-center gap-3 border border-white/10"
             >
               <Plus size={18}/> Deploy New Course
@@ -183,7 +186,7 @@ export default function AdminCoursesPage() {
 
                   {/* Action Button */}
                   <Link 
-                    href={`/en/admin/courses/${course.id}`}
+                    href={`/${currentLocale}/admin/courses/${course.id}`}
                     className="w-full py-3.5 bg-white/5 hover:bg-violet-500/20 border border-white/10 hover:border-violet-500/30 text-neutral-300 hover:text-violet-300 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm flex items-center justify-center gap-2 active:scale-95"
                   >
                     <Activity size={14}/> Open Course Details

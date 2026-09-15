@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { useParams } from "next/navigation";
+import {  useParams , usePathname } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, ArrowLeft, Users, DollarSign, BookOpen, GraduationCap, CheckCircle2, User, Mail, Calendar, Activity, ShieldAlert, Award, Search } from "lucide-react";
@@ -36,6 +36,8 @@ type EnrolledStudent = {
 };
 
 export default function CourseDetailsAdminPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   const courseId = params.courseid as string;
 
@@ -163,7 +165,7 @@ export default function CourseDetailsAdminPage() {
         <ShieldAlert size={48} className="text-neutral-600 mb-4" />
         <h2 className="text-xl font-bold text-white mb-2">Course Not Found</h2>
         <p className="text-neutral-500 mb-6">This course does not exist or has been deleted.</p>
-        <Link href="/en/admin/courses" className="px-6 py-3 bg-white/10 text-white rounded-xl font-bold hover:bg-white/20 transition">Return to Library</Link>
+        <Link href={`/${currentLocale}/admin/courses`} className="px-6 py-3 bg-white/10 text-white rounded-xl font-bold hover:bg-white/20 transition">Return to Library</Link>
       </div>
     );
   }
@@ -200,7 +202,7 @@ export default function CourseDetailsAdminPage() {
           </div>
 
           <div className="relative z-10 flex-1">
-            <Link href="/en/admin/courses" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-violet-400 transition-colors mb-6 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
+            <Link href={`/${currentLocale}/admin/courses`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-violet-400 transition-colors mb-6 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
               <ArrowLeft size={14} /> Back to Courses
             </Link>
             
@@ -336,7 +338,7 @@ export default function CourseDetailsAdminPage() {
                   <p className="text-xs text-neutral-500 font-mono mb-4 flex items-center justify-center gap-1"><Mail size={12}/> {course.teacher.email}</p>
                   
                   <Link 
-                    href={`/en/admin/manage-teachers/${course.teacher.id}`}
+                    href={`/${currentLocale}/admin/manage-teachers/${course.teacher.id}`}
                     className="w-full mt-auto py-4 bg-white/5 hover:bg-violet-500/20 border border-white/10 hover:border-violet-500/30 text-neutral-300 hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 text-center"
                   >
                     View Faculty Profile

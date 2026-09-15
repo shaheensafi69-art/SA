@@ -32,7 +32,8 @@ function TypewriterText({ text }: { text: string }) {
 export default function LoginPage() {
   const router = useRouter();
   const pathname = usePathname() || "/en";
-  const locale = pathname.split("/")[1] || "en";
+  const currentLocale = pathname.split("/")[1] || "en";
+  const locale = currentLocale;
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -161,7 +162,7 @@ export default function LoginPage() {
           
           {/* لوگو و عنوان */}
           <div className="text-center mb-5 flex flex-col items-center shrink-0">
-            <Link href="/en" className="inline-block mb-2 transition-transform hover:scale-105 duration-300">
+            <Link href={`/${currentLocale}`} className="inline-block mb-2 transition-transform hover:scale-105 duration-300">
                <div className="relative w-16 h-16 flex items-center justify-center mx-auto">
                  <div className="absolute inset-0 bg-yellow-500/20 blur-[15px] rounded-full"></div>
                  <img src="/logo-without-b.png" alt="Safi Academy Logo" className="relative z-10 w-full h-full object-contain drop-shadow-[0_6px_12px_rgba(234,179,8,0.3)]" />

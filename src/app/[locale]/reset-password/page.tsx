@@ -10,7 +10,7 @@ import {
 
 export default function ResetPasswordPage() {
   const pathname = usePathname() || "/en";
-  const locale = pathname.split("/")[1] || "en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -87,7 +87,7 @@ export default function ResetPasswordPage() {
                 Your password has been successfully changed. You can now securely log in to your account.
               </p>
               <Link 
-                href={`/${locale}/login`}
+                href={`/${currentLocale}/login`}
                 className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:scale-[1.02] rounded-xl text-sm font-black text-black transition-all flex items-center justify-center gap-2 uppercase tracking-widest shadow-[0_0_20px_rgba(16,185,129,0.3)]"
               >
                 Go to Login <ArrowRight size={18} />

@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -47,6 +48,8 @@ const REFERRAL_LINK = "https://www.hostinger.com/?REFERRALCODE=89LSHAHEEKCO";
 const REFERRAL_CODE = "89LSHAHEEKCO";
 
 export default function HostingerAffiliatePage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [copied, setCopied] = useState(false);
   const [selectedPlanTab, setSelectedPlanTab] = useState<"all" | "web" | "cloud" | "vps">("all");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -1035,7 +1038,7 @@ export default function HostingerAffiliatePage() {
             </motion.a>
 
             <Link
-              href="/en/courses"
+              href={`/${currentLocale}/courses`}
               className="inline-flex items-center justify-center gap-2 px-7 py-5 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-bold text-sm rounded-2xl border border-white/10 transition-colors"
             >
               <span>Explore Coding Courses</span>

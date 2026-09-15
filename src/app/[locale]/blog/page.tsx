@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { 
   Calendar, User, ArrowRight, BookOpen, Clock, Tag, Search, 
@@ -33,6 +34,9 @@ const calculateReadingTime = (content: string) => {
 };
 
 export default function EnglishBlogOverviewPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
+
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<string[]>(["All"]);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -59,11 +63,9 @@ export default function EnglishBlogOverviewPage() {
       const supabase = createClient();
       
       try {
-        // 🔥 Filter only English and published blogs
         let query = supabase
           .from("blogs")
           .select("id, title, slug, content, author_name, cover_image, category, created_at")
-          .eq("language", "en")
           .eq("is_published", true)
           .order("created_at", { ascending: false });
 
@@ -73,13 +75,16 @@ export default function EnglishBlogOverviewPage() {
 
         const { data: postsData, error: postsError } = await query;
         if (postsError) throw postsError;
-        if (postsData) setPosts(postsData);
+        if (postsData) {
+          // If any posts match the currentLocale, show them; otherwise show all published
+          const localeMatched = postsData.filter((p: any) => p.language === currentLocale);
+          setPosts(localeMatched.length > 0 ? localeMatched : postsData);
+        }
 
-        // Fetch distinct categories for English blogs
+        // Fetch distinct categories
         const { data: catData } = await supabase
           .from("blogs")
           .select("category")
-          .eq("language", "en")
           .eq("is_published", true)
           .not("category", "is", null);
 
@@ -88,14 +93,14 @@ export default function EnglishBlogOverviewPage() {
           setCategories(["All", ...uniqueCats]);
         }
       } catch (error) {
-        console.error("Error loading English blogs:", error);
+        console.error("Error loading blogs:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [activeCategory]);
+  }, [activeCategory, currentLocale]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -433,7 +438,7 @@ export default function EnglishBlogOverviewPage() {
                     </div>
 
                     <Link
-                      href={`/en/blog/${featuredPost.slug}`}
+                      href={`/${currentLocale}/blog/${featuredPost.slug}`}
                       className="px-6 py-3.5 rounded-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black uppercase text-xs tracking-widest transition-all shadow-[0_0_25px_rgba(234,179,8,0.35)] hover:scale-105 flex items-center gap-2"
                     >
                       Read Full Deep-Dive <ArrowRight size={15} />
@@ -538,7 +543,7 @@ export default function EnglishBlogOverviewPage() {
 
                         {/* Preserved Navigation Link */}
                         <Link
-                          href={`/en/blog/${post.slug}`}
+                          href={`/${currentLocale}/blog/${post.slug}`}
                           className="mt-auto flex items-center justify-between text-xs font-black uppercase tracking-widest text-neutral-300 group-hover:text-yellow-300 transition-all pt-5 border-t border-white/5 w-full"
                         >
                           <span>Read Full Insights</span>
@@ -793,13 +798,13 @@ export default function EnglishBlogOverviewPage() {
 
               <div className="flex flex-wrap items-center justify-center gap-4">
                 <Link
-                  href="/en/courses"
+                  href={`/${currentLocale}/courses`}
                   className="px-8 py-4 rounded-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-300 text-black font-black uppercase tracking-widest text-xs shadow-[0_0_35px_rgba(234,179,8,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                 >
                   <Laptop size={16} /> Explore All Courses
                 </Link>
                 <Link
-                  href="/en/scholarships"
+                  href={`/${currentLocale}/scholarships`}
                   className="px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-white font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                 >
                   <Award size={16} /> Find Fully-Funded Scholarships

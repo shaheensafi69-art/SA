@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Scale,
@@ -27,6 +28,8 @@ import {
 } from "lucide-react";
 
 export default function TermsOfServicePage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [activeSection, setActiveSection] = useState("agreement");
 
   const sections = [
@@ -503,6 +506,21 @@ export default function TermsOfServicePage() {
                   <Mail className="w-4 h-4" />
                   <span>Contact Legal Team</span>
                 </a>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4 mt-6 pt-6 border-t border-white/5 text-xs text-neutral-400">
+                <span>Related Documents:</span>
+                <Link href={`/${currentLocale}/privacy-policy`} className="text-amber-400 hover:underline font-bold">
+                  Privacy Policy
+                </Link>
+                <span>•</span>
+                <Link href={`/${currentLocale}/contact`} className="text-amber-400 hover:underline font-bold">
+                  Contact Us
+                </Link>
+                <span>•</span>
+                <Link href={`/${currentLocale}/delete-account`} className="text-rose-400 hover:underline font-bold">
+                  Account Deletion
+                </Link>
               </div>
             </div>
 

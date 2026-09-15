@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const currentLocale = locale || "en";
+  return {
   title: "Verified International Scholarships & Fellowships 2026-2027 | Safi Academy",
   description: "Browse fully funded international scholarships, government quotas, and university fellowships across Europe, North America, Asia, and Russia with verified deadlines and application support.",
   keywords: [
@@ -14,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Verified International Scholarships & Fellowships 2026-2027 | Safi Academy",
     description: "Browse fully funded scholarships across Europe, Americas, and Asia with step-by-step guidance from Safi Academy.",
-    url: "https://safiacademy.org/en/scholarships",
+    url: `https://safiacademy.org/${currentLocale}/scholarships`,
     siteName: "Safi Academy",
     type: "website",
   },
@@ -24,6 +31,7 @@ export const metadata: Metadata = {
     description: "Discover verified fully-funded government scholarships and university grants worldwide.",
   }
 };
+}
 
 export default function ScholarshipsLayout({
   children,

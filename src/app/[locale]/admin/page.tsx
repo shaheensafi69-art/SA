@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -15,6 +16,8 @@ type AdminStats = {
 };
 
 export default function AdminDashboard() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [isLoading, setIsLoading] = useState(true);
   const [adminName, setAdminName] = useState("");
   const [stats, setStats] = useState<AdminStats>({ 
@@ -88,13 +91,13 @@ export default function AdminDashboard() {
 
   // لیست دکمه‌های دسترسی سریع برای ادمین
   const quickLinks = [
-    { name: "Student Desk", desc: "Manage enrollments", path: "/en/admin/manage-students", icon: <Users size={24}/>, color: "emerald" },
-    { name: "Faculty Office", desc: "Manage instructors", path: "/en/admin/manage-teachers", icon: <UserCheck size={24}/>, color: "indigo" },
-    { name: "Course Builder", desc: "Create & edit courses", path: "/en/admin/courses", icon: <BookOpen size={24}/>, color: "violet" },
-    { name: "Live Studio", desc: "Monitor active streams", path: "/en/admin/live-classes", icon: <Radio size={24}/>, color: "red" },
-    { name: "Financial Ledger", desc: "Transactions & payouts", path: "/en/admin/finance", icon: <Wallet size={24}/>, color: "green" },
-    { name: "Broadcast Hub", desc: "Global announcements", path: "/en/admin/announcements", icon: <Megaphone size={24}/>, color: "orange" },
-    { name: "Honors System", desc: "Manage badges & awards", path: "/en/admin/awards", icon: <Award size={24}/>, color: "amber" },
+    { name: "Student Desk", desc: "Manage enrollments", path: `/${currentLocale}/admin/manage-students`, icon: <Users size={24}/>, color: "emerald" },
+    { name: "Faculty Office", desc: "Manage instructors", path: `/${currentLocale}/admin/manage-teachers`, icon: <UserCheck size={24}/>, color: "indigo" },
+    { name: "Course Builder", desc: "Create & edit courses", path: `/${currentLocale}/admin/courses`, icon: <BookOpen size={24}/>, color: "violet" },
+    { name: "Live Studio", desc: "Monitor active streams", path: `/${currentLocale}/admin/live-classes`, icon: <Radio size={24}/>, color: "red" },
+    { name: "Financial Ledger", desc: "Transactions & payouts", path: `/${currentLocale}/admin/finance`, icon: <Wallet size={24}/>, color: "green" },
+    { name: "Broadcast Hub", desc: "Global announcements", path: `/${currentLocale}/admin/announcements`, icon: <Megaphone size={24}/>, color: "orange" },
+    { name: "Honors System", desc: "Manage badges & awards", path: `/${currentLocale}/admin/awards`, icon: <Award size={24}/>, color: "amber" },
   ];
 
   return (

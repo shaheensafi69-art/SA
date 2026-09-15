@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -43,6 +44,8 @@ function ConfettiEffect() {
 }
 
 export default function EmailConfirmedPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   return (
     <div className="min-h-screen w-full bg-[#030305] text-white flex items-center justify-center font-sans overflow-hidden relative p-4">
       
@@ -89,7 +92,7 @@ export default function EmailConfirmedPage() {
 
           {/* Login / Dashboard Button */}
           <Link 
-            href="/en/login" 
+            href={`/${currentLocale}/login`} 
             className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 hover:scale-[1.02] rounded-xl text-black font-black text-sm uppercase tracking-widest transition-all shadow-[0_0_30px_rgba(16,185,129,0.3)] flex items-center justify-center gap-2 group"
           >
             Access Dashboard <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />

@@ -13,12 +13,13 @@ import { createClient } from "@/utils/supabase/client";
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname() || "";
+  const currentLocale = pathname.split("/")[1] || "en";
 
   const [isReady, setIsReady] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const isFullScreenRoute = pathname.includes('/dashboard/ai-assistant') || pathname.includes('/en/support/chat');
+  const isFullScreenRoute = pathname.includes('/dashboard/ai-assistant') || pathname.includes('/support/chat');
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -39,35 +40,35 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         if (profile) setUserProfile({ ...profile, id: user.id });
         setIsReady(true);
       } else {
-        router.replace("/en/login");
+        router.replace(`/${currentLocale}/login`);
       }
     };
 
     fetchProfile();
-  }, [router]);
+  }, [router, currentLocale]);
 
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.replace("/en/login");
+    router.replace(`/${currentLocale}/login`);
   };
 
-  const myProfilePath = userProfile?.id ? `/en/feed/profile/${userProfile.id}` : "/en/feed/profile";
+  const myProfilePath = userProfile?.id ? `/${currentLocale}/feed/profile/${userProfile.id}` : `/${currentLocale}/feed/profile`;
 
   const menuItems = [
-    { name: "Overview", path: "/en/dashboard", icon: <LayoutDashboard size={22} /> },
-    { name: "Academy Feed", path: "/en/feed", icon: <Rss size={22} /> },
+    { name: "Overview", path: `/${currentLocale}/dashboard`, icon: <LayoutDashboard size={22} /> },
+    { name: "Academy Feed", path: `/${currentLocale}/feed`, icon: <Rss size={22} /> },
     { name: "My Profile", path: myProfilePath, icon: <User size={22} /> },
-    { name: "Announcements", path: "/en/dashboard/announcements", icon: <Megaphone size={22} /> },
-    { name: "Live Campus", path: "/en/dashboard/live-classes", icon: <Video size={22} /> },
-    { name: "Assignments", path: "/en/dashboard/assignments", icon: <FileText size={22} /> },
-    { name: "Exams & Quizzes", path: "/en/dashboard/quizzes", icon: <Target size={22} /> },
-    { name: "Trading Journal", path: "/en/dashboard/trading-journal", icon: <TrendingUp size={22} /> },
-    { name: "Wallet & Referral", path: "/en/dashboard/wallet", icon: <Wallet size={22} /> },
-    { name: "Achievements", path: "/en/dashboard/achievements", icon: <Trophy size={22} /> },
+    { name: "Announcements", path: `/${currentLocale}/dashboard/announcements`, icon: <Megaphone size={22} /> },
+    { name: "Live Campus", path: `/${currentLocale}/dashboard/live-classes`, icon: <Video size={22} /> },
+    { name: "Assignments", path: `/${currentLocale}/dashboard/assignments`, icon: <FileText size={22} /> },
+    { name: "Exams & Quizzes", path: `/${currentLocale}/dashboard/quizzes`, icon: <Target size={22} /> },
+    { name: "Trading Journal", path: `/${currentLocale}/dashboard/trading-journal`, icon: <TrendingUp size={22} /> },
+    { name: "Wallet & Referral", path: `/${currentLocale}/dashboard/wallet`, icon: <Wallet size={22} /> },
+    { name: "Achievements", path: `/${currentLocale}/dashboard/achievements`, icon: <Trophy size={22} /> },
     { name: "AI Assistant", path: "#", icon: <Bot size={22} />, disabled: true },
-    { name: "Support Tickets", path: "/en/support", icon: <Headset size={22} /> },
-    { name: "Settings", path: "/en/dashboard/settings", icon: <Settings size={22} /> },
+    { name: "Support Tickets", path: `/${currentLocale}/support`, icon: <Headset size={22} /> },
+    { name: "Settings", path: `/${currentLocale}/dashboard/settings`, icon: <Settings size={22} /> },
   ];
 
   const getMenuColor = (name: string) => {
@@ -109,7 +110,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <div className="mb-5 p-4 rounded-2xl bg-gradient-to-br from-[#0c0c14] to-[#07070a] shadow-[inset_0_2px_6px_rgba(0,0,0,0.9),0_6px_20px_rgba(0,0,0,0.5)] border border-white/5 shrink-0 relative group">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-[#C2185B] to-yellow-500 rounded-2xl opacity-20 blur group-hover:opacity-40 transition duration-500"></div>
-          <Link href="/en/dashboard" className="flex items-center gap-3.5 relative z-10">
+          <Link href={`/${currentLocale}/dashboard`} className="flex items-center gap-3.5 relative z-10">
             <div className="relative flex items-center justify-center transform group-hover:rotate-6 group-hover:scale-110 transition-transform duration-300">
               <div className="absolute inset-0 bg-[#C2185B]/30 blur-[10px] rounded-full"></div>
               <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(194,24,91,0.7)]" />
@@ -136,9 +137,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             }
 
             const isActive = item.name === "My Profile"
-              ? pathname.includes("/en/feed/profile")
-              : item.path === "/en/dashboard"
-                ? pathname === "/en/dashboard"
+              ? pathname.includes(`/${currentLocale}/feed/profile`)
+              : item.path === `/${currentLocale}/dashboard`
+                ? pathname === `/${currentLocale}/dashboard`
                 : pathname.startsWith(item.path);
 
             return (
@@ -189,7 +190,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* ================= 2. DESKTOP FLOATING NOTIFICATION ================= */}
       <div className="hidden lg:flex absolute top-6 right-10 z-50">
-        <Link href="/en/dashboard/announcements" className="w-12 h-12 bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-[#C2185B] transition-all relative group shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
+        <Link href={`/${currentLocale}/dashboard/announcements`} className="w-12 h-12 bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-[#C2185B] transition-all relative group shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
           <Bell className="w-5 h-5" />
           <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-indigo-500 rounded-full animate-pulse"></span>
         </Link>
@@ -202,7 +203,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-8 h-8 object-contain" />
             <span className="relative z-10 font-black text-xs tracking-widest text-white uppercase">Safi Academy</span>
           </div>
-          <Link href="/en/dashboard/announcements" className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-[#C2185B]">
+          <Link href={`/${currentLocale}/dashboard/announcements`} className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-[#C2185B]">
             <Bell size={18} />
           </Link>
         </div>
@@ -216,15 +217,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* ================= 5. FLOATING MOBILE BOTTOM NAV ================= */}
       {!isFullScreenRoute && (
         <div className="lg:hidden fixed bottom-4 left-4 right-4 h-[70px] bg-[#09090e]/95 backdrop-blur-3xl border border-white/10 z-50 px-2 rounded-[2.2rem] flex justify-between items-center shadow-[0_20px_50px_rgba(0,0,0,0.9)]">
-          <Link href="/en/dashboard" className="relative flex flex-col items-center justify-center w-[25%] h-full group">
-            <LayoutDashboard size={20} className={pathname === "/en/dashboard" ? "text-white" : "text-neutral-500"} />
+          <Link href={`/${currentLocale}/dashboard`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
+            <LayoutDashboard size={20} className={pathname === `/${currentLocale}/dashboard` ? "text-white" : "text-neutral-500"} />
             <span className="text-[8px] font-bold uppercase mt-1">Overview</span>
           </Link>
-          <Link href="/en/feed" className="relative flex flex-col items-center justify-center w-[25%] h-full group">
-            <Rss size={20} className={pathname.startsWith("/en/feed") ? "text-[#C2185B]" : "text-neutral-500"} />
+          <Link href={`/${currentLocale}/feed`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
+            <Rss size={20} className={pathname.startsWith(`/${currentLocale}/feed`) ? "text-[#C2185B]" : "text-neutral-500"} />
             <span className="text-[8px] font-bold uppercase mt-1">Feed</span>
           </Link>
-          <Link href="/en/dashboard/live-classes" className="relative flex flex-col items-center justify-center w-[25%] h-full group">
+          <Link href={`/${currentLocale}/dashboard/live-classes`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
             <Video size={20} className={pathname.includes("/dashboard/live-classes") ? "text-red-500" : "text-neutral-500"} />
             <span className="text-[8px] font-bold uppercase mt-1">Live</span>
           </Link>
@@ -247,7 +248,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex-1 overflow-y-auto p-5 custom-scrollbar space-y-6">
             <div className="grid grid-cols-2 gap-3.5">
               {menuItems.map((item) => {
-                const isActive = item.name === "My Profile" ? pathname.includes("/en/feed/profile") : item.path !== "#" && pathname.startsWith(item.path);
+                const isActive = item.name === "My Profile" ? pathname.includes(`/${currentLocale}/feed/profile`) : item.path !== "#" && pathname.startsWith(item.path);
                 const colorClasses = getMenuColor(item.name);
                 if (item.disabled) {
                   return (

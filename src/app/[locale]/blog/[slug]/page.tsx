@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation"; // Removed Twitter import from lucide-react as it's not exported
+import {  useParams, useRouter , usePathname } from "next/navigation"; // Removed Twitter import from lucide-react as it's not exported
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
@@ -29,6 +29,8 @@ const calculateReadingTime = (content: string) => {
 };
 
 export default function BlogPostDetailPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
@@ -90,7 +92,7 @@ export default function BlogPostDetailPage() {
       <div className="min-h-screen bg-[#050508] flex flex-col items-center justify-center text-center px-6">
         <h1 className="text-6xl font-black text-white mb-4">404</h1>
         <p className="text-neutral-400 mb-8">The article you are looking for does not exist or has been removed.</p>
-        <Link href="/en/blog" className="px-6 py-3 rounded-xl font-bold text-black bg-yellow-500 hover:bg-yellow-400 transition-colors">
+        <Link href={`/${currentLocale}/blog`} className="px-6 py-3 rounded-xl font-bold text-black bg-yellow-500 hover:bg-yellow-400 transition-colors">
           Back to Blog
         </Link>
       </div>
@@ -111,7 +113,7 @@ export default function BlogPostDetailPage() {
       {/* ================= FLOATING BACK BUTTON ================= */}
       <div className="fixed top-28 left-4 md:left-12 z-50">
         <button 
-          onClick={() => router.push('/en/blog')}
+          onClick={() => router.push(`/${currentLocale}/blog`)}
           className="flex items-center gap-2 px-4 py-2.5 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest text-neutral-300 hover:text-white hover:bg-white/10 transition-all duration-300 shadow-xl group"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back
@@ -202,7 +204,7 @@ export default function BlogPostDetailPage() {
             </div>
           </div>
           <Link
-            href="/en/courses"
+            href={`/${currentLocale}/courses`}
             className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-black uppercase text-xs tracking-widest hover:scale-105 transition-all shadow-lg shrink-0"
           >
             Explore Masterclasses →

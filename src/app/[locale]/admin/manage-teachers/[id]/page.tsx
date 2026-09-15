@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import {  useParams, useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, ArrowLeft, Mail, Wallet, BookOpen, Users, CheckCircle2, AlertCircle, TrendingUp, History, CreditCard, Award, X, ShieldAlert } from "lucide-react";
@@ -34,6 +34,8 @@ type PayoutTransaction = {
 };
 
 export default function TeacherProfileAdminPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   const router = useRouter();
   const teacherId = params.id as string;
@@ -197,7 +199,7 @@ export default function TeacherProfileAdminPage() {
         <ShieldAlert size={48} className="text-neutral-600 mb-4" />
         <h2 className="text-xl font-bold text-white mb-2">Instructor Not Found</h2>
         <p className="text-neutral-500 mb-6">The requested faculty member does not exist or has been removed.</p>
-        <Link href="/en/admin/manage-teachers" className="px-6 py-3 bg-white/10 text-white rounded-xl font-bold hover:bg-white/20 transition">Return to Directory</Link>
+        <Link href={`/${currentLocale}/admin/manage-teachers`} className="px-6 py-3 bg-white/10 text-white rounded-xl font-bold hover:bg-white/20 transition">Return to Directory</Link>
       </div>
     );
   }
@@ -216,7 +218,7 @@ export default function TeacherProfileAdminPage() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div className="relative z-10 w-full">
-            <Link href="/en/admin/manage-teachers" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-indigo-400 transition-colors mb-8 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
+            <Link href={`/${currentLocale}/admin/manage-teachers`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-indigo-400 transition-colors mb-8 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
               <ArrowLeft size={14} /> Back to Faculty
             </Link>
             

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef, useCallback, Suspense, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter, useSearchParams } from "next/navigation";
+import {  useRouter, useSearchParams , usePathname } from "next/navigation";
 import InReelNativeAd from "@/components/ads/InReelNativeAd";
 import AuthRequiredModal from "@/components/feed/AuthRequiredModal";
 import {
@@ -110,6 +110,8 @@ function ReelsContent() {
 
     const router = useRouter();
     const searchParams = useSearchParams();
+    const pathname = usePathname() || "/en";
+    const currentLocale = pathname.split("/")[1] || "en";
     const targetReelId = searchParams.get("id");
     const supabase = useMemo(() => createClient(), []);
 
@@ -489,7 +491,7 @@ function ReelsContent() {
 
     // Copy Reel Link
     const handleCopyLink = (reelId: string) => {
-        const link = `https://www.safiacademy.org/en/feed/reels?id=${reelId}`;
+        const link = `https://www.safiacademy.org/${currentLocale}/feed/reels?id=${reelId}`;
         if (navigator.clipboard) {
             navigator.clipboard.writeText(link);
             showToast("Link copied to clipboard");
@@ -719,7 +721,7 @@ function ReelsContent() {
                                     Explore For You
                                 </button>
                                 <Link
-                                    href="/en/feed/network"
+                                    href={`/${currentLocale}/feed/network`}
                                     className="px-4 py-2.5 bg-white/5 border border-white/10 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all"
                                 >
                                     Find Friends
@@ -727,7 +729,7 @@ function ReelsContent() {
                             </div>
                         ) : (
                             <Link
-                                href="/en/feed/create/reels"
+                                href={`/${currentLocale}/feed/create/reels`}
                                 className="mt-5 px-5 py-3 bg-gradient-to-r from-[#C2185B] to-yellow-500 text-black text-xs font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-all shadow-[0_0_20px_rgba(194,24,91,0.4)]"
                             >
                                 + Create Reel
@@ -788,7 +790,7 @@ function ReelsContent() {
                                     <div className="absolute bottom-20 lg:bottom-10 left-3.5 right-18 z-20 space-y-2 pointer-events-auto">
                                         <div className="flex items-center gap-2.5">
                                             <Link
-                                                href={`/en/feed/profile/${reel.user_id}`}
+                                                href={`/${currentLocale}/feed/profile/${reel.user_id}`}
                                                 className="w-10 h-10 rounded-full bg-neutral-900 border-2 border-[#C2185B] overflow-hidden flex items-center justify-center shrink-0 shadow-lg hover:scale-105 transition-transform"
                                             >
                                                 {reel.authorAvatar ? (
@@ -799,7 +801,7 @@ function ReelsContent() {
                                             </Link>
                                             <div>
                                                 <Link
-                                                    href={`/en/feed/profile/${reel.user_id}`}
+                                                    href={`/${currentLocale}/feed/profile/${reel.user_id}`}
                                                     className="text-white font-black text-xs sm:text-sm tracking-wide drop-shadow-md hover:underline block leading-tight"
                                                 >
                                                     {reel.authorName}
@@ -1005,7 +1007,7 @@ function ReelsContent() {
                                 <input
                                     type="text"
                                     readOnly
-                                    value={`https://www.safiacademy.org/en/feed/reels?id=${shareReel.id}`}
+                                    value={`https://www.safiacademy.org/${currentLocale}/feed/reels?id=${shareReel.id}`}
                                     className="flex-1 bg-transparent px-3 text-xs text-neutral-300 outline-none truncate font-mono select-all"
                                 />
                                 <button
@@ -1060,7 +1062,7 @@ function ReelsContent() {
                                 ) : filteredFriends.length === 0 ? (
                                     <div className="text-center py-8 opacity-60">
                                         <p className="text-neutral-400 text-xs font-bold">No friends found</p>
-                                        <Link href="/en/feed/network" className="text-[10px] text-[#C2185B] font-bold mt-1 block hover:underline">
+                                        <Link href={`/${currentLocale}/feed/network`} className="text-[10px] text-[#C2185B] font-bold mt-1 block hover:underline">
                                             Find new friends in Network
                                         </Link>
                                     </div>
@@ -1270,6 +1272,8 @@ function SharedCommentsView({ reelId, currentUserId, onCommentAdded, onAuthRequi
 }
 
 export default function ReelsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
     return (
         <Suspense fallback={
             <div className="w-full h-screen flex items-center justify-center bg-[#030305]">

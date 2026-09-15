@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const currentLocale = locale || "en";
+  return {
   title: "Global Tech, Business & Academic Insights Blog | Safi Academy",
   description: "Read expert analyses, authoritative guides on UK company formation, international scholarships, artificial intelligence breakthroughs, and global career roadmaps.",
   keywords: [
@@ -14,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Global Tech, Business & Academic Insights Blog | Safi Academy",
     description: "Read expert analyses, authoritative guides on UK company formation, tech ecosystems, and international careers.",
-    url: "https://safiacademy.org/en/blog",
+    url: `https://safiacademy.org/${currentLocale}/blog`,
     siteName: "Safi Academy",
     type: "website",
   },
@@ -24,6 +31,7 @@ export const metadata: Metadata = {
     description: "Expert insights, step-by-step corporate tutorials, and technology articles from Safi Academy researchers.",
   }
 };
+}
 
 export default function BlogLayout({
   children,

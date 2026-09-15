@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import {
     Heart,
@@ -41,6 +41,8 @@ interface StatsSummary {
 }
 
 export default function LikeCommentStatusPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
     const [isLoading, setIsLoading] = useState(true);
     const [activities, setActivities] = useState<ActivityItem[]>([]);
     const [stats, setStats] = useState<StatsSummary>({
@@ -63,7 +65,7 @@ export default function LikeCommentStatusPage() {
         setIsLoading(true);
         try {
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session?.user) return router.push("/en/login");
+            if (!session?.user) return router.push(`/${currentLocale}/login`);
             const userId = session.user.id;
 
             // 1. Fetch user's discussion posts
@@ -301,7 +303,7 @@ export default function LikeCommentStatusPage() {
             <div className="flex items-center justify-between mb-8 bg-[#0a0a0f]/80 border border-white/5 p-6 rounded-[2.2rem] backdrop-blur-xl shadow-2xl relative z-10">
                 <div className="flex items-center gap-4">
                     <Link
-                        href="/en/feed"
+                        href={`/${currentLocale}/feed`}
                         className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white transition-colors"
                     >
                         <ArrowLeft size={18} />
@@ -389,7 +391,7 @@ export default function LikeCommentStatusPage() {
                         const isView = act.type.includes('view');
                         const isReel = act.targetType === 'reel';
 
-                        const targetHref = isReel ? `/en/feed/reels?id=${act.targetId}` : `/en/feed/profile/${act.actorId}`;
+                        const targetHref = isReel ? `/${currentLocale}/feed/reels?id=${act.targetId}` : `/${currentLocale}/feed/profile/${act.actorId}`;
 
                         return (
                             <Link

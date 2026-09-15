@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import { Video, MessageSquare, ExternalLink } from "lucide-react";
 
 type ClassGroup = {
@@ -18,6 +18,8 @@ type ClassGroup = {
 };
 
 export default function TeacherOverview() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   
@@ -44,7 +46,7 @@ export default function TeacherOverview() {
       const supabase = createClient();
       const { data: { session } } = await supabase.auth.getSession();
       
-      if (!session?.user) return router.push("/en/login");
+      if (!session?.user) return router.push(`/${currentLocale}/login`);
       const userId = session.user.id;
 
       try {
@@ -236,7 +238,7 @@ export default function TeacherOverview() {
           <section className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-black text-white tracking-wide">Command Center</h2>
-              <Link href="/en/teacher/live-classes" className="text-fuchsia-400 hover:text-fuchsia-300 text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-1">
+              <Link href={`/${currentLocale}/teacher/live-classes`} className="text-fuchsia-400 hover:text-fuchsia-300 text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-1">
                 Manage Hubs →
               </Link>
             </div>
@@ -244,7 +246,7 @@ export default function TeacherOverview() {
             {classes.length === 0 ? (
               <div className="bg-neutral-900/40 p-8 rounded-[2.5rem] border border-white/5 flex flex-col items-center justify-center text-center h-[220px]">
                 <p className="text-neutral-400 font-bold mb-5">You are not assigned to any active classrooms yet.</p>
-                <Link href="/en/teacher/courses" className="px-8 py-3.5 bg-fuchsia-600 text-white font-black uppercase tracking-widest text-[10px] rounded-xl hover:bg-fuchsia-500 transition-colors shadow-[0_0_20px_rgba(217,70,239,0.3)] hover:scale-105">
+                <Link href={`/${currentLocale}/teacher/courses`} className="px-8 py-3.5 bg-fuchsia-600 text-white font-black uppercase tracking-widest text-[10px] rounded-xl hover:bg-fuchsia-500 transition-colors shadow-[0_0_20px_rgba(217,70,239,0.3)] hover:scale-105">
                   View Course Materials
                 </Link>
               </div>
@@ -305,7 +307,7 @@ export default function TeacherOverview() {
               <h2 className="text-lg font-black text-white tracking-wide">Instructor Tools</h2>
             </div>
             
-            <Link href="/en/teacher/ai-assistant" className="rounded-[2rem] border border-fuchsia-500/20 bg-gradient-to-br from-fuchsia-900/20 to-black p-6 relative overflow-hidden group hover:border-fuchsia-500/50 transition-all duration-300 shadow-lg hover:-translate-y-1 flex-1 min-h-[140px]">
+            <Link href={`/${currentLocale}/teacher/ai-assistant`} className="rounded-[2rem] border border-fuchsia-500/20 bg-gradient-to-br from-fuchsia-900/20 to-black p-6 relative overflow-hidden group hover:border-fuchsia-500/50 transition-all duration-300 shadow-lg hover:-translate-y-1 flex-1 min-h-[140px]">
                <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-fuchsia-500/10 rounded-full blur-[40px] group-hover:bg-fuchsia-500/20 transition-all"></div>
                <div className="relative z-10 flex flex-col justify-between h-full">
                  <div className="flex items-center gap-4">
@@ -318,7 +320,7 @@ export default function TeacherOverview() {
                </div>
             </Link>
 
-            <Link href="/en/teacher/assignments" className="rounded-[2rem] border border-rose-500/20 bg-gradient-to-br from-rose-900/20 to-black p-6 relative overflow-hidden group hover:border-rose-500/50 transition-all duration-300 shadow-lg hover:-translate-y-1 flex-1 min-h-[140px]">
+            <Link href={`/${currentLocale}/teacher/assignments`} className="rounded-[2rem] border border-rose-500/20 bg-gradient-to-br from-rose-900/20 to-black p-6 relative overflow-hidden group hover:border-rose-500/50 transition-all duration-300 shadow-lg hover:-translate-y-1 flex-1 min-h-[140px]">
                <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-rose-500/10 rounded-full blur-[40px] group-hover:bg-rose-500/20 transition-all"></div>
                <div className="relative z-10 flex flex-col justify-between h-full">
                  <div className="flex items-center gap-4">

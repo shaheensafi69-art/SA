@@ -27,7 +27,13 @@ import {
   FileCode2
 } from "lucide-react";
 
-export default async function CoursesPage() {
+export default async function CoursesPage({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const currentLocale = locale || "en";
   const supabase = await createClient();
 
   const {
@@ -251,7 +257,7 @@ export default async function CoursesPage() {
 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <Link
-              href="/en"
+              href={`/${currentLocale}`}
               className="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-7 py-4 text-xs font-black uppercase tracking-widest text-white transition-all duration-300 hover:border-amber-500/40 hover:bg-amber-500/10 hover:text-amber-400 group shadow-lg backdrop-blur-md"
             >
               <span>Back to Hub</span>
@@ -259,7 +265,7 @@ export default async function CoursesPage() {
             </Link>
 
             <Link
-              href="/en/scholarships"
+              href={`/${currentLocale}/scholarships`}
               className="inline-flex items-center justify-center rounded-2xl border border-amber-500/30 bg-amber-500/10 px-7 py-4 text-xs font-black uppercase tracking-widest text-amber-300 transition-all duration-300 hover:bg-amber-500/20 shadow-lg backdrop-blur-md"
             >
               <GraduationCap size={16} className="mr-2" />
@@ -461,7 +467,7 @@ export default async function CoursesPage() {
                                 {course.language || "English"}
                               </span>
                               <Link
-                                href={`/en/courses/${course.id}`}
+                                href={`/${currentLocale}/courses/${course.id}`}
                                 className={`rounded-xl px-5 py-3 text-xs font-black uppercase tracking-wider text-black transition-all duration-300 active:scale-95 flex items-center gap-1.5 shadow-md ${
                                   hasDiscount
                                     ? "bg-emerald-400 hover:bg-emerald-300 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
@@ -679,7 +685,7 @@ export default async function CoursesPage() {
             </Link>
 
             <Link
-              href="/en/scholarships"
+              href={`/${currentLocale}/scholarships`}
               className="inline-flex items-center justify-center gap-2 px-8 py-5 bg-white/5 hover:bg-white/10 text-neutral-200 hover:text-white font-bold text-sm rounded-2xl border border-white/10 transition-colors"
             >
               <span>Apply for Student Scholarship</span>

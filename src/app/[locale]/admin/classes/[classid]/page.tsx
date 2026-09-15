@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import {  useParams, useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { 
@@ -34,6 +34,8 @@ type EnrolledStudent = {
 };
 
 export default function AdminClassDetailsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   
   // 🔴 اصلاح حساس به حروف: خواندن آیدی دقیقاً بر اساس نام فولدر [classid]
@@ -166,7 +168,7 @@ export default function AdminClassDetailsPage() {
         <ShieldAlert size={48} className="text-neutral-600 mb-4" />
         <h2 className="text-2xl font-black text-white mb-2">Cohort Not Found</h2>
         <p className="text-neutral-500 mb-8 font-medium">This class group does not exist or the ID is incorrect.</p>
-        <Link href="/en/admin/classes" className="px-8 py-4 bg-rose-500 hover:bg-rose-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition shadow-[0_0_20px_rgba(244,63,94,0.3)]">
+        <Link href={`/${currentLocale}/admin/classes`} className="px-8 py-4 bg-rose-500 hover:bg-rose-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition shadow-[0_0_20px_rgba(244,63,94,0.3)]">
           Return to Cohorts
         </Link>
       </div>
@@ -191,7 +193,7 @@ export default function AdminClassDetailsPage() {
           
           <div className="relative z-10 flex flex-col md:flex-row justify-between md:items-start gap-6 border-b border-white/5 pb-8 mb-8">
             <div>
-              <Link href="/en/admin/classes" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-rose-400 transition-colors mb-6 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
+              <Link href={`/${currentLocale}/admin/classes`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-rose-400 transition-colors mb-6 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
                 <ArrowLeft size={14} /> Back to Cohorts
               </Link>
               
@@ -246,7 +248,7 @@ export default function AdminClassDetailsPage() {
                 
                 {/* 👈 دکمه هدایت به صفحه افزودن شاگرد */}
                 <Link 
-                  href={`/en/admin/classes/${classId}/add-student`}
+                  href={`/${currentLocale}/admin/classes/${classId}/add-student`}
                   className="bg-rose-500 hover:bg-rose-600 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-colors shadow-[0_0_20px_rgba(244,63,94,0.3)]"
                 >
                   <Plus size={16} /> Enroll New Student
@@ -324,7 +326,7 @@ export default function AdminClassDetailsPage() {
                   <p className="text-xs text-neutral-500 font-mono mb-6 flex items-center justify-center gap-1"><Mail size={12}/> {classData.teacher.email}</p>
                   
                   <Link 
-                    href={`/en/admin/manage-teachers/${classData.teacher.id}`}
+                    href={`/${currentLocale}/admin/manage-teachers/${classData.teacher.id}`}
                     className="w-full mt-auto py-4 bg-white/5 hover:bg-rose-500/20 border border-white/10 hover:border-rose-500/30 text-neutral-300 hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 text-center"
                   >
                     View Faculty Profile

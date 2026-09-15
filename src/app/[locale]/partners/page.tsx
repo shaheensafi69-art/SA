@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +24,8 @@ type Partner = {
 const CURRENT_LANG = "en";
 
 export default function EnglishPartnersPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [partners, setPartners] = useState<Partner[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -94,7 +97,7 @@ export default function EnglishPartnersPage() {
       {/* ================= FLOATING NAVIGATION BUTTON ================= */}
       <div className="fixed top-28 left-4 md:left-12 z-50">
         <Link 
-          href="/en"
+          href={`/${currentLocale}`}
           className="flex items-center gap-2 px-4 py-2.5 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full text-xs font-black uppercase tracking-widest text-neutral-300 hover:text-white hover:bg-white/10 transition-all duration-300 shadow-xl group"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Home
@@ -591,13 +594,13 @@ export default function EnglishPartnersPage() {
 
               <div className="flex flex-wrap items-center justify-center gap-4">
                 <Link
-                  href="/en/contact"
+                  href={`/${currentLocale}/contact`}
                   className="px-8 py-4 rounded-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-300 text-black font-black uppercase tracking-widest text-xs shadow-[0_0_35px_rgba(234,179,8,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                 >
                   <Handshake size={16} /> Partner With Us Today
                 </Link>
                 <Link
-                  href="/en/courses"
+                  href={`/${currentLocale}/courses`}
                   className="px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-white font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                 >
                   <Laptop size={16} /> Explore Student Masterclasses

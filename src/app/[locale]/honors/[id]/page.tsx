@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import {  useParams , usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { Loader2, ArrowLeft, Trophy, GraduationCap, Flame, MessageSquareQuote, CheckCircle2, Target, CalendarDays, Activity, BookOpen } from "lucide-react";
@@ -26,6 +26,8 @@ type FeedbackItem = {
 };
 
 export default function StudentHonorProfilePage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   const studentId = params.id as string;
 
@@ -162,7 +164,7 @@ export default function StudentHonorProfilePage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center text-white">
         <h2 className="text-2xl font-bold mb-4">Profile Not Found</h2>
-        <Link href="/en/honors" className="text-amber-500 hover:underline">Return to Wall of Fame</Link>
+        <Link href={`/${currentLocale}/honors`} className="text-amber-500 hover:underline">Return to Wall of Fame</Link>
       </div>
     );
   }
@@ -174,7 +176,7 @@ export default function StudentHonorProfilePage() {
       
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 relative z-10 animate-[fadeIn_0.5s_ease-out]">
         
-        <Link href="/en/honors" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-amber-400 transition-colors mb-8 bg-white/5 px-4 py-2 rounded-xl border border-white/5 w-fit">
+        <Link href={`/${currentLocale}/honors`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-amber-400 transition-colors mb-8 bg-white/5 px-4 py-2 rounded-xl border border-white/5 w-fit">
           <ArrowLeft size={14} /> Back to Wall of Fame
         </Link>
 

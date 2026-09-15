@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useParams, useRouter } from "next/navigation";
+import {  useParams, useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2, FileText, CheckCircle2, XCircle, Users, Target, Clock, ShieldAlert, X, Edit3, Save, AlertCircle } from "lucide-react";
 
@@ -41,6 +41,8 @@ type StudentAnswer = {
 };
 
 export default function TeacherQuizResultsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   const router = useRouter();
   const quizId = params.quizId as string;
@@ -246,7 +248,7 @@ export default function TeacherQuizResultsPage() {
         
         {/* ================= HEADER ================= */}
         <header className="bg-[#0a0a0f]/80 p-5 sm:p-8 rounded-[2rem] border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden">
-          <Link href="/en/teacher/quizzes" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+          <Link href={`/${currentLocale}/teacher/quizzes`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
             <ArrowLeft size={14} /> Back to Hub
           </Link>
           

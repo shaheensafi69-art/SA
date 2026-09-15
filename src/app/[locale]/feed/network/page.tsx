@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   Search, Users, UserPlus, Clock,
@@ -20,6 +20,8 @@ interface NetworkUser {
 }
 
 export default function NetworkPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState<NetworkUser[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<NetworkUser[]>([]);
@@ -39,7 +41,7 @@ export default function NetworkPage() {
     setIsLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return router.push("/en/login");
+      if (!session?.user) return router.push(`/${currentLocale}/login`);
 
       const userId = session.user.id;
       setCurrentUserId(userId);
@@ -245,7 +247,7 @@ export default function NetworkPage() {
                 <div key={u.id} className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2rem] p-6 flex flex-col items-center text-center backdrop-blur-md shadow-[0_15px_30px_rgba(0,0,0,0.4)] hover:border-indigo-500/30 hover:-translate-y-1.5 transition-all duration-300 group">
 
                   {/* Avatar با لینک به مسیر جدید فید */}
-                  <Link href={`/en/feed/profile/${u.id}`} className="relative mb-4 mt-2">
+                  <Link href={`/${currentLocale}/feed/profile/${u.id}`} className="relative mb-4 mt-2">
                     <div className="w-20 h-20 rounded-[1.5rem] bg-neutral-800 border-2 border-white/10 overflow-hidden flex items-center justify-center group-hover:border-indigo-500/50 transition-colors relative z-10">
                       {u.avatar_url ? (
                         <img src={u.avatar_url} alt={u.first_name} className="w-full h-full object-cover" />
@@ -261,7 +263,7 @@ export default function NetworkPage() {
                   </Link>
 
                   {/* Info با لینک به مسیر جدید فید */}
-                  <Link href={`/en/feed/profile/${u.id}`} className="block w-full">
+                  <Link href={`/${currentLocale}/feed/profile/${u.id}`} className="block w-full">
                     <h3 className="text-lg font-black text-white truncate group-hover:text-indigo-300 transition-colors">
                       {u.first_name} {u.last_name}
                     </h3>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import { 
   LayoutGrid, PlayCircle, Trophy, BookOpen, AlertTriangle, 
   Flame, Clock, User, RotateCcw, Play, Loader2, Video
@@ -78,6 +78,8 @@ function ExpirationCounter({ enrolledDate }: { enrolledDate: string }) {
 }
 
 export default function MyCoursesPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [isLoading, setIsLoading] = useState(true);
   const [courses, setCourses] = useState<EnrolledCourse[]>([]);
   const [filter, setFilter] = useState<"all" | "in-progress" | "completed">("all");
@@ -88,7 +90,7 @@ export default function MyCoursesPage() {
       const supabase = createClient();
       const { data: { session } } = await supabase.auth.getSession();
       
-      if (!session?.user) return router.push("/en/login");
+      if (!session?.user) return router.push(`/${currentLocale}/login`);
 
       const { data: enrollments, error } = await supabase
         .from("enrollments")
@@ -249,7 +251,7 @@ export default function MyCoursesPage() {
 
                       {/* دکمه پخش مرکزی متصل به ماژول لایو کلاس */}
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <Link href="/en/dashboard/live-classes" className="w-16 h-16 bg-gradient-to-br from-amber-400 to-yellow-600 text-black rounded-full flex items-center justify-center pl-1 hover:scale-110 transition-transform shadow-[0_0_30px_rgba(245,158,11,0.6)]">
+                        <Link href={`/${currentLocale}/dashboard/live-classes`} className="w-16 h-16 bg-gradient-to-br from-amber-400 to-yellow-600 text-black rounded-full flex items-center justify-center pl-1 hover:scale-110 transition-transform shadow-[0_0_30px_rgba(245,158,11,0.6)]">
                           <Play fill="currentColor" size={28} />
                         </Link>
                       </div>
@@ -301,7 +303,7 @@ export default function MyCoursesPage() {
 
                         {/* دکمه هدایت به پورتال مرکزی کلاس‌های زنده */}
                         <Link 
-                          href="/en/dashboard/live-classes"
+                          href={`/${currentLocale}/dashboard/live-classes`}
                           className={`w-full py-3.5 sm:py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 border ${
                             expired 
                               ? "bg-white/5 text-neutral-400 border-white/5 hover:bg-white/10 hover:text-white"

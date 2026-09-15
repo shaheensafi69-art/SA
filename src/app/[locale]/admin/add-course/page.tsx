@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import { uploadFileToR2 } from "@/utils/upload";
 
 export default function AddCoursePage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
@@ -45,7 +47,7 @@ export default function AddCoursePage() {
 
       if (error) throw error;
       alert("Course created successfully!");
-      router.push("/en/admin");
+      router.push(`/${currentLocale}/admin`);
     } catch (error: any) {
       alert("Error: " + error.message);
     } finally {

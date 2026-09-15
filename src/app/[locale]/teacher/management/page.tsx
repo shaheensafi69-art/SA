@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -13,6 +14,8 @@ type Course = {
 };
 
 export default function TeacherCoursesPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -65,7 +68,7 @@ export default function TeacherCoursesPage() {
           
           {/* 🔥 دکمه متصل شد به صفحه ترمینال (Management) 🔥 */}
           <Link 
-            href="/en/teacher/management" 
+            href={`/${currentLocale}/teacher/management`} 
             className="px-6 py-3.5 bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-[0_10px_20px_rgba(217,70,239,0.2)] hover:shadow-[0_10px_30px_rgba(217,70,239,0.4)] hover:-translate-y-1 flex items-center justify-center"
           >
             + Create New Course
@@ -111,7 +114,7 @@ export default function TeacherCoursesPage() {
                   {/* Actions Grid */}
                   <div className="mt-auto grid grid-cols-2 gap-3 border-t border-white/5 pt-5">
                     <Link 
-                      href={`/en/teacher/courses/${course.id}`} 
+                      href={`/${currentLocale}/teacher/courses/${course.id}`} 
                       className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-[10px] font-black uppercase tracking-widest text-neutral-300 hover:text-white py-3 rounded-xl transition-all"
                     >
                       <BookOpen size={14} /> Manage
@@ -119,7 +122,7 @@ export default function TeacherCoursesPage() {
                     
                     {/* 🔥 دکمه ثبت‌نام متصل به صفحه ترمینال (Management) 🔥 */}
                     <Link 
-                      href="/en/teacher/management"
+                      href={`/${currentLocale}/teacher/management`}
                       className="flex items-center justify-center gap-2 bg-fuchsia-600/10 hover:bg-fuchsia-600/20 border border-fuchsia-500/20 text-fuchsia-400 text-[10px] font-black uppercase tracking-widest py-3 rounded-xl transition-all hover:text-fuchsia-300"
                     >
                       <UserPlus size={14} /> Add Student

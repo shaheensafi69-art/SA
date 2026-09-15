@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, CheckCircle2, XCircle, Clock, Lock } from "lucide-react";
 
@@ -21,6 +21,8 @@ type QuizItem = {
 };
 
 export default function QuizzesPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter(); 
   const [isLoading, setIsLoading] = useState(true);
   const [quizzes, setQuizzes] = useState<QuizItem[]>([]);
@@ -293,7 +295,7 @@ export default function QuizzesPage() {
                     {/* Action Button: Start or Locked */}
                     <button 
                       onClick={() => {
-                        if (quiz.status === "pending") router.push(`/en/dashboard/quizzes/${quiz.id}`);
+                        if (quiz.status === "pending") router.push(`/${currentLocale}/dashboard/quizzes/${quiz.id}`);
                       }}
                       disabled={quiz.status !== "pending"}
                       className={`px-6 py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-2 shadow-xl ${

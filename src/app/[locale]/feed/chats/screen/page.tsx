@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, Suspense } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
-import { useRouter, useSearchParams } from "next/navigation";
+import {  useRouter, useSearchParams , usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, Send, Image as ImageIcon, Check, CheckCheck,
@@ -38,6 +38,8 @@ function ChatScreenContent() {
   const searchParams = useSearchParams();
   const partnerId = searchParams.get("userId");
   const supabase = createClient();
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
 
   const [isLoading, setIsLoading] = useState(true);
   const [messages, setMessages] = useState<MessageItem[]>([]);
@@ -58,7 +60,7 @@ function ChatScreenContent() {
 
   useEffect(() => {
     if (!partnerId) {
-      router.push("/en/feed/chats/list");
+      router.push(`/${currentLocale}/feed/chats/list`);
       return;
     }
     initChat();
@@ -81,7 +83,7 @@ function ChatScreenContent() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
-        router.push("/en/login");
+        router.push(`/${currentLocale}/login`);
         return;
       }
       const userId = session.user.id;
@@ -285,7 +287,7 @@ function ChatScreenContent() {
             
             {/* Back button */}
             <Link
-              href="/en/feed/chats/list"
+              href={`/${currentLocale}/feed/chats/list`}
               className="w-10 h-10 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white transition-all shadow-sm shrink-0"
               title="Back to Conversations"
             >
@@ -294,7 +296,7 @@ function ChatScreenContent() {
 
             {/* Partner Info */}
             <Link
-              href={`/en/feed/profile/${partnerId}`}
+              href={`/${currentLocale}/feed/profile/${partnerId}`}
               className="flex items-center gap-3 min-w-0 group cursor-pointer"
             >
               <div className="relative shrink-0">
@@ -328,7 +330,7 @@ function ChatScreenContent() {
 
           {/* View Profile Link */}
           <Link
-            href={`/en/feed/profile/${partnerId}`}
+            href={`/${currentLocale}/feed/profile/${partnerId}`}
             className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5 shrink-0"
           >
             <User size={14} className="text-[#C2185B]" />
@@ -542,6 +544,8 @@ function ChatScreenContent() {
 }
 
 export default function ChatScreenPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   return (
     <Suspense
       fallback={

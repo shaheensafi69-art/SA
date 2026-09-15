@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
@@ -18,6 +19,8 @@ type Profile = {
 };
 
 export default function ManageTeachersPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [users, setUsers] = useState<Profile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -117,7 +120,7 @@ export default function ManageTeachersPage() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div>
-            <Link href="/en/admin" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-indigo-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+            <Link href={`/${currentLocale}/admin`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-indigo-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
@@ -235,7 +238,7 @@ export default function ManageTeachersPage() {
                 {/* Actions */}
                 <div className="flex flex-col sm:flex-row gap-3 relative z-10 pt-2 border-t border-white/5">
                   <Link 
-                    href={`/en/admin/manage-teachers/${teacher.id}`}
+                    href={`/${currentLocale}/admin/manage-teachers/${teacher.id}`}
                     className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-[10px] font-black uppercase tracking-widest text-neutral-300 hover:border-indigo-400/50 hover:bg-indigo-500/20 hover:text-indigo-300 transition-all shadow-sm flex items-center justify-center gap-2"
                   >
                     View Full Profile

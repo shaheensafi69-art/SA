@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { Video, MessageCircle, Clock, Calendar, Users, MonitorPlay, Loader2, Layers, Activity, ArrowLeft, Settings2 } from "lucide-react";
 
@@ -20,6 +20,8 @@ type LiveClass = {
 };
 
 export default function TeacherLiveClassesPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
   const [classGroups, setClassGroups] = useState<LiveClass[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +36,7 @@ export default function TeacherLiveClassesPage() {
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session?.user) {
-      router.push("/en/login");
+      router.push(`/${currentLocale}/login`);
       return;
     }
 
@@ -102,7 +104,7 @@ export default function TeacherLiveClassesPage() {
               <Activity size={32} className="animate-pulse" />
             </div>
             <div>
-              <Link href="/en/teacher/courses" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+              <Link href={`/${currentLocale}/teacher/courses`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
                 <ArrowLeft size={12} /> Dashboard
               </Link>
               <h1 className="text-3xl sm:text-5xl font-black tracking-tight mb-2">
@@ -183,7 +185,7 @@ export default function TeacherLiveClassesPage() {
                   {/* 🔥 دکمه اختصاصی برای رفتن به صفحه مدیریت کلاس 🔥 */}
                   <div className="mt-auto border-t border-white/5 pt-6 flex flex-col gap-3">
                     <Link 
-                      href={`/en/teacher/live-classes/${cls.id}`}
+                      href={`/${currentLocale}/teacher/live-classes/${cls.id}`}
                       className="w-full bg-gradient-to-r from-purple-600/10 to-fuchsia-600/10 hover:from-purple-600/20 hover:to-fuchsia-600/20 border border-purple-500/20 hover:border-fuchsia-500/40 text-white font-black uppercase tracking-[0.2em] text-[11px] sm:text-xs py-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg active:scale-[0.98]"
                     >
                       <Settings2 size={16} className="text-fuchsia-400" /> Manage Class

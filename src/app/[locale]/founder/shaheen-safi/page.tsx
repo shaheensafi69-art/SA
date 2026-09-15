@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 // Custom Social SVG Components
 const TikTokIcon = ({ size = 18 }: { size?: number }) => (
@@ -43,6 +44,9 @@ const InstagramIcon = ({ size = 18 }: { size?: number }) => (
 );
 
 export default function ShaheenSafiExecutiveDossier() {
+  const pathname = usePathname() || '/en';
+  const currentLocale = pathname.split('/')[1] || 'en';
+
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -108,7 +112,7 @@ export default function ShaheenSafiExecutiveDossier() {
         {/* --- TOP NAVIGATION BAR --- */}
         <header className="absolute top-0 left-0 right-0 h-24 flex items-center justify-between px-6 md:px-12 z-50">
           <Link 
-            href="/en/about" 
+            href={`/${currentLocale}/about`} 
             className="flex items-center gap-2 text-neutral-300 hover:text-yellow-400 transition-all font-bold text-xs uppercase tracking-widest bg-white/[0.04] border border-white/10 px-5 py-2.5 rounded-full hover:bg-white/[0.08] hover:border-yellow-500/30 backdrop-blur-xl shadow-lg"
           >
             <ArrowLeft size={16} /> Back to Executive Board
@@ -298,7 +302,7 @@ export default function ShaheenSafiExecutiveDossier() {
               <p className="text-neutral-400 text-sm leading-relaxed mb-6">
                 The flagship educational academy operating under UK company registration #17063286, offering verifiable certification across E-Commerce, Applied AI, Financial Markets, and 100% full-ride scholarships.
               </p>
-              <Link href="/en/courses" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-400 hover:text-white transition-colors">
+              <Link href={`/${currentLocale}/courses`} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-400 hover:text-white transition-colors">
                 <span>View Academic Faculties</span> <ExternalLink size={13} />
               </Link>
             </div>

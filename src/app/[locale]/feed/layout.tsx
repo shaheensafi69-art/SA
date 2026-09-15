@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Student Community Feed & Academic Social Stream | Safi Academy",
     description: "Connect with global students, tech enthusiasts, and mentors on the Safi Academy community feed.",
-    url: "https://safiacademy.org/en/feed",
+    url: "https://safiacademy.org/feed",
     siteName: "Safi Academy",
     type: "website",
   },

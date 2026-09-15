@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useParams, useRouter } from "next/navigation";
+import {  useParams, useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2, ClipboardCheck, Calendar, Star, FileText, UserCheck, CheckCircle2, AlertCircle, X, Save, MessageSquare, ExternalLink, ShieldAlert } from "lucide-react";
 
@@ -28,6 +28,8 @@ type AssignmentInfo = {
 };
 
 export default function AssignmentSubmissionsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const params = useParams();
   const router = useRouter();
   const assignmentId = params.id as string;
@@ -177,7 +179,7 @@ export default function AssignmentSubmissionsPage() {
         
         {/* ================= HEADER & ASSIGNMENT INFO ================= */}
         <header className="bg-[#0a0a0f]/80 p-6 sm:p-8 rounded-[2.5rem] border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden">
-          <Link href="/en/teacher/assignments" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+          <Link href={`/${currentLocale}/teacher/assignments`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
             <ArrowLeft size={14} /> Assignments Terminal
           </Link>
           

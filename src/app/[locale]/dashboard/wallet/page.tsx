@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -22,6 +23,8 @@ type Referral = {
 };
 
 export default function WalletPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"transactions" | "referrals">("referrals");
   
@@ -140,7 +143,7 @@ export default function WalletPage() {
   }, []);
 
   const copyLink = () => {
-    const inviteLink = `https://safiacademy.org/en/register?ref=${wallet.referralCode}`;
+    const inviteLink = `https://safiacademy.org/${currentLocale}/register?ref=${wallet.referralCode}`;
     navigator.clipboard.writeText(inviteLink);
     setIsLinkCopied(true);
     setTimeout(() => setIsLinkCopied(false), 2000);
@@ -278,7 +281,7 @@ export default function WalletPage() {
                   <div className="flex items-center gap-3">
                     <div className="flex-1 bg-white/5 px-4 py-3 rounded-xl border border-white/10 flex items-center overflow-hidden">
                       <p className="font-mono text-neutral-400 text-xs truncate">
-                        {isLoading ? "Generating..." : `safiacademy.org/en/register?ref=${wallet.referralCode}`}
+                        {isLoading ? "Generating..." : `safiacademy.org/${currentLocale}/register?ref=${wallet.referralCode}`}
                       </p>
                     </div>
                     <button onClick={copyLink} className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all active:scale-95 ${isLinkCopied ? "bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]" : "bg-white/10 text-white hover:bg-white/20 border border-white/10"}`}>

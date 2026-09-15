@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter , usePathname } from "next/navigation";
 
 export default function DashboardOverview() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   
@@ -34,7 +36,7 @@ export default function DashboardOverview() {
       const supabase = createClient();
       const { data: { session } } = await supabase.auth.getSession();
       
-      if (!session?.user) return router.push("/en/login");
+      if (!session?.user) return router.push(`/${currentLocale}/login`);
       const userId = session.user.id;
 
       const { data: profile } = await supabase
@@ -210,7 +212,7 @@ export default function DashboardOverview() {
             ) : (
               <div className="bg-neutral-900/40 p-8 rounded-[2.5rem] border border-white/5 flex flex-col items-center justify-center text-center h-[220px]">
                 <p className="text-neutral-400 font-bold mb-5">You haven't enrolled in any courses yet.</p>
-                <Link href="/en/courses" className="px-8 py-3.5 bg-amber-500 text-black font-black uppercase tracking-widest text-[10px] rounded-xl hover:bg-amber-400 transition-colors shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:scale-105">
+                <Link href={`/${currentLocale}/courses`} className="px-8 py-3.5 bg-amber-500 text-black font-black uppercase tracking-widest text-[10px] rounded-xl hover:bg-amber-400 transition-colors shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:scale-105">
                   Explore Courses
                 </Link>
               </div>
@@ -223,7 +225,7 @@ export default function DashboardOverview() {
               <h2 className="text-lg font-black text-white tracking-wide">Community</h2>
             </div>
             
-            <Link href="/en/dashboard/groups" className="block h-[220px] rounded-[2.5rem] border border-indigo-500/30 bg-gradient-to-br from-indigo-900/20 to-black p-8 relative overflow-hidden group hover:border-indigo-500/60 transition-all duration-500 shadow-[0_10px_30px_rgba(79,70,229,0.05)] hover:-translate-y-2">
+            <Link href={`/${currentLocale}/dashboard/groups`} className="block h-[220px] rounded-[2.5rem] border border-indigo-500/30 bg-gradient-to-br from-indigo-900/20 to-black p-8 relative overflow-hidden group hover:border-indigo-500/60 transition-all duration-500 shadow-[0_10px_30px_rgba(79,70,229,0.05)] hover:-translate-y-2">
                <div className="absolute top-[-20%] right-[-20%] w-48 h-48 bg-indigo-500/20 rounded-full blur-[50px] group-hover:bg-indigo-500/30 transition-all duration-700"></div>
                <div className="relative z-10 h-full flex flex-col justify-between">
                  <div>

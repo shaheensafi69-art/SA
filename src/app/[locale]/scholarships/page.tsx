@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,6 +29,8 @@ type Scholarship = {
 const CURRENT_LANG = "en";
 
 export default function EnglishScholarshipsPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
   const [scholarships, setScholarships] = useState<Scholarship[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeContinent, setActiveContinent] = useState("All");
@@ -840,7 +843,7 @@ export default function EnglishScholarshipsPage() {
 
               <div className="pt-4">
                 <Link 
-                  href="/en/support" 
+                  href={`/${currentLocale}/support`} 
                   className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black uppercase tracking-widest text-xs shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-105 transition-all"
                 >
                   <Sparkles size={16} /> Connect With Application Mentors
@@ -1000,7 +1003,7 @@ export default function EnglishScholarshipsPage() {
                   <Compass size={16} /> Explore All Scholarships Now
                 </button>
                 <Link
-                  href="/en/courses"
+                  href={`/${currentLocale}/courses`}
                   className="px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-white font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                 >
                   <Laptop size={16} /> Upskill With Free Tech Courses
