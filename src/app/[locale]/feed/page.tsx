@@ -7,6 +7,7 @@ import Link from "next/link";
 import StoryBar from "@/components/feed/StoryBar";
 import InFeedNativeAd from "@/components/ads/InFeedNativeAd";
 import AuthRequiredModal from "@/components/feed/AuthRequiredModal";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 interface PostItem {
   id: string;
@@ -49,6 +50,8 @@ interface CommentItem {
 export default function StudentFeedPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState<PostItem[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<PostItem[]>([]);
@@ -266,7 +269,7 @@ export default function StudentFeedPage() {
         });
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        alert('Link copied to clipboard!');
+        alert(t.feed.linkCopied);
       }
     } catch (error) {
       console.error('Error sharing:', error);
@@ -282,11 +285,12 @@ export default function StudentFeedPage() {
   }
 
   return (
-    <div className="max-w-[90rem] mx-auto px-4 sm:px-8 py-6 sm:py-8 font-sans relative">
+    <div dir={t.dir} className="max-w-[90rem] mx-auto px-4 sm:px-8 py-6 sm:py-8 font-sans relative">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 relative items-start">
 
         {/* ================= سمت چپ: مدیریت دوستان ================= */}
-        <div className="hidden lg:block lg:col-span-4 xl:col-span-3 space-y-6 sticky top-8 z-10 xl:-ml-4">
+        <div className={`hidden lg:block lg:col-span-4 xl:col-span-3 space-y-6 sticky top-8 z-10 ${isRtl ? "xl:-mr-4" : "xl:-ml-4"}`}>
+
           <div className="bg-[#0a0a0f]/90 border border-white/5 p-6 rounded-[2.5rem] backdrop-blur-2xl shadow-[0_20px_40px_rgba(0,0,0,0.4)] relative overflow-hidden group">
             <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-[#C2185B]/15 rounded-full blur-[40px] pointer-events-none transition-all duration-700 group-hover:bg-[#C2185B]/25"></div>
 
@@ -295,8 +299,8 @@ export default function StudentFeedPage() {
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg>
               </div>
               <div>
-                <h2 className="text-white font-black text-sm tracking-wide">Academy Peers</h2>
-                <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest mt-0.5">Discover Network</p>
+                <h2 className="text-white font-black text-sm tracking-wide">{t.feed.academyPeers}</h2>
+                <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest mt-0.5">{t.feed.discoverNetwork}</p>
               </div>
             </div>
 
@@ -328,7 +332,7 @@ export default function StudentFeedPage() {
               href={`/${currentLocale}/feed/network`}
               className="mt-6 w-full py-4 bg-transparent border border-white/10 text-white font-black text-[10px] uppercase tracking-widest rounded-2xl flex items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all duration-300 relative z-10"
             >
-              Manage Network →
+              {isRtl ? `← ${t.feed.manageNetwork}` : `${t.feed.manageNetwork} →`}
             </Link>
           </div>
         </div>
@@ -340,8 +344,8 @@ export default function StudentFeedPage() {
           <div className="flex items-center justify-between mt-2 mb-4 gap-4">
 
             {/* عنوان سمت چپ */}
-            <h1 className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-[#C2185B] via-pink-400 to-indigo-400 bg-clip-text text-transparent tracking-tight text-left">
-              Academy Feed
+            <h1 className={`text-2xl sm:text-4xl font-black bg-gradient-to-r from-[#C2185B] via-pink-400 to-indigo-400 bg-clip-text text-transparent tracking-tight ${isRtl ? "text-right" : "text-left"}`}>
+              {t.feed.feedTitle}
             </h1>
 
             {/* سرچ باکس انیمیشنی دست راست */}
@@ -354,10 +358,10 @@ export default function StudentFeedPage() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Search feed..."
+                  placeholder={t.feed.searchFeed}
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
-                  className="w-full bg-transparent text-white text-sm font-medium outline-none pl-4 pr-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300 placeholder-neutral-500"
+                  className={`w-full bg-transparent text-white text-sm font-medium outline-none ${isRtl ? "pr-4 pl-1 text-right" : "pl-4 pr-1 text-left"} opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300 placeholder-neutral-500`}
                 />
               </div>
             </div>
@@ -373,7 +377,7 @@ export default function StudentFeedPage() {
             {filteredPosts.length === 0 ? (
               <div className="text-center py-20 bg-[#0a0a0f]/40 rounded-[2.5rem] border border-white/5 shadow-inner">
                 <svg className="w-14 h-14 text-neutral-600 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v10a2 2 0 01-2 2z"></path></svg>
-                <p className="text-neutral-500 font-bold text-sm tracking-wide">No posts found matching your criteria.</p>
+                <p className="text-neutral-500 font-bold text-sm tracking-wide">{t.feed.noPostsFound}</p>
               </div>
             ) : (
               filteredPosts.map((post, index) => (
@@ -410,7 +414,7 @@ export default function StudentFeedPage() {
                     )}
                   </div>
 
-                  <div className="inline-block px-3.5 py-1.5 bg-gradient-to-r from-[#C2185B]/20 to-transparent border-l-2 border-[#C2185B] rounded-r-lg text-pink-300 text-[10px] font-black uppercase tracking-widest mt-2 shadow-sm">
+                  <div className={`inline-block px-3.5 py-1.5 bg-gradient-to-r from-[#C2185B]/20 to-transparent ${isRtl ? "border-r-2 rounded-l-lg" : "border-l-2 rounded-r-lg"} border-[#C2185B] text-pink-300 text-[10px] font-black uppercase tracking-widest mt-2 shadow-sm`}>
                     {post.moodTag}
                   </div>
 
@@ -437,7 +441,7 @@ export default function StudentFeedPage() {
                           <span className="text-white">{post.likesCount}</span>
                         </div>
                       ) : <span />}
-                      {post.commentsCount > 0 && <span>{post.commentsCount} Comments</span>}
+                      {post.commentsCount > 0 && <span>{post.commentsCount} {t.feed.commentsCount}</span>}
                     </div>
                   )}
 
@@ -452,7 +456,7 @@ export default function StudentFeedPage() {
                         }`}
                     >
                       <svg className="w-4 h-4" fill={post.isLikedByMe ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.514"></path></svg>
-                      <span>Like</span>
+                      <span>{t.feed.like}</span>
                     </button>
                     <div className="w-1 sm:w-2"></div>
                     <button
@@ -467,7 +471,7 @@ export default function StudentFeedPage() {
                       className="flex-1 flex items-center justify-center gap-2 py-3 rounded-[1rem] transition-all font-black text-xs text-neutral-400 bg-white/[0.02] hover:bg-white/5 hover:text-white"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                      <span>Comment</span>
+                      <span>{t.feed.comment}</span>
                     </button>
                     <div className="w-1 sm:w-2"></div>
                     <button
@@ -475,7 +479,7 @@ export default function StudentFeedPage() {
                       className="flex-1 flex items-center justify-center gap-2 py-3 rounded-[1rem] transition-all font-black text-xs text-neutral-400 bg-white/[0.02] hover:bg-white/5 hover:text-white"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-                      <span>Share</span>
+                      <span>{t.feed.share}</span>
                     </button>
                   </div>
                 </div>
@@ -491,6 +495,7 @@ export default function StudentFeedPage() {
         <CommentsModal
           postId={activePostId}
           currentUserId={currentUserId}
+          currentLocale={currentLocale}
           onClose={() => {
             setActivePostId(null);
             fetchFeedAndUsers();
@@ -519,7 +524,9 @@ export default function StudentFeedPage() {
 // =====================================================================
 // COMPONENT: COMMENTS MODAL (WITH NESTED REPLIES)
 // =====================================================================
-function CommentsModal({ postId, currentUserId, onClose }: { postId: string, currentUserId: string, onClose: () => void }) {
+function CommentsModal({ postId, currentUserId, currentLocale, onClose }: { postId: string, currentUserId: string, currentLocale: string, onClose: () => void }) {
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const [comments, setComments] = useState<CommentItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
@@ -573,7 +580,7 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
       const avatarUrl = c.profiles?.avatar_url;
 
       elements.push(
-        <div key={c.id} style={{ marginLeft: `${depth * 24}px` }} className="mb-4">
+        <div key={c.id} style={{ [isRtl ? 'marginRight' : 'marginLeft']: `${depth * 24}px` }} className="mb-4">
           <div className="flex gap-3 items-start">
             <div className="w-8 h-8 rounded-xl bg-neutral-800 shrink-0 overflow-hidden border border-[#C2185B]/20 flex items-center justify-center">
               {avatarUrl ? <img src={avatarUrl} className="w-full h-full object-cover" alt="" /> : <span className="text-[#C2185B] text-xs font-black">{authorName.charAt(0)}</span>}
@@ -589,7 +596,7 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
                   onClick={() => { setReplyingToId(c.id); setReplyingToName(authorName); }}
                   className="text-[10px] font-black text-[#C2185B] hover:text-pink-400 transition-colors tracking-wide uppercase"
                 >
-                  Reply
+                  {t.feed.reply}
                 </button>
               </div>
             </div>
@@ -606,7 +613,7 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 pb-[100px] sm:p-4 bg-black/80 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
       <div className="bg-[#0a0a0f] border border-white/10 rounded-t-[2rem] sm:rounded-[2rem] w-full max-w-2xl max-h-[85vh] sm:max-h-[90vh] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden animate-[slideUp_0.3s_ease-out]">
         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-[#0a0a0f]/90">
-          <h3 className="text-xl font-black text-white tracking-tight">Discussion</h3>
+          <h3 className="text-xl font-black text-white tracking-tight">{t.feed.discussion}</h3>
           <button onClick={onClose} className="p-2.5 bg-white/5 hover:bg-white/10 rounded-full transition-colors text-neutral-400 hover:text-white">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
@@ -617,7 +624,7 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
           ) : comments.length === 0 ? (
             <div className="text-center py-16">
               <svg className="w-12 h-12 text-neutral-700 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-              <p className="text-neutral-500 font-bold text-sm tracking-wide">No comments yet. Start the conversation!</p>
+              <p className="text-neutral-500 font-bold text-sm tracking-wide">{t.feed.noCommentsYet}</p>
             </div>
           ) : (
             buildCommentTree(null, 0)
@@ -628,16 +635,16 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
             <div className="flex items-center justify-between mb-3 px-3 py-2 bg-[#C2185B]/10 rounded-xl border border-[#C2185B]/20">
               <span className="text-xs font-black text-[#C2185B] flex items-center gap-2">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
-                Replying to {replyingToName}
+                {t.feed.replyingTo} {replyingToName}
               </span>
-              <button onClick={() => { setReplyingToId(null); setReplyingToName(null); }} className="text-neutral-400 hover:text-white text-xs font-bold bg-white/5 px-3 py-1 rounded-lg">Cancel</button>
+              <button onClick={() => { setReplyingToId(null); setReplyingToName(null); }} className="text-neutral-400 hover:text-white text-xs font-bold bg-white/5 px-3 py-1 rounded-lg">{t.feed.cancel}</button>
             </div>
           )}
           <div className="flex items-end gap-3 pb-2 sm:pb-0">
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Write your thought..."
+              placeholder={t.feed.writeYourThought}
               rows={1}
               className="flex-1 bg-neutral-900 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm focus:outline-none focus:border-[#C2185B] focus:ring-1 focus:ring-[#C2185B] resize-none min-h-[55px] max-h-[120px] transition-all"
             />

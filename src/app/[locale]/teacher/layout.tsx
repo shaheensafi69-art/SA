@@ -2,17 +2,20 @@
 
 import { useEffect, useState } from "react";
 import {
-  X, Sparkles, LogOut, Bell, ShieldCheck, Wallet, LayoutDashboard,
+  X, Sparkles, LogOut, Bell, ShieldCheck, LayoutDashboard,
   Rss, Megaphone, BookOpen, Video, FileText, Target, TrendingUp, Trophy, Settings, Grid, Headset
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 export default function TeacherLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname() || "";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
 
   const [isReady, setIsReady] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -62,57 +65,56 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
     router.replace(`/${currentLocale}/login`);
   };
 
-  // 🟢 لیست منوهای اصلاح‌شده (حذف گزینه‌های اضافی و تنظیم مسیر جدید فید و پشتیبانی)
   const menuItems = [
-    { name: "Overview", path: `/${currentLocale}/teacher`, icon: <LayoutDashboard size={22} />, disabled: false },
-    { name: "Academy Feed", path: `/${currentLocale}/feed`, icon: <Rss size={22} />, disabled: false },
-    { name: "Announcements", path: `/${currentLocale}/teacher/announcements`, icon: <Megaphone size={22} />, disabled: false },
-    { name: "My Courses", path: `/${currentLocale}/teacher/courses`, icon: <BookOpen size={22} />, disabled: false },
-    { name: "Live Classes", path: `/${currentLocale}/teacher/live-classes`, icon: <Video size={22} />, disabled: false },
-    { name: "My Students", path: `/${currentLocale}/teacher/students`, icon: <Rss size={22} />, disabled: false },
-    { name: "Assignments", path: `/${currentLocale}/teacher/assignments`, icon: <FileText size={22} />, disabled: false },
-    { name: "Exams & Quizzes", path: `/${currentLocale}/teacher/quizzes`, icon: <Target size={22} />, disabled: false },
-    { name: "Trading Journal", path: `/${currentLocale}/teacher/trading-journal`, icon: <TrendingUp size={22} />, disabled: false },
-    { name: "Achievements", path: `/${currentLocale}/teacher/achievements`, icon: <Trophy size={22} />, disabled: false },
-    { name: "Support Tickets", path: `/${currentLocale}/support`, icon: <Headset size={22} />, disabled: false },
-    { name: "Settings", path: `/${currentLocale}/teacher/settings`, icon: <Settings size={22} />, disabled: false },
+    { id: "overview", name: t.teacher.overview, path: `/${currentLocale}/teacher`, icon: <LayoutDashboard size={22} />, disabled: false },
+    { id: "feed", name: t.teacher.feed, path: `/${currentLocale}/feed`, icon: <Rss size={22} />, disabled: false },
+    { id: "announcements", name: t.teacher.announcements, path: `/${currentLocale}/teacher/announcements`, icon: <Megaphone size={22} />, disabled: false },
+    { id: "courses", name: t.teacher.myCourses, path: `/${currentLocale}/teacher/courses`, icon: <BookOpen size={22} />, disabled: false },
+    { id: "liveClasses", name: t.teacher.liveClasses, path: `/${currentLocale}/teacher/live-classes`, icon: <Video size={22} />, disabled: false },
+    { id: "students", name: t.teacher.myStudents, path: `/${currentLocale}/teacher/students`, icon: <Rss size={22} />, disabled: false },
+    { id: "assignments", name: t.teacher.assignments, path: `/${currentLocale}/teacher/assignments`, icon: <FileText size={22} />, disabled: false },
+    { id: "quizzes", name: t.teacher.quizzes, path: `/${currentLocale}/teacher/quizzes`, icon: <Target size={22} />, disabled: false },
+    { id: "tradingJournal", name: t.teacher.tradingJournal, path: `/${currentLocale}/teacher/trading-journal`, icon: <TrendingUp size={22} />, disabled: false },
+    { id: "achievements", name: t.teacher.achievements, path: `/${currentLocale}/teacher/achievements`, icon: <Trophy size={22} />, disabled: false },
+    { id: "support", name: t.teacher.support, path: `/${currentLocale}/support`, icon: <Headset size={22} />, disabled: false },
+    { id: "settings", name: t.teacher.settings, path: `/${currentLocale}/teacher/settings`, icon: <Settings size={22} />, disabled: false },
   ];
 
-  const getMenuColor = (name: string) => {
-    switch (name) {
-      case "Overview": return "from-blue-500/20 to-blue-500/5 text-blue-400 border-blue-500/30";
-      case "Academy Feed": return "from-pink-500/20 to-pink-500/5 text-pink-400 border-pink-500/30";
-      case "Announcements": return "from-orange-500/20 to-orange-500/5 text-orange-400 border-orange-500/30";
-      case "My Courses": return "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/30";
-      case "Live Classes": return "from-red-500/20 to-red-500/5 text-red-400 border-red-500/30";
-      case "My Students": return "from-fuchsia-500/20 to-fuchsia-500/5 text-fuchsia-400 border-fuchsia-500/30";
-      case "Assignments": return "from-cyan-500/20 to-cyan-500/5 text-cyan-400 border-cyan-500/30";
-      case "Exams & Quizzes": return "from-purple-500/20 to-purple-500/5 text-purple-400 border-purple-500/30";
-      case "Trading Journal": return "from-teal-500/20 to-teal-500/5 text-teal-400 border-teal-500/30";
-      case "Achievements": return "from-amber-500/20 to-amber-500/5 text-amber-400 border-amber-500/30";
-      case "Support Tickets": return "from-sky-500/20 to-sky-500/5 text-sky-400 border-sky-500/30";
-      case "Settings": return "from-slate-500/20 to-slate-500/5 text-slate-400 border-slate-500/30";
+  const getMenuColor = (id: string) => {
+    switch (id) {
+      case "overview": return "from-blue-500/20 to-blue-500/5 text-blue-400 border-blue-500/30";
+      case "feed": return "from-pink-500/20 to-pink-500/5 text-pink-400 border-pink-500/30";
+      case "announcements": return "from-orange-500/20 to-orange-500/5 text-orange-400 border-orange-500/30";
+      case "courses": return "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/30";
+      case "liveClasses": return "from-red-500/20 to-red-500/5 text-red-400 border-red-500/30";
+      case "students": return "from-fuchsia-500/20 to-fuchsia-500/5 text-fuchsia-400 border-fuchsia-500/30";
+      case "assignments": return "from-cyan-500/20 to-cyan-500/5 text-cyan-400 border-cyan-500/30";
+      case "quizzes": return "from-purple-500/20 to-purple-500/5 text-purple-400 border-purple-500/30";
+      case "tradingJournal": return "from-teal-500/20 to-teal-500/5 text-teal-400 border-teal-500/30";
+      case "achievements": return "from-amber-500/20 to-amber-500/5 text-amber-400 border-amber-500/30";
+      case "support": return "from-sky-500/20 to-sky-500/5 text-sky-400 border-sky-500/30";
+      case "settings": return "from-slate-500/20 to-slate-500/5 text-slate-400 border-slate-500/30";
       default: return "from-neutral-500/20 to-neutral-500/5 text-neutral-400 border-neutral-500/30";
     }
   };
 
   if (!isReady) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#020202] text-white">
+      <div dir={t.dir} className="min-h-screen flex flex-col items-center justify-center bg-[#020202] text-white">
         <div className="w-16 h-16 border-4 border-fuchsia-500 border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_25px_rgba(217,70,239,0.4)]"></div>
-        <span className="text-fuchsia-500 font-bold uppercase tracking-widest text-xs animate-pulse">Initializing Instructor Portal...</span>
+        <span className="text-fuchsia-500 font-bold uppercase tracking-widest text-xs animate-pulse">{t.teacher.initializing}</span>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-[#030305] text-white font-sans overflow-hidden relative selection:bg-fuchsia-500 selection:text-white">
+    <div dir={t.dir} className="flex h-screen bg-[#030305] text-white font-sans overflow-hidden relative selection:bg-fuchsia-500 selection:text-white">
 
       <div className="absolute top-[-15%] left-[-15%] w-[50vw] h-[50vw] bg-fuchsia-600/10 rounded-full blur-[140px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '8s' }}></div>
       <div className="absolute bottom-[-15%] right-[-15%] w-[40vw] h-[40vw] bg-purple-700/10 rounded-full blur-[130px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '6s' }}></div>
 
       {/* ================= 1. DESKTOP SIDEBAR ================= */}
-      <aside className="hidden lg:flex w-[295px] bg-[#060609]/90 backdrop-blur-2xl border-r border-white/[0.06] flex-col relative z-20 shrink-0 p-4 shadow-[15px_0_40px_rgba(0,0,0,0.9)]">
+      <aside className={`hidden lg:flex w-[295px] bg-[#060609]/90 backdrop-blur-2xl ${isRtl ? 'border-l border-r-0' : 'border-r border-l-0'} border-white/[0.06] flex-col relative z-20 shrink-0 p-4 shadow-[15px_0_40px_rgba(0,0,0,0.9)]`}>
 
         <div className="mb-5 p-4 rounded-2xl bg-gradient-to-br from-[#0c0c14] to-[#07070a] shadow-[inset_0_2px_6px_rgba(0,0,0,0.9),0_6px_20px_rgba(0,0,0,0.5)] border border-fuchsia-500/10 shrink-0 relative group">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-fuchsia-500 to-purple-600 rounded-2xl opacity-20 blur group-hover:opacity-40 transition duration-500"></div>
@@ -125,12 +127,12 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
               <h2 className="text-xs font-black text-white tracking-widest uppercase flex items-center gap-1.5">
                 Safi Academy <Sparkles size={10} className="text-fuchsia-400 animate-spin" style={{ animationDuration: '4s' }} />
               </h2>
-              <p className="text-[9px] text-fuchsia-500 font-bold uppercase tracking-[0.2em] mt-0.5">Faculty Portal</p>
+              <p className="text-[9px] text-fuchsia-500 font-bold uppercase tracking-[0.2em] mt-0.5">{t.teacher.facultyPortal}</p>
             </div>
           </Link>
         </div>
 
-        <nav className="flex-1 overflow-y-auto space-y-2 custom-scrollbar pr-1">
+        <nav className={`flex-1 overflow-y-auto space-y-2 custom-scrollbar ${isRtl ? 'pl-1 pr-0' : 'pr-1 pl-0'}`}>
           {menuItems.map((item) => {
             if (item.disabled) return null;
 
@@ -140,11 +142,11 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
 
             return (
               <Link
-                key={item.name} href={item.path}
-                className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-bold text-xs transition-all duration-300 relative group overflow-hidden ${isActive ? "bg-gradient-to-r from-[#1c111c] to-[#0a0a0e] text-white shadow-[inset_0_2px_5px_rgba(0,0,0,0.9),0_0_20px_rgba(217,70,239,0.15)] border border-fuchsia-500/30 translate-x-1" : "bg-[#08080c]/80 text-neutral-400 hover:text-white hover:bg-[#0c0c14] shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-white/[0.03] hover:border-white/10"
+                key={item.id} href={item.path}
+                className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-bold text-xs transition-all duration-300 relative group overflow-hidden ${isActive ? `bg-gradient-to-r from-[#1c111c] to-[#0a0a0e] text-white shadow-[inset_0_2px_5px_rgba(0,0,0,0.9),0_0_20px_rgba(217,70,239,0.15)] border border-fuchsia-500/30 ${isRtl ? '-translate-x-1' : 'translate-x-1'}` : "bg-[#08080c]/80 text-neutral-400 hover:text-white hover:bg-[#0c0c14] shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-white/[0.03] hover:border-white/10"
                   }`}
               >
-                {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-fuchsia-500 rounded-r-full shadow-[0_0_10px_#d946ef]"></div>}
+                {isActive && <div className={`absolute ${isRtl ? 'right-0 rounded-l-full' : 'left-0 rounded-r-full'} top-1/2 -translate-y-1/2 w-1 h-6 bg-fuchsia-500 shadow-[0_0_10px_#d946ef]`}></div>}
                 <span className={`transition-all duration-300 ${isActive ? "scale-110 text-fuchsia-400" : "group-hover:scale-110 group-hover:text-white"}`}>{item.icon}</span>
                 <span className="tracking-wide">{item.name}</span>
               </Link>
@@ -165,14 +167,14 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
               </div>
             </div>
           </div>
-          <button onClick={handleLogout} className="flex items-center justify-center gap-2 px-4 py-3 text-neutral-400 hover:text-red-400 bg-[#08080c] hover:bg-red-500/10 rounded-2xl text-xs font-bold transition-all w-full border border-white/[0.04] hover:border-red-500/30 shadow-[0_2px_8px_rgba(0,0,0,0.5)] group">
-            <LogOut size={14} className="group-hover:-translate-x-1 transition-transform" /> Secure Sign Out
+          <button onClick={handleLogout} className="flex items-center justify-center gap-2 px-4 py-3 text-neutral-400 hover:text-red-400 bg-[#08080c] hover:bg-red-500/10 rounded-2xl text-xs font-bold transition-all w-full border border-white/[0.04] hover:border-red-500/30 shadow-[0_2px_8px_rgba(0,0,0,0.5)] group cursor-pointer">
+            <LogOut size={14} className={`group-hover:${isRtl ? 'translate-x-1' : '-translate-x-1'} transition-transform ${isRtl ? 'rotate-180' : ''}`} /> {t.teacher.secureSignOut}
           </button>
         </div>
       </aside>
 
       {/* ================= 2. DESKTOP FLOATING NOTIFICATION ================= */}
-      <div className="hidden lg:flex absolute top-6 right-10 z-50">
+      <div className={`hidden lg:flex absolute top-6 ${isRtl ? 'left-10' : 'right-10'} z-50`}>
         <Link href={`/${currentLocale}/teacher/announcements`} className="w-12 h-12 bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-fuchsia-400 hover:border-fuchsia-500/40 transition-all relative group shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
           <Bell className="w-5 h-5 transition-transform group-hover:rotate-12 group-hover:scale-110" />
           <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-fuchsia-500 rounded-full animate-pulse shadow-[0_0_10px_#d946ef]"></span>
@@ -203,28 +205,28 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
         <div className="lg:hidden fixed bottom-4 left-4 right-4 h-[70px] bg-[#09090e]/95 backdrop-blur-3xl border border-white/10 z-50 px-2 rounded-[2.2rem] flex justify-between items-center shadow-[0_20px_50px_rgba(0,0,0,0.9)]">
           <Link href={`/${currentLocale}/teacher`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
             <LayoutDashboard size={22} className={pathname === `/${currentLocale}/teacher` ? "text-fuchsia-400" : "text-neutral-500"} />
-            <span className="text-[8px] font-bold uppercase mt-1">Overview</span>
+            <span className="text-[8px] font-bold uppercase mt-1">{t.teacher.overview}</span>
           </Link>
           <Link href={`/${currentLocale}/feed`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
             <Rss size={22} className={pathname.startsWith(`/${currentLocale}/feed`) ? "text-pink-400" : "text-neutral-500"} />
-            <span className="text-[8px] font-bold uppercase mt-1">Feed</span>
+            <span className="text-[8px] font-bold uppercase mt-1">{t.teacher.feed}</span>
           </Link>
           <Link href={`/${currentLocale}/support`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
             <Headset size={22} className={pathname.startsWith(`/${currentLocale}/support`) ? "text-sky-400" : "text-neutral-500"} />
-            <span className="text-[8px] font-bold uppercase mt-1">Support</span>
+            <span className="text-[8px] font-bold uppercase mt-1">{t.teacher.support}</span>
           </Link>
           <button onClick={() => setIsMobileMenuOpen(true)} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
             <Grid size={22} className="text-neutral-500" />
-            <span className="text-[8px] font-bold uppercase mt-1">Menu</span>
+            <span className="text-[8px] font-bold uppercase mt-1">{t.teacher.menu}</span>
           </button>
         </div>
       )}
 
       {/* ================= 6. MOBILE MENU DRAWER ================= */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-[#030305]/95 backdrop-blur-3xl z-[100] flex flex-col lg:hidden">
+        <div dir={t.dir} className="fixed inset-0 bg-[#030305]/95 backdrop-blur-3xl z-[100] flex flex-col lg:hidden">
           <div className="h-16 px-5 border-b border-white/[0.06] flex justify-between items-center bg-black/50 shrink-0">
-            <span className="font-black text-white uppercase tracking-widest text-xs">Faculty Tools</span>
+            <span className="font-black text-white uppercase tracking-widest text-xs">{t.teacher.facultyTools}</span>
             <button onClick={() => setIsMobileMenuOpen(false)} className="w-8 h-8 flex items-center justify-center text-neutral-400 bg-white/5 rounded-full">
               <X size={16} />
             </button>
@@ -233,12 +235,12 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
             <div className="grid grid-cols-2 gap-3.5">
               {menuItems.map((item) => {
                 const isActive = item.path === `/${currentLocale}/teacher` ? pathname === `/${currentLocale}/teacher` : pathname.startsWith(item.path);
-                const colorClasses = getMenuColor(item.name);
+                const colorClasses = getMenuColor(item.id);
                 if (item.disabled) return null;
 
                 return (
                   <Link
-                    key={item.name}
+                    key={item.id}
                     href={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex flex-col items-center justify-center gap-2 p-5 rounded-[1.8rem] font-bold border bg-gradient-to-br ${colorClasses} ${isActive ? "ring-2 ring-white/20" : ""}`}
@@ -251,8 +253,8 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
             </div>
 
             <div className="pt-2 pb-6">
-              <button onClick={handleLogout} className="flex items-center justify-center gap-2 px-4 py-3.5 text-neutral-300 hover:text-red-400 bg-[#08080c] hover:bg-red-500/10 rounded-2xl text-xs font-bold transition-all w-full border border-white/[0.06] shadow-md">
-                <LogOut size={16} /> Sign Out Account
+              <button onClick={handleLogout} className="flex items-center justify-center gap-2 px-4 py-3.5 text-neutral-300 hover:text-red-400 bg-[#08080c] hover:bg-red-500/10 rounded-2xl text-xs font-bold transition-all w-full border border-white/[0.06] shadow-md cursor-pointer">
+                <LogOut size={16} className={isRtl ? "rotate-180" : ""} /> {t.teacher.secureSignOut}
               </button>
             </div>
           </div>

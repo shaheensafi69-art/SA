@@ -11,13 +11,13 @@ export default function ConditionalLayout({
 }) {
   const pathname = usePathname();
   
-  // بررسی مسیرهای پنل‌ها و صفحات احراز هویت (لاگین و ثبت‌نام)
   const isDashboardRoute = pathname?.includes("/dashboard");
   const isAdminRoute = pathname?.includes("/admin");
   const isTeacherRoute = pathname?.includes("/teacher");
+  const isFeedRoute = pathname?.includes("/feed");
   const isAuthRoute = pathname?.includes("/login") || pathname?.includes("/register");
 
-  const isHiddenLayout = isDashboardRoute || isAdminRoute || isTeacherRoute || isAuthRoute;
+  const isHiddenLayout = isDashboardRoute || isAdminRoute || isTeacherRoute || isAuthRoute || isFeedRoute;
 
   // اگر داخل پنل‌ها یا صفحات لاگین/ثبت‌نام بودیم: هدر و فوتر مخفی می‌شوند
   return (
