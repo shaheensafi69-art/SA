@@ -40,7 +40,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&family=Vazirmatn:wght@100..900&display=swap"
           rel="stylesheet"
         />
         <style dangerouslySetInnerHTML={{
@@ -48,6 +48,7 @@ export default function RootLayout({
             :root {
               --font-geist-sans: 'Inter', sans-serif;
               --font-geist-mono: 'JetBrains Mono', monospace;
+              --font-vazirmatn: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             }
           `
         }} />

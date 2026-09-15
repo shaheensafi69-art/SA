@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { 
   ArrowLeft, Mail, KeyRound, CheckCircle2, 
@@ -9,23 +10,44 @@ import {
 } from "lucide-react";
 
 export default function ForgotPasswordPage() {
+  const pathname = usePathname() || "/en";
+  const locale = pathname.split("/")[1] || "en";
   const [email, setEmail] = useState("");
+  const [botTrap, setBotTrap] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // 🛡️ تله امنیتی بات‌ها: اگر فیلد مخفی پر شده باشد، بدون اجرا خارج شو
+    if (botTrap) {
+      console.warn("Automated bot submission prevented.");
+      return;
+    }
+
+    // ⏳ محدودیت زمانی ضد اسپم (حداقل ۱۲۰ ثانیه بین هر درخواست برای این کلاینت)
+    const lastRequest = localStorage.getItem("safi_last_pw_reset_ts");
+    const now = Date.now();
+    if (lastRequest && now - Number(lastRequest) < 120000) {
+      const remainingSeconds = Math.ceil((120000 - (now - Number(lastRequest))) / 1000);
+      setError(`Please wait ${remainingSeconds} seconds before requesting another reset code. / لطفاً ${remainingSeconds} ثانیه صبر کنید.`);
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     const supabase = createClient();
 
     try {
+      // ذخیره زمان آخرین درخواست
+      localStorage.setItem("safi_last_pw_reset_ts", String(now));
+
       // ارسال لینک بازیابی به ایمیل کاربر
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        // بسیار مهم: کاربر پس از کلیک روی ایمیل دقیقاً به این صفحه هدایت می‌شود
-        redirectTo: `${window.location.origin}/en/reset-password`,
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: `${window.location.origin}/${locale}/reset-password`,
       });
 
       if (error) {
@@ -53,7 +75,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md relative z-10 animate-[fadeInUp_0.4s_ease-out]">
         
         {/* Back Button */}
-        <Link href="/en/login" className="inline-flex items-center gap-2 text-neutral-400 hover:text-white mb-8 transition-colors group text-sm font-bold uppercase tracking-widest">
+        <Link href={`/${locale}/login`} className="inline-flex items-center gap-2 text-neutral-400 hover:text-white mb-8 transition-colors group text-sm font-bold uppercase tracking-widest">
           <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-colors">
             <ArrowLeft size={16} />
           </div>
@@ -96,6 +118,18 @@ export default function ForgotPasswordPage() {
           ) : (
             <form onSubmit={handleResetPassword} className="space-y-6">
               
+              {/* تله ضد ربات (Honeypot Trap) */}
+              <input
+                type="text"
+                name="user_security_checkpoint"
+                value={botTrap}
+                onChange={(e) => setBotTrap(e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                style={{ display: "none", opacity: 0, position: "absolute", zIndex: -1 }}
+              />
+
               {/* Email Input */}
               <div className="space-y-2">
                 <label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-neutral-400 ml-1">

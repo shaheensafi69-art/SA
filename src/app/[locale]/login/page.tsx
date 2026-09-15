@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, Eye, EyeOff, Sparkles } from "lucide-react";
 
@@ -31,6 +31,8 @@ function TypewriterText({ text }: { text: string }) {
 
 export default function LoginPage() {
   const router = useRouter();
+  const pathname = usePathname() || "/en";
+  const locale = pathname.split("/")[1] || "en";
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -130,11 +132,11 @@ export default function LoginPage() {
         }
 
         if (finalRole === "super_admin") {
-            window.location.href = "/en/admin";
+            window.location.href = `/${locale}/admin`;
         } else if (finalRole === "teacher") {
-            window.location.href = "/en/teacher";
+            window.location.href = `/${locale}/teacher`;
         } else {
-            window.location.href = "/en/dashboard";
+            window.location.href = `/${locale}/dashboard`;
         }
       }
     } catch (error: any) {
@@ -246,7 +248,7 @@ export default function LoginPage() {
                 <div className="space-y-1">
                   <div className="flex justify-between items-center ml-1">
                     <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Password</label>
-                    <Link href="/en/forgot-password" className="text-[10px] text-yellow-400 hover:text-yellow-300 font-bold transition-colors">Forgot?</Link>
+                    <Link href={`/${locale}/forgot-password`} className="text-[10px] text-yellow-400 hover:text-yellow-300 font-bold transition-colors">Forgot?</Link>
                   </div>
                   <div className="relative">
                     <input 
@@ -281,7 +283,7 @@ export default function LoginPage() {
               {selectedRoleTab === 'student' && (
                 <div className="mt-4 pt-3 border-t border-white/10 text-center text-xs">
                   <span className="text-neutral-400">Don't have an account?</span>{" "}
-                  <Link href="/en/register" className="text-yellow-400 font-bold hover:text-yellow-300 transition-colors ml-1">
+                  <Link href={`/${locale}/register`} className="text-yellow-400 font-bold hover:text-yellow-300 transition-colors ml-1">
                     Create one
                   </Link>
                 </div>

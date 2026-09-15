@@ -1,8 +1,9 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-const locales = ['en', 'fr', 'ps', 'ur', 'fa', 'de'];
-const defaultLocale = 'en';
+export const locales = ['en', 'fa', 'ps', 'ru', 'tr', 'de', 'fr', 'ar', 'ur'] as const;
+export type Locale = typeof locales[number];
+export const defaultLocale = 'en';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

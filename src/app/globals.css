@@ -16,6 +16,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-vazirmatn: var(--font-vazirmatn);
 }
 
 /* حتی اگر مرورگر کاربر در حالت لایت باشد، ما کل سایت را مجبور به دارک‌مود می‌کنیم */

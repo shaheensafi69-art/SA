@@ -97,8 +97,8 @@ export default function NotFoundPage() {
                                 asChild
                                 className="my-5 bg-green-600 hover:bg-green-700 text-white font-sans"
                             >
-                                <Link href="/en/dashboard">
-                                    بازگشت به پنل
+                                <Link href="/en">
+                                    بازگشت به صفحه اصلی / Back to Home
                                 </Link>
                             </Button>
                         </div>

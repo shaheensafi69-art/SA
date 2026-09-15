@@ -7,17 +7,20 @@ import { createClient } from "@/utils/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowRight, LogOut, LayoutDashboard, Settings, Mail, Globe, Sparkles, BookOpen, GraduationCap, Building2, HandHeart, X, Briefcase, BookMarked, Landmark, Server, Code2, Rss } from "lucide-react";
 
-// لیست زبان‌ها همراه با رنگ‌های پرچم آن‌ها برای ساخت افکت‌های نوری پشت هدر
+// لیست ۹ زبان رسمی آکادمی صافی با پرچم‌ها و گرادینت‌های اختصاصی
 const languages = [
   { code: "en", name: "English", flag: "🇬🇧", gradient: "from-blue-600 via-red-500 to-blue-600" },
-  { code: "fa", name: "فارسی", flag: "🇮🇷", gradient: "from-green-500 via-white to-red-500" },
-  { code: "ps", name: "پښتو", flag: "🇦🇫", gradient: "from-neutral-800 via-red-600 to-green-600" },
+  { code: "fa", name: "فارسی / دری", flag: "🇦🇫", gradient: "from-emerald-500 via-white to-red-500" },
+  { code: "ps", name: "پښتو", flag: "🇦🇫", gradient: "from-neutral-800 via-red-600 to-emerald-600" },
+  { code: "ru", name: "Русский", flag: "🇷🇺", gradient: "from-blue-600 via-white to-red-600" },
+  { code: "tr", name: "Türkçe", flag: "🇹🇷", gradient: "from-red-600 via-white to-red-600" },
   { code: "de", name: "Deutsch", flag: "🇩🇪", gradient: "from-neutral-800 via-red-600 to-yellow-500" },
   { code: "fr", name: "Français", flag: "🇫🇷", gradient: "from-blue-600 via-white to-red-600" },
+  { code: "ar", name: "العربية", flag: "🇸🇦", gradient: "from-emerald-700 via-emerald-500 to-green-600" },
   { code: "ur", name: "اردو", flag: "🇵🇰", gradient: "from-green-700 via-emerald-400 to-green-700" },
 ];
 
-// دیکشنری ۶ زبانه برای ترجمه داینامیک کل هدر
+// دیکشنری ۹ زبانه برای ترجمه داینامیک کل هدر
 const translations: Record<string, any> = {
   en: {
     home: "Home", feed: "Feed", learn: "Learn", academy: "Academy", corporate: "Corporate",
@@ -46,6 +49,24 @@ const translations: Record<string, any> = {
     dashboard: "ډشبورډ", signIn: "ننوتل", getStarted: "پیل کړئ", signOut: "وتل",
     welcome: "ښه راغلاست،", selectLang: "د اکاډمۍ ژبه غوره کړئ", editProfile: "پروفایل ایډیټ کړئ", signedInAs: "ننوتل شوی په توګه"
   },
+  ru: {
+    home: "Главная", feed: "Лента", learn: "Обучение", academy: "Академия", corporate: "Корпоративным",
+    courses: "Курсы", blog: "Блог", scholarships: "Стипендии",
+    partners: "Партнеры", donate: "Пожертвовать", about: "О нас", contact: "Контакты",
+    instructorApplication: "Преподавать у нас",
+    business: "Регистрация бизнеса", hosting: "Хостинг и серверы", development: "Разработка ПО",
+    dashboard: "Панель", signIn: "Войти", getStarted: "Начать", signOut: "Выйти",
+    welcome: "Добро пожаловать,", selectLang: "Выбрать язык", editProfile: "Редактировать профиль", signedInAs: "Вы вошли как"
+  },
+  tr: {
+    home: "Ana Sayfa", feed: "Sosyal Akış", learn: "Öğren", academy: "Akademi", corporate: "Kurumsal",
+    courses: "Kurslar", blog: "Blog", scholarships: "Burslar",
+    partners: "Ortaklarımız", donate: "Bağış Yap", about: "Hakkımızda", contact: "İletişim",
+    instructorApplication: "Eğitmen Olun",
+    business: "Şirket Kuruluşu", hosting: "Hosting & Sunucu", development: "Yazılım Geliştirme",
+    dashboard: "Panel", signIn: "Giriş Yap", getStarted: "Başlayın", signOut: "Çıkış Yap",
+    welcome: "Hoş geldiniz,", selectLang: "Dil Seçiniz", editProfile: "Profili Düzenle", signedInAs: "Giriş yapılan hesap"
+  },
   de: {
     home: "Startseite", feed: "Feed", learn: "Lernen", academy: "Akademie", corporate: "Unternehmen",
     courses: "Kurse", blog: "Blog", scholarships: "Stipendien",
@@ -63,6 +84,15 @@ const translations: Record<string, any> = {
     business: "Création d'entreprise", hosting: "Offres d'hébergement", development: "Services de développement",
     dashboard: "Tableau de bord", signIn: "Se connecter", getStarted: "Commencer", signOut: "Se déconnecter",
     welcome: "Bienvenue,", selectLang: "Choisir la langue", editProfile: "Modifier le profil", signedInAs: "Connecté en tant que"
+  },
+  ar: {
+    home: "الرئيسية", feed: "الخلاصة", learn: "التعليم", academy: "الأكاديمية", corporate: "الشركات",
+    courses: "الدورات", blog: "المدونة", scholarships: "المنح الدراسية",
+    partners: "شركاؤنا", donate: "تبرع", about: "عن الأكاديمية", contact: "اتصل بنا",
+    instructorApplication: "انضم كمعلم",
+    business: "تأسيس الأعمال", hosting: "الاستضافة والخوادم", development: "خدمات التطوير",
+    dashboard: "لوحة التحكم", signIn: "تسجيل الدخول", getStarted: "ابدأ الآن", signOut: "تسجيل الخروج",
+    welcome: "مرحباً،", selectLang: "اختر اللغة", editProfile: "تعديل الملف الشخصي", signedInAs: "مسجل الدخول باسم"
   },
   ur: {
     home: "ہوم", feed: "سوشل فیڈ", learn: "سیکھیں", academy: "اکیڈمی", corporate: "کارپوریٹ",
@@ -83,7 +113,17 @@ export default function Header() {
   const activeLang = languages.find((l) => l.code === currentLocale) || languages[0];
   const t = translations[currentLocale] || translations["en"];
 
-  const isRTL = useMemo(() => ["fa", "ps", "ur"].includes(currentLocale), [currentLocale]);
+  const isRTL = useMemo(() => ["fa", "ps", "ar", "ur"].includes(currentLocale), [currentLocale]);
+
+  const getLocalizedPath = (targetLocale: string) => {
+    if (!pathname) return `/${targetLocale}`;
+    const segments = pathname.split("/");
+    if (segments.length >= 2) {
+      segments[1] = targetLocale;
+      return segments.join("/") || `/${targetLocale}`;
+    }
+    return `/${targetLocale}`;
+  };
 
   // Reorganized navigation links into logical dropdown groups
   const navGroups = [
@@ -280,31 +320,28 @@ export default function Header() {
               <span className="text-xs font-black uppercase tracking-wider">{activeLang.code}</span>
               <ChevronDown size={12} className="group-hover/lang:rotate-180 transition-transform text-white/40" />
             </button>
-            <div className="absolute top-[85%] mt-2 p-2 bg-[#06060a]/95 backdrop-blur-3xl border border-white/10 rounded-2xl opacity-0 invisible group-hover/lang:opacity-100 group-hover/lang:visible transition-all duration-300 shadow-2xl transform origin-top-right scale-95 group-hover/lang:scale-100 z-50 w-52 flex flex-col gap-1">
-              {languages.map((lang) => (
-                lang.code === "en" ? (
+            <div className="absolute top-[85%] mt-2 p-2 bg-[#06060a]/95 backdrop-blur-3xl border border-white/10 rounded-2xl opacity-0 invisible group-hover/lang:opacity-100 group-hover/lang:visible transition-all duration-300 shadow-2xl transform origin-top-right scale-95 group-hover/lang:scale-100 z-50 w-56 flex flex-col gap-1 max-h-[380px] overflow-y-auto">
+              {languages.map((lang) => {
+                const isActive = lang.code === currentLocale;
+                return (
                   <Link 
                     key={lang.code} 
-                    href={`/${lang.code}`} 
-                    className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all bg-white/5 border border-white/5 text-white shadow-inner"
+                    href={getLocalizedPath(lang.code)} 
+                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                      isActive 
+                        ? "bg-white/10 border border-white/15 text-white shadow-inner" 
+                        : "text-neutral-400 hover:text-white hover:bg-white/5 border border-transparent"
+                    }`}
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-lg leading-none">{lang.flag}</span> {lang.name}
                     </div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+                    {isActive && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+                    )}
                   </Link>
-                ) : (
-                  <div 
-                    key={lang.code}
-                    className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-neutral-600 cursor-not-allowed"
-                  >
-                    <div className="flex items-center gap-3 opacity-40">
-                      <span className="text-lg leading-none">{lang.flag}</span> {lang.name}
-                    </div>
-                    <span className="text-[8px] font-black uppercase tracking-widest bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-2 py-0.5 rounded-md">Soon</span>
-                  </div>
-                )
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -435,35 +472,31 @@ export default function Header() {
               )}
             </div>
 
-            {/* بخش انتخاب زبان موبایل با نمایش نشانگر SOON */}
+            {/* بخش انتخاب زبان موبایل برای تمام ۹ زبان */}
             <div className="border-t border-white/5 pt-6">
               <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4 px-2 flex items-center gap-2"><Globe size={13} /> {t.selectLang}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {languages.map((lang) => (
-                  lang.code === "en" ? (
+                {languages.map((lang) => {
+                  const isActive = lang.code === currentLocale;
+                  return (
                     <Link
                       key={lang.code}
-                      href={`/${lang.code}`}
-                      className="flex items-center justify-between rounded-xl px-4 py-3.5 text-xs font-bold transition-all bg-white/5 border border-white/10 text-white shadow-inner"
+                      href={getLocalizedPath(lang.code)}
+                      className={`flex items-center justify-between rounded-xl px-4 py-3.5 text-xs font-bold transition-all ${
+                        isActive
+                          ? "bg-white/10 border border-white/15 text-white shadow-inner"
+                          : "bg-white/[0.02] border border-white/5 text-neutral-400 hover:text-white hover:bg-white/5"
+                      }`}
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-lg leading-none">{lang.flag}</span> {lang.name}
                       </div>
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+                      {isActive && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+                      )}
                     </Link>
-                  ) : (
-                    <div
-                      key={lang.code}
-                      className="flex items-center justify-between rounded-xl px-4 py-3.5 text-xs font-bold bg-white/[0.01] border border-white/5 opacity-60 cursor-not-allowed"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg leading-none">{lang.flag}</span> 
-                        <span className="text-neutral-400">{lang.name}</span>
-                      </div>
-                      <span className="text-[9px] font-black uppercase tracking-widest bg-yellow-500/10 text-yellow-500 px-2 py-0.5 rounded-md">Soon</span>
-                    </div>
-                  )
-                ))}
+                  );
+                })}
               </div>
             </div>
 
