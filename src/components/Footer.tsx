@@ -576,6 +576,7 @@ export default function Footer() {
           <div className="flex flex-wrap items-center justify-center gap-5 text-neutral-400">
             <Link href={`/${currentLocale}/privacy-policy`} className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href={`/${currentLocale}/terms`} className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link href={`/${currentLocale}/delete-account`} className="hover:text-rose-400 text-neutral-400 transition-colors">Delete Account</Link>
             <Link href={`/${currentLocale}/donate`} className="hover:text-white transition-colors">Scholarship Endowment</Link>
             
             {/* System Status Pill */}

@@ -24,7 +24,8 @@ import {
   Sparkles,
   ArrowUpRight,
   ShieldCheck,
-  AlertTriangle
+  AlertTriangle,
+  Trash2
 } from "lucide-react";
 
 export default function PrivacyPolicyPage() {
@@ -537,6 +538,26 @@ export default function PrivacyPolicyPage() {
                     <p className="text-[11px] text-neutral-400 leading-relaxed">{right.desc}</p>
                   </div>
                 ))}
+              </div>
+
+              {/* Direct Link to Account Deletion Portal */}
+              <div className="mt-6 p-5 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
+                    <Trash2 className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white">Need to permanently delete your account & erase your data?</p>
+                    <p className="text-[11px] text-neutral-400">Access our official self-service App Store & GDPR Account Deletion Gateway.</p>
+                  </div>
+                </div>
+                <Link
+                  href="/en/delete-account"
+                  className="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-black text-xs uppercase tracking-wider transition-all whitespace-nowrap shadow-md flex items-center gap-1.5 shrink-0"
+                >
+                  <span>Delete Account</span>
+                  <ExternalLink size={12} />
+                </Link>
               </div>
             </div>
 
