@@ -24,10 +24,10 @@ const languages = [
 const translations: Record<string, any> = {
   en: {
     home: "Home", feed: "Feed", learn: "Learn", academy: "Academy", corporate: "Corporate",
-    courses: "Courses", blog: "Blog", scholarships: "Scholarships", 
+    courses: "Courses", blog: "Blog", scholarships: "Scholarships",
     partners: "Our Partners", donate: "Donate", about: "About", contact: "Contact",
     instructorApplication: "Teach With Us",
-    business: "Business Setup", hosting: "Hosting Deals", development: "Development Services",
+    business: "Business Setup", hosting: "Hosting Deals", development: "Development Services", bankAccountService: "Bank Account Service",
     dashboard: "Dashboard", signIn: "Sign In", getStarted: "Get Started", signOut: "Sign Out",
     welcome: "Welcome,", selectLang: "Select Language", editProfile: "Edit Profile", signedInAs: "Signed in as"
   },
@@ -36,7 +36,7 @@ const translations: Record<string, any> = {
     courses: "کورس‌ها", blog: "بلاگ", scholarships: "بورسیه‌ها",
     partners: "شرکای ما", donate: "کمک مالی", about: "درباره ما", contact: "تماس",
     instructorApplication: "درخواست تدریس (استادی)",
-    business: "ثبت شرکت", hosting: "هاستینگ و سرور", development: "خدمات توسعه نرم‌افزار",
+    business: "ثبت شرکت", hosting: "هاستینگ و سرور", development: "خدمات توسعه نرم‌افزار", bankAccountService: "خدمات حساب بانکی",
     dashboard: "داشـبورد", signIn: "ورود", getStarted: "شروع کنید", signOut: "خروج",
     welcome: "خوش آمدید،", selectLang: "انتخاب زبان آکادمی", editProfile: "ویرایش پروفایل", signedInAs: "وارد شده با"
   },
@@ -45,7 +45,7 @@ const translations: Record<string, any> = {
     courses: "کورسونه", blog: "بلاګ", scholarships: "بورسیې",
     partners: "زموږ شریکان", donate: "مرسته", about: "زموږ په اړه", contact: "اړیکه",
     instructorApplication: "د ښوونکي غوښتنلیک",
-    business: "د شرکت ثبت", hosting: "د هوسټینګ وړاندیزونه", development: "د سافټویر جوړولو خدمتونه",
+    business: "د شرکت ثبت", hosting: "د هوسټینګ وړاندیزونه", development: "د سافټویر جوړولو خدمتونه", bankAccountService: "د بانکي حساب خدمت",
     dashboard: "ډشبورډ", signIn: "ننوتل", getStarted: "پیل کړئ", signOut: "وتل",
     welcome: "ښه راغلاست،", selectLang: "د اکاډمۍ ژبه غوره کړئ", editProfile: "پروفایل ایډیټ کړئ", signedInAs: "ننوتل شوی په توګه"
   },
@@ -54,7 +54,7 @@ const translations: Record<string, any> = {
     courses: "Курсы", blog: "Блог", scholarships: "Стипендии",
     partners: "Партнеры", donate: "Пожертвовать", about: "О нас", contact: "Контакты",
     instructorApplication: "Преподавать у нас",
-    business: "Регистрация бизнеса", hosting: "Хостинг и серверы", development: "Разработка ПО",
+    business: "Регистрация бизнеса", hosting: "Хостинг и серверы", development: "Разработка ПО", bankAccountService: "Банковский счёт",
     dashboard: "Панель", signIn: "Войти", getStarted: "Начать", signOut: "Выйти",
     welcome: "Добро пожаловать,", selectLang: "Выбрать язык", editProfile: "Редактировать профиль", signedInAs: "Вы вошли как"
   },
@@ -63,7 +63,7 @@ const translations: Record<string, any> = {
     courses: "Kurslar", blog: "Blog", scholarships: "Burslar",
     partners: "Ortaklarımız", donate: "Bağış Yap", about: "Hakkımızda", contact: "İletişim",
     instructorApplication: "Eğitmen Olun",
-    business: "Şirket Kuruluşu", hosting: "Hosting & Sunucu", development: "Yazılım Geliştirme",
+    business: "Şirket Kuruluşu", hosting: "Hosting & Sunucu", development: "Yazılım Geliştirme", bankAccountService: "Banka Hesabı Hizmeti",
     dashboard: "Panel", signIn: "Giriş Yap", getStarted: "Başlayın", signOut: "Çıkış Yap",
     welcome: "Hoş geldiniz,", selectLang: "Dil Seçiniz", editProfile: "Profili Düzenle", signedInAs: "Giriş yapılan hesap"
   },
@@ -72,7 +72,7 @@ const translations: Record<string, any> = {
     courses: "Kurse", blog: "Blog", scholarships: "Stipendien",
     partners: "Unsere Partner", donate: "Spenden", about: "Über uns", contact: "Kontakt",
     instructorApplication: "Dozent werden",
-    business: "Unternehmensgründung", hosting: "Hosting-Angebote", development: "Entwicklungsdienste",
+    business: "Unternehmensgründung", hosting: "Hosting-Angebote", development: "Entwicklungsdienste", bankAccountService: "Bankkonto-Service",
     dashboard: "Dashboard", signIn: "Anmelden", getStarted: "Loslegen", signOut: "Abmelden",
     welcome: "Willkommen,", selectLang: "Sprache auswählen", editProfile: "Profil bearbeiten", signedInAs: "Angemeldet als"
   },
@@ -81,7 +81,7 @@ const translations: Record<string, any> = {
     courses: "Cours", blog: "Blog", scholarships: "Bourses",
     partners: "Nos Partenaires", donate: "Faire un don", about: "À propos", contact: "Contact",
     instructorApplication: "Devenir Formateur",
-    business: "Création d'entreprise", hosting: "Offres d'hébergement", development: "Services de développement",
+    business: "Création d'entreprise", hosting: "Offres d'hébergement", development: "Services de développement", bankAccountService: "Service de compte bancaire",
     dashboard: "Tableau de bord", signIn: "Se connecter", getStarted: "Commencer", signOut: "Se déconnecter",
     welcome: "Bienvenue,", selectLang: "Choisir la langue", editProfile: "Modifier le profil", signedInAs: "Connecté en tant que"
   },
@@ -90,7 +90,7 @@ const translations: Record<string, any> = {
     courses: "الدورات", blog: "المدونة", scholarships: "المنح الدراسية",
     partners: "شركاؤنا", donate: "تبرع", about: "عن الأكاديمية", contact: "اتصل بنا",
     instructorApplication: "انضم كمعلم",
-    business: "تأسيس الأعمال", hosting: "الاستضافة والخوادم", development: "خدمات التطوير",
+    business: "تأسيس الأعمال", hosting: "الاستضافة والخوادم", development: "خدمات التطوير", bankAccountService: "خدمة الحساب البنكي",
     dashboard: "لوحة التحكم", signIn: "تسجيل الدخول", getStarted: "ابدأ الآن", signOut: "تسجيل الخروج",
     welcome: "مرحباً،", selectLang: "اختر اللغة", editProfile: "تعديل الملف الشخصي", signedInAs: "مسجل الدخول باسم"
   },
@@ -99,7 +99,7 @@ const translations: Record<string, any> = {
     courses: "کورسز", blog: "بلاگ", scholarships: "اسکالرشپ",
     partners: "ہمارے شراکت دار", donate: "عطیہ", about: "ہمارے بارے میں", contact: "رابطہ",
     instructorApplication: "استاد بنیں (درخواست)",
-    business: "بزنس سیٹ اپ", hosting: "ہوسٹنگ ڈیلز", development: "ڈیولپمنٹ سروسز",
+    business: "بزنس سیٹ اپ", hosting: "ہوسٹنگ ڈیلز", development: "ڈیولپمنٹ سروسز", bankAccountService: "بینک اکاؤنٹ سروس",
     dashboard: "ڈیش بورڈ", signIn: "سائن ان", getStarted: "شروع کریں", signOut: "سائن آؤٹ",
     welcome: "خوش آمدید،", selectLang: "اکیڈمی کی زبان منتخب کریں", editProfile: "پروفایل میں ترمیم کریں", signedInAs: "سائن ان بطور"
   }
@@ -108,7 +108,7 @@ const translations: Record<string, any> = {
 export default function Header() {
   const pathname = usePathname() || "/en";
   const router = useRouter();
-  
+
   const currentLocale = pathname.split("/")[1] || "en";
   const activeLang = languages.find((l) => l.code === currentLocale) || languages[0];
   const t = translations[currentLocale] || translations["en"];
@@ -172,6 +172,7 @@ export default function Header() {
         { name: t.business, path: "/business-formation", icon: <Briefcase size={14} /> },
         { name: t.hosting, path: "/hosting", icon: <Server size={14} /> },
         { name: t.development, path: "/development-services", icon: <Code2 size={14} /> }, // Added Development Services link
+        { name: t.bankAccountService, path: "/bank-account-service", icon: <Landmark size={14} /> },
         { name: t.partners, path: "/partners", icon: <Building2 size={14} /> },
         { name: t.contact, path: "/contact", icon: <Mail size={14} /> },
       ]
@@ -197,7 +198,7 @@ export default function Header() {
         if (session?.user) {
           const { data: profile } = await supabase
             .from("profiles")
-            .select("first_name, last_name, avatar_url, role") 
+            .select("first_name, last_name, avatar_url, role")
             .eq("id", session.user.id)
             .single();
 
@@ -230,20 +231,20 @@ export default function Header() {
     if (userProfile.role === "teacher") {
       return `/${activeLang.code}/teacher`;
     }
-    return `/${activeLang.code}/dashboard`; 
+    return `/${activeLang.code}/dashboard`;
   };
 
   if (pathname.includes("/dashboard") || pathname.includes("/admin") || pathname.includes("/teacher")) return null;
 
   return (
     <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-50 w-[96%] lg:w-[98%] max-w-[2000px] transition-all duration-700" dir={isRTL ? "rtl" : "ltr"}>
-      
+
       {/* هاله نوری داینامیک پشت هدر */}
       <div className={`absolute -inset-[1px] rounded-[2.5rem] bg-gradient-to-r ${activeLang.gradient} opacity-20 blur-xl transition-all duration-1000 pointer-events-none`}></div>
 
       {/* بدنه شیشه‌ای فوق لوکس هدر */}
       <div className="relative w-full h-20 lg:h-24 px-4 lg:px-8 bg-[#030305]/60 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] flex items-center justify-between shadow-2xl">
-        
+
         {/* خط نوری زیرین هدر */}
         <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r ${activeLang.gradient} opacity-30 rounded-full`}></div>
 
@@ -259,13 +260,13 @@ export default function Header() {
         </Link>
 
         {/* ================= منوی لینک‌های وسط (دسکتاپ - کشویی و گروه بندی شده) ================= */}
-        <nav 
+        <nav
           className="hidden xl:flex items-center gap-1 p-1 bg-white/[0.01] border border-white/5 rounded-2xl relative z-20"
           onMouseLeave={() => setHoveredTab(null)}
         >
           {navGroups.map((group) => (
             group.isDropdown ? (
-              <div 
+              <div
                 key={group.id}
                 className="relative group/dropdown h-10 flex items-center justify-center"
                 onMouseEnter={() => setHoveredTab(group.id)}
@@ -280,9 +281,9 @@ export default function Header() {
                 {/* بدنه شیشه‌ای دراپ‌داون */}
                 <div className="absolute top-[85%] mt-2 right-0 w-64 p-2 bg-[#06060a]/90 backdrop-blur-3xl border border-white/10 rounded-2xl opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all duration-300 shadow-2xl transform origin-top-right scale-95 group-hover/dropdown:scale-100 z-50">
                   {group.items?.map((sub, i) => (
-                    <Link 
-                      key={i} 
-                      href={`/${activeLang.code}${sub.path}`} 
+                    <Link
+                      key={i}
+                      href={`/${activeLang.code}${sub.path}`}
                       className="flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-neutral-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5 transition-all group/sub"
                     >
                       {sub.icon} {sub.name} <ArrowRight size={14} className={`opacity-0 group-hover/sub:opacity-100 transition-all ${isRTL ? 'mr-auto rotate-180 group-hover/sub:-translate-x-1' : 'ml-auto group-hover/sub:translate-x-1'}`} />
@@ -291,14 +292,14 @@ export default function Header() {
                 </div>
               </div>
             ) : (
-              <Link 
-                key={group.id} 
-                href={`/${activeLang.code}${group.path}`} 
+              <Link
+                key={group.id}
+                href={`/${activeLang.code}${group.path}`}
                 onMouseEnter={() => setHoveredTab(group.id)}
                 className="relative flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider text-neutral-400 hover:text-white transition-colors duration-300"
               >
                 {hoveredTab === group.id && (
-                  <motion.div 
+                  <motion.div
                     layoutId="navHoverCapsule"
                     className="absolute inset-0 bg-white/[0.07] border border-white/5 rounded-xl -z-10 shadow-lg backdrop-blur-md"
                     transition={{ type: "spring", stiffness: 350, damping: 25 }}
@@ -312,7 +313,7 @@ export default function Header() {
 
         {/* ================= بخش اکشن‌ها و سوئیچر زبان ================= */}
         <div className="flex items-center gap-3 shrink-0 relative z-20">
-          
+
           {/* سوئیچر زبان (دسکتاپ با پرچم‌های دایره‌ای) */}
           <div className="relative group/lang hidden md:block h-10 flex items-center justify-center">
             <button className="flex items-center gap-2 px-3 py-2 bg-white/[0.03] border border-white/10 hover:border-white/20 rounded-xl hover:bg-white/[0.08] hover:text-white text-neutral-300 transition-all duration-300 shadow-sm">
@@ -326,14 +327,13 @@ export default function Header() {
               {languages.map((lang) => {
                 const isActive = lang.code === currentLocale;
                 return (
-                  <Link 
-                    key={lang.code} 
-                    href={getLocalizedPath(lang.code)} 
-                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                      isActive 
-                        ? "bg-white/10 border border-white/15 text-white shadow-inner" 
-                        : "text-neutral-400 hover:text-white hover:bg-white/5 border border-transparent"
-                    }`}
+                  <Link
+                    key={lang.code}
+                    href={getLocalizedPath(lang.code)}
+                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${isActive
+                      ? "bg-white/10 border border-white/15 text-white shadow-inner"
+                      : "text-neutral-400 hover:text-white hover:bg-white/5 border border-transparent"
+                      }`}
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-5 h-5 rounded-full overflow-hidden border border-white/20 shadow-sm shrink-0 flex items-center justify-center bg-black/40">
@@ -356,13 +356,13 @@ export default function Header() {
               <div className="w-5 h-5 border-2 border-yellow-500/20 border-t-yellow-500 rounded-full animate-spin mr-6"></div>
             ) : userProfile ? (
               <>
-                <Link 
-                  href={getDashboardRoute()} 
+                <Link
+                  href={getDashboardRoute()}
                   className="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest text-black bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 shadow-[0_0_25px_rgba(234,179,8,0.25)] hover:scale-[1.01] transition-all duration-300 flex items-center gap-2 border border-yellow-400/20"
                 >
                   <LayoutDashboard size={15} /> {t.dashboard}
                 </Link>
-                
+
                 <div className="relative group/profile cursor-pointer h-12 flex items-center justify-center">
                   <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-yellow-500/40 shadow-[0_0_15px_rgba(234,179,8,0.2)] bg-neutral-900 flex items-center justify-center hover:border-yellow-400 transition-colors">
                     {userProfile.avatar_url ? (
@@ -373,11 +373,11 @@ export default function Header() {
                   </div>
                   <div className="absolute top-[85%] mt-2 right-0 p-1.5 bg-[#06060a]/95 backdrop-blur-3xl border border-white/10 rounded-2xl opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all duration-300 shadow-2xl z-50 transform origin-top-right scale-95 group-hover/profile:scale-100 w-52">
                     <div className="px-4 py-2.5 border-b border-white/5 mb-1">
-                        <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">{t.signedInAs}</p>
-                        <p className="text-xs font-black text-white truncate">{userProfile.first_name}</p>
+                      <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">{t.signedInAs}</p>
+                      <p className="text-xs font-black text-white truncate">{userProfile.first_name}</p>
                     </div>
                     <Link href={`${getDashboardRoute()}/profile`} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-neutral-400 hover:bg-white/5 hover:text-white transition-colors">
-                        <Settings size={14} /> {t.editProfile}
+                      <Settings size={14} /> {t.editProfile}
                     </Link>
                     <button onClick={handleLogout} className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors">
                       <LogOut size={14} /> {t.signOut}
@@ -418,37 +418,37 @@ export default function Header() {
         {/* ================= منوی موبایل ================= */}
         <div className={`absolute inset-x-0 top-full mt-4 rounded-3xl border border-white/10 bg-[#06060a]/95 backdrop-blur-3xl shadow-2xl transition-all duration-300 ease-in-out xl:hidden overflow-hidden origin-top ${mobileMenuOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-95 pointer-events-none"}`}>
           <div className="max-h-[80vh] overflow-y-auto custom-scrollbar p-6 flex flex-col gap-6">
-            
+
             <nav className="flex flex-col gap-2">
-                {navGroups.map((group, index) => (
-                  <div key={index} className="flex flex-col">
-                    {group.isDropdown ? (
-                      <>
-                        <div className="flex items-center gap-3.5 px-2 py-2 text-xs font-black uppercase tracking-widest text-neutral-500 opacity-60">
-                          {group.icon} {group.name}
-                        </div>
-                        <div className="flex flex-col pl-4 border-l border-white/10 ml-4 mb-2 mt-1">
-                          {group.items?.map((sub, subIndex) => (
-                            <Link
-                              key={subIndex}
-                              href={`/${activeLang.code}${sub.path}`}
-                              className="flex items-center gap-3.5 rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-neutral-300 hover:bg-white/5 hover:text-white transition-colors"
-                            >
-                                {sub.icon} {sub.name} <ArrowRight size={14} className={`opacity-20 ${isRTL ? 'mr-auto rotate-180' : 'ml-auto'}`} />
-                            </Link>
-                          ))}
-                        </div>
-                      </>
-                    ) : (
-                      <Link
-                          href={`/${activeLang.code}${group.path}`}
-                          className="flex items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest text-neutral-300 hover:bg-white/5 hover:text-white transition-colors"
-                      >
-                          {group.icon} {group.name} <ArrowRight size={14} className={`opacity-20 ${isRTL ? 'mr-auto rotate-180' : 'ml-auto'}`} />
-                      </Link>
-                    )}
-                  </div>
-                ))}
+              {navGroups.map((group, index) => (
+                <div key={index} className="flex flex-col">
+                  {group.isDropdown ? (
+                    <>
+                      <div className="flex items-center gap-3.5 px-2 py-2 text-xs font-black uppercase tracking-widest text-neutral-500 opacity-60">
+                        {group.icon} {group.name}
+                      </div>
+                      <div className="flex flex-col pl-4 border-l border-white/10 ml-4 mb-2 mt-1">
+                        {group.items?.map((sub, subIndex) => (
+                          <Link
+                            key={subIndex}
+                            href={`/${activeLang.code}${sub.path}`}
+                            className="flex items-center gap-3.5 rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-neutral-300 hover:bg-white/5 hover:text-white transition-colors"
+                          >
+                            {sub.icon} {sub.name} <ArrowRight size={14} className={`opacity-20 ${isRTL ? 'mr-auto rotate-180' : 'ml-auto'}`} />
+                          </Link>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <Link
+                      href={`/${activeLang.code}${group.path}`}
+                      className="flex items-center gap-3.5 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-widest text-neutral-300 hover:bg-white/5 hover:text-white transition-colors"
+                    >
+                      {group.icon} {group.name} <ArrowRight size={14} className={`opacity-20 ${isRTL ? 'mr-auto rotate-180' : 'ml-auto'}`} />
+                    </Link>
+                  )}
+                </div>
+              ))}
             </nav>
 
             {/* بخش کاربری موبایل */}
@@ -458,13 +458,13 @@ export default function Header() {
               ) : userProfile ? (
                 <>
                   <div className="flex items-center gap-3 px-2 mb-1">
-                     <div className="w-11 h-11 rounded-full bg-neutral-800 border border-yellow-500 flex items-center justify-center font-bold overflow-hidden">
-                       {userProfile.avatar_url ? <img src={userProfile.avatar_url} className="w-full h-full object-cover" /> : userProfile.first_name?.charAt(0)}
-                     </div>
-                     <div>
-                       <p className="text-[10px] text-neutral-500 font-bold">{t.welcome}</p>
-                       <p className="text-sm font-black text-white">{userProfile.first_name}</p>
-                     </div>
+                    <div className="w-11 h-11 rounded-full bg-neutral-800 border border-yellow-500 flex items-center justify-center font-bold overflow-hidden">
+                      {userProfile.avatar_url ? <img src={userProfile.avatar_url} className="w-full h-full object-cover" /> : userProfile.first_name?.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-neutral-500 font-bold">{t.welcome}</p>
+                      <p className="text-sm font-black text-white">{userProfile.first_name}</p>
+                    </div>
                   </div>
                   <Link href={getDashboardRoute()} className="flex items-center justify-center gap-2 rounded-xl bg-yellow-500/10 border border-yellow-500/20 px-4 py-3.5 text-xs font-black uppercase tracking-widest text-yellow-500"><LayoutDashboard size={16} /> {t.dashboard}</Link>
                   <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 rounded-xl border border-red-500/10 bg-red-500/5 px-4 py-3.5 text-xs font-black uppercase tracking-widest text-red-400"><LogOut size={16} /> {t.signOut}</button>
@@ -487,11 +487,10 @@ export default function Header() {
                     <Link
                       key={lang.code}
                       href={getLocalizedPath(lang.code)}
-                      className={`flex items-center justify-between rounded-xl px-4 py-3.5 text-xs font-bold transition-all ${
-                        isActive
-                          ? "bg-white/10 border border-white/15 text-white shadow-inner"
-                          : "bg-white/[0.02] border border-white/5 text-neutral-400 hover:text-white hover:bg-white/5"
-                      }`}
+                      className={`flex items-center justify-between rounded-xl px-4 py-3.5 text-xs font-bold transition-all ${isActive
+                        ? "bg-white/10 border border-white/15 text-white shadow-inner"
+                        : "bg-white/[0.02] border border-white/5 text-neutral-400 hover:text-white hover:bg-white/5"
+                        }`}
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-5 h-5 rounded-full overflow-hidden border border-white/20 shadow-sm shrink-0 flex items-center justify-center bg-black/40">
