@@ -64,9 +64,9 @@ export default function TeacherCoursesPage() {
           <div>
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 bg-fuchsia-500/10 text-fuchsia-400 rounded-xl flex items-center justify-center text-xl">📚</div>
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Course <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">Curriculum</span></h1>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight">{t.teacherPages.course} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">{t.teacherPages.courseCurriculum}</span></h1>
             </div>
-            <p className="text-sm text-neutral-500 font-medium">Manage your published video courses and enroll students manually.</p>
+            <p className="text-sm text-neutral-500 font-medium">{t.teacherPages.managePublishedCoursesDesc}</p>
           </div>
           
           {/* 🔥 دکمه متصل شد به صفحه ترمینال (Management) 🔥 */}
@@ -86,8 +86,8 @@ export default function TeacherCoursesPage() {
         ) : courses.length === 0 ? (
           <div className="text-center py-24 bg-neutral-900/20 border border-dashed border-white/10 rounded-[3rem] backdrop-blur-sm">
             <span className="text-6xl block mb-4 opacity-50">📖</span>
-            <h3 className="text-xl font-black text-white mb-2">No courses published yet</h3>
-            <p className="text-neutral-500 text-sm max-w-sm mx-auto">Start building your educational empire by creating your first video course.</p>
+            <h3 className="text-xl font-black text-white mb-2">{t.teacherPages.noCoursesPublishedYet}</h3>
+            <p className="text-neutral-500 text-sm max-w-sm mx-auto">{t.teacherPages.startBuildingEduEmpire}</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

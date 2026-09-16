@@ -230,8 +230,8 @@ export default function AdminApplicationDetailPage() {
     return (
       <div className="min-h-screen p-10 text-center text-white">
         <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-3" />
-        <h2 className="text-2xl font-black">Application Not Found</h2>
-        <p className="text-xs text-neutral-400 mt-2 mb-6">The requested candidate dossier does not exist.</p>
+        <h2 className="text-2xl font-black">{t.adminPages.applicationNotFound}</h2>
+        <p className="text-xs text-neutral-400 mt-2 mb-6">{t.adminPages.candidateDossierNotExist}</p>
         <Link
           href={`/${currentLocale}/admin/application-form`}
           className="px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold uppercase tracking-wider"
@@ -305,7 +305,7 @@ export default function AdminApplicationDetailPage() {
               }`}
           >
             <XCircle size={15} />
-            <span>Reject Candidate</span>
+            <span>{t.adminPages.rejectCandidate}</span>
           </button>
 
           <button
@@ -400,7 +400,7 @@ export default function AdminApplicationDetailPage() {
                     {application.phone}
                   </a>
                 ) : (
-                  <span className="text-neutral-500 font-mono">Not provided</span>
+                  <span className="text-neutral-500 font-mono">{t.adminPages.notProvided}</span>
                 )}
               </div>
 
@@ -426,7 +426,7 @@ export default function AdminApplicationDetailPage() {
                     rel="noopener noreferrer"
                     className="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 hover:text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors"
                   >
-                    <span>View LinkedIn / Portfolio</span>
+                    <span>{t.adminPages.viewPortfolio}</span>
                     <ExternalLink size={13} />
                   </a>
                 </div>
@@ -439,7 +439,7 @@ export default function AdminApplicationDetailPage() {
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
               <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
                 <FileText size={16} className="text-purple-400" />
-                <span>Curriculum Vitae (CV)</span>
+                <span>{t.adminPages.curriculumVitae}</span>
               </h3>
               {application.resume_url && (
                 <a
@@ -448,7 +448,7 @@ export default function AdminApplicationDetailPage() {
                   rel="noopener noreferrer"
                   className="text-xs text-amber-400 hover:underline flex items-center gap-1 font-mono"
                 >
-                  <span>Open Full</span>
+                  <span>{t.common.view}</span>
                   <ExternalLink size={12} />
                 </a>
               )}
@@ -471,7 +471,7 @@ export default function AdminApplicationDetailPage() {
                   className="w-full py-3 px-4 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 text-xs font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-purple-500/10"
                 >
                   <Download size={14} />
-                  <span>Download Candidate CV / Resume</span>
+                  <span>{t.adminPages.downloadCv}</span>
                 </a>
               </div>
             ) : (
@@ -505,15 +505,15 @@ export default function AdminApplicationDetailPage() {
             {/* Quick Metrics Grid */}
             <div className="grid grid-cols-3 gap-3">
               <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                <span className="text-[10px] text-neutral-500 uppercase font-mono block">Teaching Format</span>
+                <span className="text-[10px] text-neutral-500 uppercase font-mono block">{t.adminPages.teachingFormat}</span>
                 <span className="text-xs font-bold text-white mt-1 block truncate">{application.teaching_format || "Hybrid"}</span>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                <span className="text-[10px] text-neutral-500 uppercase font-mono block">Instruction Language</span>
+                <span className="text-[10px] text-neutral-500 uppercase font-mono block">{t.adminPages.instructionLanguage}</span>
                 <span className="text-xs font-bold text-white mt-1 block truncate">{application.language || "English"}</span>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                <span className="text-[10px] text-neutral-500 uppercase font-mono block">Teaching Experience</span>
+                <span className="text-[10px] text-neutral-500 uppercase font-mono block">{t.adminPages.teachingExperience}</span>
                 <span className="text-xs font-bold text-white mt-1 block truncate">{application.experience_level || "Not specified"}</span>
               </div>
             </div>
@@ -532,7 +532,7 @@ export default function AdminApplicationDetailPage() {
           {/* 2. Professional Biography & Achievements */}
           <div className="bg-[#08080d] border border-white/[0.08] rounded-3xl p-6 md:p-8 space-y-6 shadow-xl">
             <div className="pb-4 border-b border-white/[0.06]">
-              <h3 className="text-lg font-bold text-white">Professional Biography & Qualifications</h3>
+              <h3 className="text-lg font-bold text-white">{t.adminPages.professionalBioQualifications}</h3>
             </div>
 
             <div>
@@ -562,7 +562,7 @@ export default function AdminApplicationDetailPage() {
               <div>
                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
                   <Video size={18} className="text-blue-400" />
-                  <span>Audition Lecture & Demonstration Video</span>
+                  <span>{t.adminPages.auditionLectureVideo}</span>
                 </h3>
                 <p className="text-xs text-neutral-400 mt-0.5">
                   Sample teaching demonstration provided by the instructor for pedagogical assessment.
@@ -599,7 +599,7 @@ export default function AdminApplicationDetailPage() {
                 ) : (
                   <div className="p-6 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="space-y-1 text-center sm:text-left">
-                      <div className="text-sm font-bold text-white">External Video Link Available</div>
+                      <div className="text-sm font-bold text-white">{t.adminPages.auditionLectureVideo}</div>
                       <div className="text-xs text-neutral-400 font-mono break-all">
                         {application.sample_video_url}
                       </div>
@@ -610,7 +610,7 @@ export default function AdminApplicationDetailPage() {
                       rel="noopener noreferrer"
                       className="px-5 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-400 text-black font-extrabold text-xs uppercase tracking-wider transition-colors shrink-0 flex items-center gap-1.5 shadow-lg shadow-blue-500/20"
                     >
-                      <span>Watch Demo Video</span>
+                      <span>{t.common.view}</span>
                       <ExternalLink size={13} />
                     </a>
                   </div>
@@ -627,7 +627,7 @@ export default function AdminApplicationDetailPage() {
           <div className="bg-[#08080d] border border-white/[0.08] rounded-3xl p-6 md:p-8 space-y-4 shadow-xl">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
               <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                <span>Admissions Committee Notes</span>
+                <span>{t.adminPages.admissionsCommitteeNotes}</span>
               </h3>
             </div>
 
@@ -635,7 +635,7 @@ export default function AdminApplicationDetailPage() {
               value={adminNotes}
               onChange={(e) => setAdminNotes(e.target.value)}
               rows={4}
-              placeholder="Add internal evaluation feedback, interview dates, agreed revenue share, or reasons for acceptance/rejection..."
+              placeholder={t.adminPages.admissionsNotesPlaceholder}
               className="w-full px-4 py-3 rounded-2xl bg-white/[0.03] border border-white/10 text-white text-xs md:text-sm focus:border-amber-400 focus:outline-none transition-colors resize-none leading-relaxed"
             />
 
@@ -646,7 +646,7 @@ export default function AdminApplicationDetailPage() {
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs uppercase tracking-wider transition-colors disabled:opacity-50"
               >
                 <Save size={14} />
-                <span>Save Notes</span>
+                <span>{t.adminPages.saveNotes}</span>
               </button>
             </div>
           </div>
@@ -734,7 +734,7 @@ export default function AdminApplicationDetailPage() {
                 {isUpdating ? (
                   <>
                     <Loader2 size={14} className="animate-spin" />
-                    <span>Processing...</span>
+                    <span>{t.common.loading}</span>
                   </>
                 ) : (
                   <>

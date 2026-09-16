@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -21,6 +22,7 @@ type TicketInfo = {
 };
 
 export default function ChatScreen({ params }: { params: { id: string } }) {
+  const t = getPortalTranslation();
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
     const router = useRouter();
@@ -202,7 +204,7 @@ export default function ChatScreen({ params }: { params: { id: string } }) {
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/[0.02] border border-white/[0.05] mb-3">
                         <Sparkles className="w-5 h-5 text-neutral-500" />
                     </div>
-                    <p className="text-[10px] text-neutral-600 font-bold uppercase tracking-[0.2em]">End-to-End Secure Session</p>
+                    <p className="text-[10px] text-neutral-600 font-bold uppercase tracking-[0.2em]">{t.publicPages.secureSession}</p>
                 </div>
 
                 {messages.map((msg) => {
@@ -243,7 +245,7 @@ export default function ChatScreen({ params }: { params: { id: string } }) {
                                     {msg.attachment_url && (
                                         <div className="mt-3 pt-3 border-t border-white/10 flex items-center gap-2">
                                             <a href={msg.attachment_url} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs text-pink-300 hover:underline">
-                                                <FileText size={16} /> View Attachment <Download size={14} />
+                                                <FileText size={16} /> {t.common.view} <Download size={14} />
                                             </a>
                                         </div>
                                     )}
@@ -262,7 +264,7 @@ export default function ChatScreen({ params }: { params: { id: string } }) {
                                 <div className="w-1.5 h-1.5 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
                                 <div className="w-1.5 h-1.5 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
                             </div>
-                            <span className="text-[10px] text-neutral-400 font-bold tracking-widest uppercase ml-2">Processing</span>
+                            <span className="text-[10px] text-neutral-400 font-bold tracking-widest uppercase ml-2">{t.common.loading}</span>
                         </div>
                     </div>
                 )}

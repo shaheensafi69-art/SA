@@ -1,4 +1,5 @@
-'use client';
+"use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
@@ -27,6 +28,8 @@ const LinkedinIcon = ({ size = 18 }: { size?: number }) => (
 export default function ShirinGolAhmadiExecutiveDossier() {
   const pathname = usePathname() || '/en';
   const currentLocale = pathname.split('/')[1] || 'en';
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -99,7 +102,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
           <div className="hidden sm:flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping" />
             <span className="text-[11px] font-black uppercase tracking-widest text-neutral-400">
-              General Operations & AI Systems • Islamabad
+              General Operations & {t.publicPages.aiSystems} • Islamabad
             </span>
           </div>
         </header>
@@ -115,7 +118,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
               <div className="relative h-full w-full rounded-[3rem] overflow-hidden bg-[#07070d]">
                 <Image 
                   src="/team/shirin.jpeg" 
-                  alt="Shirin Gol Ahmadi - Company Manager" 
+                  alt="Shirin Gol Ahmadi - {t.publicPages.companyManager}" 
                   fill 
                   className="object-cover object-top" 
                   priority 
@@ -132,7 +135,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
               <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#0a0a12]/90 border border-rose-500/30 backdrop-blur-2xl shadow-2xl">
                 <Cpu size={20} className="text-rose-400" />
                 <div className="text-left">
-                  <p className="text-[10px] uppercase font-black tracking-wider text-rose-400">AI Systems</p>
+                  <p className="text-[10px] uppercase font-black tracking-wider text-rose-400">{t.publicPages.aiSystems}</p>
                   <p className="text-xs font-bold text-white">Autonomous Agents</p>
                 </div>
               </div>
@@ -144,7 +147,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
             >
               <div className="px-5 py-3 rounded-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white font-black tracking-widest text-xs uppercase shadow-[0_10px_35px_rgba(244,63,94,0.4)] flex items-center gap-2">
                 <Briefcase size={15} />
-                <span>Company Manager</span>
+                <span>{t.publicPages.companyManager}</span>
               </div>
             </motion.div>
           </motion.div>
@@ -207,12 +210,12 @@ export default function ShirinGolAhmadiExecutiveDossier() {
             
             <div className="flex items-center gap-3 mb-8">
               <span className="w-3 h-8 rounded-full bg-gradient-to-b from-rose-400 to-pink-600" />
-              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">Executive Leadership & Vision</h2>
+              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">{t.publicPages.executiveLeadership}</h2>
             </div>
 
             <div className="space-y-6 text-neutral-300 text-base sm:text-lg leading-relaxed text-justify font-normal">
               <p>
-                I am <strong className="text-white font-bold">Shirin Gol Ahmadi</strong>, Company Manager at SafiPay and Director of Applied Artificial Intelligence Systems across the Safi Global Ecosystem. Born on December 16, 2004, my career is defined by fusing economic theory with full-stack engineering, high-aesthetic UI/UX design, and autonomous AI automation.
+                I am <strong className="text-white font-bold">Shirin Gol Ahmadi</strong>, {t.publicPages.companyManager} at SafiPay and Director of Applied Artificial Intelligence Systems across the Safi Global Ecosystem. Born on December 16, 2004, my career is defined by fusing economic theory with full-stack engineering, high-aesthetic UI/UX design, and autonomous AI automation.
               </p>
               
               <p>
@@ -227,7 +230,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
                 <div className="mt-4 flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-rose-400">
                   <span>— Shirin Gol Ahmadi</span>
                   <span>•</span>
-                  <span>Company Manager & AI Specialist</span>
+                  <span>{t.publicPages.companyManager} & AI Specialist</span>
                 </div>
               </div>
 
@@ -265,7 +268,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
 
               <div className="p-8 rounded-[2.5rem] bg-[#07070d] border border-white/10 hover:border-rose-500/40 hover:-translate-y-2 transition-all duration-300 shadow-xl">
                 <Cpu className="text-rose-400 mb-6" size={38} />
-                <h3 className="text-xl font-black text-white mb-2">Applied AI Systems</h3>
+                <h3 className="text-xl font-black text-white mb-2">Applied {t.publicPages.aiSystems}</h3>
                 <p className="text-neutral-400 text-xs font-semibold leading-relaxed">
                   Advanced Prompt Engineering, LLM Integration, Autonomous AI Tutoring (Safi AI), Workflow Orchestration.
                 </p>
@@ -304,7 +307,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
 
                 <div className="relative">
                   <div className="absolute -left-[41px] top-1.5 w-4 h-4 bg-white/20 border-2 border-[#030307] rounded-full" />
-                  <h4 className="text-xl font-black text-white">Director of AI Systems & Student Affairs</h4>
+                  <h4 className="text-xl font-black text-white">Director of {t.publicPages.aiSystems} & Student Affairs</h4>
                   <p className="text-rose-400 text-xs font-bold uppercase tracking-widest mt-1 mb-2">Safi Academy (2025 - Present)</p>
                   <p className="text-neutral-400 text-sm leading-relaxed">
                     Overseeing the deployment of the Safi AI autonomous mentor engine (v4.1), student scholarship vetting, and personalized pedagogical course trajectories.

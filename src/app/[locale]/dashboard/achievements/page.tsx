@@ -161,7 +161,7 @@ export default function AchievementsPage() {
               <Medal size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-blue-300/70 font-bold uppercase tracking-widest mb-0.5">Total Score</p>
+              <p className="text-[10px] text-blue-300/70 font-bold uppercase tracking-widest mb-0.5">{t.achievements.totalScore}</p>
               <p className="text-xl font-black text-white leading-none tracking-tight">
                 {isLoading ? "..." : totalScore.toLocaleString()} <span className="text-xs text-blue-400 font-bold">XP</span>
               </p>
@@ -195,12 +195,12 @@ export default function AchievementsPage() {
                   </div>
 
                   <div className="flex-1 w-full">
-                    <p className="text-[9px] sm:text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1 sm:mb-1.5">Verified Credential</p>
+                    <p className="text-[9px] sm:text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1 sm:mb-1.5">{t.achievements.verifiedCredential}</p>
                     <h3 className="text-base sm:text-lg font-black text-white mb-3 sm:mb-4 leading-tight line-clamp-2">{cert.course_name}</h3>
                     
                     <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-[11px] sm:text-xs">
                       <div className="bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 flex justify-between sm:justify-start">
-                        <span className="text-neutral-500 mr-2">Issued:</span>
+                        <span className="text-neutral-500 mr-2">{t.achievements.issued}</span>
                         <span className="text-neutral-200 font-bold">{new Date(cert.issue_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                       </div>
                       <div className="bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 flex justify-between sm:justify-start">
@@ -218,7 +218,7 @@ export default function AchievementsPage() {
                       className="w-full sm:w-auto mt-2 sm:mt-0 shrink-0 px-5 py-3 sm:py-3.5 bg-indigo-600/10 hover:bg-indigo-600 text-indigo-400 hover:text-white border border-indigo-500/20 rounded-xl text-xs font-black transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-wide"
                     >
                       <ScrollText size={16} />
-                      View PDF
+                      {t.achievements.viewCertificate}
                     </a>
                   )}
                 </div>
@@ -229,8 +229,8 @@ export default function AchievementsPage() {
               <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-4 border border-white/10 text-neutral-500">
                 <ScrollText size={32} />
               </div>
-              <h3 className="text-base sm:text-lg font-black text-white mb-2">No Certificates Yet</h3>
-              <p className="text-neutral-500 text-xs sm:text-sm max-w-sm">Your completed course certificates will securely appear here.</p>
+              <h3 className="text-base sm:text-lg font-black text-white mb-2">{t.achievements.noCertificatesTitle}</h3>
+              <p className="text-neutral-500 text-xs sm:text-sm max-w-sm">{t.achievements.noCertificatesDesc}</p>
             </div>
           )}
         </section>
@@ -239,7 +239,7 @@ export default function AchievementsPage() {
         <section className="animate-[fadeIn_0.5s_ease-out]">
           <div className="flex items-center gap-3 mb-6 sm:mb-8 border-b border-white/5 pb-4">
             <Award className="text-yellow-500" size={20} />
-            <h2 className="text-lg sm:text-xl font-black text-white tracking-wide">Badges & Honors</h2>
+            <h2 className="text-lg sm:text-xl font-black text-white tracking-wide">{t.achievements.badgesHonors}</h2>
             <span className="px-2.5 py-1 bg-white/5 rounded-md text-[10px] sm:text-xs font-bold text-neutral-400">{awards.length}</span>
           </div>
 
@@ -274,8 +274,8 @@ export default function AchievementsPage() {
               <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-4 border border-white/10 text-neutral-500">
                 <Award size={32} />
               </div>
-              <h3 className="text-base sm:text-lg font-black text-white mb-2">No Badges Yet</h3>
-              <p className="text-neutral-500 text-xs sm:text-sm max-w-sm">Complete assignments and participate in activities to unlock academy badges.</p>
+              <h3 className="text-base sm:text-lg font-black text-white mb-2">{t.achievements.noBadgesTitle}</h3>
+              <p className="text-neutral-500 text-xs sm:text-sm max-w-sm">{t.achievements.noBadgesDesc}</p>
             </div>
           )}
         </section>

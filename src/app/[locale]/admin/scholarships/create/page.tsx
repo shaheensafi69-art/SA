@@ -109,8 +109,8 @@ export default function CreateScholarshipPage() {
                         <GraduationCap size={28} strokeWidth={1.5} />
                     </div>
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">Add Scholarship</h1>
-                        <p className="text-xs sm:text-sm text-neutral-400 mt-1">Create a new global educational opportunity.</p>
+                        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">{t.adminPages.addScholarship}</h1>
+                        <p className="text-xs sm:text-sm text-neutral-400 mt-1">{t.adminPages.createGlobalOpportunityDesc}</p>
                     </div>
                 </div>
 
@@ -123,7 +123,7 @@ export default function CreateScholarshipPage() {
                         <div className="space-y-8">
 
                             <div className="rounded-[2rem] border border-white/5 bg-black/40 p-6 sm:p-10 shadow-2xl backdrop-blur-2xl space-y-6">
-                                <h2 className="text-sm font-black uppercase tracking-widest text-blue-400 border-b border-white/5 pb-4">General Info</h2>
+                                <h2 className="text-sm font-black uppercase tracking-widest text-blue-400 border-b border-white/5 pb-4">{t.adminPages.generalInfo}</h2>
 
                                 <div className="grid gap-6 md:grid-cols-2">
                                     <div className="space-y-2">
@@ -142,52 +142,52 @@ export default function CreateScholarshipPage() {
 
                                 <div className="grid gap-6 md:grid-cols-3">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><MapPin size={14} /> Continent</label>
+                                        <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><MapPin size={14} /> {t.adminPages.continent}</label>
                                         <input required type="text" value={formData.continent} onChange={(e) => setFormData({ ...formData, continent: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-3.5 text-sm text-white placeholder-neutral-600 focus:border-blue-500/50 focus:bg-white/[0.05] focus:outline-none transition-all shadow-inner" placeholder="Europe" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400">Country</label>
+                                        <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400">{t.teacherPages.country}</label>
                                         <input required type="text" value={formData.country} onChange={(e) => setFormData({ ...formData, country: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-3.5 text-sm text-white placeholder-neutral-600 focus:border-blue-500/50 focus:bg-white/[0.05] focus:outline-none transition-all shadow-inner" placeholder="United Kingdom" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400">University</label>
+                                        <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400">{t.adminPages.university}</label>
                                         <input required type="text" value={formData.university} onChange={(e) => setFormData({ ...formData, university: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-3.5 text-sm text-white placeholder-neutral-600 focus:border-blue-500/50 focus:bg-white/[0.05] focus:outline-none transition-all shadow-inner" placeholder="Oxford" />
                                     </div>
                                 </div>
 
                                 <div className="grid gap-6 md:grid-cols-2">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><Award size={14} /> Degree Level</label>
+                                        <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><Award size={14} /> {t.adminPages.degreeLevel}</label>
                                         <input required type="text" value={formData.degree_level} onChange={(e) => setFormData({ ...formData, degree_level: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-3.5 text-sm text-white placeholder-neutral-600 focus:border-blue-500/50 focus:bg-white/[0.05] focus:outline-none transition-all shadow-inner" placeholder="Master, PhD" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><Calendar size={14} /> Deadline</label>
+                                        <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><Calendar size={14} /> {t.adminPages.deadline}</label>
                                         <input required type="date" value={formData.deadline} onChange={(e) => setFormData({ ...formData, deadline: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-3.5 text-sm text-white placeholder-neutral-600 focus:border-blue-500/50 focus:bg-white/[0.05] focus:outline-none transition-all shadow-inner [color-scheme:dark]" />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><LinkIcon size={14} /> Apply Link</label>
+                                    <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><LinkIcon size={14} /> {t.adminPages.applyLink}</label>
                                     <input required type="url" value={formData.apply_link} onChange={(e) => setFormData({ ...formData, apply_link: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-3.5 text-sm text-white placeholder-neutral-600 focus:border-blue-500/50 focus:bg-white/[0.05] focus:outline-none transition-all shadow-inner" placeholder="https://..." />
                                 </div>
                             </div>
 
                             {/* Requirements & Description */}
                             <div className="rounded-[2rem] border border-white/5 bg-black/40 p-6 sm:p-10 shadow-2xl backdrop-blur-2xl space-y-6">
-                                <h2 className="text-sm font-black uppercase tracking-widest text-blue-400 border-b border-white/5 pb-4">Details & Requirements</h2>
+                                <h2 className="text-sm font-black uppercase tracking-widest text-blue-400 border-b border-white/5 pb-4">{t.adminPages.detailsRequirements}</h2>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400">Description</label>
+                                    <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400">{t.adminPages.badgeDescription}</label>
                                     <textarea required rows={4} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-4 text-sm text-white placeholder-neutral-600 focus:border-blue-500/50 focus:bg-white/[0.05] focus:outline-none transition-all resize-y shadow-inner" placeholder="Brief overview of the scholarship..." />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400">Eligibility Criteria</label>
+                                    <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400">{t.adminPages.eligibilityCriteria}</label>
                                     <textarea required rows={3} value={formData.eligibility_criteria} onChange={(e) => setFormData({ ...formData, eligibility_criteria: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-4 text-sm text-white placeholder-neutral-600 focus:border-blue-500/50 focus:bg-white/[0.05] focus:outline-none transition-all resize-y shadow-inner" placeholder="Who can apply?" />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400">Required Documents</label>
+                                    <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-neutral-400">{t.adminPages.requiredDocuments}</label>
                                     <textarea required rows={3} value={formData.required_documents} onChange={(e) => setFormData({ ...formData, required_documents: e.target.value })} className="w-full rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-4 text-sm text-white placeholder-neutral-600 focus:border-blue-500/50 focus:bg-white/[0.05] focus:outline-none transition-all resize-y shadow-inner" placeholder="Passport, Transcripts, CV..." />
                                 </div>
                             </div>
@@ -214,7 +214,7 @@ export default function CreateScholarshipPage() {
                                     {uploadingImage ? (
                                         <div className="flex flex-col items-center gap-3 text-blue-500">
                                             <Loader2 size={32} className="animate-spin" />
-                                            <span className="text-[10px] font-bold uppercase tracking-widest">Uploading to Bucket...</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest">{t.adminPages.uploadingToBucket}</span>
                                         </div>
                                     ) : formData.cover_image ? (
                                         <>
@@ -250,8 +250,8 @@ export default function CreateScholarshipPage() {
                                                 <UploadCloud size={32} />
                                             </div>
                                             <div className="text-center space-y-1">
-                                                <p className="text-sm font-bold text-white">Click to upload cover</p>
-                                                <p className="text-[9px] uppercase tracking-widest">SVG, PNG, JPG (MAX. 50MB)</p>
+                                                <p className="text-sm font-bold text-white">{t.adminPages.clickToUploadCover}</p>
+                                                <p className="text-[9px] uppercase tracking-widest">{t.adminPages.maxFileSizeNotice}</p>
                                             </div>
                                         </button>
                                     )}
@@ -262,8 +262,8 @@ export default function CreateScholarshipPage() {
                                         <div className={`h-4 w-4 rounded-full bg-white transition-transform duration-300 shadow-sm ${formData.is_active ? 'translate-x-5' : 'translate-x-0'}`} />
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-sm font-bold text-white">Set as Active</span>
-                                        <span className="text-[10px] text-neutral-500 uppercase tracking-widest">Visible on website</span>
+                                        <span className="text-sm font-bold text-white">{t.adminPages.setAsActive}</span>
+                                        <span className="text-[10px] text-neutral-500 uppercase tracking-widest">{t.adminPages.visibleOnWebsite}</span>
                                     </div>
                                 </div>
 

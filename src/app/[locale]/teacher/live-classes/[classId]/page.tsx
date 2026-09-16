@@ -119,7 +119,7 @@ export default function LiveClassDetailsPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-purple-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Opening Control Room...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.teacherPages.openingControlRoom}</p>
       </div>
     );
   }
@@ -128,8 +128,8 @@ export default function LiveClassDetailsPage() {
     return (
       <div className="min-h-screen bg-[#020202] text-white flex flex-col items-center justify-center p-6 space-y-4">
         <BadgeAlert size={64} className="text-red-500" />
-        <h2 className="text-3xl font-black">Class Not Found</h2>
-        <p className="text-neutral-500 text-sm">The live class you are looking for does not exist or was removed.</p>
+        <h2 className="text-3xl font-black">{t.teacherPages.classNotFound}</h2>
+        <p className="text-neutral-500 text-sm">{t.teacherPages.classNotFoundDesc}</p>
         <Link href={`/${currentLocale}/teacher/live-classes`} className="px-6 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-purple-400 font-bold flex items-center gap-2 transition-colors">
           <ArrowLeft size={16} /> Return to Live Terminal
         </Link>
@@ -160,7 +160,7 @@ export default function LiveClassDetailsPage() {
                 {classDetails.course_title}
               </span>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white mb-2">{classDetails.class_name}</h1>
-              <p className="text-xs sm:text-sm text-neutral-400 font-medium">Control panel for managing live broadcast, students, and cohort operations.</p>
+              <p className="text-xs sm:text-sm text-neutral-400 font-medium">{t.teacherPages.controlPanelLiveDesc}</p>
             </div>
             
             <div className={`px-5 py-3 rounded-2xl border text-[11px] sm:text-xs font-black uppercase tracking-widest flex items-center gap-2 self-start md:self-auto shrink-0 shadow-lg ${classDetails.is_active ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_20px_rgba(52,211,153,0.15)]' : 'bg-white/5 text-neutral-500 border-white/5'}`}>
@@ -184,14 +184,14 @@ export default function LiveClassDetailsPage() {
                 <div className="bg-white/[0.02] border border-white/5 p-4 sm:p-5 rounded-2xl flex items-center gap-4 hover:bg-white/[0.04] transition-colors">
                   <Calendar size={24} className="text-purple-500 shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Weekly Schedule</p>
+                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t.teacherPages.weeklySchedule}</p>
                     <p className="text-sm font-black text-white mt-0.5 truncate">{classDetails.class_days}</p>
                   </div>
                 </div>
                 <div className="bg-white/[0.02] border border-white/5 p-4 sm:p-5 rounded-2xl flex items-center gap-4 hover:bg-white/[0.04] transition-colors">
                   <Clock size={24} className="text-purple-500 shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Class Timing</p>
+                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t.teacherPages.classTiming}</p>
                     <p className="text-sm font-black text-white mt-0.5 truncate">{classDetails.class_time}</p>
                   </div>
                 </div>
@@ -205,7 +205,7 @@ export default function LiveClassDetailsPage() {
                   href={classDetails.meeting_link} target="_blank" rel="noopener noreferrer"
                   className="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white font-black uppercase tracking-[0.15em] text-xs py-4.5 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2.5 shadow-[0_10px_25px_rgba(168,85,247,0.2)] active:scale-[0.98]"
                 >
-                  <Video size={18} /> Launch Live Room <ExternalLink size={12} />
+                  <Video size={18} /> {t.teacherPages.launchLiveRoom} <ExternalLink size={12} />
                 </a>
               ) : (
                 <div className="bg-neutral-900 border border-white/5 text-neutral-600 font-black uppercase tracking-[0.15em] text-xs py-4.5 rounded-2xl text-center flex items-center justify-center gap-2.5 cursor-not-allowed">
@@ -218,7 +218,7 @@ export default function LiveClassDetailsPage() {
                   href={classDetails.signal_group_link} target="_blank" rel="noopener noreferrer"
                   className="bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 hover:text-white font-black uppercase tracking-[0.15em] text-xs py-4.5 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2.5 active:scale-[0.98]"
                 >
-                  <MessageCircle size={18} className="text-fuchsia-400" /> Open Signal Channel <ExternalLink size={12} />
+                  <MessageCircle size={18} className="text-fuchsia-400" /> {t.teacherPages.openSignalChannel} <ExternalLink size={12} />
                 </a>
               ) : (
                 <div className="bg-transparent border border-dashed border-white/5 text-neutral-600 font-black uppercase tracking-[0.15em] text-xs py-4.5 rounded-2xl text-center flex items-center justify-center gap-2.5 cursor-not-allowed">
@@ -234,9 +234,9 @@ export default function LiveClassDetailsPage() {
             <div className="w-20 h-20 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-3xl flex items-center justify-center mb-6 shadow-inner relative z-10">
               <Users size={32} />
             </div>
-            <p className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-neutral-500 mb-2 relative z-10">Total Cohort Size</p>
+            <p className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-neutral-500 mb-2 relative z-10">{t.teacherPages.totalCohortSize}</p>
             <h2 className="text-5xl sm:text-7xl font-black tracking-tight text-white mb-3 relative z-10 drop-shadow-2xl">{classDetails.student_count}</h2>
-            <p className="text-xs text-neutral-400 font-medium max-w-[200px] relative z-10">Active enrolled students assigned to this specific group.</p>
+            <p className="text-xs text-neutral-400 font-medium max-w-[200px] relative z-10">{t.teacherPages.activeEnrolledSpecificDesc}</p>
           </div>
         </div>
 
@@ -249,8 +249,8 @@ export default function LiveClassDetailsPage() {
                <GraduationCap size={20} />
              </div>
              <div>
-               <h3 className="text-base font-black text-white group-hover:text-purple-400 transition-colors">Manage Roster</h3>
-               <p className="text-[11px] text-neutral-400 mt-1 leading-relaxed">Add, remove, or score your students.</p>
+               <h3 className="text-base font-black text-white group-hover:text-purple-400 transition-colors">{t.teacherPages.manageRoster}</h3>
+               <p className="text-[11px] text-neutral-400 mt-1 leading-relaxed">{t.teacherPages.addRemoveScoreStudents}</p>
              </div>
            </Link>
 
@@ -260,8 +260,8 @@ export default function LiveClassDetailsPage() {
                <Settings size={20} />
              </div>
              <div>
-               <h3 className="text-base font-black text-white group-hover:text-fuchsia-400 transition-colors">Class Settings</h3>
-               <p className="text-[11px] text-neutral-400 mt-1 leading-relaxed">Update schedule, timings, and links.</p>
+               <h3 className="text-base font-black text-white group-hover:text-fuchsia-400 transition-colors">{t.teacherPages.classSettings}</h3>
+               <p className="text-[11px] text-neutral-400 mt-1 leading-relaxed">{t.teacherPages.updateScheduleLinksDesc}</p>
              </div>
            </Link>
 
@@ -271,8 +271,8 @@ export default function LiveClassDetailsPage() {
                <FileText size={20} />
              </div>
              <div>
-               <h3 className="text-base font-black text-white group-hover:text-emerald-400 transition-colors">Attendance</h3>
-               <p className="text-[11px] text-neutral-400 mt-1 leading-relaxed">Review session participation logs.</p>
+               <h3 className="text-base font-black text-white group-hover:text-emerald-400 transition-colors">{t.teacherPages.attendance}</h3>
+               <p className="text-[11px] text-neutral-400 mt-1 leading-relaxed">{t.teacherPages.reviewParticipationLogs}</p>
              </div>
            </div>
 
@@ -282,8 +282,8 @@ export default function LiveClassDetailsPage() {
                <FolderArchive size={20} />
              </div>
              <div>
-               <h3 className="text-base font-black text-white group-hover:text-amber-400 transition-colors">Materials</h3>
-               <p className="text-[11px] text-neutral-400 mt-1 leading-relaxed">Upload resources for this cohort.</p>
+               <h3 className="text-base font-black text-white group-hover:text-amber-400 transition-colors">{t.teacherPages.materials}</h3>
+               <p className="text-[11px] text-neutral-400 mt-1 leading-relaxed">{t.teacherPages.uploadCohortResources}</p>
              </div>
            </div>
 

@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 import { usePathname } from "next/navigation";
 
 import { useState, useEffect, useMemo, useRef } from "react";
@@ -26,11 +27,13 @@ type Scholarship = {
   cover_image: string;
 };
 
-const CURRENT_LANG = "en";
-
 export default function EnglishScholarshipsPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
+
+  const CURRENT_LANG = currentLocale;
   const [scholarships, setScholarships] = useState<Scholarship[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeContinent, setActiveContinent] = useState("All");
@@ -75,12 +78,14 @@ export default function EnglishScholarshipsPage() {
       const supabase = createClient();
       
       try {
-        const { data, error } = await supabase
+        let { data, error } = await supabase
           .from("scholarships")
           .select("id, title, slug, continent, country, university, degree_level, deadline, description, cover_image")
-          .eq("language", CURRENT_LANG)
-          .eq("is_active", true)
-          .order("created_at", { ascending: false });
+          .eq("language", currentLocale).eq("is_active", true).order("created_at", { ascending: false });
+        if (!data || data.length === 0) {
+          const fb = await supabase.from("scholarships").select("id, title, slug, continent, country, university, degree_level, deadline, description, cover_image").eq("language", "en").eq("is_active", true).order("created_at", { ascending: false });
+          if (fb.data) data = fb.data;
+        }
           
         if (error) throw error;
         if (data) setScholarships(data);
@@ -165,7 +170,7 @@ export default function EnglishScholarshipsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030307] text-white font-sans selection:bg-yellow-500/30 overflow-hidden relative" >
+    <div className="min-h-screen bg-[#030307] text-white font-sans selection:bg-yellow-500/30 overflow-hidden relative" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* ================= LUXURY AMBIENT BACKGROUND SYSTEM ================= */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
@@ -196,20 +201,20 @@ export default function EnglishScholarshipsPage() {
           <div className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full bg-gradient-to-r from-yellow-500/10 via-amber-500/15 to-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[11px] sm:text-xs font-black uppercase tracking-widest mb-8 shadow-[0_0_25px_rgba(234,179,8,0.15)] animate-fade-in">
             <span className="w-2 h-2 rounded-full bg-yellow-400 animate-ping" />
             <Globe className="w-4 h-4 text-yellow-400" />
-            <span>Global Academic Opportunities & Fellowships — Safi Academy</span>
+            <span>{t.publicPages.globalOpportunitiesBadge}</span>
           </div>
           
           {/* Main Title */}
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tight mb-8 leading-[1.08]">
-            Discover Fully Funded <br className="hidden md:block" />
+            {t.publicPages.discoverScholarshipsTitle1} <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 drop-shadow-[0_10px_35px_rgba(234,179,8,0.35)]">
-              Global Scholarships.
+              {t.publicPages.discoverScholarshipsTitle2}
             </span>
           </h1>
           
           {/* Deep Informative Subtitle */}
           <p className="text-neutral-300 sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed mb-12 font-medium">
-            Safi Academy tears down geographic and economic barriers for ambitious students worldwide. Explore verified Bachelor, Master, PhD, and Post-Doctoral awards from the world’s top universities — with comprehensive mentorship from nomination to visa issuance.
+            {t.publicPages.scholarshipsHeroSubtitle}
           </p>
 
           {/* Key Impact Metrics Bar */}
@@ -217,37 +222,37 @@ export default function EnglishScholarshipsPage() {
             <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-lg hover:border-yellow-500/30 transition-colors">
               <div className="flex items-center gap-2 text-yellow-400 mb-1">
                 <Award size={18} />
-                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Total Secured</span>
+                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">{t.publicPages.totalSecured}</span>
               </div>
               <div className="text-2xl sm:text-3xl font-black text-white">$4.8M+</div>
-              <p className="text-[11px] text-neutral-400 mt-1">Direct student funding & grants</p>
+              <p className="text-[11px] text-neutral-400 mt-1">{t.publicPages.directStudentFunding}</p>
             </div>
 
             <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-lg hover:border-yellow-500/30 transition-colors">
               <div className="flex items-center gap-2 text-amber-400 mb-1">
                 <Building2 size={18} />
-                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Institutions</span>
+                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">{t.publicPages.institutions}</span>
               </div>
               <div className="text-2xl sm:text-3xl font-black text-white">500+</div>
-              <p className="text-[11px] text-neutral-400 mt-1">Partner & verified universities</p>
+              <p className="text-[11px] text-neutral-400 mt-1">{t.publicPages.partnerVerifiedUnis}</p>
             </div>
 
             <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-lg hover:border-yellow-500/30 transition-colors">
               <div className="flex items-center gap-2 text-emerald-400 mb-1">
                 <CheckCircle2 size={18} />
-                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Success Rate</span>
+                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">{t.publicPages.successRate}</span>
               </div>
               <div className="text-2xl sm:text-3xl font-black text-white">94.6%</div>
-              <p className="text-[11px] text-neutral-400 mt-1">With Safi document review</p>
+              <p className="text-[11px] text-neutral-400 mt-1">{t.publicPages.withSafiReview}</p>
             </div>
 
             <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-lg hover:border-yellow-500/30 transition-colors">
               <div className="flex items-center gap-2 text-cyan-400 mb-1">
                 <HeartHandshake size={18} />
-                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Tuition Cost</span>
+                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">{t.publicPages.tuitionCost}</span>
               </div>
-              <div className="text-2xl sm:text-3xl font-black text-white">100% Free</div>
-              <p className="text-[11px] text-neutral-400 mt-1">Zero hidden fee portal</p>
+              <div className="text-2xl sm:text-3xl font-black text-white">{t.publicPages.hundredPercentFree}</div>
+              <p className="text-[11px] text-neutral-400 mt-1">{t.publicPages.zeroHiddenFee}</p>
             </div>
           </div>
 
@@ -258,7 +263,7 @@ export default function EnglishScholarshipsPage() {
               <Search className="text-yellow-400 ml-3 sm:ml-4 mr-3 shrink-0" size={22} />
               <input 
                 type="text" 
-                placeholder="Search by program, country (e.g. Germany, UK), university, or keywords..." 
+                placeholder={t.publicPages.searchScholarshipsPlaceholder} 
                 className="bg-transparent border-none outline-none w-full text-white placeholder:text-neutral-500 text-sm sm:text-base font-medium"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -267,19 +272,19 @@ export default function EnglishScholarshipsPage() {
                 <button 
                   onClick={() => setSearchQuery("")}
                   className="p-1.5 rounded-full hover:bg-white/10 text-neutral-400 hover:text-white transition-colors mr-2"
-                  title="Clear search"
+                  title={t.publicPages.clearSearch}
                 >
                   <X size={18} />
                 </button>
               )}
               <div className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-bold shrink-0">
-                <Sparkles size={14} /> Live Search
+                <Sparkles size={14} /> {t.publicPages.liveSearch}
               </div>
             </div>
 
             {/* Quick Suggestion Chips */}
             <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs text-neutral-400">
-              <span className="font-bold text-neutral-500 uppercase tracking-widest text-[10px]">Quick Searches:</span>
+              <span className="font-bold text-neutral-500 uppercase tracking-widest text-[10px]">{t.publicPages.quickSearches}</span>
               {quickFilters.map((qf, i) => (
                 <button
                   key={i}
@@ -304,7 +309,7 @@ export default function EnglishScholarshipsPage() {
           <div className="flex flex-col items-center">
             <div className="flex items-center gap-2 mb-3">
               <Compass size={14} className="text-yellow-400" />
-              <p className="text-neutral-400 text-[11px] font-black uppercase tracking-widest">Filter by Global Region</p>
+              <p className="text-neutral-400 text-[11px] font-black uppercase tracking-widest">{t.publicPages.filterByGlobalRegion}</p>
             </div>
             
             {/* Desktop Version (Pills) */}
@@ -381,7 +386,7 @@ export default function EnglishScholarshipsPage() {
           <div className="flex flex-col items-center pt-2">
             <div className="flex items-center gap-2 mb-3">
               <GraduationCap size={14} className="text-amber-400" />
-              <p className="text-neutral-400 text-[11px] font-black uppercase tracking-widest">Filter by Degree Program</p>
+              <p className="text-neutral-400 text-[11px] font-black uppercase tracking-widest">{t.publicPages.filterByDegreeProgram}</p>
             </div>
             
             {/* Desktop Version (Pills) */}
@@ -467,7 +472,7 @@ export default function EnglishScholarshipsPage() {
                 onClick={clearAllFilters}
                 className="text-yellow-400 hover:text-yellow-300 font-bold uppercase tracking-wider text-[11px] underline underline-offset-4"
               >
-                Reset All Filters
+                {t.publicPages.resetAllFilters}
               </button>
             )}
           </div>
@@ -481,7 +486,7 @@ export default function EnglishScholarshipsPage() {
             <div className="w-full flex flex-col items-center justify-center py-28">
               <div className="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mb-6 shadow-[0_0_25px_rgba(234,179,8,0.5)]" />
               <p className="text-yellow-400 font-black tracking-widest uppercase text-xs animate-pulse">
-                Synchronizing Global Scholarship Database...
+                {t.publicPages.syncingScholarshipDb}
               </p>
             </div>
           ) : (
@@ -497,7 +502,7 @@ export default function EnglishScholarshipsPage() {
                     <Globe className="w-10 h-10" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-black text-white mb-2">No Matching Scholarships Found</h3>
+                    <h3 className="text-2xl font-black text-white mb-2">{t.publicPages.noMatchingScholarships}</h3>
                     <p className="text-neutral-400 text-sm leading-relaxed max-w-md mx-auto">
                       We couldn't find active opportunities matching &ldquo;{searchQuery || `${activeContinent} - ${activeDegree}`}&rdquo;. Try broadening your search or resetting filters.
                     </p>
@@ -506,7 +511,7 @@ export default function EnglishScholarshipsPage() {
                     onClick={clearAllFilters}
                     className="px-6 py-3 rounded-full bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-black uppercase tracking-widest text-xs shadow-lg hover:scale-105 transition-transform"
                   >
-                    View All Scholarships
+                    {t.publicPages.viewAllScholarships}
                   </button>
                 </motion.div>
               ) : (
@@ -551,7 +556,7 @@ export default function EnglishScholarshipsPage() {
                             </span>
                             {isUrgent && (
                               <span className="bg-rose-500/90 text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full shadow-lg animate-pulse flex items-center gap-1">
-                                <Clock size={10} /> Closing Soon
+                                <Clock size={10} /> {t.publicPages.closingSoon}
                               </span>
                             )}
                           </div>
@@ -577,7 +582,7 @@ export default function EnglishScholarshipsPage() {
                                 <Building2 size={15} />
                               </div>
                               <div className="overflow-hidden">
-                                <span className="text-[10px] uppercase text-neutral-500 font-black tracking-widest block">Institution</span>
+                                <span className="text-[10px] uppercase text-neutral-500 font-black tracking-widest block">{t.publicPages.institutionLabel}</span>
                                 <span className="font-bold line-clamp-1 text-white">{item.university}</span>
                               </div>
                             </div>
@@ -587,7 +592,7 @@ export default function EnglishScholarshipsPage() {
                                 <GraduationCap size={15} />
                               </div>
                               <div className="overflow-hidden">
-                                <span className="text-[10px] uppercase text-neutral-500 font-black tracking-widest block">Academic Level</span>
+                                <span className="text-[10px] uppercase text-neutral-500 font-black tracking-widest block">{t.publicPages.academicLevel}</span>
                                 <span className="font-bold text-white">{item.degree_level}</span>
                               </div>
                             </div>
@@ -615,7 +620,7 @@ export default function EnglishScholarshipsPage() {
                             href={`/${CURRENT_LANG}/scholarships/${item.slug}`} 
                             className="w-full py-4 px-5 bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-amber-400 text-black font-black uppercase tracking-widest text-xs rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(234,179,8,0.25)] hover:shadow-[0_0_30px_rgba(234,179,8,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all group/btn"
                           >
-                            <span>View Requirements & Apply</span> 
+                            <span>{t.publicPages.viewRequirementsAndApply}</span> 
                             <ArrowRight size={15} className="group-hover/btn:translate-x-1 transition-transform" />
                           </Link>
                         </div>
@@ -632,13 +637,13 @@ export default function EnglishScholarshipsPage() {
         <section className="py-24 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto border-t border-white/10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-black uppercase tracking-widest mb-4">
-              <Compass size={14} /> Proven Success Methodology
+              <Compass size={14} /> {t.publicPages.provenSuccessMethodology}
             </div>
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mb-4 leading-tight">
-              The 4-Step Global Admission Blueprint
+              {t.publicPages.fourStepBlueprint}
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
-              Applying for an international scholarship isn&rsquo;t a lottery—it&rsquo;s an engineering process. Follow our battle-tested pipeline to transform your academic application into a winning candidacy.
+              {t.publicPages.blueprintDesc}
             </p>
           </div>
 
@@ -652,12 +657,12 @@ export default function EnglishScholarshipsPage() {
               <div className="w-12 h-12 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 mb-6">
                 <FileText size={22} />
               </div>
-              <h3 className="text-xl font-black text-white mb-3">Profile & GPA Audit</h3>
+              <h3 className="text-xl font-black text-white mb-3">{t.publicPages.step1Title}</h3>
               <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed mb-4 flex-1">
-                Evaluate your academic transcript, calculate your US GPA / ECTS equivalents, identify course prerequisites, and pinpoint country-specific eligibility thresholds.
+                {t.publicPages.step1Desc}
               </p>
               <div className="pt-4 border-t border-white/5 text-[11px] font-bold text-yellow-400/90 flex items-center gap-1.5">
-                <Check size={14} /> Transcript Equivalence Verification
+                <Check size={14} /> {t.publicPages.step1Badge}
               </div>
             </div>
 
@@ -669,12 +674,12 @@ export default function EnglishScholarshipsPage() {
               <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-6">
                 <BookOpen size={22} />
               </div>
-              <h3 className="text-xl font-black text-white mb-3">SOP & Dossier Mastery</h3>
+              <h3 className="text-xl font-black text-white mb-3">{t.publicPages.step2Title}</h3>
               <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed mb-4 flex-1">
-                Draft a high-impact Statement of Purpose (SOP), tailor your Academic CV to Europass or US ATS standards, and secure compelling Letters of Recommendation (LOR).
+                {t.publicPages.step2Desc}
               </p>
               <div className="pt-4 border-t border-white/5 text-[11px] font-bold text-amber-400/90 flex items-center gap-1.5">
-                <Check size={14} /> Line-by-Line Surgical Review
+                <Check size={14} /> {t.publicPages.step2Badge}
               </div>
             </div>
 
@@ -686,12 +691,12 @@ export default function EnglishScholarshipsPage() {
               <div className="w-12 h-12 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 mb-6">
                 <Building2 size={22} />
               </div>
-              <h3 className="text-xl font-black text-white mb-3">Portal Submission</h3>
+              <h3 className="text-xl font-black text-white mb-3">{t.publicPages.step3Title}</h3>
               <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed mb-4 flex-1">
-                Submit through official university registries and government grant portals (DAAD, Chevening, MEXT, CSC) before strict priority deadlines without missing appendices.
+                {t.publicPages.step3Desc}
               </p>
               <div className="pt-4 border-t border-white/5 text-[11px] font-bold text-yellow-400/90 flex items-center gap-1.5">
-                <Check size={14} /> Direct University Endorsements
+                <Check size={14} /> {t.publicPages.step3Badge}
               </div>
             </div>
 
@@ -703,12 +708,12 @@ export default function EnglishScholarshipsPage() {
               <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-6">
                 <ShieldCheck size={22} />
               </div>
-              <h3 className="text-xl font-black text-white mb-3">Visa & Relocation</h3>
+              <h3 className="text-xl font-black text-white mb-3">{t.publicPages.step4Title}</h3>
               <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed mb-4 flex-1">
-                Receive your official admission decree, prepare embassy financial exemption paperwork, pass mock visa interviews, and organize international flight logistics.
+                {t.publicPages.step4Desc}
               </p>
               <div className="pt-4 border-t border-white/5 text-[11px] font-bold text-emerald-400/90 flex items-center gap-1.5">
-                <Check size={14} /> Full Pre-Departure Orientation
+                <Check size={14} /> {t.publicPages.step4Badge}
               </div>
             </div>
 
@@ -722,13 +727,13 @@ export default function EnglishScholarshipsPage() {
             
             <div className="max-w-3xl mb-12">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-black uppercase tracking-widest mb-4">
-                <Award size={14} /> Global Funding Archetypes
+                <Award size={14} /> {t.publicPages.globalFundingArchetypes}
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
-                Understanding International Scholarship Tiers
+                {t.publicPages.understandingScholarshipTiers}
               </h2>
               <p className="text-neutral-300 text-sm sm:text-base leading-relaxed">
-                Scholarships are structured differently depending on the funder. Knowing whether an award covers full living expenses or tuition alone is critical for your financial planning.
+                {t.publicPages.tiersDesc}
               </p>
             </div>
 
@@ -736,57 +741,57 @@ export default function EnglishScholarshipsPage() {
               
               {/* Card 1 */}
               <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 flex flex-col hover:border-yellow-400/40 transition-all">
-                <div className="text-xs font-black uppercase tracking-widest text-yellow-400 mb-2">Category 01</div>
-                <h3 className="text-lg font-black text-white mb-3">Fully Funded (Type A)</h3>
+                <div className="text-xs font-black uppercase tracking-widest text-yellow-400 mb-2">{t.publicPages.category01}</div>
+                <h3 className="text-lg font-black text-white mb-3">{t.publicPages.cat1Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed mb-6 flex-1">
-                  The gold standard of international education. Completely covers 100% of university tuition fees, provides monthly stipends ($1,200 - $2,500/mo), covers airfares, and includes national health insurance.
+                  {t.publicPages.cat1Desc}
                 </p>
                 <div className="space-y-2 text-xs text-neutral-300">
-                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> 100% Tuition Waived</div>
-                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> Monthly Living Stipend</div>
-                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> Round-trip Flights Included</div>
+                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> {t.publicPages.cat1Perk1}</div>
+                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> {t.publicPages.cat1Perk2}</div>
+                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> {t.publicPages.cat1Perk3}</div>
                 </div>
               </div>
 
               {/* Card 2 */}
               <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 flex flex-col hover:border-amber-400/40 transition-all">
-                <div className="text-xs font-black uppercase tracking-widest text-amber-400 mb-2">Category 02</div>
-                <h3 className="text-lg font-black text-white mb-3">Government Bilateral</h3>
+                <div className="text-xs font-black uppercase tracking-widest text-amber-400 mb-2">{t.publicPages.category02}</div>
+                <h3 className="text-lg font-black text-white mb-3">{t.publicPages.cat2Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed mb-6 flex-1">
-                  Prestigious state-sponsored fellowships including DAAD (Germany), Chevening (UK), Fulbright (USA), MEXT (Japan), Turkiye Burslari, and Swedish Institute (SI).
+                  {t.publicPages.cat2Desc}
                 </p>
                 <div className="space-y-2 text-xs text-neutral-300">
-                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> Global Diplomatic Prestige</div>
-                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> Comprehensive Visa Fast-Track</div>
-                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> Lifelong Alumni Network</div>
+                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> {t.publicPages.cat2Perk1}</div>
+                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> {t.publicPages.cat2Perk2}</div>
+                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> {t.publicPages.cat2Perk3}</div>
                 </div>
               </div>
 
               {/* Card 3 */}
               <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 flex flex-col hover:border-yellow-400/40 transition-all">
-                <div className="text-xs font-black uppercase tracking-widest text-yellow-400 mb-2">Category 03</div>
-                <h3 className="text-lg font-black text-white mb-3">Graduate RA & TA Grants</h3>
+                <div className="text-xs font-black uppercase tracking-widest text-yellow-400 mb-2">{t.publicPages.category03}</div>
+                <h3 className="text-lg font-black text-white mb-3">{t.publicPages.cat3Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed mb-6 flex-1">
-                  Direct university department funding where Master & PhD candidates work as Research Assistants (RA) or Teaching Assistants (TA) in exchange for zero tuition and salaried stipends.
+                  {t.publicPages.cat3Desc}
                 </p>
                 <div className="space-y-2 text-xs text-neutral-300">
-                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> Academic & Lab Experience</div>
-                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> Direct Professor Sponsorship</div>
-                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> High Acceptance Rate for STEM</div>
+                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> {t.publicPages.cat3Perk1}</div>
+                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> {t.publicPages.cat3Perk2}</div>
+                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> {t.publicPages.cat3Perk3}</div>
                 </div>
               </div>
 
               {/* Card 4 */}
               <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 flex flex-col hover:border-cyan-400/40 transition-all">
                 <div className="text-xs font-black uppercase tracking-widest text-cyan-400 mb-2">Category 04</div>
-                <h3 className="text-lg font-black text-white mb-3">Emergency & Women in Tech</h3>
+                <h3 className="text-lg font-black text-white mb-3">{t.publicPages.cat4Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed mb-6 flex-1">
-                  Dedicated humanitarian funds, Open Society foundations, and specialized female leadership grants prioritizing scholars facing political crises or educational bans.
+                  {t.publicPages.cat4Desc}
                 </p>
                 <div className="space-y-2 text-xs text-neutral-300">
-                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> Crisis & Relocation Support</div>
-                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> Dedicated Afghan Quotas</div>
-                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> Online & Hybrid Options</div>
+                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> {t.publicPages.cat4Perk1}</div>
+                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> {t.publicPages.cat4Perk2}</div>
+                  <div className="flex items-center gap-2"><Check size={14} className="text-emerald-400" /> {t.publicPages.cat4Perk3}</div>
                 </div>
               </div>
 
@@ -800,13 +805,13 @@ export default function EnglishScholarshipsPage() {
             
             <div className="lg:col-span-6 space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-black uppercase tracking-widest">
-                <BadgeCheck size={14} /> Safi Academic Advisory
+                <BadgeCheck size={14} /> {t.publicPages.safiAcademicAdvisory}
               </div>
               <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-                Don&rsquo;t Apply Alone. Let Experts Polish Your Dossier.
+                {t.publicPages.dontApplyAlone}
               </h2>
               <p className="text-neutral-300 text-sm sm:text-base leading-relaxed">
-                90% of qualified applicants are rejected not because of their grades, but because of weak motivation letters, formatting errors, or generic recommendations. Safi Academy provides free, community-driven document audits to maximize your winning odds.
+                {t.publicPages.dontApplyAloneDesc}
               </p>
 
               <div className="space-y-4 pt-2">
@@ -982,15 +987,15 @@ export default function EnglishScholarshipsPage() {
             
             <div className="relative z-10 max-w-3xl mx-auto">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-300 text-xs font-black uppercase tracking-widest mb-6">
-                <Sparkles size={14} /> Turn Ambition Into Reality
+                <Sparkles size={14} /> {t.publicPages.turnAmbitionReality}
               </div>
 
               <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight mb-6 leading-tight">
-                Your International Degree <br /> Starts With One Application.
+                {t.publicPages.yourIntlDegreeStarts}
               </h2>
 
               <p className="text-neutral-300 text-sm sm:text-base leading-relaxed mb-10 max-w-2xl mx-auto">
-                Every year, millions of dollars in scholarship funding go unclaimed due to lack of awareness. Step forward today, prepare your documents, and let Safi Academy support your journey to global academic success.
+                {t.publicPages.intlDegreeDesc}
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-4">
@@ -1000,13 +1005,13 @@ export default function EnglishScholarshipsPage() {
                   }}
                   className="px-8 py-4 rounded-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-300 text-black font-black uppercase tracking-widest text-xs shadow-[0_0_35px_rgba(234,179,8,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                 >
-                  <Compass size={16} /> Explore All Scholarships Now
+                  <Compass size={16} /> {t.publicPages.exploreAllScholarshipsNow}
                 </button>
                 <Link
                   href={`/${currentLocale}/courses`}
                   className="px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-white font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                 >
-                  <Laptop size={16} /> Upskill With Free Tech Courses
+                  <Laptop size={16} /> {t.publicPages.upskillFreeCourses}
                 </Link>
               </div>
             </div>

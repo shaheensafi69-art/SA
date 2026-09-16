@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useState, useEffect } from "react";
 import {  useParams, useRouter , usePathname } from "next/navigation";
@@ -31,6 +32,10 @@ type Scholarship = {
 export default function EnglishScholarshipDetailPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
+
+  
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
@@ -44,13 +49,14 @@ export default function EnglishScholarshipDetailPage() {
       const supabase = createClient();
       
       try {
-        const { data, error } = await supabase
+        let { data, error } = await supabase
           .from("scholarships")
           .select("*")
-          .eq("language", "en") // قفل روی زبان انگلیسی
-          .eq("slug", slug)
-          .eq("is_active", true)
-          .single();
+          .eq("language", currentLocale).eq("slug", slug).eq("is_active", true).maybeSingle();
+        if (!data) {
+          const fb = await supabase.from("scholarships").select("*").eq("language", "en").eq("slug", slug).eq("is_active", true).maybeSingle();
+          if (fb.data) data = fb.data;
+        }
 
         if (error) throw error;
         if (data) setScholarship(data);
@@ -77,7 +83,7 @@ export default function EnglishScholarshipDetailPage() {
     return (
       <div className="min-h-screen bg-[#050508] flex flex-col items-center justify-center">
         <div className="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mb-6 shadow-[0_0_15px_rgba(234,179,8,0.5)]"></div>
-        <p className="text-yellow-500 font-bold tracking-widest uppercase text-xs animate-pulse">Loading Scholarship Details...</p>
+        <p className="text-yellow-500 font-bold tracking-widest uppercase text-xs animate-pulse">{t.publicPages.loadingScholarshipDetails}</p>
       </div>
     );
   }
@@ -86,9 +92,9 @@ export default function EnglishScholarshipDetailPage() {
     return (
       <div className="min-h-screen bg-[#050508] flex flex-col items-center justify-center text-center px-6">
         <h1 className="text-6xl font-black text-white mb-4">404</h1>
-        <p className="text-neutral-400 mb-8">Scholarship opportunity not found or has expired.</p>
+        <p className="text-neutral-400 mb-8">{t.publicPages.scholarshipNotFound}</p>
         <Link href={`/${currentLocale}/scholarships`} className="px-6 py-3 rounded-xl font-bold text-black bg-gradient-to-r from-yellow-500 to-amber-500 hover:scale-105 transition-all">
-          Back to Scholarships
+          {t.publicPages.backToScholarships || "Back to Scholarships"}
         </Link>
       </div>
     );
@@ -102,7 +108,7 @@ export default function EnglishScholarshipDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050508] text-white font-sans pb-32 overflow-hidden selection:bg-yellow-500/30" >
+    <div className="min-h-screen bg-[#050508] text-white font-sans pb-32 overflow-hidden selection:bg-yellow-500/30" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* ================= BACKGROUND EFFECTS ================= */}
       <div className="fixed inset-0 z-0 pointer-events-none">
@@ -117,7 +123,7 @@ export default function EnglishScholarshipDetailPage() {
           onClick={() => router.push(`/${currentLocale}/scholarships`)}
           className="flex items-center gap-2 px-4 py-2.5 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full text-xs font-black uppercase tracking-widest text-neutral-300 hover:text-white hover:bg-white/10 transition-all duration-300 shadow-xl group"
         >
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> {t.common.back}
         </button>
       </div>
 
@@ -201,7 +207,7 @@ export default function EnglishScholarshipDetailPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-neutral-500 text-sm italic">No specific criteria listed.</p>
+                <p className="text-neutral-500 text-sm italic">{t.publicPages.noCriteriaListed || "No specific criteria listed."}</p>
               )}
             </div>
 
@@ -233,7 +239,7 @@ export default function EnglishScholarshipDetailPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-neutral-500 text-sm italic">No specific documents listed.</p>
+                <p className="text-neutral-500 text-sm italic">{t.publicPages.noDocumentsListed || "No specific documents listed."}</p>
               )}
             </div>
 
@@ -247,7 +253,7 @@ export default function EnglishScholarshipDetailPage() {
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-yellow-500/60 to-transparent"></div>
 
               <h3 className="text-base font-black tracking-widest uppercase text-yellow-400 border-b border-white/10 pb-4 mb-6 flex items-center justify-between">
-                <span>Key Overview</span>
+                <span>{t.publicPages.keyOverview || "Key Overview"}</span>
                 <Sparkles size={16} className="text-yellow-500" />
               </h3>
               
@@ -257,7 +263,7 @@ export default function EnglishScholarshipDetailPage() {
                     <Building2 size={18} />
                   </div>
                   <div className="overflow-hidden">
-                    <p className="text-[10px] uppercase text-neutral-500 font-black tracking-widest">University / Sponsor</p>
+                    <p className="text-[10px] uppercase text-neutral-500 font-black tracking-widest">{t.publicPages.universitySponsor || "University / Sponsor"}</p>
                     <p className="font-bold text-white leading-snug break-words">{scholarship.university}</p>
                   </div>
                 </div>
@@ -267,7 +273,7 @@ export default function EnglishScholarshipDetailPage() {
                     <MapPin size={18} />
                   </div>
                   <div className="overflow-hidden">
-                    <p className="text-[10px] uppercase text-neutral-500 font-black tracking-widest">Location</p>
+                    <p className="text-[10px] uppercase text-neutral-500 font-black tracking-widest">{t.publicPages.location || "Location"}</p>
                     <p className="font-bold text-white leading-snug break-words">{scholarship.country} ({scholarship.continent})</p>
                   </div>
                 </div>
@@ -277,7 +283,7 @@ export default function EnglishScholarshipDetailPage() {
                     <GraduationCap size={18} />
                   </div>
                   <div className="overflow-hidden">
-                    <p className="text-[10px] uppercase text-neutral-500 font-black tracking-widest">Degree Level</p>
+                    <p className="text-[10px] uppercase text-neutral-500 font-black tracking-widest">{t.publicPages.academicLevel || "Degree Level"}</p>
                     <p className="font-bold text-white leading-snug break-words">{scholarship.degree_level}</p>
                   </div>
                 </div>
@@ -287,7 +293,7 @@ export default function EnglishScholarshipDetailPage() {
                     <Calendar size={18} />
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase text-amber-500 font-black tracking-widest">Application Deadline</p>
+                    <p className="text-[10px] uppercase text-amber-500 font-black tracking-widest">{t.publicPages.deadlineLabel || "Application Deadline"}</p>
                     <p className="font-black text-amber-400 text-sm">{formatDate(scholarship.deadline)}</p>
                   </div>
                 </div>
@@ -306,12 +312,12 @@ export default function EnglishScholarshipDetailPage() {
 
             {/* Share & Connect Card */}
             <div className="bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] p-6 shadow-xl space-y-4">
-              <p className="text-xs font-black uppercase tracking-widest text-neutral-400">Share Opportunity</p>
+              <p className="text-xs font-black uppercase tracking-widest text-neutral-400">{t.publicPages.shareOpportunity}</p>
               <div className="flex items-center gap-3">
                 <button 
                   onClick={copyToClipboard}
                   className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/10 transition-colors" 
-                  title="Copy Link"
+                  title={t.publicPages.copyLink}
                 >
                   <Share2 size={16} />
                 </button>
@@ -338,7 +344,7 @@ export default function EnglishScholarshipDetailPage() {
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/10 transition-colors" 
-                  title="X (Twitter)"
+                  title={t.publicPages.shareOnX}
                 >
                   <XIcon size={16} />
                 </a>

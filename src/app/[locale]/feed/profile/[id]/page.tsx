@@ -678,7 +678,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
               {activeTab === 'learning' && (
                 <div className="space-y-4">
                   {enrollments.length === 0 ? (
-                    <EmptyState icon={<BookOpen size={40} />} title="No Courses Yet" description="This user hasn't enrolled in any courses." />
+                    <EmptyState icon={<BookOpen size={40} />} title={t.feed.noCoursesYet} description="This user hasn't enrolled in any courses." />
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {enrollments.map((enr) => (
@@ -695,7 +695,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                             <h4 className="text-white font-bold text-xs sm:text-sm mt-1.5 leading-tight line-clamp-2">{enr.courses?.title}</h4>
                             <div className="mt-2.5">
                               <div className="flex justify-between text-[9px] sm:text-[10px] font-bold text-neutral-400 mb-1">
-                                <span>Progress</span>
+                                <span>{t.dashboardPages.progress}</span>
                                 <span>{enr.progress_percentage}%</span>
                               </div>
                               <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
@@ -714,9 +714,9 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
               {activeTab === 'achievements' && (
                 <div className="space-y-6 sm:space-y-8">
                   <div className="bg-[#0a0a0f]/80 border border-white/10 p-5 sm:p-8 rounded-[2rem] backdrop-blur-md shadow-xl">
-                    <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-widest mb-4 sm:mb-6 flex items-center gap-2 border-b border-white/5 pb-3 sm:pb-4"><Trophy size={16} className="text-yellow-500" /> Earned Badges</h3>
+                    <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-widest mb-4 sm:mb-6 flex items-center gap-2 border-b border-white/5 pb-3 sm:pb-4"><Trophy size={16} className="text-yellow-500" /> {t.feed.earnedBadges}</h3>
                     {awards.length === 0 ? (
-                      <p className="text-neutral-500 text-xs sm:text-sm font-medium text-center py-4 sm:py-6">No badges earned yet.</p>
+                      <p className="text-neutral-500 text-xs sm:text-sm font-medium text-center py-4 sm:py-6">{t.feed.noBadgesEarned}</p>
                     ) : (
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
                         {awards.map((award) => (
@@ -733,9 +733,9 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                   </div>
 
                   <div className="bg-[#0a0a0f]/80 border border-white/10 p-5 sm:p-8 rounded-[2rem] backdrop-blur-md shadow-xl">
-                    <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-widest mb-4 sm:mb-6 flex items-center gap-2 border-b border-white/5 pb-3 sm:pb-4"><Award size={16} className="text-emerald-500" /> Official Certificates</h3>
+                    <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-widest mb-4 sm:mb-6 flex items-center gap-2 border-b border-white/5 pb-3 sm:pb-4"><Award size={16} className="text-emerald-500" /> {t.achievements.officialCertificates}</h3>
                     {certificates.length === 0 ? (
-                      <p className="text-neutral-500 text-xs sm:text-sm font-medium text-center py-4 sm:py-6">No certificates issued yet.</p>
+                      <p className="text-neutral-500 text-xs sm:text-sm font-medium text-center py-4 sm:py-6">{t.feed.noCertificatesIssued}</p>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {certificates.map((cert) => (
@@ -807,6 +807,7 @@ function EmptyState({ icon, title, description }: any) {
 
 // ================= COMMENTS MODAL COMPONENT =================
 function CommentsModal({ postId, currentUserId, onClose }: { postId: string, currentUserId: string, onClose: () => void }) {
+  const t = getPortalTranslation();
   const [comments, setComments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
@@ -852,7 +853,7 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
               </div>
               <div className="flex items-center gap-3 mt-1.5 ml-2">
                 <span className="text-[8px] sm:text-[9px] text-neutral-500 font-bold">{c.created_at.split('T')[0]}</span>
-                <button onClick={() => { setReplyingToId(c.id); setReplyingToName(authorName); }} className="text-[9px] sm:text-[10px] font-black text-[#C2185B] hover:text-pink-400 uppercase">Reply</button>
+                <button onClick={() => { setReplyingToId(c.id); setReplyingToName(authorName); }} className="text-[9px] sm:text-[10px] font-black text-[#C2185B] hover:text-pink-400 uppercase">{t.feed.reply}</button>
               </div>
             </div>
           </div>
@@ -867,21 +868,21 @@ function CommentsModal({ postId, currentUserId, onClose }: { postId: string, cur
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-[fadeIn_0.2s_ease-out]">
       <div className="bg-[#0a0a0f] border border-white/10 rounded-t-[2rem] sm:rounded-[2rem] w-full max-w-2xl h-[85vh] sm:max-h-[90vh] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden animate-[slideUp_0.3s_ease-out]">
         <div className="flex items-center justify-between p-5 sm:p-6 border-b border-white/5 bg-[#0a0a0f]/90 shrink-0">
-          <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">Discussion</h3>
+          <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">{t.feed.discussion}</h3>
           <button onClick={onClose} className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-full text-neutral-400 hover:text-white"><X size={18} /></button>
         </div>
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 scrollbar-hide pb-32">
-          {isLoading ? <div className="flex justify-center py-10"><div className="w-8 h-8 border-2 border-[#C2185B] border-t-transparent rounded-full animate-spin"></div></div> : comments.length === 0 ? <div className="text-center py-16"><MessageSquare className="w-10 h-10 sm:w-12 sm:h-12 text-neutral-700 mx-auto mb-4" /><p className="text-neutral-500 font-bold text-xs sm:text-sm tracking-wide">No comments yet. Start the conversation!</p></div> : buildCommentTree(null, 0)}
+          {isLoading ? <div className="flex justify-center py-10"><div className="w-8 h-8 border-2 border-[#C2185B] border-t-transparent rounded-full animate-spin"></div></div> : comments.length === 0 ? <div className="text-center py-16"><MessageSquare className="w-10 h-10 sm:w-12 sm:h-12 text-neutral-700 mx-auto mb-4" /><p className="text-neutral-500 font-bold text-xs sm:text-sm tracking-wide">{t.feed.noCommentsYet}</p></div> : buildCommentTree(null, 0)}
         </div>
         <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 sm:p-6 border-t border-white/5 bg-[#0a0a0f]/95 backdrop-blur-xl">
           {replyingToName && (
             <div className="flex items-center justify-between mb-2 sm:mb-3 px-3 py-1.5 sm:py-2 bg-[#C2185B]/10 rounded-xl border border-[#C2185B]/20">
-              <span className="text-[10px] sm:text-xs font-black text-[#C2185B]">Replying to {replyingToName}</span>
-              <button onClick={() => { setReplyingToId(null); setReplyingToName(null); }} className="text-neutral-400 hover:text-white text-[10px] sm:text-xs font-bold bg-white/5 px-2.5 py-1 rounded-lg">Cancel</button>
+              <span className="text-[10px] sm:text-xs font-black text-[#C2185B]">{t.feed.replyingTo} {replyingToName}</span>
+              <button onClick={() => { setReplyingToId(null); setReplyingToName(null); }} className="text-neutral-400 hover:text-white text-[10px] sm:text-xs font-bold bg-white/5 px-2.5 py-1 rounded-lg">{t.feed.cancel}</button>
             </div>
           )}
           <div className="flex items-end gap-2 sm:gap-3 pb-safe">
-            <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder="Write your thought..." rows={1} className="flex-1 bg-neutral-900 border border-white/10 rounded-xl sm:rounded-2xl px-4 sm:px-5 py-3.5 sm:py-4 text-white text-xs sm:text-sm focus:outline-none focus:border-[#C2185B] focus:ring-1 focus:ring-[#C2185B] resize-none min-h-[45px] sm:min-h-[55px] max-h-[100px] sm:max-h-[120px] transition-all" />
+            <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder={t.feed.writeYourThought} rows={1} className="flex-1 bg-neutral-900 border border-white/10 rounded-xl sm:rounded-2xl px-4 sm:px-5 py-3.5 sm:py-4 text-white text-xs sm:text-sm focus:outline-none focus:border-[#C2185B] focus:ring-1 focus:ring-[#C2185B] resize-none min-h-[45px] sm:min-h-[55px] max-h-[100px] sm:max-h-[120px] transition-all" />
             <button onClick={handleSend} disabled={isSending || !newComment.trim()} className="w-[45px] h-[45px] sm:w-[55px] sm:h-[55px] shrink-0 bg-[#C2185B] text-white rounded-xl sm:rounded-2xl flex items-center justify-center hover:bg-[#ad1457] disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(194,24,91,0.3)]">
               {isSending ? <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <Send size={18} className="ml-1" />}
             </button>

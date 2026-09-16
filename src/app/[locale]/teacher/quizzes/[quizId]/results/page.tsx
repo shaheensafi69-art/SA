@@ -236,7 +236,7 @@ export default function TeacherQuizResultsPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-fuchsia-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Submissions...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.teacherPages.loadingSubmissions}</p>
       </div>
     );
   }
@@ -263,7 +263,7 @@ export default function TeacherQuizResultsPage() {
                 </span>
               </div>
               <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white mb-2">{quizInfo?.title}</h1>
-              <p className="text-xs text-neutral-400 font-medium">Evaluate descriptive answers and assign grades.</p>
+              <p className="text-xs text-neutral-400 font-medium">{t.teacherPages.evaluateDescriptiveDesc}</p>
             </div>
             
             <div className="px-4 py-2.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 w-fit">
@@ -276,23 +276,23 @@ export default function TeacherQuizResultsPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-[#0a0a0f]/60 border border-white/5 p-4 rounded-[1.5rem] flex flex-col justify-center items-center text-center shadow-lg">
             <Users size={18} className="text-fuchsia-400 mb-2" />
-            <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest">Total Submitted</p>
+            <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest">{t.teacherPages.totalSubmitted}</p>
             <h3 className="text-xl font-black text-white mt-1">{stats.total}</h3>
           </div>
           <div className="bg-[#0a0a0f]/60 border border-amber-500/20 p-4 rounded-[1.5rem] flex flex-col justify-center items-center text-center shadow-[0_0_15px_rgba(245,158,11,0.05)] relative overflow-hidden group">
             <div className="absolute inset-0 bg-amber-500/5 animate-pulse"></div>
             <Clock size={18} className="text-amber-400 mb-2 relative z-10" />
-            <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest relative z-10">Pending Grading</p>
+            <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest relative z-10">{t.teacherPages.pendingGrading}</p>
             <h3 className="text-xl font-black text-amber-400 mt-1 relative z-10">{stats.pending}</h3>
           </div>
           <div className="bg-[#0a0a0f]/60 border border-white/5 p-4 rounded-[1.5rem] flex flex-col justify-center items-center text-center shadow-lg">
             <CheckCircle2 size={18} className="text-emerald-400 mb-2" />
-            <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest">Passed</p>
+            <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest">{t.teacherPages.passed}</p>
             <h3 className="text-xl font-black text-emerald-400 mt-1">{stats.passed}</h3>
           </div>
           <div className="bg-[#0a0a0f]/60 border border-white/5 p-4 rounded-[1.5rem] flex flex-col justify-center items-center text-center shadow-lg">
             <XCircle size={18} className="text-rose-400 mb-2" />
-            <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest">Failed (Chance)</p>
+            <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest">{t.teacherPages.failedChance}</p>
             <h3 className="text-xl font-black text-rose-400 mt-1">{stats.gradedCount - stats.passed}</h3>
           </div>
         </div>
@@ -308,7 +308,7 @@ export default function TeacherQuizResultsPage() {
           {attempts.length === 0 ? (
             <div className="p-16 text-center flex flex-col items-center">
               <ShieldAlert size={40} className="text-neutral-600 mb-4" />
-              <p className="text-neutral-400 text-sm font-bold">No submissions found for this exam.</p>
+              <p className="text-neutral-400 text-sm font-bold">{t.teacherPages.noSubmissionsForExam}</p>
             </div>
           ) : (
             <>
@@ -317,11 +317,11 @@ export default function TeacherQuizResultsPage() {
                 <table className="w-full text-left border-collapse whitespace-nowrap min-w-[800px]">
                   <thead>
                     <tr className="bg-white/[0.02] border-b border-white/5 text-[10px] font-black text-neutral-500 uppercase tracking-widest">
-                      <th className="p-5">Student Profile</th>
-                      <th className="p-5">Submitted At</th>
-                      <th className="p-5 text-center">Status / Grade</th>
-                      <th className="p-5 text-center">Final Score</th>
-                      <th className="p-5 text-right">Action</th>
+                      <th className="p-5">{t.teacherPages.studentProfile}</th>
+                      <th className="p-5">{t.teacherPages.submittedAt}</th>
+                      <th className="p-5 text-center">{t.teacherPages.statusGrade}</th>
+                      <th className="p-5 text-center">{t.teacherPages.finalScore}</th>
+                      <th className="p-5 text-right">{t.teacherPages.actions}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
@@ -362,7 +362,7 @@ export default function TeacherQuizResultsPage() {
                         </td>
                         <td className="p-5 text-right">
                           <button onClick={() => handleOpenGrading(attempt)} className={`px-4 py-2 hover:bg-fuchsia-500/10 border border-white/5 hover:border-fuchsia-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 ml-auto flex items-center gap-2 ${attempt.status === "pending_review" ? "bg-fuchsia-600/20 text-fuchsia-400 border-fuchsia-500/30" : "bg-white/5 text-neutral-400 hover:text-fuchsia-400"}`}>
-                            {attempt.status === "pending_review" ? <><Edit3 size={14} /> Evaluate</> : <><FileText size={14} /> Review</>}
+                            {attempt.status === "pending_review" ? <><Edit3 size={14} /> {t.teacherPages.evaluate}</> : <><FileText size={14} /> {t.teacherPages.review}</>}
                           </button>
                         </td>
                       </tr>
@@ -389,9 +389,9 @@ export default function TeacherQuizResultsPage() {
                     {/* Status & Action */}
                     <div className="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-white/5">
                       <div className="flex flex-col">
-                        <span className="text-[8px] font-black text-neutral-500 uppercase tracking-widest mb-1">Status</span>
+                        <span className="text-[8px] font-black text-neutral-500 uppercase tracking-widest mb-1">{t.common?.status || "Status"}</span>
                         {attempt.status === "pending_review" ? (
-                           <span className="text-amber-400 font-black text-[10px] uppercase flex items-center gap-1"><Clock size={12}/> Needs Grading</span>
+                           <span className="text-amber-400 font-black text-[10px] uppercase flex items-center gap-1"><Clock size={12}/> {t.teacherPages.needsGrading}</span>
                         ) : (
                           <div className="flex items-center gap-2">
                             <span className={`text-[11px] font-black uppercase ${attempt.is_passed ? "text-emerald-400" : "text-rose-400"}`}>
@@ -433,7 +433,7 @@ export default function TeacherQuizResultsPage() {
                 </div>
                 <div className="min-w-0">
                   <h2 className="text-sm sm:text-base font-black text-white truncate">Paper: {selectedAttempt.first_name} {selectedAttempt.last_name}</h2>
-                  <p className="text-[10px] text-fuchsia-400 font-black uppercase tracking-widest mt-0.5 truncate">Evaluation Mode</p>
+                  <p className="text-[10px] text-fuchsia-400 font-black uppercase tracking-widest mt-0.5 truncate">{t.teacherPages.evaluationMode}</p>
                 </div>
               </div>
               <button disabled={isSubmittingGrade} onClick={() => setSelectedAttempt(null)} className="w-8 h-8 sm:w-10 sm:h-10 bg-white/5 hover:bg-white/10 text-neutral-400 rounded-full flex items-center justify-center transition-all shrink-0">
@@ -446,7 +446,7 @@ export default function TeacherQuizResultsPage() {
               {isLoadingDetails ? (
                 <div className="flex flex-col items-center justify-center py-20 opacity-50">
                   <Loader2 className="w-10 h-10 text-fuchsia-500 animate-spin mb-4" />
-                  <p className="text-[10px] font-black uppercase tracking-widest">Retrieving Answers...</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest">{t.teacherPages.retrievingAnswers}</p>
                 </div>
               ) : (
                 questions.map((q, index) => {
@@ -465,9 +465,9 @@ export default function TeacherQuizResultsPage() {
                       
                       {/* Student's Answer */}
                       <div className="bg-black/50 border border-white/5 rounded-xl p-4 mt-2">
-                        <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-2 flex items-center gap-1.5"><FileText size={12}/> Student's Response:</p>
+                        <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-2 flex items-center gap-1.5"><FileText size={12}/> {t.teacherPages.studentResponse}</p>
                         <p className="text-xs sm:text-sm text-neutral-300 whitespace-pre-wrap font-medium leading-relaxed">
-                          {studentAns?.student_answer_text || <span className="italic text-neutral-600">No answer provided.</span>}
+                          {studentAns?.student_answer_text || <span className="italic text-neutral-600">{t.teacherPages.noAnswerProvided}</span>}
                         </p>
                       </div>
 
@@ -501,7 +501,7 @@ export default function TeacherQuizResultsPage() {
             <div className="p-4 sm:p-6 border-t border-white/5 bg-[#0a0a0f] shrink-0">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-4 w-full sm:w-auto bg-black/40 px-4 py-3 rounded-xl border border-white/5">
-                  <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Calculated Total</span>
+                  <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{t.teacherPages.calculatedTotal}</span>
                   <span className="text-xl font-black text-fuchsia-400">
                     {Object.values(gradingScores).reduce((a, b) => a + (b || 0), 0)} <span className="text-xs text-neutral-500">/ 100</span>
                   </span>

@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 import { usePathname } from "next/navigation";
 
 import React, { useState } from "react";
@@ -50,6 +51,8 @@ const REFERRAL_CODE = "89LSHAHEEKCO";
 export default function HostingerAffiliatePage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   const [copied, setCopied] = useState(false);
   const [selectedPlanTab, setSelectedPlanTab] = useState<"all" | "web" | "cloud" | "vps">("all");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -450,7 +453,7 @@ export default function HostingerAffiliatePage() {
   const filteredPlans = selectedPlanTab === "all" ? plans : plans.filter(p => p.category === selectedPlanTab);
 
   return (
-    <main className="w-full relative bg-[#030307] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-24">
+    <main dir={isRtl ? "rtl" : "ltr"} className="w-full relative bg-[#030307] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-24">
       {/* Background Ambient Glow & Grid Pattern */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:32px_32px] opacity-40"></div>
@@ -466,7 +469,7 @@ export default function HostingerAffiliatePage() {
         <div className="mb-10 bg-purple-950/30 border border-purple-500/20 rounded-2xl p-4 md:p-5 flex items-start gap-4 backdrop-blur-md shadow-lg">
           <Info className="w-5 h-5 text-purple-400 mt-0.5 shrink-0" />
           <div className="text-xs md:text-sm text-neutral-300 leading-relaxed">
-            <span className="font-bold text-purple-300 mr-1.5">Official Partner & Editorial Disclosure:</span>
+            <span className="font-bold text-purple-300 mr-1.5">{t.publicPages.partnerDisclosure}</span>
             Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code <code className="bg-purple-500/20 border border-purple-500/30 text-purple-300 px-2 py-0.5 rounded font-mono font-bold text-xs">{REFERRAL_CODE}</code>, you receive an exclusive <strong className="text-white font-semibold">20% additional discount</strong> on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.
           </div>
         </div>
@@ -489,7 +492,7 @@ export default function HostingerAffiliatePage() {
             </h1>
 
             <p className="text-base sm:text-lg text-neutral-300 leading-relaxed font-normal max-w-2xl">
-              Power your websites, web applications, and digital business on world-class infrastructure. Equipped with <strong className="text-white font-semibold">LiteSpeed Web Servers</strong>, enterprise-grade NVMe SSDs, 99.9% uptime SLA, global Cloudflare CDN, and autonomous AI site-building agents.
+              Power your websites, web applications, and digital business on world-class infrastructure. Equipped with <strong className="text-white font-semibold">{t.publicPages.liteSpeedServers}</strong>, enterprise-grade NVMe SSDs, 99.9% uptime SLA, global Cloudflare CDN, and autonomous AI site-building agents.
             </p>
 
             {/* Key Value Pill Checklist */}

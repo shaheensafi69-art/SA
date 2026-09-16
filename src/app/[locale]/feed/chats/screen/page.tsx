@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 import { useEffect, useState, useRef, Suspense } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -40,6 +41,8 @@ function ChatScreenContent() {
   const supabase = createClient();
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
 
   const [isLoading, setIsLoading] = useState(true);
   const [messages, setMessages] = useState<MessageItem[]>([]);
@@ -264,7 +267,7 @@ function ChatScreenContent() {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center bg-[#030305]">
         <div className="w-12 h-12 border-4 border-[#C2185B] border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(194,24,91,0.5)]"></div>
-        <p className="text-neutral-500 font-bold text-xs uppercase tracking-widest mt-4">Connecting to conversation...</p>
+        <p className="text-neutral-500 font-bold text-xs uppercase tracking-widest mt-4">{t.feed.connectingToConversation}</p>
       </div>
     );
   }
@@ -289,7 +292,7 @@ function ChatScreenContent() {
             <Link
               href={`/${currentLocale}/feed/chats/list`}
               className="w-10 h-10 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white transition-all shadow-sm shrink-0"
-              title="Back to Conversations"
+              title={t.feed.backToConversations}
             >
               <ArrowLeft size={18} />
             </Link>
@@ -334,7 +337,7 @@ function ChatScreenContent() {
             className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5 shrink-0"
           >
             <User size={14} className="text-[#C2185B]" />
-            <span className="hidden sm:inline">Profile</span>
+            <span className="hidden sm:inline">{t.feed.myProfile}</span>
           </Link>
         </div>
       </header>
@@ -343,7 +346,7 @@ function ChatScreenContent() {
       {sendError && (
         <div className="px-4 py-2 bg-red-500/20 border-b border-red-500/30 text-red-400 text-xs font-bold text-center flex items-center justify-center gap-2 shrink-0">
           <span>⚠️ {sendError}</span>
-          <button onClick={() => setSendError(null)} className="underline hover:text-white">Dismiss</button>
+          <button onClick={() => setSendError(null)} className="underline hover:text-white">{t.feed.dismiss}</button>
         </div>
       )}
 
@@ -358,7 +361,7 @@ function ChatScreenContent() {
               <div className="w-16 h-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-[#C2185B] shadow-xl">
                 <Sparkles size={28} />
               </div>
-              <h3 className="text-white font-black text-base tracking-wide">Start the conversation</h3>
+              <h3 className="text-white font-black text-base tracking-wide">{t.feed.startConversation}</h3>
               <p className="text-neutral-400 text-xs font-medium mt-1.5 max-w-xs">
                 Send a direct message to {partnerName}. Messages are private and securely delivered.
               </p>
@@ -456,7 +459,7 @@ function ChatScreenContent() {
                     <button
                       onClick={() => setReplyingTo(msg)}
                       className={`absolute top-2 ${isMe ? "-left-9" : "-right-9"} opacity-0 group-hover/msg:opacity-100 transition-opacity p-2 bg-neutral-900 text-neutral-300 hover:text-white rounded-full shadow-lg border border-white/10 cursor-pointer`}
-                      title="Reply to message"
+                      title={t.feed.replyToMessage}
                     >
                       <CornerUpLeft size={13} />
                     </button>
@@ -475,7 +478,7 @@ function ChatScreenContent() {
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-1.5 h-8 bg-[#C2185B] rounded-full shrink-0 shadow-[0_0_10px_#C2185B]"></div>
               <div className="min-w-0">
-                <p className="text-[10px] font-black uppercase tracking-wider text-[#C2185B]">Replying to message</p>
+                <p className="text-[10px] font-black uppercase tracking-wider text-[#C2185B]">{t.feed.replyingToMessage}</p>
                 <p className="text-xs text-neutral-300 truncate mt-0.5">{replyingTo.message_text}</p>
               </div>
             </div>
@@ -500,7 +503,7 @@ function ChatScreenContent() {
             className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:border-[#C2185B] transition-all cursor-pointer shrink-0 shadow-sm ${
               isUploading ? "opacity-50 cursor-not-allowed" : ""
             }`}
-            title="Send file or photo"
+            title={t.feed.sendFileOrPhoto}
           >
             {isUploading ? (
               <Loader2 size={20} className="text-[#C2185B] animate-spin" />
@@ -532,7 +535,7 @@ function ChatScreenContent() {
             type="submit"
             disabled={isUploading || !newMessage.trim()}
             className="w-11 h-11 sm:w-12 sm:h-12 bg-gradient-to-br from-[#C2185B] to-yellow-500 text-black font-bold rounded-2xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 transition-all shadow-[0_0_20px_rgba(194,24,91,0.4)] shrink-0 cursor-pointer"
-            title="Send message"
+            title={t.feed.sendMessage}
           >
             <Send size={18} className="text-black font-black" />
           </button>

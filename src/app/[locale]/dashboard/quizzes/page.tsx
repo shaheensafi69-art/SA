@@ -275,7 +275,7 @@ export default function QuizzesPage() {
                     {/* Score / Grade Display */}
                     {quiz.status === "graded" ? (
                       <div>
-                        <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mb-1">Final Grade</p>
+                        <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mb-1">{t.quizzes.finalGrade}</p>
                         <div className="flex items-baseline gap-2">
                           <p className={`text-4xl font-black ${quiz.is_passed ? "text-emerald-400" : "text-red-400"}`}>{quiz.score}</p>
                           <span className={`text-sm font-black px-2 py-0.5 rounded border ${quiz.is_passed ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-red-500/10 border-red-500/30 text-red-400'}`}>
@@ -285,12 +285,12 @@ export default function QuizzesPage() {
                       </div>
                     ) : quiz.status === "pending_review" ? (
                       <div className="text-neutral-500 text-xs font-bold">
-                        <p className="uppercase tracking-widest text-[9px] mb-1">Status</p>
+                        <p className="uppercase tracking-widest text-[9px] mb-1">{t.quizzes.status}</p>
                         Awaiting Instructor Grading
                       </div>
                     ) : (
                       <div>
-                        <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mb-1">Pass Mark</p>
+                        <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mb-1">{t.quizzes.passMark}</p>
                         <p className="text-xl font-black text-white">{quiz.passing_score} / 100</p>
                       </div>
                     )}
@@ -308,9 +308,9 @@ export default function QuizzesPage() {
                       }`}
                     >
                       {quiz.status === "pending" ? (
-                        <>Start Exam</>
+                        <>{t.quizzes.startExam}</>
                       ) : (
-                        <><Lock size={14} /> Locked</>
+                        <><Lock size={14} /> {t.quizzes.locked}</>
                       )}
                     </button>
 
@@ -321,11 +321,11 @@ export default function QuizzesPage() {
           ) : (
             <div className="bg-neutral-900/40 p-12 rounded-[3rem] border border-white/5 backdrop-blur-xl flex flex-col items-center justify-center text-center shadow-lg min-h-[400px]">
               <div className="text-6xl mb-6 opacity-80">🎯</div>
-              <h3 className="text-2xl font-black text-white mb-2">No Quizzes Found</h3>
-              <p className="text-neutral-400 font-medium mb-8 max-w-sm">You don't have any exams matching this status.</p>
+              <h3 className="text-2xl font-black text-white mb-2">{t.quizzes.noQuizzesFound}</h3>
+              <p className="text-neutral-400 font-medium mb-8 max-w-sm">{t.quizzes.noQuizzesFoundDesc}</p>
               {filter !== "all" && (
                 <button onClick={() => setFilter("all")} className="px-8 py-4 bg-white/5 border border-white/10 text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-white/10">
-                  View All Exams
+                  {t.quizzes.allExams}
                 </button>
               )}
             </div>

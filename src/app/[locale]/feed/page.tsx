@@ -670,6 +670,7 @@ function CommentsModal({ postId, currentUserId, currentLocale, onClose }: { post
 // COMPONENT: STORY VIEWER MODAL (OVERLAY)
 // =====================================================================
 function StoryViewerModal({ userId, onClose }: { userId: string, onClose: () => void }) {
+  const t = getPortalTranslation();
   const supabase = createClient();
   const [stories, setStories] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);
@@ -788,7 +789,7 @@ function StoryViewerModal({ userId, onClose }: { userId: string, onClose: () => 
     return (
       <div className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-md flex flex-col items-center justify-center text-white">
         <p className="text-neutral-500 font-bold mb-6">{error || "Story unavailable."}</p>
-        <button onClick={onClose} className="px-6 py-3 bg-white/10 rounded-[1.2rem]">Return</button>
+        <button onClick={onClose} className="px-6 py-3 bg-white/10 rounded-[1.2rem]">{t.feed.returnBtn}</button>
       </div>
     );
   }

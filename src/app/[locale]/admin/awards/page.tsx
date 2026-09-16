@@ -116,7 +116,7 @@ export default function AdminAwardsPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-amber-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Honors System...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.loadingHonorsSystem}</p>
       </div>
     );
   }
@@ -139,7 +139,7 @@ export default function AdminAwardsPage() {
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
-              Honors & <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Badges</span>
+              {t.teacherPages.honorsWord} <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">{t.adminPages.badges}</span>
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-xl">
               Create and manage official academy badges. Instructors can award these to students for outstanding achievements.
@@ -148,7 +148,7 @@ export default function AdminAwardsPage() {
 
           <div className="flex gap-3 shrink-0 relative z-10">
             <div className="bg-black/40 border border-white/5 px-6 py-4 rounded-2xl flex flex-col items-center justify-center shadow-inner">
-              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1 flex items-center gap-1.5"><Trophy size={12}/> Total Badges</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1 flex items-center gap-1.5"><Trophy size={12}/> {t.adminPages.totalBadges}</p>
               <p className="text-3xl font-black text-amber-400">{awards.length}</p>
             </div>
           </div>
@@ -174,11 +174,11 @@ export default function AdminAwardsPage() {
               <form onSubmit={handleCreateAward} className="space-y-5">
                 {/* Badge Title */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Badge Title *</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.badgeTitle}</label>
                   <div className="relative">
                     <Type size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
-                      required type="text" placeholder="e.g. Top Scholar"
+                      required type="text" placeholder={t.adminPages.badgeTitlePlaceholder}
                       value={form.title} onChange={(e) => setForm({...form, title: e.target.value})}
                       className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-3.5 text-white text-sm font-bold focus:outline-none focus:border-amber-500/50 shadow-inner" 
                     />
@@ -187,11 +187,11 @@ export default function AdminAwardsPage() {
 
                 {/* Description */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Description *</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.badgeDescription}</label>
                   <div className="relative">
                     <AlignLeft size={16} className="absolute left-4 top-4 text-neutral-500" />
                     <textarea 
-                      required rows={3} placeholder="What is this badge awarded for?"
+                      required rows={3} placeholder={t.adminPages.badgeDescPlaceholder}
                       value={form.description} onChange={(e) => setForm({...form, description: e.target.value})}
                       className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-3.5 text-white text-sm focus:outline-none focus:border-amber-500/50 shadow-inner resize-y" 
                     />
@@ -201,7 +201,7 @@ export default function AdminAwardsPage() {
                 {/* Icon & Points Row */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Icon / Emoji</label>
+                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.iconEmoji}</label>
                     <div className="relative">
                       <ImageIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                       <input 
@@ -213,7 +213,7 @@ export default function AdminAwardsPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Points Value</label>
+                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.pointsValue}</label>
                     <div className="relative">
                       <Target size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                       <input 
@@ -247,8 +247,8 @@ export default function AdminAwardsPage() {
               {awards.length === 0 ? (
                 <div className="text-center py-20 border border-dashed border-white/5 rounded-3xl bg-black/20 text-neutral-500 flex flex-col items-center">
                   <Trophy size={48} className="mb-4 opacity-30"/>
-                  <p className="text-sm font-bold">No badges have been created yet.</p>
-                  <p className="text-[10px] mt-1 uppercase tracking-widest">Use the form to add the first honor.</p>
+                  <p className="text-sm font-bold">{t.adminPages.noBadgesCreatedYet}</p>
+                  <p className="text-[10px] mt-1 uppercase tracking-widest">{t.adminPages.useFormAddFirstHonor}</p>
                 </div>
               ) : (
                 awards.map((award) => (
@@ -270,14 +270,14 @@ export default function AdminAwardsPage() {
 
                     <div className="flex items-center justify-between sm:justify-end gap-4 border-t border-white/5 sm:border-0 pt-4 sm:pt-0 shrink-0">
                       <div className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-center min-w-[70px]">
-                        <p className="text-[8px] font-black uppercase tracking-widest text-neutral-500">Points</p>
+                        <p className="text-[8px] font-black uppercase tracking-widest text-neutral-500">{t.adminPages.points}</p>
                         <p className="text-sm font-bold text-amber-400 font-mono">{award.points_required}</p>
                       </div>
                       <button 
                         onClick={() => handleDeleteAward(award.id)}
                         disabled={deletingId === award.id}
                         className="w-10 h-10 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 flex items-center justify-center transition-all disabled:opacity-50"
-                        title="Delete Badge"
+                        title={t.adminPages.deleteBadge}
                       >
                         {deletingId === award.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16}/>}
                       </button>

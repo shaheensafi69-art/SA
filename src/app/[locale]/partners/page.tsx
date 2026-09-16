@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 import { usePathname } from "next/navigation";
 
 import { useState, useEffect, useMemo } from "react";
@@ -21,11 +22,13 @@ type Partner = {
   description: string;
 };
 
-const CURRENT_LANG = "en";
-
 export default function EnglishPartnersPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
+
+  const CURRENT_LANG = currentLocale;
   const [partners, setPartners] = useState<Partner[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -37,12 +40,14 @@ export default function EnglishPartnersPage() {
       const supabase = createClient();
       
       try {
-        const { data, error } = await supabase
+        let { data, error } = await supabase
           .from("partners")
           .select("id, name, slug, logo_url, website_url, description")
-          .eq("language", CURRENT_LANG)
-          .eq("is_active", true)
-          .order("created_at", { ascending: true });
+          .eq("language", currentLocale).eq("is_active", true).order("created_at", { ascending: true });
+        if (!data || data.length === 0) {
+          const fb = await supabase.from("partners").select("id, name, slug, logo_url, website_url, description").eq("language", "en").eq("is_active", true).order("created_at", { ascending: true });
+          if (fb.data) data = fb.data;
+        }
           
         if (error) throw error;
         if (data) setPartners(data);
@@ -72,7 +77,7 @@ export default function EnglishPartnersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030307] text-white font-sans selection:bg-yellow-500/30 overflow-hidden relative" >
+    <div className="min-h-screen bg-[#030307] text-white font-sans selection:bg-yellow-500/30 overflow-hidden relative" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* ================= LUXURY AMBIENT BACKGROUND SYSTEM ================= */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
@@ -113,20 +118,20 @@ export default function EnglishPartnersPage() {
           <div className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full bg-gradient-to-r from-yellow-500/10 via-amber-500/15 to-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[11px] sm:text-xs font-black uppercase tracking-widest mb-8 shadow-[0_0_25px_rgba(234,179,8,0.15)] animate-fade-in">
             <span className="w-2 h-2 rounded-full bg-yellow-400 animate-ping" />
             <Handshake className="w-4 h-4 text-yellow-400" />
-            <span>Global Strategic Alliances & Institutional Ecosystem — Safi Academy</span>
+            <span>{t.publicPages.alliancesBadge}</span>
           </div>
           
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tight mb-8 leading-[1.08]">
-            Forging Global Alliances. <br className="hidden md:block" />
+            {t.publicPages.partnersHeroTitle1} <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 drop-shadow-[0_10px_35px_rgba(234,179,8,0.35)]">
-              Empowering Minds.
+              {t.publicPages.partnersHeroTitle2}
             </span>
           </h1>
           
           {/* Deep Informative Subtitle */}
           <p className="text-neutral-300 sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed mb-12 font-medium">
-            Safi Academy collaborates with world-class cloud infrastructure providers, top-tier universities, international fintech institutions, and global humanitarian foundations. Together, we deliver accredited education, verified certifications, and borderless career pathways to students worldwide.
+            {t.publicPages.partnersHeroSubtitle}
           </p>
 
           {/* Key Alliance Metrics Bar */}
@@ -134,37 +139,37 @@ export default function EnglishPartnersPage() {
             <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-lg hover:border-yellow-500/30 transition-colors">
               <div className="flex items-center gap-2 text-yellow-400 mb-1">
                 <Building2 size={18} />
-                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Alliances</span>
+                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">{t.publicPages.alliances}</span>
               </div>
               <div className="text-2xl sm:text-3xl font-black text-white">35+</div>
-              <p className="text-[11px] text-neutral-400 mt-1">Global verified partners</p>
+              <p className="text-[11px] text-neutral-400 mt-1">{t.publicPages.globalVerifiedPartners}</p>
             </div>
 
             <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-lg hover:border-yellow-500/30 transition-colors">
               <div className="flex items-center gap-2 text-amber-400 mb-1">
                 <Award size={18} />
-                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Subsidies</span>
+                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">{t.publicPages.subsidies}</span>
               </div>
               <div className="text-2xl sm:text-3xl font-black text-white">$2.4M+</div>
-              <p className="text-[11px] text-neutral-400 mt-1">Joint educational grants</p>
+              <p className="text-[11px] text-neutral-400 mt-1">{t.publicPages.jointGrants}</p>
             </div>
 
             <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-lg hover:border-yellow-500/30 transition-colors">
               <div className="flex items-center gap-2 text-emerald-400 mb-1">
                 <Users size={18} />
-                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Beneficiaries</span>
+                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">{t.publicPages.beneficiaries}</span>
               </div>
               <div className="text-2xl sm:text-3xl font-black text-white">12,000+</div>
-              <p className="text-[11px] text-neutral-400 mt-1">Students directly funded</p>
+              <p className="text-[11px] text-neutral-400 mt-1">{t.publicPages.studentsDirectlyFunded}</p>
             </div>
 
             <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-lg hover:border-yellow-500/30 transition-colors">
               <div className="flex items-center gap-2 text-cyan-400 mb-1">
                 <ShieldCheck size={18} />
-                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Compliance</span>
+                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">{t.publicPages.compliance}</span>
               </div>
-              <div className="text-2xl sm:text-3xl font-black text-white">100% Verified</div>
-              <p className="text-[11px] text-neutral-400 mt-1">NDA & legal standards</p>
+              <div className="text-2xl sm:text-3xl font-black text-white">{t.publicPages.hundredPercentVerified}</div>
+              <p className="text-[11px] text-neutral-400 mt-1">{t.publicPages.ndaLegalStandards}</p>
             </div>
           </div>
 
@@ -175,7 +180,7 @@ export default function EnglishPartnersPage() {
               <Search className="text-yellow-400 ml-3 sm:ml-4 mr-3 shrink-0" size={20} />
               <input 
                 type="text" 
-                placeholder="Search partners by name, technology, or sector..." 
+                placeholder={t.publicPages.searchPartnersPlaceholder} 
                 className="bg-transparent border-none outline-none w-full text-white placeholder:text-neutral-500 text-sm sm:text-base font-medium"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -184,7 +189,7 @@ export default function EnglishPartnersPage() {
                 <button 
                   onClick={() => setSearchQuery("")}
                   className="p-1.5 rounded-full hover:bg-white/10 text-neutral-400 hover:text-white transition-colors mr-2"
-                  title="Clear search"
+                  title={t.publicPages.clearSearch}
                 >
                   <X size={18} />
                 </button>
@@ -201,7 +206,7 @@ export default function EnglishPartnersPage() {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
               <span>
-                Active Institutional Collaborations: <strong className="text-white font-bold">{filteredPartners.length}</strong>
+                {t.publicPages.activeInstitutionalCollaborations} <strong className="text-white font-bold">{filteredPartners.length}</strong>
               </span>
             </div>
             {searchQuery && (
@@ -234,7 +239,7 @@ export default function EnglishPartnersPage() {
                     <Globe className="w-10 h-10" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-black text-white mb-2">No Partners Found</h3>
+                    <h3 className="text-2xl font-black text-white mb-2">{t.publicPages.noPartnersFound}</h3>
                     <p className="text-neutral-400 text-sm leading-relaxed max-w-md mx-auto">
                       No active partners matching &ldquo;{searchQuery}&rdquo;. Check back soon as new organizations join our ecosystem.
                     </p>
@@ -294,7 +299,7 @@ export default function EnglishPartnersPage() {
                         {/* Verification Tag */}
                         <div className="relative z-10 text-center">
                           <span className="text-[11px] uppercase tracking-widest text-neutral-400 font-bold flex items-center gap-1.5 justify-center">
-                            <BadgeCheck size={14} className="text-yellow-400" /> Strategic Alliance
+                            <BadgeCheck size={14} className="text-yellow-400" /> {t.publicPages.strategicAlliance}
                           </span>
                         </div>
                       </div>
@@ -307,7 +312,7 @@ export default function EnglishPartnersPage() {
                           <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
                             <div>
                               <span className="text-xs uppercase font-black tracking-widest text-yellow-400/90 mb-1 block">
-                                Institutional Ecosystem
+                                {t.publicPages.institutionalEcosystem}
                               </span>
                               <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight group-hover:text-yellow-300 transition-colors">
                                 {partner.name}
@@ -336,15 +341,15 @@ export default function EnglishPartnersPage() {
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 pt-4 border-t border-white/5">
                             <div className="flex items-center gap-2 text-xs text-neutral-300 bg-white/[0.02] p-2.5 rounded-xl border border-white/5">
                               <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
-                              <span className="truncate">Joint Certification</span>
+                              <span className="truncate">{t.publicPages.jointCertification}</span>
                             </div>
                             <div className="flex items-center gap-2 text-xs text-neutral-300 bg-white/[0.02] p-2.5 rounded-xl border border-white/5">
                               <CheckCircle2 size={15} className="text-amber-400 shrink-0" />
-                              <span className="truncate">Student Talent Pipeline</span>
+                              <span className="truncate">{t.publicPages.talentPipeline}</span>
                             </div>
                             <div className="flex items-center gap-2 text-xs text-neutral-300 bg-white/[0.02] p-2.5 rounded-xl border border-white/5">
                               <CheckCircle2 size={15} className="text-cyan-400 shrink-0" />
-                              <span className="truncate">Verified Infrastructure</span>
+                              <span className="truncate">{t.publicPages.verifiedInfrastructure}</span>
                             </div>
                           </div>
                         </div>
@@ -353,14 +358,14 @@ export default function EnglishPartnersPage() {
                         <div className="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/10">
                           <div className="flex items-center gap-2 text-xs text-neutral-400 font-bold">
                             <Lock size={14} className="text-yellow-400" />
-                            <span>Legal Status: NDA & Agreement Verified</span>
+                            <span>{t.publicPages.legalStatusVerified}</span>
                           </div>
 
                           <Link 
                             href={`/${CURRENT_LANG}/partners/${partner.slug}`} 
                             className="px-6 py-3.5 bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-amber-400 text-black font-black uppercase tracking-widest text-xs rounded-2xl flex items-center justify-center gap-2.5 shadow-[0_0_20px_rgba(234,179,8,0.25)] hover:shadow-[0_0_30px_rgba(234,179,8,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all group/btn"
                           >
-                            <span>View Partner Profile & Legal Dossier</span> 
+                            <span>{t.publicPages.viewProfile}</span> 
                             <ArrowRight size={15} className="group-hover/btn:translate-x-1 transition-transform" />
                           </Link>
                         </div>
@@ -378,13 +383,13 @@ export default function EnglishPartnersPage() {
         <section className="py-20 border-t border-white/10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-black uppercase tracking-widest mb-4">
-              <Layers size={14} /> Ecosystem Architecture
+              <Layers size={14} /> {t.publicPages.ecosystemArch}
             </div>
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mb-4 leading-tight">
-              Our 4 Strategic Collaboration Pillars
+              {t.publicPages.fourPillarsTitle}
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
-              Every partnership at Safi Academy is forged with a clear strategic mandate: to empower students with verified skills, global infrastructure, and accredited pathways.
+              {t.publicPages.fourPillarsDesc}
             </p>
           </div>
 
@@ -395,12 +400,12 @@ export default function EnglishPartnersPage() {
               <div className="w-12 h-12 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 mb-6">
                 <Laptop size={24} />
               </div>
-              <h3 className="text-lg font-black text-white mb-2">Cloud & Tech Giants</h3>
+              <h3 className="text-lg font-black text-white mb-2">{t.publicPages.pillar1Title}</h3>
               <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed mb-4 flex-1">
-                Collaborations with enterprise infrastructure providers (Hostinger, AWS, Google Cloud) offering server credits, sandbox compute, and hands-on lab environments for our students.
+                {t.publicPages.pillar1Desc}
               </p>
               <div className="pt-4 border-t border-white/5 text-[11px] font-bold text-yellow-400 flex items-center gap-1.5">
-                <Check size={14} /> Production Developer Stacks
+                <Check size={14} /> {t.publicPages.pillar1Badge}
               </div>
             </div>
 
@@ -409,12 +414,12 @@ export default function EnglishPartnersPage() {
               <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-6">
                 <Building2 size={24} />
               </div>
-              <h3 className="text-lg font-black text-white mb-2">Academic Universities</h3>
+              <h3 className="text-lg font-black text-white mb-2">{t.publicPages.pillar2Title}</h3>
               <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed mb-4 flex-1">
-                Direct bridges with global higher-education institutions facilitating credit transfers, joint degrees, scholarship nominations, and international faculty exchanges.
+                {t.publicPages.pillar2Desc}
               </p>
               <div className="pt-4 border-t border-white/5 text-[11px] font-bold text-amber-400 flex items-center gap-1.5">
-                <Check size={14} /> Accredited Degree Pathways
+                <Check size={14} /> {t.publicPages.pillar2Badge}
               </div>
             </div>
 
@@ -423,12 +428,12 @@ export default function EnglishPartnersPage() {
               <div className="w-12 h-12 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 mb-6">
                 <Network size={24} />
               </div>
-              <h3 className="text-lg font-black text-white mb-2">Fintech & Settlement</h3>
+              <h3 className="text-lg font-black text-white mb-2">{t.publicPages.pillar3Title}</h3>
               <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed mb-4 flex-1">
-                Partnerships with global payment processors and crypto liquidity providers allowing Afghan and diaspora scholars to receive remote compensation and funding safely.
+                {t.publicPages.pillar3Desc}
               </p>
               <div className="pt-4 border-t border-white/5 text-[11px] font-bold text-yellow-400 flex items-center gap-1.5">
-                <Check size={14} /> Borderless Remittance Infrastructure
+                <Check size={14} /> {t.publicPages.pillar3Badge}
               </div>
             </div>
 
@@ -437,12 +442,12 @@ export default function EnglishPartnersPage() {
               <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-6">
                 <Handshake size={24} />
               </div>
-              <h3 className="text-lg font-black text-white mb-2">Humanitarian Foundations</h3>
+              <h3 className="text-lg font-black text-white mb-2">{t.publicPages.pillar4Title}</h3>
               <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed mb-4 flex-1">
-                International NGOs and philanthropic trusts co-funding emergency laptop drives, female programming academies, and satellite internet access for remote learners.
+                {t.publicPages.pillar4Desc}
               </p>
               <div className="pt-4 border-t border-white/5 text-[11px] font-bold text-emerald-400 flex items-center gap-1.5">
-                <Check size={14} /> 100% Free Humanitarian Reach
+                <Check size={14} /> {t.publicPages.pillar4Badge}
               </div>
             </div>
 
@@ -456,47 +461,47 @@ export default function EnglishPartnersPage() {
 
             <div className="max-w-3xl mb-14">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-black uppercase tracking-widest mb-4">
-                <ShieldCheck size={14} /> Rigorous Selection Protocol
+                <ShieldCheck size={14} /> {t.publicPages.vettingProtocol}
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
-                How We Vet & Onboard Global Partners
+                {t.publicPages.vettingTitle}
               </h2>
               <p className="text-neutral-300 text-sm sm:text-base leading-relaxed">
-                Trust is our most valuable asset. Every organization listed on Safi Academy passes thorough legal, operational, and ethical audits before engaging with our student body.
+                {t.publicPages.vettingDesc}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               
               <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 flex flex-col hover:border-yellow-400/40 transition-all">
-                <div className="text-xs font-black uppercase tracking-widest text-yellow-400 mb-2">Stage 01</div>
-                <h3 className="text-lg font-black text-white mb-2">Synergy & Ethics Audit</h3>
+                <div className="text-xs font-black uppercase tracking-widest text-yellow-400 mb-2">{t.publicPages.stage01}</div>
+                <h3 className="text-lg font-black text-white mb-2">{t.publicPages.stage1Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed">
-                  We review the partner&rsquo;s global track record, corporate integrity, and commitment to equitable educational access without exploitation.
+                  {t.publicPages.stage1Desc}
                 </p>
               </div>
 
               <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 flex flex-col hover:border-amber-400/40 transition-all">
-                <div className="text-xs font-black uppercase tracking-widest text-amber-400 mb-2">Stage 02</div>
-                <h3 className="text-lg font-black text-white mb-2">Legal NDA Clearance</h3>
+                <div className="text-xs font-black uppercase tracking-widest text-amber-400 mb-2">{t.publicPages.stage02}</div>
+                <h3 className="text-lg font-black text-white mb-2">{t.publicPages.stage2Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed">
-                  Execution of Non-Disclosure Agreements (NDA) and formal memorandums of understanding (MoU) defining strict privacy covenants.
+                  {t.publicPages.stage2Desc}
                 </p>
               </div>
 
               <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 flex flex-col hover:border-yellow-400/40 transition-all">
-                <div className="text-xs font-black uppercase tracking-widest text-yellow-400 mb-2">Stage 03</div>
-                <h3 className="text-lg font-black text-white mb-2">Technical Integration</h3>
+                <div className="text-xs font-black uppercase tracking-widest text-yellow-400 mb-2">{t.publicPages.stage03}</div>
+                <h3 className="text-lg font-black text-white mb-2">{t.publicPages.stage3Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed">
-                  Seamless API linkage, curriculum alignment, and direct student portal access for internships, lab infrastructure, and certification exams.
+                  {t.publicPages.stage3Desc}
                 </p>
               </div>
 
               <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 flex flex-col hover:border-emerald-400/40 transition-all">
-                <div className="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2">Stage 04</div>
-                <h3 className="text-lg font-black text-white mb-2">Student Impact Metrics</h3>
+                <div className="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2">{t.publicPages.stage04}</div>
+                <h3 className="text-lg font-black text-white mb-2">{t.publicPages.stage4Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed">
-                  Quarterly audits tracking real student hiring rates, grant distribution amounts, and verified community satisfaction scores.
+                  {t.publicPages.stage4Desc}
                 </p>
               </div>
 
@@ -581,15 +586,15 @@ export default function EnglishPartnersPage() {
             
             <div className="relative z-10 max-w-3xl mx-auto">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-300 text-xs font-black uppercase tracking-widest mb-6">
-                <Sparkles size={14} /> Join Our Global Mission
+                <Sparkles size={14} /> {t.publicPages.joinGlobalMission || "Join Our Global Mission"}
               </div>
 
               <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight mb-6 leading-tight">
-                Become a Partner. <br /> Empower the Next Generation.
+                {t.publicPages.becomeAPartner || "Become a Partner"}
               </h2>
 
               <p className="text-neutral-300 text-sm sm:text-base leading-relaxed mb-10 max-w-2xl mx-auto">
-                Whether you represent a university, a cloud provider, or an international development organization, partnering with Safi Academy creates exponential human impact. Let&rsquo;s build together.
+                {t.publicPages.becomePartnerDesc || ""}
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-4">
@@ -597,13 +602,13 @@ export default function EnglishPartnersPage() {
                   href={`/${currentLocale}/contact`}
                   className="px-8 py-4 rounded-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-300 text-black font-black uppercase tracking-widest text-xs shadow-[0_0_35px_rgba(234,179,8,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                 >
-                  <Handshake size={16} /> Partner With Us Today
+                  <Handshake size={16} /> {t.publicPages.partnerWithUsToday || "Partner With Us Today"}
                 </Link>
                 <Link
                   href={`/${currentLocale}/courses`}
                   className="px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-white font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                 >
-                  <Laptop size={16} /> Explore Student Masterclasses
+                  <Laptop size={16} /> {t.publicPages.exploreMasterclasses || "Explore Masterclasses"}
                 </Link>
               </div>
             </div>

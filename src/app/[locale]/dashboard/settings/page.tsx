@@ -300,7 +300,7 @@ export default function SettingsPage() {
               {/* ================= تب پروفایل ================= */}
               {activeTab === "profile" && (
                 <div className="animate-[fadeIn_0.3s_ease-out] relative z-10">
-                  <h2 className="text-2xl font-black text-white mb-8 border-b border-white/5 pb-4">Personal Identity</h2>
+                  <h2 className="text-2xl font-black text-white mb-8 border-b border-white/5 pb-4">{t.settings.personalIdentity}</h2>
 
                   {/* بخش تغییر عکس پروفایل و کاور فوتو */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
@@ -322,8 +322,8 @@ export default function SettingsPage() {
                         <input type="file" accept="image/*" onChange={handleAvatarUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" disabled={isSaving} />
                       </div>
                       <div>
-                        <h3 className="text-white font-black text-sm mb-0.5">Avatar</h3>
-                        <p className="text-neutral-500 text-[11px] font-medium leading-relaxed">Tap to upload profile photo (avatars bucket).</p>
+                        <h3 className="text-white font-black text-sm mb-0.5">{t.settings.avatar}</h3>
+                        <p className="text-neutral-500 text-[11px] font-medium leading-relaxed">{t.settings.avatarUploadPrompt}</p>
                       </div>
                     </div>
 
@@ -336,7 +336,7 @@ export default function SettingsPage() {
                             <img src={profile.cover_image_url} alt="Cover" className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full bg-gradient-to-br from-[#0a0a0f] via-pink-900/30 to-indigo-950/40 flex items-center justify-center">
-                              <span className="text-[10px] text-neutral-500 font-bold">No Cover</span>
+                              <span className="text-[10px] text-neutral-500 font-bold">{t.settings.noCover}</span>
                             </div>
                           )}
                           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
@@ -346,8 +346,8 @@ export default function SettingsPage() {
                         <input type="file" accept="image/*" onChange={handleCoverUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" disabled={isSaving} />
                       </div>
                       <div>
-                        <h3 className="text-white font-black text-sm mb-0.5">Cover Photo</h3>
-                        <p className="text-neutral-500 text-[11px] font-medium leading-relaxed">Tap to upload cover banner (16:9 or landscape).</p>
+                        <h3 className="text-white font-black text-sm mb-0.5">{t.settings.coverPhoto}</h3>
+                        <p className="text-neutral-500 text-[11px] font-medium leading-relaxed">{t.settings.coverUploadPrompt}</p>
                       </div>
                     </div>
 
@@ -356,49 +356,49 @@ export default function SettingsPage() {
                   {/* فرم اطلاعات فردی فول آپشن */}
                   <form onSubmit={handleSaveProfile} className="space-y-6">
 
-                    <h4 className="text-[10px] font-black text-amber-500 uppercase tracking-widest border-l-2 border-amber-500 pl-2">Basic Details</h4>
+                    <h4 className="text-[10px] font-black text-amber-500 uppercase tracking-widest border-l-2 border-amber-500 pl-2">{t.settings.basicDetails}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">First Name</label>
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.settings.firstName}</label>
                         <input required type="text" value={profile.first_name} onChange={(e) => setProfile({ ...profile, first_name: e.target.value })} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Last Name</label>
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.settings.lastName}</label>
                         <input required type="text" value={profile.last_name} onChange={(e) => setProfile({ ...profile, last_name: e.target.value })} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Father's Name</label>
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.settings.fatherName}</label>
                         <input type="text" value={profile.father_name} onChange={(e) => setProfile({ ...profile, father_name: e.target.value })} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Date of Birth</label>
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.settings.dateOfBirth}</label>
                         <input type="date" value={profile.date_of_birth} onChange={(e) => setProfile({ ...profile, date_of_birth: e.target.value })} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3.5 text-white text-sm font-mono focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
                       </div>
                     </div>
 
-                    <h4 className="text-[10px] font-black text-amber-500 uppercase tracking-widest border-l-2 border-amber-500 pl-2 pt-2">Contact Info</h4>
+                    <h4 className="text-[10px] font-black text-amber-500 uppercase tracking-widest border-l-2 border-amber-500 pl-2 pt-2">{t.settings.contactInfo}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Email Address</label>
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.settings.email}</label>
                         <input type="email" value={profile.email} disabled className="w-full bg-white/5 border border-transparent rounded-2xl px-4 py-4 text-neutral-400 text-sm cursor-not-allowed opacity-70" />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Phone Number</label>
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.settings.phoneNumber}</label>
                         <input type="tel" placeholder="+1 234 567 890" value={profile.phone_number} onChange={(e) => setProfile({ ...profile, phone_number: e.target.value })} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm font-mono focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
                       </div>
                       <div className="space-y-1.5 md:col-span-2">
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Country / Region</label>
-                        <input type="text" placeholder="e.g. United Kingdom" value={profile.country} onChange={(e) => setProfile({ ...profile, country: e.target.value })} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.settings.country}</label>
+                        <input type="text" placeholder={t.settings.countryPlaceholder} value={profile.country} onChange={(e) => setProfile({ ...profile, country: e.target.value })} className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner" />
                       </div>
                     </div>
 
-                    <h4 className="text-[10px] font-black text-amber-500 uppercase tracking-widest border-l-2 border-amber-500 pl-2 pt-2">About You</h4>
+                    <h4 className="text-[10px] font-black text-amber-500 uppercase tracking-widest border-l-2 border-amber-500 pl-2 pt-2">{t.settings.aboutYou}</h4>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Bio / Headline</label>
+                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.settings.bioHeadline}</label>
                       <textarea
                         value={profile.bio}
                         onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-                        placeholder="E.g. Aspiring Forex Trader & Software Engineer..."
+                        placeholder={t.settings.bioPlaceholder}
                         className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner resize-none h-28 custom-scrollbar"
                       />
                     </div>
@@ -419,12 +419,12 @@ export default function SettingsPage() {
               {/* ================= تب امنیت (تغییر رمز) ================= */}
               {activeTab === "security" && (
                 <div className="animate-[fadeIn_0.3s_ease-out] relative z-10">
-                  <h2 className="text-2xl font-black text-white mb-2">Vault Security</h2>
-                  <p className="text-neutral-500 text-sm mb-8 font-medium border-b border-white/5 pb-6">Update your password to keep your assets and data heavily secured.</p>
+                  <h2 className="text-2xl font-black text-white mb-2">{t.settings.vaultSecurity}</h2>
+                  <p className="text-neutral-500 text-sm mb-8 font-medium border-b border-white/5 pb-6">{t.settings.vaultSecurityDesc}</p>
 
                   <form onSubmit={handleUpdatePassword} className="space-y-6 max-w-md">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">New Secure Password</label>
+                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.settings.newSecurePassword}</label>
                       <input
                         required type="password" minLength={6}
                         value={passwords.newPassword}
@@ -434,7 +434,7 @@ export default function SettingsPage() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Confirm Password</label>
+                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.settings.confirmPassword}</label>
                       <input
                         required type="password" minLength={6}
                         value={passwords.confirmPassword}
@@ -450,19 +450,19 @@ export default function SettingsPage() {
                         disabled={isSaving || !passwords.newPassword}
                         className="w-full py-4 bg-white/5 text-white border border-white/10 font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-white/10 hover:border-white/20 transition-all disabled:opacity-50"
                       >
-                        {isSaving ? "Updating Vault..." : "Update Vault Password"}
+                        {isSaving ? "Updating..." : t.settings.changePassword}
                       </button>
                     </div>
                   </form>
 
                   <div className="pt-8 mt-8 border-t border-red-500/20 max-w-md">
-                    <h3 className="text-sm font-black text-red-400 uppercase tracking-wider mb-2">Danger Zone</h3>
-                    <p className="text-xs text-neutral-400 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
+                    <h3 className="text-sm font-black text-red-400 uppercase tracking-wider mb-2">{t.settings.dangerZone}</h3>
+                    <p className="text-xs text-neutral-400 mb-4">{t.settings.dangerZoneDesc}</p>
                     <Link
                       href={`/${currentLocale}/delete-account`}
                       className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-black uppercase tracking-widest transition-all hover:scale-105"
                     >
-                      <Trash2 size={14} /> Delete Account
+                      <Trash2 size={14} /> {t.settings.deleteAccount}
                     </Link>
                   </div>
                 </div>
@@ -471,15 +471,15 @@ export default function SettingsPage() {
               {/* ================= تب Preferences (تنظیمات اعلانات) ================= */}
               {activeTab === "preferences" && (
                 <div className="animate-[fadeIn_0.3s_ease-out] relative z-10">
-                  <h2 className="text-2xl font-black text-white mb-2">Notification Center</h2>
-                  <p className="text-neutral-500 text-sm mb-8 font-medium border-b border-white/5 pb-6">Manage how the Academy communicates with you.</p>
+                  <h2 className="text-2xl font-black text-white mb-2">{t.settings.notificationCenter}</h2>
+                  <p className="text-neutral-500 text-sm mb-8 font-medium border-b border-white/5 pb-6">{t.settings.notificationCenterDesc}</p>
 
                   <div className="space-y-4">
                     {/* Toggle 1 */}
                     <div className="flex items-center justify-between p-6 bg-black/40 border border-white/5 rounded-[1.5rem] hover:border-white/10 transition-colors">
                       <div className="pr-4">
-                        <h4 className="text-white font-bold mb-1">Academy Updates & Emails</h4>
-                        <p className="text-[11px] text-neutral-500 font-bold leading-relaxed">Receive instant alerts about your live classes, course progress, and assignment grades.</p>
+                        <h4 className="text-white font-bold mb-1">{t.settings.academyUpdates}</h4>
+                        <p className="text-[11px] text-neutral-500 font-bold leading-relaxed">{t.settings.academyUpdatesDesc}</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer shrink-0">
                         <input type="checkbox" className="sr-only peer" defaultChecked />
@@ -490,8 +490,8 @@ export default function SettingsPage() {
                     {/* Toggle 2 */}
                     <div className="flex items-center justify-between p-6 bg-black/40 border border-white/5 rounded-[1.5rem] hover:border-white/10 transition-colors">
                       <div className="pr-4">
-                        <h4 className="text-white font-bold mb-1">Marketing & Exclusive Offers</h4>
-                        <p className="text-[11px] text-neutral-500 font-bold leading-relaxed">Get notified about new courses, discounts, and referral program bonuses.</p>
+                        <h4 className="text-white font-bold mb-1">{t.settings.marketingOffers}</h4>
+                        <p className="text-[11px] text-neutral-500 font-bold leading-relaxed">{t.settings.marketingOffersDesc}</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer shrink-0">
                         <input type="checkbox" className="sr-only peer" />

@@ -1,4 +1,5 @@
-'use client';
+"use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
@@ -46,6 +47,8 @@ const InstagramIcon = ({ size = 18 }: { size?: number }) => (
 export default function ShaheenSafiExecutiveDossier() {
   const pathname = usePathname() || '/en';
   const currentLocale = pathname.split('/')[1] || 'en';
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -137,7 +140,7 @@ export default function ShaheenSafiExecutiveDossier() {
               <div className="relative h-full w-full rounded-[3rem] overflow-hidden bg-[#07070d]">
                 <Image 
                   src="/team/shaheen.jpeg" 
-                  alt="Shaheen Safi - Founder & Group CEO" 
+                  alt="Shaheen Safi - {t.publicPages.founderGroupCeo}" 
                   fill 
                   className="object-cover object-top" 
                   priority 
@@ -154,8 +157,8 @@ export default function ShaheenSafiExecutiveDossier() {
               <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#0a0a12]/90 border border-yellow-500/30 backdrop-blur-2xl shadow-2xl">
                 <Code2 size={20} className="text-yellow-400" />
                 <div className="text-left">
-                  <p className="text-[10px] uppercase font-black tracking-wider text-yellow-400">Lead Architect</p>
-                  <p className="text-xs font-bold text-white">Full-Stack & Fintech</p>
+                  <p className="text-[10px] uppercase font-black tracking-wider text-yellow-400">{t.publicPages.leadArchitect}</p>
+                  <p className="text-xs font-bold text-white">{t.publicPages.fullStackFintech}</p>
                 </div>
               </div>
             </motion.div>
@@ -166,7 +169,7 @@ export default function ShaheenSafiExecutiveDossier() {
             >
               <div className="px-5 py-3 rounded-2xl bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-black font-black tracking-widest text-xs uppercase shadow-[0_10px_35px_rgba(234,179,8,0.4)] flex items-center gap-2">
                 <Building2 size={15} />
-                <span>Founder & Group CEO</span>
+                <span>{t.publicPages.founderGroupCeo}</span>
               </div>
             </motion.div>
           </motion.div>
@@ -226,7 +229,7 @@ export default function ShaheenSafiExecutiveDossier() {
             
             <div className="flex items-center gap-3 mb-8">
               <span className="w-3 h-8 rounded-full bg-gradient-to-b from-yellow-400 to-amber-500" />
-              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">The Architect's Manifesto</h2>
+              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">{t.publicPages.architectManifesto}</h2>
             </div>
 
             <div className="space-y-6 text-neutral-300 text-base sm:text-lg leading-relaxed text-justify font-normal">
@@ -380,7 +383,7 @@ export default function ShaheenSafiExecutiveDossier() {
               <div className="space-y-10 border-l-2 border-yellow-500/20 pl-8 ml-3">
                 <div className="relative">
                   <div className="absolute -left-[41px] top-1.5 w-4 h-4 bg-yellow-400 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.7)]" />
-                  <h4 className="text-xl font-black text-white">Founder & Group CEO</h4>
+                  <h4 className="text-xl font-black text-white">{t.publicPages.founderGroupCeo}</h4>
                   <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest mt-1 mb-2">Safi International Capital LTD (2025 - Present)</p>
                   <p className="text-neutral-400 text-sm leading-relaxed">
                     Registered in England and Wales under Company No. 17063286. Leading corporate holding governance, sovereign compliance, and multi-platform fintech deployments worldwide.

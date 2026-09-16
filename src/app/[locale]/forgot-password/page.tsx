@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -12,6 +13,8 @@ import {
 export default function ForgotPasswordPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   const [email, setEmail] = useState("");
   const [botTrap, setBotTrap] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -101,7 +104,7 @@ export default function ForgotPasswordPage() {
               <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle2 size={24} className="text-emerald-400" />
               </div>
-              <h3 className="text-white font-black text-lg mb-2">Check Your Email</h3>
+              <h3 className="text-white font-black text-lg mb-2">{t.publicPages.checkYourEmail}</h3>
               <p className="text-emerald-400/80 text-sm mb-6">
                 We've sent a secure reset link to <strong className="text-white">{email}</strong>
               </p>

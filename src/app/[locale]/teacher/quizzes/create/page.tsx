@@ -214,9 +214,9 @@ export default function TeacherCreateDynamicQuizPage() {
               <ArrowLeft size={14} /> Back to Exam Hub
             </Link>
             <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white mb-2">
-              Deploy <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">Assessment</span>
+              {t.teacherPages.deployTask} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">{t.teacherPages.exams}</span>
             </h1>
-            <p className="text-xs sm:text-sm text-neutral-400 font-medium">Configure settings and build mixed question papers.</p>
+            <p className="text-xs sm:text-sm text-neutral-400 font-medium">{t.teacherPages.configureAssessmentDesc}</p>
           </div>
         </header>
 
@@ -254,7 +254,7 @@ export default function TeacherCreateDynamicQuizPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Target Cohort (Class) *</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.targetCohortClass} *</label>
                 <div className="relative">
                   <Layers size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                   <select 
@@ -267,7 +267,7 @@ export default function TeacherCreateDynamicQuizPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Exam Type *</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.examType} *</label>
                 <div className="relative flex bg-black/60 border border-white/10 rounded-2xl p-1.5 shadow-inner">
                   <button
                     type="button"
@@ -289,11 +289,11 @@ export default function TeacherCreateDynamicQuizPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Paper Title *</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.paperTitle} *</label>
                 <div className="relative">
                   <FileQuestion size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                   <input 
-                    required type="text" placeholder="e.g. Final Semester Evaluation"
+                    required type="text" placeholder={t.teacherPages.paperTitlePlaceholder}
                     value={quizConfig.title} onChange={(e) => setQuizConfig({...quizConfig, title: e.target.value})}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 shadow-inner" 
                   />
@@ -301,7 +301,7 @@ export default function TeacherCreateDynamicQuizPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Passing Threshold Score (%) *</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.passingThresholdScore} *</label>
                 <div className="relative">
                   <Award size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500" />
                   <input 
@@ -345,7 +345,7 @@ export default function TeacherCreateDynamicQuizPage() {
                     onClick={() => removeQuestionBlock(q.id)}
                     disabled={questions.length === 1}
                     className="p-2 text-neutral-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all disabled:opacity-30 self-end sm:self-auto"
-                    title="Remove Question"
+                    title={t.teacherPages.removeQuestion}
                   >
                     <Trash2 size={18} />
                   </button>
@@ -362,7 +362,7 @@ export default function TeacherCreateDynamicQuizPage() {
                   {/* Options Input (Only for MCQ) */}
                   {q.type === "mcq" && (
                     <div className="bg-white/[0.02] border border-white/5 p-4 sm:p-5 rounded-2xl space-y-3">
-                      <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest block mb-1">Answers & Select Correct Option *</label>
+                      <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest block mb-1">{t.teacherPages.answersAndSelectCorrect}</label>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                         {(["A", "B", "C", "D"] as const).map((optKey) => {
                           const isCorrect = q.correct_option === optKey;
@@ -372,7 +372,7 @@ export default function TeacherCreateDynamicQuizPage() {
                                 type="button"
                                 onClick={() => updateQuestion(q.id, 'correct_option', optKey)}
                                 className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border transition-all ${isCorrect ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-white/5 border-white/10 text-neutral-500 hover:text-white'}`}
-                                title="Mark as correct answer"
+                                title={t.teacherPages.markCorrectAnswer}
                               >
                                 {isCorrect ? <CheckCircle2 size={16} /> : optKey}
                               </button>
@@ -393,7 +393,7 @@ export default function TeacherCreateDynamicQuizPage() {
 
                   <div className="flex justify-end pt-2 border-t border-white/5">
                     <div className="w-32">
-                      <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 block mb-2 text-right">Points Value</label>
+                      <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 block mb-2 text-right">{t.teacherPages.pointsValue}</label>
                       <input 
                         required type="number" min="1" max="100"
                         value={q.points} onChange={(e) => updateQuestion(q.id, 'points', Number(e.target.value))}

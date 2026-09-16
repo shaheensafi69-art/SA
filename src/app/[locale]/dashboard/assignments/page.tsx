@@ -270,15 +270,15 @@ export default function StudentHubPage() {
                     <div className="flex flex-wrap items-center gap-2 mt-2">
                       {cls.meeting_link ? (
                         <a href={cls.meeting_link} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-xs font-bold text-red-400 rounded-lg flex items-center gap-1.5 transition-colors">
-                          <Video size={12} /> Teams <ExternalLink size={10} />
+                          <Video size={12} /> {t.assignments.teams} <ExternalLink size={10} />
                         </a>
-                      ) : <span className="px-3 py-1.5 bg-white/5 text-[10px] font-bold text-neutral-600 rounded-lg">Teams Locked</span>}
+                      ) : <span className="px-3 py-1.5 bg-white/5 text-[10px] font-bold text-neutral-600 rounded-lg">{t.assignments.teamsLocked}</span>}
 
                       {cls.signal_group_link ? (
                         <a href={cls.signal_group_link} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-xs font-bold text-indigo-400 rounded-lg flex items-center gap-1.5 transition-colors">
-                          <MessageSquare size={12} /> Signal <ExternalLink size={10} />
+                          <MessageSquare size={12} /> {t.assignments.signal} <ExternalLink size={10} />
                         </a>
-                      ) : <span className="px-3 py-1.5 bg-white/5 text-[10px] font-bold text-neutral-600 rounded-lg">Signal Syncing</span>}
+                      ) : <span className="px-3 py-1.5 bg-white/5 text-[10px] font-bold text-neutral-600 rounded-lg">{t.assignments.signalSyncing}</span>}
                     </div>
                   </div>
 
@@ -293,7 +293,7 @@ export default function StudentHubPage() {
                       className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-black rounded-xl text-[11px] font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-[0_0_15px_rgba(16,185,129,0.3)] disabled:opacity-50 shrink-0 flex items-center justify-center gap-2 w-full sm:w-auto"
                     >
                       {signingId === cls.id ? (
-                        <><Loader2 size={16} className="animate-spin"/> Processing...</>
+                        <><Loader2 size={16} className="animate-spin"/> {t.assignments.processing}</>
                       ) : (
                         <><ClipboardCheck size={16} /> {t.assignments.signAttendance}</>
                       )}
@@ -308,7 +308,7 @@ export default function StudentHubPage() {
                 <CalendarDays size={20} />
               </div>
               <p className="text-neutral-400 text-sm font-bold tracking-wide">{t.liveClasses.noScheduled}</p>
-              <p className="text-neutral-600 text-xs">Take a break or review your pending assignments.</p>
+              <p className="text-neutral-600 text-xs">{t.assignments.takeBreak}</p>
             </div>
           )}
         </section>
@@ -322,7 +322,7 @@ export default function StudentHubPage() {
               </div>
               <div>
                 <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">{t.assignments.courseAssignments}</h2>
-                <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest mt-1">Academic Tasks</p>
+                <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest mt-1">{t.assignments.academicTasks}</p>
               </div>
             </div>
             
@@ -413,7 +413,7 @@ export default function StudentHubPage() {
                     {task.status === "submitted" && (
                       <div className="flex flex-col items-center justify-center py-4 bg-white/[0.02] rounded-xl border border-white/5 gap-2">
                         <Clock className="text-blue-400 animate-pulse" size={20} />
-                        <p className="text-[10px] sm:text-xs font-bold text-blue-400">Assignment Under Review</p>
+                        <p className="text-[10px] sm:text-xs font-bold text-blue-400">{t.assignments.underReview}</p>
                       </div>
                     )}
 
@@ -425,7 +425,7 @@ export default function StudentHubPage() {
                           <p className="text-2xl sm:text-3xl font-black text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]">{task.grade}</p>
                         </div>
                         <div className="flex-1">
-                          <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-emerald-500/70 mb-1">Feedback</p>
+                          <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-emerald-500/70 mb-1">{t.assignments.feedback}</p>
                           <p className="text-xs sm:text-sm text-neutral-300 italic leading-relaxed line-clamp-3">"{task.feedback || "Excellent job!"}"</p>
                         </div>
                       </div>
@@ -439,7 +439,7 @@ export default function StudentHubPage() {
               <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3">
                 <CheckCircle size={32} className="text-neutral-600" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-black text-white tracking-wide">All caught up!</h3>
+              <h3 className="text-xl sm:text-2xl font-black text-white tracking-wide">{t.assignments.allCaughtUp}</h3>
               <p className="text-neutral-500 text-xs sm:text-sm font-medium max-w-sm">No {filter} assignments found. Take a rest or prepare for upcoming classes.</p>
             </div>
           )}

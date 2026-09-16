@@ -264,9 +264,9 @@ export default function TeacherOverview() {
                     <div>
                       <div className="flex justify-between items-start mb-3">
                         {room.is_active ? (
-                          <span className="bg-rose-500/20 text-rose-400 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md animate-pulse">Live Now</span>
+                          <span className="bg-rose-500/20 text-rose-400 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md animate-pulse">{t.teacherPages.liveNow}</span>
                         ) : (
-                          <span className="bg-white/10 text-neutral-400 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">Standby</span>
+                          <span className="bg-white/10 text-neutral-400 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">{t.teacherPages.standby}</span>
                         )}
                       </div>
                       <h3 className="text-base font-bold text-white mb-3 line-clamp-1">{room.class_name}</h3>

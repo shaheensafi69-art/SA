@@ -104,7 +104,7 @@ export default function ManageTeachersPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Faculty Records...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.loadingFacultyRecords}</p>
       </div>
     );
   }
@@ -127,7 +127,7 @@ export default function ManageTeachersPage() {
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
-              Faculty <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-500">Management</span>
+              {t.adminTeachers.title}
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-2xl">
               Review instructor profiles, monitor their active cohorts, and manage administrative access levels across Safi Academy.
@@ -139,14 +139,14 @@ export default function ManageTeachersPage() {
             <div className="bg-black/40 border border-white/5 px-5 py-3 rounded-2xl flex items-center gap-3 shadow-inner">
               <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-400"><UserCheck size={18}/></div>
               <div>
-                <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">Total Faculty</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">{t.adminTeachers.totalInstructors}</p>
                 <p className="text-xl font-black text-white">{stats.totalFaculty}</p>
               </div>
             </div>
             <div className="bg-black/40 border border-white/5 px-5 py-3 rounded-2xl flex items-center gap-3 shadow-inner hidden sm:flex">
               <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-400"><BookOpen size={18}/></div>
               <div>
-                <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">Active Cohorts</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">{t.adminPages.classCohorts}</p>
                 <p className="text-xl font-black text-white">{stats.totalClasses}</p>
               </div>
             </div>
@@ -158,7 +158,7 @@ export default function ManageTeachersPage() {
           <div className="pl-4 text-neutral-500"><Search size={18} /></div>
           <input 
             type="text" 
-            placeholder="Search instructor by name or email..."
+            placeholder={t.adminTeachers.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-transparent border-none text-white text-sm focus:outline-none focus:ring-0 py-3 pr-4 font-medium placeholder:text-neutral-600"
@@ -169,8 +169,8 @@ export default function ManageTeachersPage() {
         {filteredTeachers.length === 0 ? (
            <div className="text-center py-20 bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] backdrop-blur-md shadow-2xl">
              <ShieldAlert size={48} className="mx-auto text-neutral-600 mb-4" />
-             <h3 className="text-xl font-black text-white mb-2">No Instructors Found</h3>
-             <p className="text-neutral-500 text-sm">There are no faculty members matching your search criteria.</p>
+             <h3 className="text-xl font-black text-white mb-2">{t.adminTeachers.noTeachers}</h3>
+             <p className="text-neutral-500 text-sm">{t.adminTeachers.noTeachers}</p>
            </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
@@ -220,20 +220,20 @@ export default function ManageTeachersPage() {
 
                 {/* Bio Section */}
                 <div className="mb-6 relative z-10 flex-1">
-                  <p className="font-black text-neutral-500 text-[9px] uppercase tracking-widest mb-2">Professional Summary</p>
+                  <p className="font-black text-neutral-500 text-[9px] uppercase tracking-widest mb-2">{t.adminPages.professionalSummary}</p>
                   <p className="text-xs text-neutral-400 line-clamp-3 leading-relaxed font-medium">
-                    {teacher.bio ? teacher.bio : <span className="italic opacity-50">No professional biography has been provided for this instructor.</span>}
+                    {teacher.bio ? teacher.bio : <span className="italic opacity-50">{t.adminPages.noBioProvided}</span>}
                   </p>
                 </div>
 
                 {/* Database Live Stats */}
                 <div className="grid grid-cols-2 gap-3 mb-6 relative z-10 mt-auto">
                   <div className="bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
-                    <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1 flex items-center gap-1"><BookOpen size={10}/> Active Classes</p>
+                    <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1 flex items-center gap-1"><BookOpen size={10}/> {t.adminPages.assignedClasses}</p>
                     <p className="text-2xl font-black text-white">{teacher.activeClasses}</p>
                   </div>
                   <div className="bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
-                    <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1 flex items-center gap-1"><Users size={10}/> Total Students</p>
+                    <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1 flex items-center gap-1"><Users size={10}/> {t.teacherPages.totalStudents}</p>
                     <p className="text-2xl font-black text-white">{teacher.totalStudents}</p>
                   </div>
                 </div>

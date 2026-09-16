@@ -140,7 +140,7 @@ export default function AdminSettingsPage() {
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
-              System <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">Settings</span>
+              {t.admin.settings}
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-md">
               Manage your master administrator profile, configure contact parameters, and monitor node parameters.
@@ -160,7 +160,7 @@ export default function AdminSettingsPage() {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-4">
             <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
-            <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Synchronizing Core Engine...</p>
+            <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.synchronizingCoreEngine}</p>
           </div>
         ) : (
           <form onSubmit={handleSaveChanges} className="space-y-6 sm:space-y-8">
@@ -194,20 +194,20 @@ export default function AdminSettingsPage() {
                   </div>
                   
                   <div className="w-full space-y-2">
-                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Avatar Vector URL</label>
+                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.avatarImageUrl}</label>
                     <input 
                       type="url" placeholder="https://example.com/photo.jpg"
                       value={profileData.avatar_url}
                       onChange={(e) => setProfileData({...profileData, avatar_url: e.target.value})}
                       className="w-full bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm focus:outline-none focus:border-indigo-500/50 shadow-inner"
                     />
-                    <p className="text-[10px] text-neutral-500 ml-1">Sync your graphic nodes via absolute web link.</p>
+                    <p className="text-[10px] text-neutral-500 ml-1">{t.adminPages.syncGraphicNodesDesc}</p>
                   </div>
                 </div>
 
                 {/* First Name */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">First Name *</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.settings.firstName} *</label>
                   <div className="relative">
                     <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
@@ -220,7 +220,7 @@ export default function AdminSettingsPage() {
 
                 {/* Last Name */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Last Name *</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.settings.lastName} *</label>
                   <div className="relative">
                     <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
@@ -233,11 +233,11 @@ export default function AdminSettingsPage() {
 
                 {/* Father Name */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Father's Name</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.fatherName}</label>
                   <div className="relative">
                     <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
-                      type="text" value={profileData.father_name} placeholder="Father's Name"
+                      type="text" value={profileData.father_name} placeholder={t.teacherPages.fatherName}
                       onChange={(e) => setProfileData({...profileData, father_name: e.target.value})}
                       className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm font-bold focus:outline-none focus:border-indigo-500/50 shadow-inner"
                     />
@@ -246,7 +246,7 @@ export default function AdminSettingsPage() {
 
                 {/* Date of Birth */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Date of Birth</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.dateOfBirth}</label>
                   <div className="relative">
                     <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
@@ -270,7 +270,7 @@ export default function AdminSettingsPage() {
                 
                 {/* Email (Read Only) */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Primary Email (Protected)</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.primaryEmailProtected}</label>
                   <div className="relative">
                     <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600" />
                     <input 
@@ -282,7 +282,7 @@ export default function AdminSettingsPage() {
 
                 {/* Phone Number */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Phone Number</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.phone}</label>
                   <div className="relative">
                     <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
@@ -295,11 +295,11 @@ export default function AdminSettingsPage() {
 
                 {/* Country */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Country Node</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.countryNode}</label>
                   <div className="relative">
                     <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
-                      type="text" value={profileData.country} placeholder="e.g. United Kingdom"
+                      type="text" value={profileData.country} placeholder={t.settings.countryPlaceholder}
                       onChange={(e) => setProfileData({...profileData, country: e.target.value})}
                       className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm font-bold focus:outline-none focus:border-indigo-500/50 shadow-inner"
                     />
@@ -308,7 +308,7 @@ export default function AdminSettingsPage() {
 
                 {/* Clearance (Read Only) */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">System Clearance</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.systemClearance}</label>
                   <div className="relative">
                     <ShieldCheck size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500" />
                     <input 
@@ -320,13 +320,13 @@ export default function AdminSettingsPage() {
 
                 {/* Bio */}
                 <div className="sm:col-span-2 space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Professional Biography</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.professionalBiography}</label>
                   <div className="relative">
                     <FileText size={16} className="absolute left-4 top-4 text-neutral-500" />
                     <textarea 
                       value={profileData.bio}
                       onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
-                      placeholder="Write your professional credentials..."
+                      placeholder={t.teacherPages.bioPlaceholder}
                       className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-indigo-500/50 shadow-inner min-h-[100px] resize-y custom-scrollbar"
                     />
                   </div>
@@ -345,19 +345,19 @@ export default function AdminSettingsPage() {
                 
                 {/* Total Score */}
                 <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col justify-center border-l-2 border-l-indigo-500">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1 flex items-center gap-1.5"><Award size={12}/> Academic Score</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1 flex items-center gap-1.5"><Award size={12}/> {t.adminPages.points}</p>
                   <p className="text-xl font-black text-white font-mono">{profileData.total_score} Pts</p>
                 </div>
 
                 {/* Wallet Balance */}
                 <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col justify-center border-l-2 border-l-amber-500">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1 flex items-center gap-1.5"><Wallet size={12}/> Wallet Balance</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1 flex items-center gap-1.5"><Wallet size={12}/> {t.teacherPages.walletBalance}</p>
                   <p className="text-xl font-black text-amber-400 font-mono">${profileData.wallet_balance.toFixed(2)}</p>
                 </div>
 
                 {/* Referral Code */}
                 <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col justify-center border-l-2 border-l-purple-500">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1 flex items-center gap-1.5"><Fingerprint size={12}/> Affiliate Code</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1 flex items-center gap-1.5"><Fingerprint size={12}/> {t.adminPages.affiliateCode}</p>
                   <p className="text-xl font-black text-purple-400 font-mono uppercase tracking-wider">{profileData.referral_code || "NONE"}</p>
                 </div>
 

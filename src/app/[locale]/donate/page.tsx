@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 import { usePathname } from "next/navigation";
 
 import React, { useState, useEffect } from "react";
@@ -86,6 +87,10 @@ const PRESET_AMOUNTS = [
 export default function EnglishDonatePage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
+
+  
   const [amount, setAmount] = useState<number | "">(75);
   const [note, setNote] = useState("");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -259,7 +264,7 @@ export default function EnglishDonatePage() {
           className="flex items-center gap-2 px-4 py-2.5 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full text-xs font-black uppercase text-neutral-300 hover:text-white hover:bg-white/10 transition-all shadow-xl group"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-          <span>Home</span>
+          <span>{t.common.home}</span>
         </Link>
       </div>
 
@@ -270,7 +275,7 @@ export default function EnglishDonatePage() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-red-500/10 border border-red-500/25 text-red-400 text-xs font-black uppercase tracking-widest mb-8 shadow-[0_0_25px_rgba(239,68,68,0.2)] animate-[fadeInDown_0.6s_ease-out]">
             <Heart size={15} className="fill-red-500/80 animate-pulse text-red-500" />
-            <span>Emergency Educational Aid • Defy the Ban</span>
+            <span>{t.publicPages.emergencyEducationalAid}</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight mb-8 leading-[1.08]">
@@ -307,17 +312,17 @@ export default function EnglishDonatePage() {
               <div className="flex items-center gap-2 mb-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest">
-                  Live Global Scholarship Campaign
+                  {t.publicPages.liveScholarshipCampaign}
                 </p>
               </div>
               <p className="text-3xl sm:text-4xl md:text-5xl font-black text-white flex items-baseline gap-2">
                 ${campaign.raised.toLocaleString()}
-                <span className="text-xs text-neutral-400 font-normal">USD Raised</span>
+                <span className="text-xs text-neutral-400 font-normal">{t.publicPages.usdRaised}</span>
               </p>
             </div>
             <div className="sm:text-right">
               <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-1">
-                Target 2026 Student Goal
+                {t.publicPages.targetStudentGoal}
               </p>
               <p className="text-2xl font-black text-neutral-300">
                 ${campaign.goal.toLocaleString()}
@@ -342,19 +347,19 @@ export default function EnglishDonatePage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2 border-t border-white/10 text-center">
             <div className="p-2">
               <div className="text-lg sm:text-xl font-black text-white">1,240+</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">Girls Enrolled</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{t.publicPages.girlsEnrolled}</div>
             </div>
             <div className="p-2">
               <div className="text-lg sm:text-xl font-black text-white">100%</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">Free Scholarships</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{t.publicPages.freeScholarships}</div>
             </div>
             <div className="p-2">
               <div className="text-lg sm:text-xl font-black text-white">48+</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">Secret Classrooms</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{t.publicPages.liveClassrooms || "Classrooms"}</div>
             </div>
             <div className="p-2">
               <div className="text-lg sm:text-xl font-black text-white">256-bit</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">Encrypted Privacy</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{t.publicPages.encryptedTech || "Encrypted"}</div>
             </div>
           </div>
         </div>
@@ -712,7 +717,7 @@ export default function EnglishDonatePage() {
             }}
             className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-black font-black text-base uppercase tracking-wider rounded-2xl transition-all shadow-[0_10px_40px_rgba(245,158,11,0.4)] hover:shadow-[0_15px_50px_rgba(245,158,11,0.6)] hover:scale-105"
           >
-            <span>Make Your Donation Now</span>
+            <span>{t.publicPages.makeDonationNow}</span>
             <ArrowRight size={18} />
           </button>
 

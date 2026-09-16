@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -36,6 +37,10 @@ const calculateReadingTime = (content: string) => {
 export default function EnglishBlogOverviewPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
+
+  
 
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<string[]>(["All"]);
@@ -73,7 +78,7 @@ export default function EnglishBlogOverviewPage() {
           query = query.eq("category", activeCategory);
         }
 
-        const { data: postsData, error: postsError } = await query;
+        let { data: postsData, error: postsError } = await query;
         if (postsError) throw postsError;
         if (postsData) {
           // If any posts match the currentLocale, show them; otherwise show all published
@@ -153,7 +158,7 @@ export default function EnglishBlogOverviewPage() {
   const standardPosts = filteredPosts.length > 1 ? filteredPosts.slice(1) : (filteredPosts.length === 1 && (searchTerm || activeCategory !== "All") ? filteredPosts : []);
 
   return (
-    <div className="min-h-screen bg-[#030307] text-white font-sans selection:bg-yellow-500/30 overflow-hidden relative" >
+    <div className="min-h-screen bg-[#030307] text-white font-sans selection:bg-yellow-500/30 overflow-hidden relative" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* ================= LUXURY AMBIENT BACKGROUND SYSTEM ================= */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
@@ -184,20 +189,20 @@ export default function EnglishBlogOverviewPage() {
           <div className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full bg-gradient-to-r from-yellow-500/10 via-amber-500/15 to-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[11px] sm:text-xs font-black uppercase tracking-widest mb-8 shadow-[0_0_25px_rgba(234,179,8,0.15)] animate-fade-in">
             <span className="w-2 h-2 rounded-full bg-yellow-400 animate-ping" />
             <BookOpen size={14} className="text-yellow-400" />
-            <span>Safi Academy Editorial & Knowledge Hub — Global Engineering & Insights</span>
+            <span>{t.publicPages.editorialBadge}</span>
           </div>
 
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tight mb-8 leading-[1.08]">
-            Engineering Minds. <br className="hidden md:block" />
+            {t.publicPages.blogHeroTitle1} <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 drop-shadow-[0_10px_35px_rgba(234,179,8,0.35)]">
-              Global Insights.
+              {t.publicPages.blogHeroTitle2}
             </span>
           </h1>
 
           {/* Deep Informative Subtitle */}
           <p className="text-neutral-300 sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed mb-12 font-medium">
-            Explore cutting-edge engineering blueprints, distributed software architectures, quantitative fintech breakdowns, and international academic scholarship guides authored by industry specialists.
+            {t.publicPages.blogHeroSubtitle}
           </p>
 
           {/* Key Editorial Metrics Bar */}
@@ -205,37 +210,37 @@ export default function EnglishBlogOverviewPage() {
             <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-lg hover:border-yellow-500/30 transition-colors">
               <div className="flex items-center gap-2 text-yellow-400 mb-1">
                 <FileText size={18} />
-                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Articles</span>
+                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">{t.publicPages.articles}</span>
               </div>
               <div className="text-2xl sm:text-3xl font-black text-white">120+</div>
-              <p className="text-[11px] text-neutral-400 mt-1">Peer-reviewed tech guides</p>
+              <p className="text-[11px] text-neutral-400 mt-1">{t.publicPages.peerReviewedTechGuides}</p>
             </div>
 
             <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-lg hover:border-yellow-500/30 transition-colors">
               <div className="flex items-center gap-2 text-amber-400 mb-1">
                 <User size={18} />
-                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Authors</span>
+                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">{t.publicPages.authors}</span>
               </div>
               <div className="text-2xl sm:text-3xl font-black text-white">15+</div>
-              <p className="text-[11px] text-neutral-400 mt-1">Senior engineers & scholars</p>
+              <p className="text-[11px] text-neutral-400 mt-1">{t.publicPages.seniorEngineersScholars}</p>
             </div>
 
             <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-lg hover:border-yellow-500/30 transition-colors">
               <div className="flex items-center gap-2 text-emerald-400 mb-1">
                 <TrendingUp size={18} />
-                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Readership</span>
+                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">{t.publicPages.readership}</span>
               </div>
               <div className="text-2xl sm:text-3xl font-black text-white">45K+</div>
-              <p className="text-[11px] text-neutral-400 mt-1">Monthly international readers</p>
+              <p className="text-[11px] text-neutral-400 mt-1">{t.publicPages.monthlyReaders}</p>
             </div>
 
             <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-lg hover:border-yellow-500/30 transition-colors">
               <div className="flex items-center gap-2 text-cyan-400 mb-1">
                 <ShieldCheck size={18} />
-                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Access</span>
+                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">{t.teacherPages.access || "Access"}</span>
               </div>
-              <div className="text-2xl sm:text-3xl font-black text-white">100% Free</div>
-              <p className="text-[11px] text-neutral-400 mt-1">Open-source knowledge base</p>
+              <div className="text-2xl sm:text-3xl font-black text-white">{t.publicPages.hundredPercentFree}</div>
+              <p className="text-[11px] text-neutral-400 mt-1">{t.publicPages.openSourceKnowledgeBase}</p>
             </div>
           </div>
 
@@ -246,7 +251,7 @@ export default function EnglishBlogOverviewPage() {
               <Search className="text-yellow-400 ml-3 sm:ml-4 mr-3 shrink-0" size={22} />
               <input 
                 type="text" 
-                placeholder="Search by topic, keyword, author, or architecture..." 
+                placeholder={t.publicPages.searchBlogPlaceholder} 
                 className="bg-transparent border-none outline-none w-full text-white placeholder:text-neutral-500 text-sm sm:text-base font-medium"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -255,19 +260,19 @@ export default function EnglishBlogOverviewPage() {
                 <button 
                   onClick={() => setSearchTerm("")}
                   className="p-1.5 rounded-full hover:bg-white/10 text-neutral-400 hover:text-white transition-colors mr-2"
-                  title="Clear search"
+                  title={t.publicPages.clearSearch}
                 >
                   <X size={18} />
                 </button>
               )}
               <div className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-bold shrink-0">
-                <Sparkles size={14} /> Live Filter
+                <Sparkles size={14} /> {t.publicPages.liveFilter}
               </div>
             </div>
 
             {/* Quick Topic Chips */}
             <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs text-neutral-400">
-              <span className="font-bold text-neutral-500 uppercase tracking-widest text-[10px]">Popular Topics:</span>
+              <span className="font-bold text-neutral-500 uppercase tracking-widest text-[10px]">{t.publicPages.popularTopics}</span>
               {quickSearchTags.map((tag, i) => (
                 <button
                   key={i}
@@ -290,7 +295,7 @@ export default function EnglishBlogOverviewPage() {
           
           <div className="flex items-center justify-center gap-2 mb-2">
             <Compass size={14} className="text-yellow-400" />
-            <p className="text-neutral-400 text-[11px] font-black uppercase tracking-widest">Filter by Knowledge Domain</p>
+            <p className="text-neutral-400 text-[11px] font-black uppercase tracking-widest">{t.publicPages.filterKnowledgeDomain}</p>
           </div>
 
           {/* Desktop Version (Pills) */}
@@ -470,7 +475,7 @@ export default function EnglishBlogOverviewPage() {
                 <Globe className="w-10 h-10" />
               </div>
               <div>
-                <h3 className="text-2xl font-black text-white mb-2">No Articles Found</h3>
+                <h3 className="text-2xl font-black text-white mb-2">{t.publicPages.noArticlesFound}</h3>
                 <p className="text-neutral-400 text-sm leading-relaxed max-w-md mx-auto">
                   We couldn&rsquo;t find articles matching &ldquo;{searchTerm || activeCategory}&rdquo;. Try another keyword or browse all categories.
                 </p>
@@ -546,7 +551,7 @@ export default function EnglishBlogOverviewPage() {
                           href={`/${currentLocale}/blog/${post.slug}`}
                           className="mt-auto flex items-center justify-between text-xs font-black uppercase tracking-widest text-neutral-300 group-hover:text-yellow-300 transition-all pt-5 border-t border-white/5 w-full"
                         >
-                          <span>Read Full Insights</span>
+                          <span>{t.publicPages.readFullInsights}</span>
                           <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1.5 text-yellow-400" />
                         </Link>
                       </div>
@@ -582,12 +587,12 @@ export default function EnglishBlogOverviewPage() {
               <div className="w-12 h-12 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 mb-6">
                 <Code2 size={24} />
               </div>
-              <h3 className="text-lg font-black text-white mb-2">Modern Web & Systems</h3>
+              <h3 className="text-lg font-black text-white mb-2">{t.publicPages.trackWebTitle}</h3>
               <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed mb-4 flex-1">
-                Deep dives into Next.js 14 App Router, React Server Components, TypeScript type-level wizardry, and edge performance optimization.
+                {t.publicPages.trackWebDesc}
               </p>
               <div className="pt-4 border-t border-white/5 text-[11px] font-bold text-yellow-400 flex items-center gap-1.5">
-                <span>Filter Web Guides</span> <ArrowUpRight size={14} />
+                <span>{t.publicPages.filterWebGuides}</span> <ArrowUpRight size={14} />
               </div>
             </div>
 
@@ -599,12 +604,12 @@ export default function EnglishBlogOverviewPage() {
               <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-6">
                 <TrendingUp size={24} />
               </div>
-              <h3 className="text-lg font-black text-white mb-2">Quant Finance & Fintech</h3>
+              <h3 className="text-lg font-black text-white mb-2">{t.publicPages.trackFinanceTitle}</h3>
               <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed mb-4 flex-1">
-                Algorithmic trading bot engineering, risk management models, crypto exchange APIs, and high-frequency order execution analysis.
+                {t.publicPages.trackFinanceDesc}
               </p>
               <div className="pt-4 border-t border-white/5 text-[11px] font-bold text-amber-400 flex items-center gap-1.5">
-                <span>Filter Quant Articles</span> <ArrowUpRight size={14} />
+                <span>{t.publicPages.filterQuantArticles}</span> <ArrowUpRight size={14} />
               </div>
             </div>
 
@@ -616,12 +621,12 @@ export default function EnglishBlogOverviewPage() {
               <div className="w-12 h-12 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 mb-6">
                 <Award size={24} />
               </div>
-              <h3 className="text-lg font-black text-white mb-2">Scholarships & Study Abroad</h3>
+              <h3 className="text-lg font-black text-white mb-2">{t.publicPages.trackScholarshipTitle}</h3>
               <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed mb-4 flex-1">
-                Step-by-step application dossiers, SOP crafting strategies, embassy visa workflows, and direct university nomination guides.
+                {t.publicPages.trackScholarshipDesc}
               </p>
               <div className="pt-4 border-t border-white/5 text-[11px] font-bold text-yellow-400 flex items-center gap-1.5">
-                <span>Filter Academic Guides</span> <ArrowUpRight size={14} />
+                <span>{t.publicPages.filterAcademicGuides}</span> <ArrowUpRight size={14} />
               </div>
             </div>
 
@@ -633,12 +638,12 @@ export default function EnglishBlogOverviewPage() {
               <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-6">
                 <Laptop size={24} />
               </div>
-              <h3 className="text-lg font-black text-white mb-2">DevOps & Cloud Infrastructure</h3>
+              <h3 className="text-lg font-black text-white mb-2">{t.publicPages.trackCloudTitle}</h3>
               <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed mb-4 flex-1">
-                Kubernetes deployments, serverless edge functions, Docker optimization, and automated CI/CD pipeline architectural breakdowns.
+                {t.publicPages.trackCloudDesc}
               </p>
               <div className="pt-4 border-t border-white/5 text-[11px] font-bold text-cyan-400 flex items-center gap-1.5">
-                <span>Filter Cloud Posts</span> <ArrowUpRight size={14} />
+                <span>{t.publicPages.filterCloudPosts}</span> <ArrowUpRight size={14} />
               </div>
             </div>
 
@@ -652,13 +657,13 @@ export default function EnglishBlogOverviewPage() {
             
             <div className="max-w-3xl mb-12">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-black uppercase tracking-widest mb-4">
-                <ShieldCheck size={14} /> Rigorous Publication Standards
+                <ShieldCheck size={14} /> {t.publicPages.editorialStandardsBadge}
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
-                How We Engineer Our Insights
+                {t.publicPages.howWeEngineerInsightsTitle}
               </h2>
               <p className="text-neutral-300 text-sm sm:text-base leading-relaxed">
-                Every publication on Safi Academy passes through an intensive 4-pillar quality benchmark to guarantee accuracy, reproducibility, and real-world utility.
+                {t.publicPages.howWeEngineerInsightsDesc}
               </p>
             </div>
 
@@ -668,9 +673,9 @@ export default function EnglishBlogOverviewPage() {
                 <div className="w-10 h-10 rounded-xl bg-yellow-500/15 border border-yellow-500/30 text-yellow-400 flex items-center justify-center mb-4">
                   <Code2 size={20} />
                 </div>
-                <h3 className="text-base font-black text-white mb-2">Production Tested Code</h3>
+                <h3 className="text-base font-black text-white mb-2">{t.publicPages.editorialPillar1Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed">
-                  No theoretical pseudocode. All algorithms, configurations, and snippets are tested in live production environments before publishing.
+                  {t.publicPages.editorialPillar1Desc}
                 </p>
               </div>
 
@@ -678,9 +683,9 @@ export default function EnglishBlogOverviewPage() {
                 <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center mb-4">
                   <Lightbulb size={20} />
                 </div>
-                <h3 className="text-base font-black text-white mb-2">Zero AI Hallucinations</h3>
+                <h3 className="text-base font-black text-white mb-2">{t.publicPages.editorialPillar2Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed">
-                  Every technical guide is verified by real domain specialists, ensuring fact-checked citations, benchmarked latencies, and accurate API documentation.
+                  {t.publicPages.editorialPillar2Desc}
                 </p>
               </div>
 
@@ -688,9 +693,9 @@ export default function EnglishBlogOverviewPage() {
                 <div className="w-10 h-10 rounded-xl bg-yellow-500/15 border border-yellow-500/30 text-yellow-400 flex items-center justify-center mb-4">
                   <ShieldCheck size={20} />
                 </div>
-                <h3 className="text-base font-black text-white mb-2">Peer-Review Panels</h3>
+                <h3 className="text-base font-black text-white mb-2">{t.publicPages.editorialPillar3Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed">
-                  Each article undergoes double-blind technical peer review by software architects and academic researchers to eliminate bias and outdated paradigms.
+                  {t.publicPages.editorialPillar3Desc}
                 </p>
               </div>
 
@@ -698,9 +703,9 @@ export default function EnglishBlogOverviewPage() {
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mb-4">
                   <CheckCircle2 size={20} />
                 </div>
-                <h3 className="text-base font-black text-white mb-2">Open-Source Repositories</h3>
+                <h3 className="text-base font-black text-white mb-2">{t.publicPages.editorialPillar4Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed">
-                  Accompanying code, starter templates, and GitHub repositories are released under permissive open-source licenses for community empowerment.
+                  {t.publicPages.editorialPillar4Desc}
                 </p>
               </div>
 
@@ -712,13 +717,13 @@ export default function EnglishBlogOverviewPage() {
         <section className="py-20 max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-black uppercase tracking-widest mb-4">
-              <HelpCircle size={14} /> Readers & Contributors
+              <HelpCircle size={14} /> {t.publicPages.faqBadge}
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
-              Editorial FAQs & Guidelines
+              {t.publicPages.editorialFaqTitle}
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
-              Common questions regarding publishing frequency, code repositories, guest writing, and translation permissions.
+              {t.publicPages.editorialFaqDesc}
             </p>
           </div>
 
@@ -785,15 +790,15 @@ export default function EnglishBlogOverviewPage() {
             
             <div className="relative z-10 max-w-3xl mx-auto">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-300 text-xs font-black uppercase tracking-widest mb-6">
-                <Sparkles size={14} /> Accelerate Your Engineering Career
+                <Sparkles size={14} /> {t.publicPages.accelerateCareerBadge}
               </div>
 
               <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight mb-6 leading-tight">
-                Turn Theory Into Production Code.
+                {t.publicPages.turnTheoryIntoCodeTitle}
               </h2>
 
               <p className="text-neutral-300 text-sm sm:text-base leading-relaxed mb-10 max-w-2xl mx-auto">
-                Knowledge without application is just potential. Join our masterclasses, build enterprise fullstack applications, and master high-ticket tech skills with Safi Academy.
+                {t.publicPages.turnTheoryIntoCodeDesc}
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-4">
@@ -801,13 +806,13 @@ export default function EnglishBlogOverviewPage() {
                   href={`/${currentLocale}/courses`}
                   className="px-8 py-4 rounded-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-300 text-black font-black uppercase tracking-widest text-xs shadow-[0_0_35px_rgba(234,179,8,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                 >
-                  <Laptop size={16} /> Explore All Courses
+                  <Laptop size={16} /> {t.publicPages.exploreAllCoursesBtn}
                 </Link>
                 <Link
                   href={`/${currentLocale}/scholarships`}
                   className="px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-white font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                 >
-                  <Award size={16} /> Find Fully-Funded Scholarships
+                  <Award size={16} /> {t.publicPages.findScholarshipsBtn}
                 </Link>
               </div>
             </div>

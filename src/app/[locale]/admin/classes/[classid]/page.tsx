@@ -160,7 +160,7 @@ export default function AdminClassDetailsPage() {
     return (
       <div className="min-h-screen bg-[#030305] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-rose-500 animate-spin shadow-[0_0_15px_rgba(244,63,94,0.5)] rounded-full" />
-        <p className="text-rose-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Cohort Information...</p>
+        <p className="text-rose-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.loadingCohortInfo}</p>
       </div>
     );
   }
@@ -169,8 +169,8 @@ export default function AdminClassDetailsPage() {
     return (
       <div className="min-h-screen bg-[#030305] flex flex-col items-center justify-center p-6 text-center">
         <ShieldAlert size={48} className="text-neutral-600 mb-4" />
-        <h2 className="text-2xl font-black text-white mb-2">Cohort Not Found</h2>
-        <p className="text-neutral-500 mb-8 font-medium">This class group does not exist or the ID is incorrect.</p>
+        <h2 className="text-2xl font-black text-white mb-2">{t.adminPages.cohortNotFound}</h2>
+        <p className="text-neutral-500 mb-8 font-medium">{t.adminPages.cohortNotFoundDesc}</p>
         <Link href={`/${currentLocale}/admin/classes`} className="px-8 py-4 bg-rose-500 hover:bg-rose-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition shadow-[0_0_20px_rgba(244,63,94,0.3)]">
           Return to Cohorts
         </Link>
@@ -202,7 +202,7 @@ export default function AdminClassDetailsPage() {
               
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white">{classData.class_name}</h1>
-                {isNew && <span className="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center gap-1 shadow-md"><Sparkles size={10}/> New</span>}
+                {isNew && <span className="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center gap-1 shadow-md"><Sparkles size={10}/> {t.common.newBadge || "New"}</span>}
               </div>
               <p className="text-sm font-bold text-neutral-400 flex items-center gap-2"><BookOpen size={16} className="text-rose-500/70" /> {classData.course?.title}</p>
             </div>
@@ -212,26 +212,26 @@ export default function AdminClassDetailsPage() {
                 classData.is_active ? "bg-rose-500/20 text-rose-300 border-rose-500/30" : "bg-black/60 text-neutral-300 border-white/10"
               }`}>
                 {classData.is_active ? <Radio size={14} className="animate-pulse"/> : <CheckCircle2 size={14}/>}
-                {classData.is_active ? "Live / In Progress" : "Completed Cohort"}
+                {classData.is_active ? t.adminClasses.liveInProgress : t.adminClasses.completedCohort}
               </span>
             </div>
           </div>
 
           <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col justify-center hover:bg-white/5 transition-colors">
-              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2 flex items-center gap-1.5"><Clock size={12} className="text-rose-400"/> Time</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2 flex items-center gap-1.5"><Clock size={12} className="text-rose-400"/> {t.adminPages.time}</p>
               <p className="text-base font-bold text-white font-mono">{classData.schedule_time}</p>
             </div>
             <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col justify-center hover:bg-white/5 transition-colors">
-              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2 flex items-center gap-1.5"><CalendarDays size={12} className="text-rose-400"/> Days</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2 flex items-center gap-1.5"><CalendarDays size={12} className="text-rose-400"/> {t.adminPages.days}</p>
               <p className="text-sm font-bold text-white">{classData.schedule_days}</p>
             </div>
             <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col justify-center hover:bg-white/5 transition-colors">
-              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2 flex items-center gap-1.5"><CalendarDays size={12} className="text-rose-400"/> Created On</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2 flex items-center gap-1.5"><CalendarDays size={12} className="text-rose-400"/> {t.adminClasses.createdOn}</p>
               <p className="text-sm font-bold text-white font-mono">{new Date(classData.created_at).toLocaleDateString()}</p>
             </div>
             <div className="bg-rose-500/5 border border-rose-500/20 p-5 rounded-2xl flex flex-col justify-center border-l-2 border-l-rose-500 shadow-[inset_10px_0_20px_rgba(244,63,94,0.05)]">
-              <p className="text-[10px] font-black uppercase tracking-widest text-rose-400 mb-2 flex items-center gap-1.5"><Users size={12}/> Enrolled</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-rose-400 mb-2 flex items-center gap-1.5"><Users size={12}/> {t.adminClasses.enrolled}</p>
               <p className="text-2xl font-black text-white">{students.length}</p>
             </div>
           </div>
@@ -246,7 +246,7 @@ export default function AdminClassDetailsPage() {
               
               <div className="relative z-10 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6 border-b border-white/5 pb-4">
                 <h3 className="text-xl font-black text-white flex items-center gap-2">
-                  <Users size={22} className="text-rose-500"/> Student Roster
+                  <Users size={22} className="text-rose-500"/> {t.adminClasses.studentRoster}
                 </h3>
                 
                 {/* 👈 دکمه هدایت به صفحه افزودن شاگرد */}
@@ -254,7 +254,7 @@ export default function AdminClassDetailsPage() {
                   href={`/${currentLocale}/admin/classes/${classId}/add-student`}
                   className="bg-rose-500 hover:bg-rose-600 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-colors shadow-[0_0_20px_rgba(244,63,94,0.3)]"
                 >
-                  <Plus size={16} /> Enroll New Student
+                  <Plus size={16} /> {t.adminClasses.enrollNewStudent}
                 </Link>
               </div>
               
@@ -262,7 +262,7 @@ export default function AdminClassDetailsPage() {
                 {students.length === 0 ? (
                   <div className="text-center py-16 border border-dashed border-white/5 rounded-3xl bg-black/20 text-neutral-500">
                     <Users size={32} className="mx-auto mb-3 opacity-50"/>
-                    <p className="text-sm font-bold">No students have enrolled in this class yet.</p>
+                    <p className="text-sm font-bold">{t.adminPages.noStudentsEnrolledClass}</p>
                   </div>
                 ) : (
                   students.map((student) => (
@@ -283,7 +283,7 @@ export default function AdminClassDetailsPage() {
                       
                       <div className="flex items-center justify-between sm:justify-end gap-6 border-t border-white/5 sm:border-t-0 pt-3 sm:pt-0">
                         <div className="text-left sm:text-right">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">Joined</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">{t.adminClasses.joined}</p>
                           <p className="text-xs font-bold text-neutral-300 mt-0.5 font-mono">{new Date(student.joined_at).toLocaleDateString()}</p>
                         </div>
                         
@@ -338,7 +338,7 @@ export default function AdminClassDetailsPage() {
               ) : (
                 <div className="text-center py-12 text-neutral-500 mt-auto mb-auto">
                   <User size={32} className="mx-auto mb-3 opacity-50"/>
-                  <p className="text-sm font-bold">No instructor assigned.</p>
+                  <p className="text-sm font-bold">{t.adminPages.noInstructorAssigned}</p>
                 </div>
               )}
             </section>

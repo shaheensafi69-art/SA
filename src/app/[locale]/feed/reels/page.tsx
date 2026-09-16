@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 import React, { useEffect, useState, useRef, useCallback, Suspense, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -112,6 +113,8 @@ function ReelsContent() {
     const searchParams = useSearchParams();
     const pathname = usePathname() || "/en";
     const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
     const targetReelId = searchParams.get("id");
     const supabase = useMemo(() => createClient(), []);
 
@@ -574,7 +577,7 @@ function ReelsContent() {
         return (
             <div className="w-full h-full flex flex-col items-center justify-center bg-[#030305]">
                 <div className="w-10 h-10 border-3 border-[#C2185B] border-t-transparent rounded-full animate-spin mb-3"></div>
-                <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-400">Loading Explore Reels...</p>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-400">{t.feed.loadingExploreReels}</p>
             </div>
         );
     }
@@ -611,7 +614,7 @@ function ReelsContent() {
                                 </div>
                                 <div>
                                     <p className="text-white font-black text-[10px] leading-tight">Safi Academy</p>
-                                    <p className="text-neutral-400 text-[8px] font-medium">Watch in Mobile App</p>
+                                    <p className="text-neutral-400 text-[8px] font-medium">{t.feed.watchInMobileApp}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-1.5">
@@ -665,7 +668,7 @@ function ReelsContent() {
                                 target="_blank"
                                 rel="noreferrer"
                                 className="w-8 h-8 rounded-xl bg-black/70 backdrop-blur-2xl border border-white/15 flex items-center justify-center text-pink-300 hover:text-white hover:bg-[#C2185B]/40 hover:border-[#C2185B] transition-all shadow-xl"
-                                title="Get Safi Academy App"
+                                title={t.feed.getApp}
                             >
                                 <Smartphone size={14} />
                             </a>
@@ -858,7 +861,7 @@ function ReelsContent() {
                                                 }
                                             }}
                                             className="flex flex-col items-center group/btn"
-                                            title="Comments & Discussion"
+                                            title={t.feed.commentsDiscussion}
                                         >
                                             <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-xl border flex items-center justify-center text-white transition-all shadow-lg ${
                                                 isDesktopCommentsOpen
@@ -874,12 +877,12 @@ function ReelsContent() {
                                         <button
                                             onClick={() => handleOpenShare(reel)}
                                             className="flex flex-col items-center group/btn"
-                                            title="Share Reel"
+                                            title={t.feed.shareReel}
                                         >
                                             <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-[#C2185B] hover:border-[#C2185B] hover:scale-105 transition-all shadow-lg">
                                                 <Share2 size={18} />
                                             </div>
-                                            <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">Share</span>
+                                            <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">{t.feed.share}</span>
                                         </button>
 
                                         {/* Download Button (TikTok/Instagram Style) */}
@@ -887,7 +890,7 @@ function ReelsContent() {
                                             onClick={() => handleDownloadVideo(reel)}
                                             disabled={isDownloadingThis}
                                             className="flex flex-col items-center group/btn"
-                                            title="Download Video"
+                                            title={t.feed.downloadVideo}
                                         >
                                             <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-black hover:border-yellow-500 hover:scale-105 transition-all shadow-lg disabled:opacity-50">
                                                 {isDownloadingThis ? (
@@ -896,7 +899,7 @@ function ReelsContent() {
                                                     <Download size={18} />
                                                 )}
                                             </div>
-                                            <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">Save</span>
+                                            <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">{t.feed.save}</span>
                                         </button>
 
                                     </div>
@@ -916,12 +919,12 @@ function ReelsContent() {
                             <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
                                 <MessageCircle size={18} className="text-[#C2185B]" /> Discussion
                             </h3>
-                            <p className="text-[10px] text-neutral-400 font-bold mt-1">Comments update automatically as you scroll.</p>
+                            <p className="text-[10px] text-neutral-400 font-bold mt-1">{t.feed.commentsUpdateAuto}</p>
                         </div>
                         <button
                             onClick={() => setIsDesktopCommentsOpen(false)}
                             className="w-7 h-7 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
-                            title="Hide comments to expand player"
+                            title={t.feed.hideComments}
                         >
                             <X size={14} />
                         </button>
@@ -989,7 +992,7 @@ function ReelsContent() {
                                     <Share2 size={18} />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-black text-white uppercase tracking-wider">Share Reel</h3>
+                                    <h3 className="text-sm font-black text-white uppercase tracking-wider">{t.feed.shareReel}</h3>
                                     <p className="text-[10px] text-neutral-400 font-bold truncate max-w-[220px]">{shareReel.title}</p>
                                 </div>
                             </div>
@@ -1020,7 +1023,7 @@ function ReelsContent() {
 
                             {/* Open in Safi Academy App / Play Store */}
                             <div className="mt-3 flex items-center justify-between px-2 py-1.5 bg-gradient-to-r from-pink-500/10 to-yellow-500/10 rounded-xl border border-white/5">
-                                <span className="text-[10px] font-bold text-neutral-300">Open in Safi Academy App</span>
+                                <span className="text-[10px] font-bold text-neutral-300">{t.feed.openInApp}</span>
                                 <a
                                     href={`intent://feed/reels?id=${shareReel.id}#Intent;scheme=safiacademy;package=org.safiacademy.app;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dorg.safiacademy.app;end`}
                                     target="_blank"
@@ -1045,7 +1048,7 @@ function ReelsContent() {
                             <div className="relative mb-3">
                                 <input
                                     type="text"
-                                    placeholder="Search friends..."
+                                    placeholder={t.feed.searchFriends}
                                     value={friendSearch}
                                     onChange={(e) => setFriendSearch(e.target.value)}
                                     className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3.5 py-2.5 pl-9 text-white text-xs placeholder-neutral-500 focus:outline-none focus:border-[#C2185B]"
@@ -1061,7 +1064,7 @@ function ReelsContent() {
                                     </div>
                                 ) : filteredFriends.length === 0 ? (
                                     <div className="text-center py-8 opacity-60">
-                                        <p className="text-neutral-400 text-xs font-bold">No friends found</p>
+                                        <p className="text-neutral-400 text-xs font-bold">{t.feed.noFriendsFound}</p>
                                         <Link href={`/${currentLocale}/feed/network`} className="text-[10px] text-[#C2185B] font-bold mt-1 block hover:underline">
                                             Find new friends in Network
                                         </Link>
@@ -1133,6 +1136,7 @@ function ReelsContent() {
 // COMPONENT: SHARED COMMENTS VIEW (Used in Desktop Panel & Mobile Modal)
 // =====================================================================
 function SharedCommentsView({ reelId, currentUserId, onCommentAdded, onAuthRequired }: { reelId: string, currentUserId: string | null, onCommentAdded: () => void, onAuthRequired?: () => void }) {
+    const t = getPortalTranslation();
     const [comments, setComments] = useState<ReelComment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSending, setIsSending] = useState(false);
@@ -1210,8 +1214,8 @@ function SharedCommentsView({ reelId, currentUserId, onCommentAdded, onAuthRequi
                 ) : comments.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-12 text-center opacity-50">
                         <MessageCircle size={32} className="text-neutral-500 mb-3" />
-                        <span className="text-neutral-300 font-bold text-xs uppercase tracking-widest">No comments yet</span>
-                        <span className="text-neutral-500 text-[10px] mt-1">Be the first to share your thoughts.</span>
+                        <span className="text-neutral-300 font-bold text-xs uppercase tracking-widest">{t.feed.noCommentsYet}</span>
+                        <span className="text-neutral-500 text-[10px] mt-1">{t.feed.beFirstToComment}</span>
                     </div>
                 ) : (
                     comments.map((c) => {
@@ -1241,7 +1245,7 @@ function SharedCommentsView({ reelId, currentUserId, onCommentAdded, onAuthRequi
                     <div className="flex items-center gap-3">
                         <input
                             type="text"
-                            placeholder="Add a comment..."
+                            placeholder={t.feed.addComment}
                             value={newComment}
                             onChange={(e) => setNewComment(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -1260,7 +1264,7 @@ function SharedCommentsView({ reelId, currentUserId, onCommentAdded, onAuthRequi
                         onClick={onAuthRequired}
                         className="w-full py-3.5 px-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-[#C2185B]/40 text-neutral-400 hover:text-white text-xs font-bold transition-all flex items-center justify-between group cursor-pointer"
                     >
-                        <span>Sign in to join the conversation...</span>
+                        <span>{t.feed.signInToJoin}</span>
                         <span className="px-3 py-1 rounded-xl bg-gradient-to-r from-[#C2185B] to-yellow-500 text-black text-[10px] font-black uppercase tracking-wider group-hover:scale-105 transition-transform">
                             Sign In
                         </span>

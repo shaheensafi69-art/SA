@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -11,6 +12,8 @@ import {
 export default function ResetPasswordPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -82,7 +85,7 @@ export default function ResetPasswordPage() {
               <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/30">
                 <CheckCircle2 size={32} className="text-emerald-400" />
               </div>
-              <h3 className="text-white font-black text-xl mb-3">Password Updated!</h3>
+              <h3 className="text-white font-black text-xl mb-3">{t.publicPages.passwordUpdated}</h3>
               <p className="text-emerald-400/80 text-sm mb-8">
                 Your password has been successfully changed. You can now securely log in to your account.
               </p>

@@ -155,9 +155,9 @@ export default function EditClassSettingsPage() {
               <ArrowLeft size={14} /> Back to Control Room
             </Link>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">
-              Class <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-500">Settings</span>
+              {t.teacherPages.classroomName} <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-500">{t.teacherPages.settings}</span>
             </h1>
-            <p className="text-xs sm:text-sm text-neutral-400 font-medium">Modify live session properties, schedules, and connectivity links.</p>
+            <p className="text-xs sm:text-sm text-neutral-400 font-medium">{t.teacherPages.modifyLiveSessionDesc}</p>
           </div>
         </header>
 
@@ -184,10 +184,10 @@ export default function EditClassSettingsPage() {
             </h3>
             
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Classroom Name *</label>
+              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.classroomName} *</label>
               <input 
                 required type="text" 
-                placeholder="e.g. Shopify Masterclass - Group 01"
+                placeholder={t.teacherPages.classroomNamePlaceholder}
                 value={form.class_name}
                 onChange={(e) => setForm({...form, class_name: e.target.value})}
                 className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50 shadow-inner" 
@@ -202,7 +202,7 @@ export default function EditClassSettingsPage() {
             </h3>
             
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Class Days *</label>
+              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.classDays} *</label>
               <div className="flex flex-wrap gap-2">
                 {WEEK_DAYS.map(day => {
                   const isSelected = selectedDays.includes(day);
@@ -226,25 +226,25 @@ export default function EditClassSettingsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 pt-2">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Time (UTC/Local) *</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.timeUtcLocal} *</label>
                 <div className="relative">
                   <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                   <input required type="text" placeholder="e.g. 18:00 - 20:00" value={form.class_time} onChange={(e) => setForm({...form, class_time: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50" />
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Start Date</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.startDate}</label>
                 <input type="date" value={form.start_date} onChange={(e) => setForm({...form, start_date: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm font-mono focus:outline-none focus:border-purple-500/50 [color-scheme:dark]" />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">End Date</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.endDate}</label>
                 <input type="date" value={form.end_date} onChange={(e) => setForm({...form, end_date: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm font-mono focus:outline-none focus:border-purple-500/50 [color-scheme:dark]" />
               </div>
             </div>
 
             <div className="space-y-2 pt-2">
-              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Schedule Summary</label>
-              <input type="text" placeholder="e.g. Evening intensive cohort, 3 days a week" value={form.schedule_info} onChange={(e) => setForm({...form, schedule_info: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50" />
+              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.scheduleSummaryOptional}</label>
+              <input type="text" placeholder={t.teacherPages.scheduleSummaryPlaceholder} value={form.schedule_info} onChange={(e) => setForm({...form, schedule_info: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50" />
             </div>
           </div>
 
@@ -256,17 +256,17 @@ export default function EditClassSettingsPage() {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Live Meeting Link</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.liveMeetingLink}</label>
                 <div className="relative">
                   <Video size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
-                  <input type="url" placeholder="Zoom / Google Meet URL" value={form.meeting_link} onChange={(e) => setForm({...form, meeting_link: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50" />
+                  <input type="url" placeholder={t.teacherPages.meetingLinkPlaceholder} value={form.meeting_link} onChange={(e) => setForm({...form, meeting_link: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50" />
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Support Group Link</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.supportGroupLink}</label>
                 <div className="relative">
                   <MessageCircle size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
-                  <input type="url" placeholder="Signal / Telegram / WhatsApp URL" value={form.signal_group_link} onChange={(e) => setForm({...form, signal_group_link: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50" />
+                  <input type="url" placeholder={t.teacherPages.supportGroupPlaceholder} value={form.signal_group_link} onChange={(e) => setForm({...form, signal_group_link: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50" />
                 </div>
               </div>
             </div>
@@ -274,8 +274,8 @@ export default function EditClassSettingsPage() {
             {/* Toggle Status */}
             <div className="flex items-center justify-between p-5 mt-4 bg-white/[0.02] border border-white/5 rounded-2xl">
               <div>
-                <p className="font-black text-white text-sm">Cohort Broadcast Status</p>
-                <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">Toggle whether students can see this stream active.</p>
+                <p className="font-black text-white text-sm">{t.teacherPages.cohortBroadcastStatus}</p>
+                <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">{t.teacherPages.toggleBroadcastVisible}</p>
               </div>
               <button 
                 type="button" 

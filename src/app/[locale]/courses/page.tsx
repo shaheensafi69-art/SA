@@ -1,3 +1,4 @@
+import { getPortalTranslation } from "@/utils/portalTranslations";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import {
@@ -34,6 +35,8 @@ export default async function CoursesPage({
 }) {
   const { locale } = await params;
   const currentLocale = locale || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   const supabase = await createClient();
 
   const {
@@ -186,7 +189,7 @@ export default async function CoursesPage({
   ];
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#030307] text-white font-sans selection:bg-amber-500 selection:text-black pb-28">
+    <main dir={isRtl ? "rtl" : "ltr"} className="relative min-h-screen overflow-hidden bg-[#030307] text-white font-sans selection:bg-amber-500 selection:text-black pb-28">
       {/* ================================================================== */}
       {/* LUXURY AMBIENT BACKGROUND SYSTEM (REPLACED CANVAS WAVES) */}
       {/* ================================================================== */}
@@ -216,31 +219,31 @@ export default async function CoursesPage({
             {userWalletBalance > 0 && (
               <div className="mb-4 inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 text-emerald-400 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-[0_0_20px_rgba(16,185,129,0.25)] backdrop-blur-md">
                 <Wallet size={14} className="animate-pulse text-emerald-400" />
-                <span>Wallet Credit Available: ${userWalletBalance.toFixed(2)} USD Applied</span>
+                <span>{t.publicPages.walletCredit}: ${userWalletBalance.toFixed(2)} USD</span>
               </div>
             )}
 
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-black uppercase tracking-[0.25em] text-amber-300 backdrop-blur-md mb-6 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
               <Sparkles size={14} className="text-amber-400" />
-              <span>Safi Academy Accredited Curriculums</span>
+              <span>{t.publicPages.safiAccreditedCurriculums}</span>
             </div>
 
             <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-7xl leading-[1.08]">
-              Master In-Demand Skills. <br />
+              {t.publicPages.heroTitleLine1} <br />
               <span className="bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-sm">
-                Build Real Systems.
+                {t.publicPages.heroTitleLine2}
               </span>
             </h1>
 
             <p className="mt-6 text-base sm:text-lg leading-relaxed text-neutral-300 font-normal max-w-2xl">
-              Step away from passive tutorials. Safi Academy curriculums are engineered for ambitious builders who want production mastery, senior code reviews, and verifiable career credentials.
+              {t.publicPages.heroSubtitle}
             </p>
 
             {/* Quick Category Anchor Bar */}
             {categories.length > 0 && (
               <div className="mt-8 flex flex-wrap items-center gap-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 mr-1">
-                  Quick Jump:
+                  {t.publicPages.quickJump}
                 </span>
                 {categories.map((cat) => (
                   <a
@@ -260,7 +263,7 @@ export default async function CoursesPage({
               href={`/${currentLocale}`}
               className="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-7 py-4 text-xs font-black uppercase tracking-widest text-white transition-all duration-300 hover:border-amber-500/40 hover:bg-amber-500/10 hover:text-amber-400 group shadow-lg backdrop-blur-md"
             >
-              <span>Back to Hub</span>
+              <span>{t.publicPages.backToHub}</span>
               <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
             </Link>
 
@@ -269,7 +272,7 @@ export default async function CoursesPage({
               className="inline-flex items-center justify-center rounded-2xl border border-amber-500/30 bg-amber-500/10 px-7 py-4 text-xs font-black uppercase tracking-widest text-amber-300 transition-all duration-300 hover:bg-amber-500/20 shadow-lg backdrop-blur-md"
             >
               <GraduationCap size={16} className="mr-2" />
-              <span>Apply for Scholarship</span>
+              <span>{t.publicPages.applyForScholarship}</span>
             </Link>
           </div>
         </section>
@@ -280,19 +283,19 @@ export default async function CoursesPage({
         <div className="mb-24 p-6 sm:p-8 rounded-[2.5rem] bg-[#090812]/90 border border-white/10 backdrop-blur-xl shadow-2xl grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div>
             <div className="text-3xl sm:text-4xl font-black text-white">15,000+</div>
-            <div className="text-xs text-neutral-400 uppercase tracking-wider font-bold mt-1">Students Enrolled</div>
+            <div className="text-xs text-neutral-400 uppercase tracking-wider font-bold mt-1">{t.publicPages.studentsEnrolled}</div>
           </div>
           <div>
             <div className="text-3xl sm:text-4xl font-black text-amber-400">94%</div>
-            <div className="text-xs text-neutral-400 uppercase tracking-wider font-bold mt-1">Hiring & Promotion Rate</div>
+            <div className="text-xs text-neutral-400 uppercase tracking-wider font-bold mt-1">{t.publicPages.hiringPromotionRate}</div>
           </div>
           <div>
             <div className="text-3xl sm:text-4xl font-black text-white">100%</div>
-            <div className="text-xs text-neutral-400 uppercase tracking-wider font-bold mt-1">Project-Driven Labs</div>
+            <div className="text-xs text-neutral-400 uppercase tracking-wider font-bold mt-1">{t.publicPages.projectDrivenLabs}</div>
           </div>
           <div>
             <div className="text-3xl sm:text-4xl font-black text-emerald-400">24/7</div>
-            <div className="text-xs text-neutral-400 uppercase tracking-wider font-bold mt-1">Mentor Office Hours</div>
+            <div className="text-xs text-neutral-400 uppercase tracking-wider font-bold mt-1">{t.publicPages.mentorOfficeHours}</div>
           </div>
         </div>
 
@@ -301,7 +304,7 @@ export default async function CoursesPage({
         {/* ================================================================== */}
         {error && (
           <div className="mb-12 rounded-2xl border border-red-800/50 bg-red-950/40 p-6 text-red-400 backdrop-blur-md text-sm font-bold text-center shadow-xl">
-            Database Sync Notice: {error.message}
+            {t.publicPages.databaseSyncNotice} {error.message}
           </div>
         )}
 
@@ -313,9 +316,9 @@ export default async function CoursesPage({
             <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mb-6">
               <BookOpen className="w-8 h-8 text-neutral-500" />
             </div>
-            <h3 className="text-2xl font-black text-white mb-2 tracking-tight">Curriculums Deploying</h3>
+            <h3 className="text-2xl font-black text-white mb-2 tracking-tight">{t.publicPages.curriculumsDeploying}</h3>
             <p className="text-neutral-400 text-sm max-w-md mx-auto">
-              Our engineering faculty is currently deploying newly updated course tracks. Check back shortly or browse our scholarships.
+              {t.publicPages.curriculumsDeployingDesc}
             </p>
           </div>
         ) : (
@@ -347,7 +350,7 @@ export default async function CoursesPage({
 
                     <div className="flex items-center gap-2 text-xs font-semibold text-neutral-400">
                       <ShieldCheck size={14} className="text-emerald-400" />
-                      <span>Accredited Curriculum</span>
+                      <span>{t.publicPages.accreditedCurriculum}</span>
                     </div>
                   </div>
 
@@ -368,7 +371,7 @@ export default async function CoursesPage({
                           {hasDiscount && (
                             <div className="absolute top-4 right-4 z-30 bg-emerald-500 text-black px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center gap-1.5">
                               <Sparkles size={12} />
-                              <span>-${applicableDiscount.toFixed(2)} Wallet Credit</span>
+                              <span>-${applicableDiscount.toFixed(2)} {t.publicPages.walletCredit}</span>
                             </div>
                           )}
 
@@ -450,13 +453,13 @@ export default async function CoursesPage({
                               {/* Curriculum Highlights Tags */}
                               <div className="mt-5 flex flex-wrap gap-1.5">
                                 <span className="inline-flex items-center gap-1 text-[10px] font-bold text-neutral-400 bg-white/5 border border-white/5 px-2 py-0.5 rounded-md">
-                                  <Award size={11} className="text-amber-400" /> Certificate
+                                  <Award size={11} className="text-amber-400" /> {t.publicPages.certificate}
                                 </span>
                                 <span className="inline-flex items-center gap-1 text-[10px] font-bold text-neutral-400 bg-white/5 border border-white/5 px-2 py-0.5 rounded-md">
-                                  <Clock size={11} className="text-blue-400" /> Self-Paced
+                                  <Clock size={11} className="text-blue-400" /> {t.publicPages.selfPaced}
                                 </span>
                                 <span className="inline-flex items-center gap-1 text-[10px] font-bold text-neutral-400 bg-white/5 border border-white/5 px-2 py-0.5 rounded-md">
-                                  <Zap size={11} className="text-emerald-400" /> Real Projects
+                                  <Zap size={11} className="text-emerald-400" /> {t.publicPages.realProjects}
                                 </span>
                               </div>
                             </div>
@@ -474,7 +477,7 @@ export default async function CoursesPage({
                                     : "bg-amber-400 hover:bg-yellow-300 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)]"
                                 }`}
                               >
-                                <span>Enroll Now</span>
+                                <span>{t.publicPages.enrollNow}</span>
                                 <ArrowRight size={14} />
                               </Link>
                             </div>
@@ -495,13 +498,13 @@ export default async function CoursesPage({
         <div className="mb-32">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-3">
-              Uncompromising Quality
+              {t.publicPages.uncompromisingQuality}
             </div>
             <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">
-              How Safi Academy Outperforms Others
+              {t.publicPages.howSafiOutperforms}
             </h2>
             <p className="text-sm md:text-base text-neutral-300 leading-relaxed">
-              Compare our production-first engineering training model against traditional university degrees and disconnected video tutorials.
+              {t.publicPages.howSafiOutperformsDesc}
             </p>
             <div className="w-20 h-1 bg-amber-500 mx-auto mt-6 rounded-full"></div>
           </div>
@@ -511,16 +514,16 @@ export default async function CoursesPage({
               <thead>
                 <tr className="border-b border-white/10 bg-white/[0.03]">
                   <th className="py-5 px-6 text-xs font-black uppercase tracking-wider text-neutral-400">
-                    Feature & Dimension
+                    {t.publicPages.featureAndDimension}
                   </th>
                   <th className="py-5 px-6 text-xs font-black uppercase tracking-wider text-amber-400 bg-amber-500/10">
-                    Safi Academy Masterclass
+                    {t.publicPages.safiAcademyMasterclass}
                   </th>
                   <th className="py-5 px-6 text-xs font-black uppercase tracking-wider text-neutral-400">
-                    Traditional University Degree
+                    {t.publicPages.traditionalUniversityDegree}
                   </th>
                   <th className="py-5 px-6 text-xs font-black uppercase tracking-wider text-neutral-400">
-                    YouTube Tutorials
+                    {t.publicPages.youtubeTutorials}
                   </th>
                 </tr>
               </thead>
@@ -555,13 +558,13 @@ export default async function CoursesPage({
         <div className="bg-gradient-to-br from-[#0e0c18] via-[#090812] to-[#040408] border border-amber-500/25 rounded-[3rem] p-8 md:p-14 shadow-2xl relative overflow-hidden mb-32">
           <div className="text-center max-w-3xl mx-auto mb-16 relative z-10">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-3">
-              The Safi Academy Method
+              {t.publicPages.theSafiMethod}
             </div>
             <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">
-              Why Our Graduates Stand Out
+              {t.publicPages.whyGraduatesStandOut}
             </h2>
             <p className="text-sm md:text-base text-neutral-300 leading-relaxed">
-              We reject shallow crash courses and passive lectures. Every curriculum is built around deep technical rigor, direct mentor accountability, and tangible project deliverables.
+              {t.publicPages.whyGraduatesStandOutDesc}
             </p>
             <div className="w-20 h-1 bg-amber-500 mx-auto mt-6 rounded-full"></div>
           </div>
@@ -596,13 +599,13 @@ export default async function CoursesPage({
         <div className="mb-32">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-3">
-              The Student Journey
+              {t.publicPages.theStudentJourney}
             </div>
             <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-              From Enrollment to Global Placement
+              {t.publicPages.fromEnrollmentToPlacement}
             </h2>
             <p className="mt-3 text-neutral-400 text-sm md:text-base">
-              A clear, proven trajectory designed to transform aspiring learners into high-earning technical professionals.
+              {t.publicPages.fromEnrollmentToPlacementDesc}
             </p>
           </div>
 
@@ -634,10 +637,10 @@ export default async function CoursesPage({
         <div className="max-w-4xl mx-auto mb-32">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-3">
-              Common Questions
+              {t.publicPages.commonQuestions}
             </div>
             <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-              Everything You Need to Know Before Enrolling
+              {t.publicPages.everythingYouNeedToKnow}
             </h2>
           </div>
 
@@ -668,11 +671,11 @@ export default async function CoursesPage({
           </div>
 
           <h2 className="text-3xl md:text-5xl font-black text-white mb-6 max-w-3xl leading-tight">
-            Invest in Your Mind. Build the Future.
+            {t.publicPages.investInYourMind}
           </h2>
 
           <p className="text-neutral-300 text-sm md:text-base max-w-2xl mb-10 leading-relaxed">
-            Gain immediate access to full curriculums, interactive coding milestones, senior mentor reviews, and verified certifications. Begin your transformation today.
+            {t.publicPages.investInYourMindDesc}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -680,7 +683,7 @@ export default async function CoursesPage({
               href="#top"
               className="inline-flex items-center justify-center gap-2 px-10 py-5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-black font-black text-sm uppercase tracking-wider rounded-2xl transition-all shadow-[0_10px_35px_rgba(245,158,11,0.35)] hover:scale-105"
             >
-              <span>Explore Curriculums Above</span>
+              <span>{t.publicPages.exploreCurriculumsAbove}</span>
               <ArrowRight size={16} />
             </Link>
 
@@ -688,7 +691,7 @@ export default async function CoursesPage({
               href={`/${currentLocale}/scholarships`}
               className="inline-flex items-center justify-center gap-2 px-8 py-5 bg-white/5 hover:bg-white/10 text-neutral-200 hover:text-white font-bold text-sm rounded-2xl border border-white/10 transition-colors"
             >
-              <span>Apply for Student Scholarship</span>
+              <span>{t.publicPages.applyForStudentScholarship}</span>
               <ChevronRight size={16} />
             </Link>
           </div>
@@ -696,15 +699,15 @@ export default async function CoursesPage({
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-neutral-400">
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              Verified Accreditation ID
+              {t.publicPages.verifiedAccreditationId}
             </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              Lifetime Curriculum Access
+              {t.publicPages.lifetimeCurriculumAccess}
             </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              100% Satisfaction Guarantee
+              {t.publicPages.satisfactionGuarantee}
             </span>
           </div>
         </div>

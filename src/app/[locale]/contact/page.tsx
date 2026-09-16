@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -15,6 +16,8 @@ import {
 export default function ContactPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [selectedSubject, setSelectedSubject] = useState("");
@@ -170,7 +173,7 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#030307] text-white pt-28 sm:pt-32 pb-24 px-4 sm:px-6 md:px-10 lg:px-16 max-w-[1600px] mx-auto relative overflow-hidden font-sans selection:bg-yellow-500/30 selection:text-yellow-200">
+    <main dir={isRtl ? "rtl" : "ltr"} className="min-h-screen bg-[#030307] text-white pt-28 sm:pt-32 pb-24 px-4 sm:px-6 md:px-10 lg:px-16 max-w-[1600px] mx-auto relative overflow-hidden font-sans selection:bg-yellow-500/30 selection:text-yellow-200">
       
       {/* ================= BACKGROUND AMBIENCE ================= */}
       <div className="absolute top-[-10%] left-[-10%] w-[55vw] h-[55vw] bg-yellow-500/10 rounded-full blur-[170px] pointer-events-none z-0 animate-pulse"></div>
@@ -215,7 +218,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 max-w-4xl mx-auto text-left">
           <div className="p-5 rounded-2xl bg-neutral-900/50 border border-white/5 backdrop-blur-xl">
             <div className="text-2xl sm:text-3xl font-black text-yellow-400 font-mono mb-1">&lt; 4 Hours</div>
-            <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Average Response SLA</div>
+            <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{t.publicPages.averageResponseSla}</div>
             <div className="text-[11px] text-neutral-500 mt-1">Priority dispatch triage</div>
           </div>
           <div className="p-5 rounded-2xl bg-neutral-900/50 border border-white/5 backdrop-blur-xl">
@@ -225,7 +228,7 @@ export default function ContactPage() {
           </div>
           <div className="p-5 rounded-2xl bg-neutral-900/50 border border-white/5 backdrop-blur-xl">
             <div className="text-2xl sm:text-3xl font-black text-amber-400 font-mono mb-1">London, UK</div>
-            <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Corporate Headquarters</div>
+            <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{t.publicPages.corporateHeadquarters}</div>
             <div className="text-[11px] text-neutral-500 mt-1">Reg No: 17063286</div>
           </div>
           <div className="p-5 rounded-2xl bg-neutral-900/50 border border-white/5 backdrop-blur-xl">
@@ -264,7 +267,7 @@ export default function ContactPage() {
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-[11px] text-neutral-400 font-mono uppercase tracking-wider font-bold">
-                    Global Corporate Headquarters
+                    Global {t.publicPages.corporateHeadquarters}
                   </span>
                   <span className="bg-yellow-500/20 text-yellow-300 text-[10px] font-bold px-2 py-0.5 rounded border border-yellow-500/30">
                     UNITED KINGDOM
@@ -493,7 +496,7 @@ export default function ContactPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-neutral-300 flex items-center justify-between">
-                  <span>Full Legal Name <span className="text-yellow-500">*</span></span>
+                  <span>{t.publicPages.fullLegalName} <span className="text-yellow-500">*</span></span>
                 </label>
                 <input 
                   required 
@@ -521,7 +524,7 @@ export default function ContactPage() {
             {/* Row 2: Subject Matter */}
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-neutral-300 flex items-center justify-between">
-                <span>Subject Matter / Department Target <span className="text-yellow-500">*</span></span>
+                <span>{t.publicPages.subjectDepartmentTarget} <span className="text-yellow-500">*</span></span>
                 {selectedSubject && (
                   <span className="text-[10px] text-yellow-400 font-mono font-normal">
                     Preset Selected
@@ -602,7 +605,7 @@ export default function ContactPage() {
                 >
                   <CheckCircle2 size={20} className="text-emerald-400 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="font-bold text-emerald-200 block mb-0.5">Transmission Confirmed:</strong>
+                    <strong className="font-bold text-emerald-200 block mb-0.5">{t.publicPages.transmissionConfirmed}</strong>
                     Your dispatch has been securely delivered to Central Headquarters. A senior coordinator has been notified and will review your file shortly.
                   </div>
                 </motion.div>
@@ -617,7 +620,7 @@ export default function ContactPage() {
                 >
                   <AlertCircle size={20} className="text-red-400 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="font-bold text-red-200 block mb-0.5">Transmission Interrupted:</strong>
+                    <strong className="font-bold text-red-200 block mb-0.5">{t.publicPages.transmissionInterrupted}</strong>
                     A momentary connection latency occurred. Please verify your internet or contact our direct WhatsApp hotline at <a href="https://wa.me/447476620282" className="underline font-bold text-white">+44 7476 620282</a>.
                   </div>
                 </motion.div>
@@ -630,7 +633,7 @@ export default function ContactPage() {
                 <Lock size={13} className="text-yellow-400" />
                 TLS 1.3 256-Bit Encrypted
               </span>
-              <span>Zero-Spam & GDPR Guarantee</span>
+              <span>{t.publicPages.zeroSpamGdprGuarantee}</span>
             </div>
 
           </form>
@@ -683,7 +686,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="pt-4 border-t border-white/5 space-y-2">
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-neutral-500 font-bold">Scope Coverage:</div>
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-neutral-500 font-bold">{t.publicPages.scopeCoverage}</div>
                   <ul className="space-y-1.5">
                     {desk.coverage.map((item, cIdx) => (
                       <li key={cIdx} className="text-xs text-neutral-300 flex items-center gap-2">
@@ -718,10 +721,10 @@ export default function ContactPage() {
           <table className="w-full text-left border-collapse min-w-[600px]">
             <thead>
               <tr className="border-b border-white/10 text-xs font-mono text-neutral-400 uppercase">
-                <th className="py-4 px-4 font-bold">Communication Channel</th>
-                <th className="py-4 px-4 font-bold">Guaranteed Response Window</th>
-                <th className="py-4 px-4 font-bold">Operational Scope</th>
-                <th className="py-4 px-4 font-bold">Service Target</th>
+                <th className="py-4 px-4 font-bold">{t.publicPages.communicationChannel}</th>
+                <th className="py-4 px-4 font-bold">{t.publicPages.guaranteedResponseWindow}</th>
+                <th className="py-4 px-4 font-bold">{t.publicPages.operationalScope}</th>
+                <th className="py-4 px-4 font-bold">{t.publicPages.serviceTarget}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 text-sm">

@@ -189,9 +189,9 @@ export default function CreateCoursePage() {
               <ArrowLeft size={14} /> Back to Hub
             </Link>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white mb-2">
-              Create New <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">Course</span>
+              {t.common?.create || "Create"} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">{t.teacherPages.course}</span>
             </h1>
-            <p className="text-xs sm:text-sm text-neutral-400 font-medium">Design and publish a new masterclass or video series to the academy.</p>
+            <p className="text-xs sm:text-sm text-neutral-400 font-medium">{t.teacherPages.designPublishMasterclassDesc}</p>
           </div>
         </header>
 
@@ -212,56 +212,56 @@ export default function CreateCoursePage() {
             
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Course Title *</label>
-                <input required type="text" placeholder="e.g. Advanced AI Trading Masterclass" value={form.title} onChange={(e) => setForm({...form, title: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 shadow-inner transition-colors" />
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.courseTitle} *</label>
+                <input required type="text" placeholder={t.teacherPages.courseTitlePlaceholder} value={form.title} onChange={(e) => setForm({...form, title: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 shadow-inner transition-colors" />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Detailed Description</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.detailedDescription}</label>
                 <div className="relative">
                   <AlignLeft size={18} className="absolute left-4 top-4 text-neutral-500" />
-                  <textarea rows={4} placeholder="What will students learn in this course?..." value={form.description} onChange={(e) => setForm({...form, description: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 resize-none custom-scrollbar shadow-inner" />
+                  <textarea rows={4} placeholder={t.teacherPages.detailedDescriptionPlaceholder} value={form.description} onChange={(e) => setForm({...form, description: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 resize-none custom-scrollbar shadow-inner" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Category</label>
-                  <input type="text" placeholder="e.g. Finance, Programming" value={form.category} onChange={(e) => setForm({...form, category: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 shadow-inner" />
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.category}</label>
+                  <input type="text" placeholder={t.teacherPages.categoryPlaceholder} value={form.category} onChange={(e) => setForm({...form, category: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 shadow-inner" />
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Language</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.language}</label>
                   <div className="relative">
                     <Globe size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <select value={form.language} onChange={(e) => setForm({...form, language: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 appearance-none shadow-inner">
-                      <option value="English">English</option>
-                      <option value="Persian">Persian (فارسی)</option>
-                      <option value="Arabic">Arabic (العربية)</option>
-                      <option value="Spanish">Spanish</option>
+                      <option value="English">{t.teacherPages.langEnglish || "English"}</option>
+                      <option value="Persian">{t.teacherPages.langPersian || "Persian (فارسی)"}</option>
+                      <option value="Arabic">{t.teacherPages.langArabic || "Arabic (العربية)"}</option>
+                      <option value="Spanish">{t.teacherPages.langSpanish || "Spanish"}</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Price (USD)</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.priceUsd}</label>
                   <div className="relative">
                     <DollarSign size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500" />
-                    <input type="number" min="0" step="0.01" placeholder="0.00 (Leave empty for Free)" value={form.price} onChange={(e) => setForm({...form, price: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-emerald-500/50 font-mono shadow-inner" />
+                    <input type="number" min="0" step="0.01" placeholder="0.00" value={form.price} onChange={(e) => setForm({...form, price: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-emerald-500/50 font-mono shadow-inner" />
                   </div>
                 </div>
               </div>
 
               {/* 🔥 آپلود یا لینک کاور کورس (Thumbnail) 🔥 */}
               <div className="space-y-2 pt-2 border-t border-white/5">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Course Thumbnail Image *</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.courseThumbnailImage}</label>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <div className="relative flex-1">
                     <ImageIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
                       type="url" 
                       required
-                      placeholder="Paste Image URL or upload a file..." 
+                      placeholder={t.teacherPages.avatarImageUrl} 
                       value={form.thumbnail_url} 
                       onChange={(e) => setForm({...form, thumbnail_url: e.target.value})} 
                       className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 shadow-inner transition-colors" 
@@ -329,23 +329,23 @@ export default function CreateCoursePage() {
             {/* استاد دوم (اختیاری و قابل ویرایش) */}
             <div className="pt-4 space-y-5">
               <h4 className="text-sm font-black text-white flex items-center gap-2">
-                <Users size={16} className="text-neutral-500" /> Co-Instructor <span className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded-md">Optional</span>
+                <Users size={16} className="text-neutral-500" /> {t.teacherPages.coInstructor} <span className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded-md">{t.common?.optional || "Optional"}</span>
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Co-Instructor Name</label>
-                  <input type="text" placeholder="e.g. John Doe" value={form.instructor_2_name} onChange={(e) => setForm({...form, instructor_2_name: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50 shadow-inner" />
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.coInstructorName}</label>
+                  <input type="text" placeholder={t.teacherPages.coInstructorName} value={form.instructor_2_name} onChange={(e) => setForm({...form, instructor_2_name: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50 shadow-inner" />
                 </div>
                 
                 {/* 🔥 آپلود یا لینک عکس استاد دوم 🔥 */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Co-Instructor Image URL</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.coInstructorImageUrl}</label>
                   <div className="flex flex-col xl:flex-row gap-3">
                     <div className="relative flex-1">
                       <ImageIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                       <input 
                         type="url" 
-                        placeholder="Paste URL or upload file..." 
+                        placeholder={t.teacherPages.coInstructorImageUrl} 
                         value={form.instructor_2_image_url} 
                         onChange={(e) => setForm({...form, instructor_2_image_url: e.target.value})} 
                         className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50 shadow-inner" 
@@ -377,8 +377,8 @@ export default function CreateCoursePage() {
                 </div>
 
                 <div className="sm:col-span-2 space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Co-Instructor Biography</label>
-                  <input type="text" placeholder="Short bio for the second instructor..." value={form.instructor_2_bio} onChange={(e) => setForm({...form, instructor_2_bio: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50 shadow-inner" />
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.coInstructorBio}</label>
+                  <input type="text" placeholder={t.teacherPages.coInstructorBio} value={form.instructor_2_bio} onChange={(e) => setForm({...form, instructor_2_bio: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50 shadow-inner" />
                 </div>
               </div>
             </div>
@@ -390,8 +390,8 @@ export default function CreateCoursePage() {
             {/* Toggle Publish Status */}
             <div className="flex items-center justify-between w-full sm:w-auto gap-6 bg-black/40 px-5 py-3.5 rounded-2xl border border-white/5">
               <div>
-                <p className="font-black text-white text-sm">Publish Course</p>
-                <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">Make it visible to academy students.</p>
+                <p className="font-black text-white text-sm">{t.teacherPages.publishCourse}</p>
+                <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">{t.teacherPages.makeVisibleStudents}</p>
               </div>
               <button 
                 type="button" 

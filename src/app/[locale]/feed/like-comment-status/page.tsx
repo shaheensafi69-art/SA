@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -43,6 +44,8 @@ interface StatsSummary {
 export default function LikeCommentStatusPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
     const [isLoading, setIsLoading] = useState(true);
     const [activities, setActivities] = useState<ActivityItem[]>([]);
     const [stats, setStats] = useState<StatsSummary>({
@@ -288,7 +291,7 @@ export default function LikeCommentStatusPage() {
         return (
             <div className="w-full h-[80vh] flex flex-col items-center justify-center bg-transparent">
                 <div className="w-12 h-12 border-4 border-[#C2185B] border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p className="text-xs font-bold uppercase tracking-widest text-neutral-400">Loading Activity Status...</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-neutral-400">{t.feed.loadingActivityStatus}</p>
             </div>
         );
     }
@@ -312,7 +315,7 @@ export default function LikeCommentStatusPage() {
                         <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
                             <Activity className="text-[#C2185B]" size={24} /> Likes & Comments Status
                         </h1>
-                        <p className="text-xs text-neutral-400 font-medium mt-0.5">Track real-time engagement and interactions across all your content</p>
+                        <p className="text-xs text-neutral-400 font-medium mt-0.5">{t.feed.trackEngagement}</p>
                     </div>
                 </div>
             </div>
@@ -321,25 +324,25 @@ export default function LikeCommentStatusPage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mb-8 relative z-10">
                 <div className="bg-[#0a0a0f]/80 border border-white/5 p-4 rounded-2xl backdrop-blur-xl shadow-lg flex flex-col">
                     <div className="flex items-center justify-between text-neutral-400 mb-2">
-                        <span className="text-[10px] font-black uppercase tracking-wider">Total Likes</span>
+                        <span className="text-[10px] font-black uppercase tracking-wider">{t.feed.totalLikes}</span>
                         <Heart size={16} className="text-[#C2185B]" fill="#C2185B" />
                     </div>
                     <span className="text-xl sm:text-2xl font-black text-white">{stats.totalLikes}</span>
-                    <span className="text-[10px] text-neutral-500 font-bold mt-0.5">Across posts & reels</span>
+                    <span className="text-[10px] text-neutral-500 font-bold mt-0.5">{t.feed.acrossPostsReels}</span>
                 </div>
 
                 <div className="bg-[#0a0a0f]/80 border border-white/5 p-4 rounded-2xl backdrop-blur-xl shadow-lg flex flex-col">
                     <div className="flex items-center justify-between text-neutral-400 mb-2">
-                        <span className="text-[10px] font-black uppercase tracking-wider">Comments</span>
+                        <span className="text-[10px] font-black uppercase tracking-wider">{t.feed.commentsCount}</span>
                         <MessageCircle size={16} className="text-pink-400" />
                     </div>
                     <span className="text-xl sm:text-2xl font-black text-white">{stats.totalComments}</span>
-                    <span className="text-[10px] text-neutral-500 font-bold mt-0.5">Discussions started</span>
+                    <span className="text-[10px] text-neutral-500 font-bold mt-0.5">{t.feed.discussionsStarted}</span>
                 </div>
 
                 <div className="bg-[#0a0a0f]/80 border border-white/5 p-4 rounded-2xl backdrop-blur-xl shadow-lg flex flex-col">
                     <div className="flex items-center justify-between text-neutral-400 mb-2">
-                        <span className="text-[10px] font-black uppercase tracking-wider">Reel Views</span>
+                        <span className="text-[10px] font-black uppercase tracking-wider">{t.feed.reelViews}</span>
                         <Eye size={16} className="text-yellow-400" />
                     </div>
                     <span className="text-xl sm:text-2xl font-black text-white">{stats.totalViews}</span>
@@ -348,11 +351,11 @@ export default function LikeCommentStatusPage() {
 
                 <div className="bg-[#0a0a0f]/80 border border-white/5 p-4 rounded-2xl backdrop-blur-xl shadow-lg flex flex-col">
                     <div className="flex items-center justify-between text-neutral-400 mb-2">
-                        <span className="text-[10px] font-black uppercase tracking-wider">My Posts</span>
+                        <span className="text-[10px] font-black uppercase tracking-wider">{t.feed.myPosts}</span>
                         <FileText size={16} className="text-cyan-400" />
                     </div>
                     <span className="text-xl sm:text-2xl font-black text-white">{stats.totalPosts}</span>
-                    <span className="text-[10px] text-neutral-500 font-bold mt-0.5">Community posts</span>
+                    <span className="text-[10px] text-neutral-500 font-bold mt-0.5">{t.feed.communityPosts}</span>
                 </div>
             </div>
 
@@ -382,7 +385,7 @@ export default function LikeCommentStatusPage() {
                 {filteredActivities.length === 0 ? (
                     <div className="text-center py-20 bg-[#0a0a0f]/40 rounded-[2.5rem] border border-white/5 shadow-inner">
                         <Sparkles className="w-12 h-12 text-neutral-700 mx-auto mb-3 opacity-50" />
-                        <p className="text-neutral-500 font-bold text-sm tracking-wide">No engagement activity found in this category.</p>
+                        <p className="text-neutral-500 font-bold text-sm tracking-wide">{t.feed.noEngagement}</p>
                     </div>
                 ) : (
                     filteredActivities.map((act) => {

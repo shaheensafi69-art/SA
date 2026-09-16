@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -30,6 +31,8 @@ import {
 export default function TermsOfServicePage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   const [activeSection, setActiveSection] = useState("agreement");
 
   const sections = [
@@ -93,7 +96,7 @@ export default function TermsOfServicePage() {
   }, []);
 
   return (
-    <main className="w-full relative bg-[#020202] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-32">
+    <main dir={isRtl ? "rtl" : "ltr"} className="w-full relative bg-[#020202] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-32">
 
       {/* Dynamic Background Mesh */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
@@ -186,7 +189,7 @@ export default function TermsOfServicePage() {
             {/* Table of Contents Card */}
             <div className="bg-neutral-900/80 border border-white/10 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
-                <span className="text-xs font-bold uppercase tracking-widest text-yellow-500">Navigation Index</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-yellow-500">{t.publicPages.navigationIndex}</span>
                 <span className="text-[11px] font-mono text-neutral-500">10 Sections</span>
               </div>
 
@@ -231,7 +234,7 @@ export default function TermsOfServicePage() {
                 href="mailto:contact@safiacademy.org"
                 className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-yellow-400 transition-colors"
               >
-                <span>Contact Legal Department</span>
+                <span>{t.publicPages.contactLegalDepartment}</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </a>
             </div>

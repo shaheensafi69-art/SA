@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { Suspense } from "react";
 import Link from "next/link";
@@ -8,6 +9,8 @@ import { Mail, ShieldCheck, ArrowRight } from "lucide-react";
 function VerifyEmailContent() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   const searchParams = useSearchParams();
   const email = searchParams?.get("email") || "your email";
 
@@ -25,10 +28,10 @@ function VerifyEmailContent() {
         
         <div className="space-y-3">
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-            Verify Your Identity
+            {t.auth.verifyYourIdentity}
           </h1>
           <p className="text-neutral-400 text-sm sm:text-base leading-relaxed max-w-sm mx-auto">
-            Welcome to Safi Academy! We've sent a secure verification link to your email address:
+            {t.auth.verifyEmailSentDesc}
           </p>
         </div>
 
@@ -41,13 +44,13 @@ function VerifyEmailContent() {
         <div className="bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/20 rounded-2xl p-6 w-full text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-yellow-500"></div>
           <p className="text-yellow-400/90 text-xs font-black uppercase tracking-[0.2em] mb-3 flex items-center justify-center gap-2">
-            <ShieldCheck size={16} /> Action Required
+            <ShieldCheck size={16} /> {t.auth.actionRequired}
           </p>
-          <p className="text-neutral-300 text-xs leading-loose" dir="rtl">
-            لطفاً وارد صندوق ورودی (Inbox) خود شده و برای فعال‌سازی حساب، روی دکمه تایید کلیک کنید. 
+          <p className="text-neutral-300 text-xs leading-loose">
+            {t.auth.checkInboxActivation}
             <br/><br/>
             <span className="text-neutral-500">
-              در صورت عدم مشاهده ایمیل، حتماً پوشه <strong className="text-yellow-500/70">Spam</strong> یا <strong className="text-yellow-500/70">Junk</strong> را نیز بررسی نمایید.
+              {t.auth.checkSpamJunk}
             </span>
           </p>
         </div>
@@ -57,7 +60,7 @@ function VerifyEmailContent() {
           href={`/${currentLocale}/login`} 
           className="mt-4 w-full py-4 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 hover:scale-[1.02] rounded-xl text-black font-black text-sm uppercase tracking-widest transition-all shadow-[0_0_30px_rgba(234,179,8,0.25)] flex items-center justify-center gap-2 group"
         >
-          Proceed to Login <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          {t.auth.proceedToLogin} <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
         </Link>
 
       </div>
@@ -68,8 +71,10 @@ function VerifyEmailContent() {
 export default function VerifyEmailPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   return (
-    <div className="min-h-screen w-full bg-[#030305] text-white flex items-center justify-center font-sans overflow-hidden relative p-4">
+    <div dir={isRtl ? "rtl" : "ltr"} className="min-h-screen w-full bg-[#030305] text-white flex items-center justify-center font-sans overflow-hidden relative p-4">
       
       {/* Background Ambient Glows */}
       <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-yellow-600/10 rounded-full blur-[150px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '8s' }}></div>

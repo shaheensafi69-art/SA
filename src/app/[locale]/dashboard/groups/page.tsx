@@ -178,13 +178,13 @@ export default function MyGroupsPage() {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-40 gap-4">
               <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-neutral-500 font-black uppercase tracking-widest text-xs">Synchronizing Operations...</p>
+              <p className="text-neutral-500 font-black uppercase tracking-widest text-xs">{t.dashboardPages.syncingOps}</p>
             </div>
           ) : filteredGroups.length === 0 ? (
             <div className="bg-neutral-900/20 border border-white/5 border-dashed rounded-[3rem] py-32 text-center">
                <span className="text-7xl block mb-6 opacity-20">💬</span>
                <h3 className="text-2xl font-black text-white">{t.groups.noGroups}</h3>
-               <p className="text-neutral-500 max-w-xs mx-auto mt-2">Join an active course curriculum to unlock your priority workspace sector.</p>
+               <p className="text-neutral-500 max-w-xs mx-auto mt-2">{t.dashboardPages.joinCourseCurriculumDesc}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
@@ -256,7 +256,7 @@ export default function MyGroupsPage() {
                         </div>
                         <div>
                           <h3 className="text-lg sm:text-2xl font-black text-neutral-400">{group.class_name}</h3>
-                          <p className="text-xs text-amber-500/70 font-black uppercase tracking-widest mt-1">Signal Workspace Sync Pending</p>
+                          <p className="text-xs text-amber-500/70 font-black uppercase tracking-widest mt-1">{t.dashboardPages.workspaceSyncPending}</p>
                         </div>
                       </div>
                     </div>

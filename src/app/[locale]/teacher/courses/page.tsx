@@ -100,7 +100,7 @@ export default function TeacherCoursesPage() {
                 <Activity size={12} className="text-fuchsia-500" /> Professional Terminal
               </div>
               <h1 className="text-3xl sm:text-5xl font-black tracking-tight mb-2">
-                Class <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">Scheduler</span>
+                {t.teacherPages.classroomName} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">{t.teacherPages.scheduler}</span>
               </h1>
               <p className="text-xs sm:text-base text-neutral-400 font-medium max-w-md leading-relaxed tracking-wide">
                 Real-time database integration for managing class timings, weekly days, and cohort enrollment.
@@ -123,13 +123,13 @@ export default function TeacherCoursesPage() {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-32 space-y-6">
             <Loader2 className="w-12 h-12 text-fuchsia-500 animate-spin" />
-            <p className="text-neutral-500 text-xs font-black uppercase tracking-[0.3em] animate-pulse">Synchronizing Schedules...</p>
+            <p className="text-neutral-500 text-xs font-black uppercase tracking-[0.3em] animate-pulse">{t.teacherPages.syncingSchedules}</p>
           </div>
         ) : classGroups.length === 0 ? (
           <div className="text-center py-24 sm:py-40 bg-white/[0.02] border border-dashed border-white/10 rounded-[3rem] backdrop-blur-md mx-2 sm:mx-0 shadow-2xl relative">
             <MonitorPlay size={64} className="text-neutral-700 mx-auto mb-6" />
-            <h3 className="text-2xl font-black text-white mb-4">No Schedules Found</h3>
-            <p className="text-neutral-400 text-sm max-w-xs mx-auto leading-relaxed">Your teaching calendar is currently empty. Start by initializing a new classroom group.</p>
+            <h3 className="text-2xl font-black text-white mb-4">{t.teacherPages.noSchedulesFound}</h3>
+            <p className="text-neutral-400 text-sm max-w-xs mx-auto leading-relaxed">{t.teacherPages.teachingCalendarEmptyDesc}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
@@ -180,7 +180,7 @@ export default function TeacherCoursesPage() {
 
                     <div className="flex items-center gap-3.5 text-neutral-300 text-xs sm:text-sm font-bold bg-white/[0.03] px-4 py-4 rounded-2xl border border-white/5">
                       <Users size={18} className="text-fuchsia-500 shrink-0"/> 
-                      <span><strong className="text-white text-lg">{cls.student_count}</strong> Active Students</span>
+                      <span><strong className="text-white text-lg">{cls.student_count}</strong> {t.teacherPages.activeStudents}</span>
                     </div>
                   </div>
                   

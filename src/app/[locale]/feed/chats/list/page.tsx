@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -20,6 +21,8 @@ interface ChatPartner {
 export default function ChatsListPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
     const [isLoading, setIsLoading] = useState(true);
     const [chats, setChats] = useState<ChatPartner[]>([]);
     const [friends, setFriends] = useState<ChatPartner[]>([]);
@@ -149,8 +152,8 @@ export default function ChatsListPage() {
                         <MessageSquare size={24} />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black text-white tracking-tight">Messages</h1>
-                        <p className="text-xs text-neutral-400 font-medium mt-0.5">Direct conversations with academy peers and mentors.</p>
+                        <h1 className="text-2xl font-black text-white tracking-tight">{t.feed.messages}</h1>
+                        <p className="text-xs text-neutral-400 font-medium mt-0.5">{t.feed.directConversations}</p>
                     </div>
                 </div>
             </div>
@@ -159,7 +162,7 @@ export default function ChatsListPage() {
             <div className="relative mb-8 z-10">
                 <input
                     type="text"
-                    placeholder="Search conversations..."
+                    placeholder={t.feed.searchConversations}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-[#0a0a0f]/80 border border-white/10 rounded-2xl px-5 py-4 pl-14 text-white placeholder-neutral-500 font-medium focus:outline-none focus:border-[#C2185B] transition-colors shadow-lg"
@@ -170,7 +173,7 @@ export default function ChatsListPage() {
             {/* بخش شروع چت سریع با دوستان */}
             {friends.length > 0 && (
                 <div className="mb-8 relative z-10">
-                    <h3 className="text-xs font-black uppercase tracking-widest text-neutral-400 mb-4 px-2">Connected Friends</h3>
+                    <h3 className="text-xs font-black uppercase tracking-widest text-neutral-400 mb-4 px-2">{t.feed.connectedFriends}</h3>
                     <div className="flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
                         {friends.map((friend) => (
                             <Link
@@ -195,13 +198,13 @@ export default function ChatsListPage() {
 
             {/* لیست چت‌ها */}
             <div className="space-y-4 relative z-10">
-                <h3 className="text-xs font-black uppercase tracking-widest text-neutral-400 mb-2 px-2">Recent Chats</h3>
+                <h3 className="text-xs font-black uppercase tracking-widest text-neutral-400 mb-2 px-2">{t.feed.recentChats}</h3>
 
                 {filteredChats.length === 0 ? (
                     <div className="text-center py-20 bg-[#0a0a0f]/40 rounded-[2.5rem] border border-white/5 shadow-inner">
                         <MessageSquare className="w-12 h-12 text-neutral-700 mx-auto mb-3 opacity-50" />
-                        <p className="text-neutral-500 font-bold text-sm tracking-wide">No active conversations found.</p>
-                        <p className="text-neutral-600 text-xs mt-1">Select a friend above to start messaging!</p>
+                        <p className="text-neutral-500 font-bold text-sm tracking-wide">{t.feed.noActiveConversations}</p>
+                        <p className="text-neutral-600 text-xs mt-1">{t.feed.selectFriendToMessage}</p>
                     </div>
                 ) : (
                     filteredChats.map((chat) => (

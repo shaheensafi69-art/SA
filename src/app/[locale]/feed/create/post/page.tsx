@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 import { useState, useRef } from "react";
 import {  useRouter , usePathname } from "next/navigation";
@@ -20,6 +21,8 @@ import {
 export default function CreatePostPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const router = useRouter();
   const supabase = createClient();
 
@@ -116,8 +119,8 @@ export default function CreatePostPage() {
           <ArrowLeft size={20} />
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Create Publication</h1>
-          <p className="text-xs text-neutral-400 font-medium mt-1">Share professional insights with the academy network.</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t.feed.createPublication}</h1>
+          <p className="text-xs text-neutral-400 font-medium mt-1">{t.feed.shareInsights}</p>
         </div>
       </div>
 
@@ -132,7 +135,7 @@ export default function CreatePostPage() {
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-neutral-400">
               <Tag size={16} />
-              <label className="text-xs font-bold uppercase tracking-widest">Category Tag</label>
+              <label className="text-xs font-bold uppercase tracking-widest">{t.feed.categoryTag}</label>
             </div>
             <div className="flex flex-wrap gap-3">
               {moods.map((m) => (
@@ -156,11 +159,11 @@ export default function CreatePostPage() {
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-neutral-400">
               <Type size={16} />
-              <label className="text-xs font-bold uppercase tracking-widest">Publication Title</label>
+              <label className="text-xs font-bold uppercase tracking-widest">{t.feed.publicationTitle}</label>
             </div>
             <input
               type="text"
-              placeholder="Enter a descriptive title..."
+              placeholder={t.feed.titlePlaceholder}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full bg-[#030305]/60 border border-white/10 rounded-[1.5rem] px-6 py-5 text-white placeholder-neutral-600 font-bold focus:outline-none focus:border-[#C2185B] focus:ring-1 focus:ring-[#C2185B] transition-all shadow-inner text-lg"
@@ -172,10 +175,10 @@ export default function CreatePostPage() {
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-neutral-400">
               <AlignLeft size={16} />
-              <label className="text-xs font-bold uppercase tracking-widest">Content Body</label>
+              <label className="text-xs font-bold uppercase tracking-widest">{t.feed.contentBody}</label>
             </div>
             <textarea
-              placeholder="Elaborate your analysis, setup, or question here..."
+              placeholder={t.feed.contentPlaceholder}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={8}
@@ -188,7 +191,7 @@ export default function CreatePostPage() {
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-neutral-400">
               <ImagePlus size={16} />
-              <label className="text-xs font-bold uppercase tracking-widest">Media Attachment (Optional)</label>
+              <label className="text-xs font-bold uppercase tracking-widest">{t.feed.mediaAttachment}</label>
             </div>
 
             {!imagePreview ? (
@@ -200,8 +203,8 @@ export default function CreatePostPage() {
                   <ImagePlus size={28} className="text-neutral-500 group-hover:text-[#C2185B] transition-colors" />
                 </div>
                 <div className="text-center">
-                  <p className="text-sm font-bold text-white mb-1">Click to upload an image</p>
-                  <p className="text-xs text-neutral-500">Supports JPG, PNG, WEBP (Max 5MB)</p>
+                  <p className="text-sm font-bold text-white mb-1">{t.feed.clickToUploadImage}</p>
+                  <p className="text-xs text-neutral-500">{t.feed.supportsJpg}</p>
                 </div>
               </div>
             ) : (

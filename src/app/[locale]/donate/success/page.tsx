@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { Suspense, useEffect } from "react";
 import {  useSearchParams , usePathname } from "next/navigation";
@@ -11,6 +12,8 @@ import { trackPurchaseConversion } from "@/lib/gtag";
 function DonationSuccessContent() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id") || "";
 
@@ -100,8 +103,10 @@ function DonationSuccessContent() {
 export default function DonationSuccessPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   return (
-    <main className="min-h-screen bg-[#050508] text-white font-sans selection:bg-yellow-500/30 overflow-hidden relative" >
+    <main dir={isRtl ? "rtl" : "ltr"} className="min-h-screen bg-[#050508] text-white font-sans selection:bg-yellow-500/30 overflow-hidden relative" >
       {/* Background ambient lighting */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[60vw] h-[40vw] bg-yellow-600/10 rounded-full blur-[180px]"></div>
@@ -109,7 +114,7 @@ export default function DonationSuccessPage() {
         <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
       </div>
 
-      <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-neutral-400">Loading confirmation...</div>}>
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-neutral-400">{t.publicPages.loadingConfirmation}</div>}>
         <DonationSuccessContent />
       </Suspense>
     </main>

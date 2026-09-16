@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 import { usePathname } from "next/navigation";
 
 import Link from "next/link";
@@ -11,6 +12,8 @@ import {
 export default function CoursePartnershipPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   const benefits = [
     {
       title: "Passive Revenue Share",
@@ -60,7 +63,7 @@ export default function CoursePartnershipPage() {
   ];
 
   return (
-    <main className="w-full relative bg-[#050505] text-white font-sans overflow-hidden min-h-screen pt-32 pb-20">
+    <main dir={isRtl ? "rtl" : "ltr"} className="w-full relative bg-[#050505] text-white font-sans overflow-hidden min-h-screen pt-32 pb-20">
       
       {/* Background Effects */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
@@ -74,11 +77,11 @@ export default function CoursePartnershipPage() {
         {/* Header Section */}
         <div className="text-center max-w-4xl mx-auto mb-20 animate-[fadeInDown_1s_ease-out]">
           <div className="inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-5 py-2 text-xs font-black uppercase tracking-widest text-yellow-500 mb-6 shadow-[0_0_20px_rgba(234,179,8,0.2)]">
-            <Gem size={16} /> Exclusive Investment Opportunity
+            <Gem size={16} /> {t.publicPages.exclusiveInvestmentOpportunity}
           </div>
           <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-6 leading-tight">
-            Co-Own the Future of <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">Premium Education</span>
+            {t.publicPages.coOwnFuture} <br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">{t.publicPages.premiumEducation}</span>
           </h1>
           <p className="text-lg md:text-xl text-neutral-400 leading-relaxed mb-8 max-w-3xl mx-auto font-medium">
             Become a strategic partner at Safi Academy. Buy equity shares in our top-tier courses and earn lifetime passive income from a rapidly expanding global student base.
@@ -110,11 +113,11 @@ export default function CoursePartnershipPage() {
         <div className="mb-24">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
             <div>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-2">Live Funding Rounds</h2>
-              <p className="text-neutral-400">Available course partnerships open for investment.</p>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-2">{t.publicPages.liveFundingRounds}</h2>
+              <p className="text-neutral-400">{t.publicPages.availableCoursePartnerships}</p>
             </div>
             <div className="flex items-center gap-2 text-sm font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-4 py-2 rounded-xl">
-              <TrendingUp size={18} /> High Yield Potential
+              <TrendingUp size={18} /> {t.publicPages.highYieldPotential}
             </div>
           </div>
 
@@ -143,15 +146,15 @@ export default function CoursePartnershipPage() {
 
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-neutral-500">Target Raise:</span>
+                    <span className="text-neutral-500">{t.publicPages.targetRaise}</span>
                     <span className="font-bold text-white">{opp.targetRaise}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-neutral-500">Min. Investment:</span>
+                    <span className="text-neutral-500">{t.publicPages.minInvestment}</span>
                     <span className="font-bold text-white">{opp.minInvestment}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-neutral-500">Expected Return:</span>
+                    <span className="text-neutral-500">{t.publicPages.expectedReturn}</span>
                     <span className="font-black text-emerald-400">{opp.expectedROI}</span>
                   </div>
                 </div>
@@ -159,7 +162,7 @@ export default function CoursePartnershipPage() {
                 {/* Progress Bar */}
                 <div className="mb-8">
                   <div className="flex justify-between text-xs font-bold text-neutral-400 mb-2">
-                    <span>Funded</span>
+                    <span>{t.publicPages.funded}</span>
                     <span className="text-yellow-500">{opp.progress}%</span>
                   </div>
                   <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
@@ -176,7 +179,7 @@ export default function CoursePartnershipPage() {
                   href={`/${currentLocale}/contact`} 
                   className="w-full flex items-center justify-center gap-2 py-3.5 bg-white/5 hover:bg-yellow-500 text-white hover:text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all border border-white/10 hover:border-yellow-500"
                 >
-                  Request Details <ArrowRight size={16} />
+                  {t.publicPages.requestDetails} <ArrowRight size={16} />
                 </Link>
               </motion.div>
             ))}
@@ -195,15 +198,15 @@ export default function CoursePartnershipPage() {
           
           <div className="w-full md:w-2/3 relative z-10">
             <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
-              Ready to Become a <span className="text-yellow-500">Partner?</span>
+              {t.publicPages.readyToBecome} <span className="text-yellow-500">{t.publicPages.partnerQuestion}</span>
             </h2>
             <p className="text-neutral-400 text-lg leading-relaxed mb-6">
               Our investment relations team is ready to provide you with detailed prospectuses, financial projections, and legal frameworks for our upcoming courses.
             </p>
             <ul className="space-y-2 mb-8">
-              <li className="flex items-center gap-2 text-sm font-bold text-neutral-300"><CheckCircle2 size={18} className="text-yellow-500" /> Non-Disclosure Agreement (NDA) Provided</li>
-              <li className="flex items-center gap-2 text-sm font-bold text-neutral-300"><CheckCircle2 size={18} className="text-yellow-500" /> Full Access to Production Metrics</li>
-              <li className="flex items-center gap-2 text-sm font-bold text-neutral-300"><CheckCircle2 size={18} className="text-yellow-500" /> Dedicated Account Manager</li>
+              <li className="flex items-center gap-2 text-sm font-bold text-neutral-300"><CheckCircle2 size={18} className="text-yellow-500" /> {t.publicPages.ndaProvided}</li>
+              <li className="flex items-center gap-2 text-sm font-bold text-neutral-300"><CheckCircle2 size={18} className="text-yellow-500" /> {t.publicPages.fullAccessMetrics}</li>
+              <li className="flex items-center gap-2 text-sm font-bold text-neutral-300"><CheckCircle2 size={18} className="text-yellow-500" /> {t.publicPages.dedicatedAccountManager}</li>
             </ul>
           </div>
           

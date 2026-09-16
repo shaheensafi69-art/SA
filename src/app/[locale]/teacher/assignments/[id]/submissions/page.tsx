@@ -167,7 +167,7 @@ export default function AssignmentSubmissionsPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-fuchsia-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Submissions...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.teacherPages.loadingSubmissions}</p>
       </div>
     );
   }
@@ -215,11 +215,11 @@ export default function AssignmentSubmissionsPage() {
             <table className="w-full text-left border-collapse whitespace-nowrap min-w-[800px]">
               <thead>
                 <tr className="bg-white/[0.02] border-b border-white/5 text-[10px] sm:text-[11px] font-black text-neutral-500 uppercase tracking-widest">
-                  <th className="p-6">Student Profile</th>
-                  <th className="p-6">Submission Date</th>
-                  <th className="p-6 text-center">Status</th>
-                  <th className="p-6 text-center">Grade Point</th>
-                  <th className="p-6 text-right">Review Operations</th>
+                  <th className="p-6">{t.teacherPages.studentProfile}</th>
+                  <th className="p-6">{t.teacherPages.submissionDate}</th>
+                  <th className="p-6 text-center">{t.teacherPages.status}</th>
+                  <th className="p-6 text-center">{t.teacherPages.gradePoint}</th>
+                  <th className="p-6 text-right">{t.teacherPages.reviewOperations}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -228,7 +228,7 @@ export default function AssignmentSubmissionsPage() {
                     <td colSpan={5} className="p-20 text-center">
                       <div className="flex flex-col items-center justify-center space-y-4 opacity-40">
                         <ShieldAlert size={48} className="text-neutral-600" />
-                        <p className="text-neutral-400 text-sm font-bold">No student submissions received for this assignment yet.</p>
+                        <p className="text-neutral-400 text-sm font-bold">{t.teacherPages.noSubmissionsYetDesc}</p>
                       </div>
                     </td>
                   </tr>
@@ -329,13 +329,13 @@ export default function AssignmentSubmissionsPage() {
               
               {/* Student's Uploaded Attachment File URL */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1">Student's Submitted File</label>
+                <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1">{t.teacherPages.studentSubmittedFile}</label>
                 {selectedSubmission.file_url ? (
                   <a 
                     href={selectedSubmission.file_url} target="_blank" rel="noopener noreferrer"
                     className="flex items-center justify-between p-5 bg-fuchsia-500/5 hover:bg-fuchsia-500/10 border border-fuchsia-500/10 text-fuchsia-400 rounded-2xl text-xs font-black uppercase tracking-wider transition-colors shadow-sm"
                   >
-                    <span className="flex items-center gap-2"><FileText size={18}/> View Uploaded Attachment</span>
+                    <span className="flex items-center gap-2"><FileText size={18}/> {t.teacherPages.viewUploadedAttachment}</span>
                     <ExternalLink size={16} />
                   </a>
                 ) : (
@@ -349,7 +349,7 @@ export default function AssignmentSubmissionsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-4 border-t border-white/5">
                 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-amber-500 uppercase tracking-widest ml-1">Award Points *</label>
+                  <label className="text-[10px] font-black text-amber-500 uppercase tracking-widest ml-1">{t.teacherPages.awardPointsLabel}</label>
                   <div className="relative">
                     <Star size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500" />
                     <input 
@@ -363,11 +363,11 @@ export default function AssignmentSubmissionsPage() {
 
                 {/* Feedback Input */}
                 <div className="sm:col-span-2 space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Teacher Feedback (Optional)</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.teacherFeedbackOptional}</label>
                   <div className="relative">
                     <MessageSquare size={16} className="absolute left-4 top-5 text-neutral-500" />
                     <textarea 
-                      rows={2} placeholder="Type your constructive comments here..."
+                      rows={2} placeholder={t.teacherPages.tacticalFeedbackPlaceholder}
                       value={feedbackInput} onChange={(e) => setFeedbackInput(e.target.value)}
                       className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 resize-none shadow-inner" 
                     />
@@ -378,7 +378,7 @@ export default function AssignmentSubmissionsPage() {
 
               {/* Action Buttons */}
               <div className="pt-4 border-t border-white/5 flex gap-3">
-                <button type="button" onClick={() => setSelectedStudentSubmission(null)} className="flex-1 py-4 bg-white/5 hover:bg-white/10 text-neutral-400 rounded-xl text-xs font-black uppercase tracking-widest transition-colors active:scale-95">Cancel</button>
+                <button type="button" onClick={() => setSelectedStudentSubmission(null)} className="flex-1 py-4 bg-white/5 hover:bg-white/10 text-neutral-400 rounded-xl text-xs font-black uppercase tracking-widest transition-colors active:scale-95">{t.teacherPages.cancel}</button>
                 <button type="submit" disabled={isSubmittingGrade} className="flex-[2] py-4 bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-[0_10px_20px_rgba(217,70,239,0.2)] disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95">
                   {isSubmittingGrade ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save Evaluation
                 </button>

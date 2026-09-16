@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 import { usePathname } from "next/navigation";
 
 import Link from "next/link";
@@ -36,6 +37,8 @@ const AFFILIATE_URL = "https://www.registeredagentsinc.com/business-formation/";
 export default function BusinessFormationPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   const services = [
     {
       title: "Registered Agent in All 50 States",
@@ -155,7 +158,7 @@ export default function BusinessFormationPage() {
   ];
 
   return (
-    <main className="w-full relative bg-[#020202] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-24">
+    <main dir={isRtl ? "rtl" : "ltr"} className="w-full relative bg-[#020202] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-24">
 
       {/* Ambient Lighting & Grid Background */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
@@ -170,7 +173,7 @@ export default function BusinessFormationPage() {
         <div className="mb-12 bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 md:p-5 flex items-start gap-4 backdrop-blur-md">
           <Info className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
           <div className="text-xs md:text-sm text-neutral-300 leading-relaxed">
-            <span className="font-semibold text-amber-300 mr-1">Affiliate & Editorial Disclosure:</span>
+            <span className="font-semibold text-amber-300 mr-1">{t.publicPages.partnerDisclosure}</span>
             Safi Academy provides independent educational courses and resources for entrepreneurs. When you register or purchase services through our referral links to Registered Agents Inc, we may receive an affiliate commission at no additional cost to you. We only recommend established providers that meet our criteria for data privacy, nationwide reliability, and professional compliance.
           </div>
         </div>

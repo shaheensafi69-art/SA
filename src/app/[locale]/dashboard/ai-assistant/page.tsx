@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import { usePathname } from "next/navigation";
 
 import { useEffect, useState, useRef } from "react";
@@ -15,6 +16,8 @@ type Message = {
 export default function AIAssistantPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -198,15 +201,15 @@ export default function AIAssistantPage() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 rounded-[0.8rem] flex items-center justify-center text-white text-base shadow-[0_4px_15px_rgba(99,102,241,0.3)] font-black border border-white/10">🤖</div>
             <div>
-              <h2 className="text-sm sm:text-base font-black text-white tracking-tight leading-tight">Safi AI Assistant</h2>
+              <h2 className="text-sm sm:text-base font-black text-white tracking-tight leading-tight">{t.aiAssistant.title}</h2>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(168,85,247,0.8)]"></span>
-                <span className="text-[9px] text-purple-400 font-bold uppercase tracking-widest">Quantum Core Live</span>
+                <span className="text-[9px] text-purple-400 font-bold uppercase tracking-widest">{t.aiAssistant.quantumCoreLive}</span>
               </div>
             </div>
           </div>
         </div>
-        <button onClick={handleClearChat} className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-neutral-400 text-[10px] font-black uppercase tracking-widest hover:text-red-400 hover:bg-red-500/10 cursor-pointer transition-all active:scale-95">Clear History</button>
+        <button onClick={handleClearChat} className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-neutral-400 text-[10px] font-black uppercase tracking-widest hover:text-red-400 hover:bg-red-500/10 cursor-pointer transition-all active:scale-95">{t.aiAssistant.clearHistory}</button>
       </header>
 
       <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 space-y-4 custom-scrollbar relative z-10 scroll-smooth bg-gradient-to-b from-transparent to-black/20">
@@ -214,13 +217,13 @@ export default function AIAssistantPage() {
           {isLoadingHistory ? (
             <div className="flex flex-col justify-center items-center h-[60vh] gap-3">
               <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-neutral-500 text-[9px] font-black uppercase tracking-widest">Waking up Neural Networks...</p>
+              <p className="text-neutral-500 text-[9px] font-black uppercase tracking-widest">{t.aiAssistant.wakingUp}</p>
             </div>
           ) : messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center text-center py-10 md:py-16 animate-[fadeIn_0.5s_ease-out]">
               <div className="w-20 h-20 text-6xl mb-4 drop-shadow-[0_0_20px_rgba(99,102,241,0.3)] animate-bounce">⚡</div>
               <h3 className="text-xl md:text-2xl font-black text-white">How can I assist you, {studentName || "Trader"}?</h3>
-              <p className="text-neutral-500 text-xs mt-2 max-w-sm font-medium leading-relaxed">Ask anything about financial markets, smart contracts, full-stack systems, or drop-shipping.</p>
+              <p className="text-neutral-500 text-xs mt-2 max-w-sm font-medium leading-relaxed">{t.aiAssistant.welcomePrompt}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl mt-10">
                 {suggestedPrompts.map((prompt, idx) => (
                   <button key={idx} onClick={() => setInputValue(prompt)} className="p-4 bg-[#0d0d12]/60 backdrop-blur-md border border-white/5 rounded-2xl text-xs font-bold text-neutral-400 hover:bg-neutral-900 hover:border-indigo-500/30 hover:text-white transition-all text-left flex flex-col justify-between group shadow-xl">
@@ -276,7 +279,7 @@ export default function AIAssistantPage() {
           <form onSubmit={handleSendMessage} className="flex items-center gap-2.5 bg-[#0d0d13] border border-white/10 p-1.5 sm:p-2 rounded-2xl group transition-all focus-within:border-indigo-500/50">
             <button type="button" onClick={() => setShowEmojiPanel(!showEmojiPanel)} className={`w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-xl transition-all ${showEmojiPanel ? "bg-indigo-500/20 text-indigo-400" : "text-neutral-500 hover:text-white"}`}>{showEmojiPanel ? "⌨️" : "😀"}</button>
             <div className="flex-1 relative">
-              <input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Ask anything from Safi AI..." className="w-full bg-transparent px-1 py-2 text-white text-[13px] sm:text-sm focus:outline-none placeholder-neutral-600 font-medium" />
+              <input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder={t.aiAssistant.askPlaceholder} className="w-full bg-transparent px-1 py-2 text-white text-[13px] sm:text-sm focus:outline-none placeholder-neutral-600 font-medium" />
             </div>
             <button type="submit" disabled={!inputValue.trim() || isTyping} className="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-fuchsia-600 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all disabled:opacity-20 disabled:hover:scale-100 shadow-[0_4px_12px_rgba(99,102,241,0.3)]">
               <svg className="w-4 h-4 sm:w-5 sm:h-5 transform rotate-45 -translate-x-0.5 translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>

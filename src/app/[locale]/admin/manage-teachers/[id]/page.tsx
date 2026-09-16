@@ -191,7 +191,7 @@ export default function TeacherProfileAdminPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Instructor Data...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.loadingInstructorData}</p>
       </div>
     );
   }
@@ -200,9 +200,9 @@ export default function TeacherProfileAdminPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center p-6 text-center">
         <ShieldAlert size={48} className="text-neutral-600 mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">Instructor Not Found</h2>
-        <p className="text-neutral-500 mb-6">The requested faculty member does not exist or has been removed.</p>
-        <Link href={`/${currentLocale}/admin/manage-teachers`} className="px-6 py-3 bg-white/10 text-white rounded-xl font-bold hover:bg-white/20 transition">Return to Directory</Link>
+        <h2 className="text-xl font-bold text-white mb-2">{t.adminTeachers.noTeachers}</h2>
+        <p className="text-neutral-500 mb-6">{t.adminTeachers.noTeachers}</p>
+        <Link href={`/${currentLocale}/admin/manage-teachers`} className="px-6 py-3 bg-white/10 text-white rounded-xl font-bold hover:bg-white/20 transition">{t.common.back}</Link>
       </div>
     );
   }
@@ -253,12 +253,12 @@ export default function TeacherProfileAdminPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <div className="bg-[#0a0a0f]/80 p-5 sm:p-6 rounded-[2rem] border border-white/5 shadow-xl backdrop-blur-xl">
             <div className="w-10 h-10 bg-indigo-500/10 text-indigo-400 rounded-xl flex items-center justify-center mb-4"><BookOpen size={20}/></div>
-            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">Assigned Classes</p>
+            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">{t.adminPages.assignedClasses}</p>
             <p className="text-3xl font-black text-white">{classes.length}</p>
           </div>
           <div className="bg-[#0a0a0f]/80 p-5 sm:p-6 rounded-[2rem] border border-white/5 shadow-xl backdrop-blur-xl">
             <div className="w-10 h-10 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center mb-4"><Users size={20}/></div>
-            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">Total Students</p>
+            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">{t.teacherPages.totalStudents}</p>
             <p className="text-3xl font-black text-white">{totalStudents}</p>
           </div>
           <div className="bg-[#0a0a0f]/80 p-5 sm:p-6 rounded-[2rem] border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.05)] backdrop-blur-xl lg:col-span-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative overflow-hidden group">
@@ -266,7 +266,7 @@ export default function TeacherProfileAdminPage() {
             <div className="relative z-10">
               <div className="w-10 h-10 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center mb-4 border border-emerald-500/20"><Wallet size={20}/></div>
               <p className="text-[10px] font-black text-emerald-500/70 uppercase tracking-widest mb-1 flex items-center gap-1.5">
-                Current Wallet Balance <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded text-[8px]">40% Share</span>
+                Current Wallet Balance <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded text-[8px]">{t.adminPages.unpaidShare}</span>
               </p>
               <p className="text-4xl font-black text-emerald-400 tracking-tight">${teacher.wallet_balance.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
             </div>
@@ -335,14 +335,14 @@ export default function TeacherProfileAdminPage() {
                   payouts.map((tx) => (
                     <div key={tx.id} className="flex justify-between items-center bg-black/40 border border-white/5 rounded-xl p-4 gap-4">
                       <div>
-                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Withdrawal</p>
+                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">{t.adminPages.distributedPayoutsLedger}</p>
                         <p className="text-[10px] text-neutral-600 font-mono mt-1">{new Date(tx.created_at).toLocaleString()}</p>
                       </div>
                       <div className="text-right">
                         <p className="font-mono text-base font-black text-white">
                           ${Math.abs(tx.amount).toFixed(2)}
                         </p>
-                        <p className="text-[8px] font-black uppercase tracking-widest text-emerald-500 mt-0.5">Paid</p>
+                        <p className="text-[8px] font-black uppercase tracking-widest text-emerald-500 mt-0.5">{t.common.status}</p>
                       </div>
                     </div>
                   ))
@@ -363,8 +363,8 @@ export default function TeacherProfileAdminPage() {
             
             <div className="p-6 border-b border-white/5 bg-neutral-900/40 shrink-0 flex justify-between items-center">
               <div>
-                <h2 className="text-base font-black text-white">Process Instructor Payout</h2>
-                <p className="text-[10px] text-emerald-400 font-black uppercase tracking-widest mt-0.5">Settle Wallet Balance</p>
+                <h2 className="text-base font-black text-white">{t.adminPages.processInstructorPayout}</h2>
+                <p className="text-[10px] text-emerald-400 font-black uppercase tracking-widest mt-0.5">{t.adminPages.settleWalletBalance}</p>
               </div>
               <button disabled={isProcessingPayout} onClick={() => setIsPayoutModalOpen(false)} className="w-10 h-10 bg-white/5 hover:bg-white/10 text-neutral-400 rounded-full flex items-center justify-center transition-all shrink-0">
                 <X size={16} />
@@ -383,12 +383,12 @@ export default function TeacherProfileAdminPage() {
               <form onSubmit={handleProcessPayout} className="space-y-6">
                 
                 <div className="bg-black/40 border border-white/5 rounded-2xl p-5 shadow-inner text-center">
-                  <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mb-1">Available Funds</p>
+                  <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mb-1">{t.adminPages.availableFunds}</p>
                   <p className="text-3xl font-black text-white">${teacher?.wallet_balance.toFixed(2)}</p>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block ml-1">Amount to Transfer/Pay</label>
+                  <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block ml-1">{t.adminPages.amountToTransfer}</label>
                   <div className="relative flex items-center">
                     <span className="absolute left-4 text-emerald-500 font-black">$</span>
                     <input 
@@ -401,7 +401,7 @@ export default function TeacherProfileAdminPage() {
                       className="w-full bg-black border border-white/10 rounded-xl pl-8 pr-4 py-4 text-white text-lg font-black focus:outline-none focus:border-emerald-500/50 transition-colors shadow-inner"
                     />
                   </div>
-                  <p className="text-[9px] text-neutral-500 ml-1">This amount will be deducted from their wallet and recorded as a paid withdrawal.</p>
+                  <p className="text-[9px] text-neutral-500 ml-1">{t.adminPages.payoutDeductWalletDesc}</p>
                 </div>
 
                 <button 

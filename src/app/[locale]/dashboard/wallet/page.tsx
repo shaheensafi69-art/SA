@@ -208,8 +208,8 @@ export default function WalletPage() {
                     <img src="/logo-without-b.png" alt="Safi" className="w-full h-full object-contain drop-shadow-md" />
                   </div>
                   <div>
-                    <span className="font-black text-white tracking-widest text-xs uppercase opacity-90 block">SAFI PAY</span>
-                    <span className="text-[9px] text-emerald-400 font-bold tracking-widest uppercase">Verified Node</span>
+                    <span className="font-black text-white tracking-widest text-xs uppercase opacity-90 block">{t.wallet.safiPay}</span>
+                    <span className="text-[9px] text-emerald-400 font-bold tracking-widest uppercase">{t.wallet.verifiedNode}</span>
                   </div>
                 </div>
                 <CreditCard className="w-6 h-6 text-neutral-500" />
@@ -257,16 +257,16 @@ export default function WalletPage() {
                   <div className="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-2xl flex items-center justify-center mb-4 border border-amber-500/20 shadow-inner">
                     <Gift size={24} />
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-black text-white mb-2">Invite & Earn $5</h3>
+                  <h3 className="text-xl sm:text-2xl font-black text-white mb-2">{t.wallet.inviteAndEarn}</h3>
                   <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed max-w-[280px]">
-                    Share your unique link. When your friends register and <strong className="text-amber-500 font-bold">enroll in their first course</strong>, you will instantly receive a $5 cash bonus in your wallet!
+                    Share your unique link. When your friends register and <strong className="text-amber-500 font-bold">{t.wallet.enrollFirstCourse}</strong>, you will instantly receive a $5 cash bonus in your wallet!
                   </p>
                 </div>
               </div>
 
               <div className="flex flex-col gap-4 relative z-10">
                 <div className="bg-black/60 border border-white/5 p-4 rounded-2xl flex flex-col gap-3">
-                  <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest px-1">Your Referral Code</p>
+                  <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest px-1">{t.wallet.yourReferralCode}</p>
                   <div className="flex items-center gap-3">
                     <div className="flex-1 bg-white/5 px-4 py-3 rounded-xl border border-white/10 flex items-center">
                       <p className="font-mono text-amber-400 text-sm font-bold tracking-wider truncate">
@@ -280,7 +280,7 @@ export default function WalletPage() {
                 </div>
 
                 <div className="bg-black/60 border border-white/5 p-4 rounded-2xl flex flex-col gap-3">
-                  <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest px-1">Your Master Link</p>
+                  <p className="text-[9px] text-neutral-500 font-black uppercase tracking-widest px-1">{t.wallet.yourMasterLink}</p>
                   <div className="flex items-center gap-3">
                     <div className="flex-1 bg-white/5 px-4 py-3 rounded-xl border border-white/10 flex items-center overflow-hidden">
                       <p className="font-mono text-neutral-400 text-xs truncate">
@@ -297,7 +297,7 @@ export default function WalletPage() {
               <div className="mt-8 flex items-center justify-between border-t border-white/5 pt-6 relative z-10">
                 <div className="flex items-center gap-2">
                    <Users size={16} className="text-neutral-500" />
-                   <span className="text-[10px] text-neutral-500 font-black uppercase tracking-widest">Total Cash Earned</span>
+                   <span className="text-[10px] text-neutral-500 font-black uppercase tracking-widest">{t.wallet.totalCashEarned}</span>
                 </div>
                 <span className="text-emerald-400 font-black text-2xl font-mono">${isLoading ? "-" : wallet.totalRewards.toFixed(2)}</span>
               </div>
@@ -372,8 +372,8 @@ export default function WalletPage() {
                     <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6">
                        <CreditCard className="w-10 h-10 text-neutral-600" />
                     </div>
-                    <p className="text-xl font-black text-white mb-2">No Transactions Found</p>
-                    <p className="text-neutral-500 text-sm max-w-sm">Your payment, deposit, and withdrawal history will be securely logged here.</p>
+                    <p className="text-xl font-black text-white mb-2">{t.wallet.noTransactionsFound}</p>
+                    <p className="text-neutral-500 text-sm max-w-sm">{t.wallet.noTransactionsDesc}</p>
                   </div>
                 )
 
@@ -393,11 +393,8 @@ export default function WalletPage() {
                           </div>
                         </div>
                         <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 border-white/5 pt-3 sm:pt-0">
-                          <p className={`font-black font-mono text-lg ${ref.is_paid ? 'text-emerald-400' : 'text-neutral-500'}`}>
-                            ${ref.reward_amount.toFixed(2)}
-                          </p>
                           <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md mt-1 inline-block ${ref.is_paid ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-white/5 text-neutral-400 border border-white/10'}`}>
-                            {ref.is_paid ? 'Reward Paid' : 'Awaiting Enrollment'}
+                            {ref.is_paid ? "Paid" : "Pending"}
                           </span>
                         </div>
                       </div>
@@ -408,8 +405,8 @@ export default function WalletPage() {
                     <div className="w-20 h-20 bg-amber-500/5 rounded-full flex items-center justify-center mb-6">
                        <Users className="w-10 h-10 text-amber-600/50" />
                     </div>
-                    <p className="text-xl font-black text-white mb-2">Network is Empty</p>
-                    <p className="text-neutral-500 text-sm max-w-sm">Share your unique link with friends to expand your network and earn cash bonuses.</p>
+                    <p className="text-xl font-black text-white mb-2">{t.wallet.networkIsEmpty}</p>
+                    <p className="text-neutral-500 text-sm max-w-sm">{t.wallet.networkIsEmptyDesc}</p>
                   </div>
                 )
               )}

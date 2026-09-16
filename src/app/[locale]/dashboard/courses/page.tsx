@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -23,7 +24,7 @@ type EnrolledCourse = {
 // =====================================================================
 // کامپوننت هوشمند محاسباتی زمان باقیمانده واقعی بر اساس فیلد enrolled_at دیتابیس
 // =====================================================================
-function ExpirationCounter({ enrolledDate }: { enrolledDate: string }) {
+function ExpirationCounter({ enrolledDate, expiredLabel = "Access Expired" }: { enrolledDate: string; expiredLabel?: string }) {
   const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; mins: number } | null>(null);
 
   useEffect(() => {
@@ -55,7 +56,7 @@ function ExpirationCounter({ enrolledDate }: { enrolledDate: string }) {
     return (
       <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.15)] backdrop-blur-md">
         <AlertTriangle size={14} className="text-red-500" />
-        <span className="text-[9px] font-black uppercase tracking-widest text-red-400">Access Expired</span>
+        <span className="text-[9px] font-black uppercase tracking-widest text-red-400">{expiredLabel}</span>
       </div>
     );
   }
@@ -80,6 +81,8 @@ function ExpirationCounter({ enrolledDate }: { enrolledDate: string }) {
 export default function MyCoursesPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const [isLoading, setIsLoading] = useState(true);
   const [courses, setCourses] = useState<EnrolledCourse[]>([]);
   const [filter, setFilter] = useState<"all" | "in-progress" | "completed">("all");
@@ -159,9 +162,9 @@ export default function MyCoursesPage() {
       <header className="px-4 sm:px-8 lg:px-12 pt-8 sm:pt-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4 relative z-40 mb-8 sm:mb-10 max-w-[90rem] mx-auto">
         <div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight flex items-center gap-3">
-            My <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-600">Courses</span>
+            {t.dashboardPages.enrolled}
           </h1>
-          <p className="text-neutral-500 mt-1.5 sm:mt-2 text-xs sm:text-sm font-medium">Real-time database records and active core tracking.</p>
+          <p className="text-neutral-500 mt-1.5 sm:mt-2 text-xs sm:text-sm font-medium">{t.dashboardPages.recentActivity}</p>
         </div>
       </header>
 
@@ -173,12 +176,12 @@ export default function MyCoursesPage() {
           {/* چراغ هوشمند پشت باکس فیلتر */}
           <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/5 to-transparent rounded-[2rem] blur-xl pointer-events-none hidden lg:block"></div>
 
-          <p className="text-[9px] font-black text-neutral-500 uppercase tracking-[0.2em] px-4 pt-3 pb-1 hidden lg:block relative z-10">Filter Curriculum</p>
+          <p className="text-[9px] font-black text-neutral-500 uppercase tracking-[0.2em] px-4 pt-3 pb-1 hidden lg:block relative z-10">{t.dashboardPages.filterCurriculum}</p>
           
           {([
-            { id: "all", label: "All Courses", icon: <LayoutGrid size={18} />, count: courses.length, color: "hover:text-yellow-400" },
-            { id: "in-progress", label: "In Progress", icon: <PlayCircle size={18} />, count: courses.filter(c => !isCourseExpired(c.enrolled_at)).length, color: "hover:text-amber-400" },
-            { id: "completed", label: "Completed", icon: <Trophy size={18} />, count: courses.filter(c => isCourseExpired(c.enrolled_at)).length, color: "hover:text-red-400" }
+            { id: "all", label: t.dashboardPages.enrolled, icon: <LayoutGrid size={18} />, count: courses.length, color: "hover:text-yellow-400" },
+            { id: "in-progress", label: t.dashboardPages.inProgressStatus, icon: <PlayCircle size={18} />, count: courses.filter(c => !isCourseExpired(c.enrolled_at)).length, color: "hover:text-amber-400" },
+            { id: "completed", label: t.dashboardPages.completedStatus, icon: <Trophy size={18} />, count: courses.filter(c => isCourseExpired(c.enrolled_at)).length, color: "hover:text-red-400" }
           ] as const).map((tab) => (
             <button
               key={tab.id}
@@ -246,7 +249,7 @@ export default function MyCoursesPage() {
                           <BookOpen size={12} className="text-amber-500" />
                           <span className="text-[9px] font-black text-amber-500 uppercase tracking-widest">{course.category}</span>
                         </div>
-                        <ExpirationCounter enrolledDate={course.enrolled_at} />
+                        <ExpirationCounter enrolledDate={course.enrolled_at} expiredLabel={t.dashboardPages.accessExpired} />
                       </div>
 
                       {/* دکمه پخش مرکزی متصل به ماژول لایو کلاس */}
@@ -267,7 +270,7 @@ export default function MyCoursesPage() {
                             ? "bg-red-500/10 text-red-400 border border-red-500/20" 
                             : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
                         }`}>
-                          {expired ? <><AlertTriangle size={10} /> Completed (Access Finished)</> : <><Video size={10} /> In Progress (Active Session)</>}
+                          {expired ? <><AlertTriangle size={10} /> {t.dashboardPages.completedStatus}</> : <><Video size={10} /> {t.dashboardPages.inProgressStatus}</>}
                         </span>
                       </div>
 
@@ -311,9 +314,9 @@ export default function MyCoursesPage() {
                           }`}
                         >
                           {expired ? (
-                            <><RotateCcw size={16} /> Review Records</>
+                            <><RotateCcw size={16} /> {t.dashboardPages.reviewRecords}</>
                           ) : (
-                            <><Video size={16} /> Go To Live Campus</>
+                            <><Video size={16} /> {t.dashboardPages.goToLiveCampus}</>
                           )}
                         </Link>
                       </div>
@@ -328,8 +331,8 @@ export default function MyCoursesPage() {
               <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/5 border border-white/10 rounded-[1.5rem] sm:rounded-3xl flex items-center justify-center text-neutral-600 mb-6 shadow-inner">
                 <BookOpen size={40} />
               </div>
-              <h3 className="text-xl sm:text-2xl font-black text-white mb-2 tracking-tight">No Courses Found</h3>
-              <p className="text-neutral-400 font-medium max-w-sm text-sm">No data entries matched the database active status criteria for this node.</p>
+              <h3 className="text-xl sm:text-2xl font-black text-white mb-2 tracking-tight">{t.dashboardPages.noCoursesFound}</h3>
+              <p className="text-neutral-400 font-medium max-w-sm text-sm">{t.dashboardPages.noCoursesFoundDesc}</p>
             </div>
           )}
         </div>

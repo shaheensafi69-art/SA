@@ -116,7 +116,7 @@ export default function ManageStudentsPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-emerald-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Student Records...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.loadingStudentRecords}</p>
       </div>
     );
   }
@@ -183,7 +183,7 @@ export default function ManageStudentsPage() {
           {filteredStudents.length === 0 ? (
             <div className="p-16 text-center flex flex-col items-center">
               <ShieldAlert size={40} className="text-neutral-600 mb-4" />
-              <p className="text-neutral-400 text-sm font-bold">No students found matching your criteria.</p>
+              <p className="text-neutral-400 text-sm font-bold">{t.adminStudents.noStudents}</p>
             </div>
           ) : (
             <>
@@ -192,11 +192,11 @@ export default function ManageStudentsPage() {
                 <table className="w-full text-left border-collapse whitespace-nowrap min-w-[900px]">
                   <thead>
                     <tr className="bg-white/[0.02] border-b border-white/5 text-[10px] font-black text-neutral-500 uppercase tracking-widest">
-                      <th className="p-5 pl-8">Student Profile</th>
-                      <th className="p-5">Joined Date</th>
-                      <th className="p-5 text-center">Academic Points</th>
-                      <th className="p-5 text-right">Wallet Balance</th>
-                      <th className="p-5 text-right pr-8">Actions</th>
+                      <th className="p-5 pl-8">{t.common.profile}</th>
+                      <th className="p-5">{t.adminPages.joined}</th>
+                      <th className="p-5 text-center">{t.adminPages.points}</th>
+                      <th className="p-5 text-right">{t.teacherPages.walletBalance}</th>
+                      <th className="p-5 text-right pr-8">{t.common.actions}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
@@ -268,7 +268,7 @@ export default function ManageStudentsPage() {
                     <div className="flex items-end justify-between gap-4 border-t border-white/5 pt-4">
                       <div className="flex flex-col gap-2">
                         <div>
-                          <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest block mb-1">Balance</span>
+                          <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest block mb-1">{t.teacherPages.walletBalance}</span>
                           <span className={`font-mono text-xl font-black tracking-tight ${student.wallet_balance > 0 ? "text-emerald-400" : "text-white"}`}>
                             ${student.wallet_balance?.toFixed(2) || "0.00"}
                           </span>
@@ -312,7 +312,7 @@ export default function ManageStudentsPage() {
                 </div>
                 <div className="min-w-0">
                   <h2 className="text-base font-black text-white truncate">{selectedStudent.first_name} {selectedStudent.last_name}</h2>
-                  <p className="text-[10px] text-emerald-400 font-black uppercase tracking-widest mt-0.5 truncate">Student Profile</p>
+                  <p className="text-[10px] text-emerald-400 font-black uppercase tracking-widest mt-0.5 truncate">{t.common.profile}</p>
                 </div>
               </div>
               <button disabled={isSaving} onClick={() => setSelectedStudent(null)} className="w-10 h-10 bg-white/5 hover:bg-white/10 text-neutral-400 rounded-full flex items-center justify-center transition-all shrink-0">
@@ -332,7 +332,7 @@ export default function ManageStudentsPage() {
 
               <form onSubmit={handleUpdateWallet} className="space-y-6">
                 <div className="bg-black/40 border border-white/5 rounded-2xl p-5 shadow-inner">
-                  <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-4 text-center">Adjust Wallet Balance (USD)</label>
+                  <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-4 text-center">{t.adminPages.adjustWalletBalance}</label>
                   <div className="relative flex items-center justify-center">
                     <span className="absolute left-6 text-2xl font-black text-neutral-600">$</span>
                     <input 
@@ -344,7 +344,7 @@ export default function ManageStudentsPage() {
                       className="w-full bg-transparent border-b-2 border-emerald-500/30 px-12 py-2 text-center text-4xl font-black text-emerald-400 focus:outline-none focus:border-emerald-500 transition-colors"
                     />
                   </div>
-                  <p className="text-[9px] text-neutral-500 text-center mt-4">This will directly overwrite the student's current balance.</p>
+                  <p className="text-[9px] text-neutral-500 text-center mt-4">{t.adminPages.overwriteBalanceDesc}</p>
                 </div>
 
                 <button 

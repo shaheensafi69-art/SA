@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -22,6 +23,8 @@ interface NetworkUser {
 export default function NetworkPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState<NetworkUser[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<NetworkUser[]>([]);
@@ -196,8 +199,8 @@ export default function NetworkPage() {
               <Users size={28} />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Academy Network</h1>
-              <p className="text-xs sm:text-sm text-neutral-400 font-medium mt-1.5">Connect with peers, mentors, and faculty members.</p>
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t.feed.academyNetwork}</h1>
+              <p className="text-xs sm:text-sm text-neutral-400 font-medium mt-1.5">{t.feed.academyNetworkDesc}</p>
             </div>
           </div>
         </div>
@@ -207,7 +210,7 @@ export default function NetworkPage() {
           <div className="relative flex-1">
             <input
               type="text"
-              placeholder="Search by name..."
+              placeholder={t.feed.searchByName}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-[#0a0a0f]/60 border border-white/10 rounded-[1.5rem] px-5 py-4 pl-14 text-white placeholder-neutral-500 font-medium focus:outline-none focus:border-indigo-500 transition-colors shadow-lg"
@@ -235,7 +238,7 @@ export default function NetworkPage() {
         {filteredUsers.length === 0 ? (
           <div className="text-center py-24 bg-[#0a0a0f]/40 rounded-[2.5rem] border border-white/5 shadow-inner">
             <Users className="w-14 h-14 text-neutral-600 mx-auto mb-4 opacity-50" />
-            <p className="text-neutral-500 font-bold text-sm tracking-wide">No members found matching your search.</p>
+            <p className="text-neutral-500 font-bold text-sm tracking-wide">{t.feed.noMembersFound}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-24">
@@ -289,8 +292,8 @@ export default function NetworkPage() {
                       <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
                     ) : (
                       <>
-                        {u.friendshipStatus === 'friends' ? <span className="group-hover:hidden flex items-center gap-2">{btn.icon} Connected</span> : ''}
-                        {u.friendshipStatus === 'friends' ? <span className="hidden group-hover:flex items-center gap-2"><UserMinus size={16} /> Disconnect</span> : ''}
+                        {u.friendshipStatus === 'friends' ? <span className="group-hover:hidden flex items-center gap-2">{btn.icon} {t.feed.connectedFriends || "Connected"}</span> : ''}
+                        {u.friendshipStatus === 'friends' ? <span className="hidden group-hover:flex items-center gap-2"><UserMinus size={16} /> {t.feed.disconnect}</span> : ''}
 
                         {u.friendshipStatus !== 'friends' && (
                           <>

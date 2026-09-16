@@ -186,7 +186,7 @@ export default function TeacherTradingJournalDashboard() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-purple-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Syncing Trading Terminals...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.teacherPages.syncingTradingTerminals}</p>
       </div>
     );
   }
@@ -204,9 +204,9 @@ export default function TeacherTradingJournalDashboard() {
           <div className="w-24 h-24 bg-purple-500/10 border border-purple-500/20 rounded-3xl flex items-center justify-center text-purple-500 mb-8 shadow-[inset_0_0_20px_rgba(168,85,247,0.2)]">
             <LineChart size={40} />
           </div>
-          <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">Access Restricted</h2>
+          <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">{t.tradingJournal.accessRestricted}</h2>
           <p className="text-neutral-400 text-sm md:text-base leading-relaxed mb-6 max-w-md">
-            The Trading Journal Audit system is exclusively available for instructors actively teaching the <strong className="text-purple-400">Financial Markets & Forex Trading</strong> masterclass.
+            {t.teacherPages.financialMarketsForex}
           </p>
           <p className="text-neutral-600 text-xs font-bold uppercase tracking-widest">
             You do not have any active groups assigned for this specific course.
@@ -236,7 +236,7 @@ export default function TeacherTradingJournalDashboard() {
             </div>
             <div>
               <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-1 sm:mb-2">
-                Trading <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-emerald-400">Journals</span>
+                {t.teacherPages.financialMarketsForex} <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-emerald-400">{t.teacherPages.journals}</span>
               </h1>
               <p className="text-[11px] sm:text-sm md:text-base text-neutral-400 font-medium max-w-md leading-relaxed tracking-wide">
                 Audit student ledger submissions, verify chart parameters, and grade risk compliance execution.
@@ -247,7 +247,7 @@ export default function TeacherTradingJournalDashboard() {
           <div className="w-full lg:w-80 relative group shrink-0 mt-2 lg:mt-0">
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-purple-400 transition-colors" />
             <input 
-              type="text" placeholder="Search student, symbol..." 
+              type="text" placeholder={t.teacherPages.searchStudentSymbolPlaceholder} 
               value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-black border border-white/10 rounded-2xl pl-11 pr-4 py-3.5 sm:py-4 text-white text-sm focus:outline-none focus:border-purple-500/50 transition-colors shadow-inner"
             />
@@ -260,13 +260,13 @@ export default function TeacherTradingJournalDashboard() {
             <table className="w-full text-left border-collapse whitespace-nowrap min-w-[1000px]">
               <thead>
                 <tr className="bg-white/[0.02] border-b border-white/5 text-[10px] sm:text-[11px] font-black text-neutral-500 uppercase tracking-widest">
-                  <th className="p-4 sm:p-6">Trader (Student)</th>
-                  <th className="p-4 sm:p-6">Execution Date</th>
-                  <th className="p-4 sm:p-6">Asset / Order</th>
-                  <th className="p-4 sm:p-6">Risk Profile (Lot / R&R)</th>
-                  <th className="p-4 sm:p-6 text-center">Net Return (USD)</th>
-                  <th className="p-4 sm:p-6 text-center">Status</th>
-                  <th className="p-4 sm:p-6 text-right">Review</th>
+                  <th className="p-4 sm:p-6">{t.teacherPages.traderStudent}</th>
+                  <th className="p-4 sm:p-6">{t.teacherPages.executionDate}</th>
+                  <th className="p-4 sm:p-6">{t.teacherPages.assetOrder}</th>
+                  <th className="p-4 sm:p-6">{t.teacherPages.riskProfileLotRr}</th>
+                  <th className="p-4 sm:p-6 text-center">{t.teacherPages.netReturnUsd}</th>
+                  <th className="p-4 sm:p-6 text-center">{t.common?.status || "Status"}</th>
+                  <th className="p-4 sm:p-6 text-right">{t.teacherPages.review}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -275,7 +275,7 @@ export default function TeacherTradingJournalDashboard() {
                     <td colSpan={7} className="p-12 sm:p-20 text-center">
                       <div className="flex flex-col items-center justify-center space-y-4 opacity-40">
                         <ShieldAlert size={40} className="text-neutral-600 sm:w-12 sm:h-12" />
-                        <p className="text-neutral-400 text-xs sm:text-sm font-bold whitespace-normal max-w-[250px] sm:max-w-none mx-auto">No trading journals reported by your students yet.</p>
+                        <p className="text-neutral-400 text-xs sm:text-sm font-bold whitespace-normal max-w-[250px] sm:max-w-none mx-auto">{t.teacherPages.noTradingJournalsReported}</p>
                       </div>
                     </td>
                   </tr>
@@ -318,8 +318,8 @@ export default function TeacherTradingJournalDashboard() {
 
                         {/* Lot & R&R */}
                         <td className="p-4 sm:p-6 font-mono text-[11px] sm:text-xs">
-                          <p className="text-neutral-300">Size: <strong className="text-white">{journal.lot_size || "-"} Lots</strong></p>
-                          <p className="text-neutral-500 mt-0.5">R&R Factor: <strong className="text-purple-400">{journal.rr_multiple || "-"}R</strong></p>
+                          <p className="text-neutral-300">{t.teacherPages.size} <strong className="text-white">{journal.lot_size || "-"} Lots</strong></p>
+                          <p className="text-neutral-500 mt-0.5">{t.teacherPages.rrFactor} <strong className="text-purple-400">{journal.rr_multiple || "-"}R</strong></p>
                         </td>
 
                         {/* PnL USD */}
@@ -330,7 +330,7 @@ export default function TeacherTradingJournalDashboard() {
                               {isWin ? `+$${journal.profit_loss_usd}` : `-$${Math.abs(journal.profit_loss_usd)}`}
                             </span>
                           ) : (
-                            <span className="text-neutral-500 italic text-[10px]">Open Trade</span>
+                            <span className="text-neutral-500 italic text-[10px]">{t.teacherPages.openTrade}</span>
                           )}
                         </td>
 
@@ -392,19 +392,19 @@ export default function TeacherTradingJournalDashboard() {
               {/* Technical Execution Metrics Box */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 bg-black/40 border border-white/5 p-4 sm:p-5 rounded-2xl">
                 <div>
-                  <p className="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest font-black">Entry Metric</p>
+                  <p className="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest font-black">{t.teacherPages.entryMetric}</p>
                   <p className="text-xs sm:text-sm font-bold font-mono text-white mt-0.5">${selectedJournal.entry_price || "-"}</p>
                 </div>
                 <div>
-                  <p className="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest font-black">Exit Metric</p>
+                  <p className="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest font-black">{t.teacherPages.exitMetric}</p>
                   <p className="text-xs sm:text-sm font-bold font-mono text-white mt-0.5">${selectedJournal.exit_price || "-"}</p>
                 </div>
                 <div>
-                  <p className="text-[9px] sm:text-[10px] text-rose-400 uppercase tracking-widest font-black">Stop Loss (SL)</p>
+                  <p className="text-[9px] sm:text-[10px] text-rose-400 uppercase tracking-widest font-black">{t.teacherPages.stopLoss}</p>
                   <p className="text-xs sm:text-sm font-bold font-mono text-rose-400 mt-0.5">${selectedJournal.stop_loss || "-"}</p>
                 </div>
                 <div>
-                  <p className="text-[9px] sm:text-[10px] text-emerald-400 uppercase tracking-widest font-black">Take Profit (TP)</p>
+                  <p className="text-[9px] sm:text-[10px] text-emerald-400 uppercase tracking-widest font-black">{t.teacherPages.takeProfit}</p>
                   <p className="text-xs sm:text-sm font-bold font-mono text-emerald-400 mt-0.5">${selectedJournal.take_profit || "-"}</p>
                 </div>
               </div>
@@ -414,7 +414,7 @@ export default function TeacherTradingJournalDashboard() {
                 
                 {/* Left: Chart Attachment */}
                 <div className="space-y-2">
-                  <label className="text-[9px] sm:text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1 flex items-center gap-1.5"><Image size={14}/> Chart Attachment Asset</label>
+                  <label className="text-[9px] sm:text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1 flex items-center gap-1.5"><Image size={14}/> {t.teacherPages.chartAttachmentAsset}</label>
                   {selectedJournal.chart_image_url ? (
                     <div className="w-full aspect-video bg-black rounded-xl sm:rounded-2xl border border-white/10 overflow-hidden relative shadow-inner group">
                       <img src={selectedJournal.chart_image_url} alt="Trade Chart Setup" className="w-full h-full object-contain" />
@@ -422,7 +422,7 @@ export default function TeacherTradingJournalDashboard() {
                   ) : (
                     <div className="w-full aspect-video bg-neutral-900/60 border border-dashed border-white/5 rounded-xl sm:rounded-2xl flex flex-col justify-center items-center opacity-40 p-4 text-center">
                       <Landmark size={28} className="text-neutral-500 mb-2 sm:w-9 sm:h-9"/>
-                      <p className="text-[10px] sm:text-xs font-bold text-neutral-400">No chart snapshot uploaded by student</p>
+                      <p className="text-[10px] sm:text-xs font-bold text-neutral-400">{t.teacherPages.noChartSnapshot}</p>
                     </div>
                   )}
                 </div>
@@ -430,13 +430,13 @@ export default function TeacherTradingJournalDashboard() {
                 {/* Right: Notes & Psychological metrics */}
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-[9px] sm:text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1">Psychological/Emotions State</label>
+                    <label className="text-[9px] sm:text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1">{t.teacherPages.psychologicalState}</label>
                     <div className="w-full bg-black/40 border border-white/5 p-3 sm:p-4 rounded-xl text-xs sm:text-sm font-medium text-purple-300">
                       {selectedJournal.emotions || "No psychological notes logged."}
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[9px] sm:text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1">Analysis & Trade Log Notes</label>
+                    <label className="text-[9px] sm:text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1">{t.teacherPages.analysisTradeLogNotes}</label>
                     <div className="w-full bg-black/40 border border-white/5 p-3 sm:p-4 rounded-xl text-xs sm:text-sm font-medium text-neutral-200 min-h-[100px] sm:min-h-[120px] whitespace-pre-wrap custom-scrollbar">
                       {selectedJournal.analysis_notes || "No trade execution notes provided."}
                     </div>
@@ -449,7 +449,7 @@ export default function TeacherTradingJournalDashboard() {
                 
                 {/* Score Input */}
                 <div className="space-y-1.5">
-                  <label className="text-[9px] sm:text-[10px] font-black text-purple-400 uppercase tracking-widest ml-1 flex items-center gap-1"><Star size={12} className="fill-purple-400"/> Execution Score (0-100) *</label>
+                  <label className="text-[9px] sm:text-[10px] font-black text-purple-400 uppercase tracking-widest ml-1 flex items-center gap-1"><Star size={12} className="fill-purple-400"/> {t.teacherPages.executionScore}</label>
                   <input 
                     required type="number" min="0" max="100" placeholder="e.g. 95"
                     value={scoreInput} onChange={e => setScoreInput(e.target.value)}
@@ -459,11 +459,11 @@ export default function TeacherTradingJournalDashboard() {
 
                 {/* Feedback Input & Button */}
                 <div className="space-y-1.5">
-                  <label className="text-[9px] sm:text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1"><MessageSquare size={12}/> Academic Audit Feedback</label>
+                  <label className="text-[9px] sm:text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1"><MessageSquare size={12}/> {t.teacherPages.academicAuditFeedback}</label>
                   
                   <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
                     <textarea 
-                      rows={2} placeholder="Provide tactical strategy feedback..."
+                      rows={2} placeholder={t.teacherPages.tacticalFeedbackPlaceholder}
                       value={feedbackInput} onChange={e => setFeedbackInput(e.target.value)}
                       className="w-full sm:flex-1 bg-black border border-white/10 rounded-xl sm:rounded-2xl px-4 py-3 sm:py-4 text-white text-xs sm:text-sm focus:outline-none focus:border-purple-500/50 resize-none shadow-inner"
                     />

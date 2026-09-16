@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useState, useEffect, Suspense } from "react";
 import {  useSearchParams, useRouter , usePathname } from "next/navigation";
@@ -77,6 +78,8 @@ function ConfettiEffect() {
 function TeacherOnboardingForm() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   const searchParams = useSearchParams();
   const router = useRouter();
   const appId = searchParams.get("appId");
@@ -329,8 +332,8 @@ function TeacherOnboardingForm() {
           </div>
         </div>
         <div className="text-center space-y-1">
-          <h3 className="text-white text-base font-bold">Verifying Faculty Credentials</h3>
-          <p className="text-neutral-400 text-xs">Authenticating your one-time cryptographic admissions token...</p>
+          <h3 className="text-white text-base font-bold">{t.publicPages.verifyingFacultyCredentials}</h3>
+          <p className="text-neutral-400 text-xs">{t.publicPages.authenticatingToken}</p>
         </div>
       </div>
     );
@@ -350,7 +353,7 @@ function TeacherOnboardingForm() {
           <div className="inline-block px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-extrabold uppercase tracking-widest">
             Security Authorization Failed
           </div>
-          <h2 className="text-2xl font-black text-white tracking-tight">Access Strictly Restricted</h2>
+          <h2 className="text-2xl font-black text-white tracking-tight">{t.publicPages.accessStrictlyRestricted}</h2>
           <p className="text-neutral-400 text-xs leading-relaxed max-w-sm mx-auto">
             {denialReason}
           </p>
@@ -395,7 +398,7 @@ function TeacherOnboardingForm() {
           <div className="inline-block px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-extrabold uppercase tracking-widest">
             Faculty Account Active
           </div>
-          <h2 className="text-2xl font-black text-white tracking-tight">Account Already Activated</h2>
+          <h2 className="text-2xl font-black text-white tracking-tight">{t.publicPages.accountAlreadyActivated}</h2>
           <p className="text-neutral-400 text-xs leading-relaxed max-w-sm mx-auto">
             Your instructor credentials for <strong>{applicantData?.course_title}</strong> have already been activated with Teacher privileges.
           </p>
@@ -464,7 +467,7 @@ function TeacherOnboardingForm() {
             href={`/${currentLocale}/teacher`}
             className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(245,158,11,0.4)] flex items-center justify-center gap-2 group"
           >
-            Launch Faculty Portal Now <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            {t.publicPages.launchFacultyPortalNow} <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>
@@ -489,13 +492,13 @@ function TeacherOnboardingForm() {
           </div>
         </Link>
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-extrabold uppercase tracking-widest mb-1">
-          <Sparkles size={12} /> Faculty Appointment Registration
+          <Sparkles size={12} /> {t.publicPages.facultyAppointmentBadge}
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-          Complete Teacher Setup
+          {t.publicPages.completeTeacherSetup}
         </h1>
         <p className="text-neutral-400 text-xs mt-1">
-          Role: <span className="text-amber-400 font-bold">Teacher</span> &bull; Approved Track: {applicantData?.course_title}
+          <span className="text-amber-400 font-bold">{t.publicPages.roleTeacher}</span> &bull; {t.publicPages.approvedTrack}: {applicantData?.course_title}
         </p>
       </div>
 
@@ -513,7 +516,7 @@ function TeacherOnboardingForm() {
           >
             {step > 1 ? <Check size={16} /> : "1"}
           </div>
-          <span className="text-[10px] font-bold text-neutral-400">Personal</span>
+          <span className="text-[10px] font-bold text-neutral-400">{t.publicPages.stepPersonal}</span>
         </div>
 
         <div className={`flex-1 h-1 mx-2 rounded-full transition-all ${step > 1 ? "bg-emerald-500" : "bg-white/10"}`} />
@@ -530,7 +533,7 @@ function TeacherOnboardingForm() {
           >
             {step > 2 ? <Check size={16} /> : "2"}
           </div>
-          <span className="text-[10px] font-bold text-neutral-400">Academic</span>
+          <span className="text-[10px] font-bold text-neutral-400">{t.publicPages.stepAcademic}</span>
         </div>
 
         <div className={`flex-1 h-1 mx-2 rounded-full transition-all ${step > 2 ? "bg-emerald-500" : "bg-white/10"}`} />
@@ -545,7 +548,7 @@ function TeacherOnboardingForm() {
           >
             3
           </div>
-          <span className="text-[10px] font-bold text-neutral-400">Security</span>
+          <span className="text-[10px] font-bold text-neutral-400">{t.publicPages.stepSecurity}</span>
         </div>
       </div>
 
@@ -907,8 +910,10 @@ function TeacherOnboardingForm() {
 export default function TeacherOnboardingPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   return (
-    <div className="min-h-screen w-full bg-[#030307] text-white flex flex-col justify-center items-center font-sans overflow-x-hidden relative py-12 px-4">
+    <div dir={isRtl ? "rtl" : "ltr"} className="min-h-screen w-full bg-[#030307] text-white flex flex-col justify-center items-center font-sans overflow-x-hidden relative py-12 px-4">
       {/* Background Starfield and Golden Glows */}
       <div
         className="absolute inset-0 bg-cover bg-center filter brightness-[0.25] pointer-events-none"
@@ -923,7 +928,7 @@ export default function TeacherOnboardingPage() {
         fallback={
           <div className="flex flex-col items-center justify-center py-20 space-y-3">
             <Loader2 className="w-8 h-8 text-amber-400 animate-spin" />
-            <span className="text-xs text-neutral-400 font-mono">Initializing Faculty Onboarding...</span>
+            <span className="text-xs text-neutral-400 font-mono">{t.publicPages.activatingAccount}</span>
           </div>
         }
       >

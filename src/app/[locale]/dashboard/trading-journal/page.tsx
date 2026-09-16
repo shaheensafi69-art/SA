@@ -281,7 +281,7 @@ export default function TradingJournalPage() {
               <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-[60px] pointer-events-none opacity-30 ${stats.totalProfitLoss >= 0 ? "bg-emerald-500" : "bg-red-500"}`}></div>
               <div className="flex justify-between items-start mb-4 relative z-10">
                 <div className={`w-12 h-12 rounded-[1rem] flex items-center justify-center text-xl shadow-lg ${stats.totalProfitLoss >= 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>💰</div>
-                <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[9px] font-black text-neutral-300 uppercase tracking-widest">Net PnL (USD)</span>
+                <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[9px] font-black text-neutral-300 uppercase tracking-widest">{t.tradingJournal.netPnLUsd}</span>
               </div>
               <h3 className={`text-4xl font-black relative z-10 tracking-tight ${stats.totalProfitLoss >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                 {stats.totalProfitLoss >= 0 ? "+" : ""}${stats.totalProfitLoss.toFixed(2)}
@@ -291,7 +291,7 @@ export default function TradingJournalPage() {
             <div className="bg-gradient-to-br from-neutral-900/50 to-black p-5 rounded-[2rem] border border-white/10 backdrop-blur-xl flex items-center gap-5 cursor-default">
               <div className="w-12 h-12 bg-white/5 rounded-[1rem] flex items-center justify-center text-xl text-white border border-white/10 shrink-0">📊</div>
               <div>
-                <p className="text-neutral-500 text-[9px] font-black uppercase tracking-widest mb-0.5">Total Entries</p>
+                <p className="text-neutral-500 text-[9px] font-black uppercase tracking-widest mb-0.5">{t.tradingJournal.totalEntries}</p>
                 <h3 className="text-2xl font-black text-white leading-none">{stats.totalTrades}</h3>
               </div>
             </div>
@@ -307,12 +307,12 @@ export default function TradingJournalPage() {
 
           {/* Vertical Filters */}
           <div className="flex flex-col bg-neutral-900/40 backdrop-blur-2xl p-2.5 rounded-[2rem] border border-white/10 shadow-2xl space-y-1.5">
-            <p className="text-[9px] font-black text-neutral-500 uppercase tracking-[0.2em] px-4 pt-3 pb-1 hidden md:block">Filter Trades</p>
+            <p className="text-[9px] font-black text-neutral-500 uppercase tracking-[0.2em] px-4 pt-3 pb-1 hidden md:block">{t.tradingJournal.filterTrades}</p>
             {([
-              { id: "all", label: "All Trades", icon: "📋", color: "hover:text-yellow-400" },
-              { id: "open", label: "Open Positions", icon: "⏳", color: "hover:text-amber-400" },
-              { id: "win", label: "Winning Trades", icon: "🏆", color: "hover:text-emerald-400" },
-              { id: "loss", label: "Losing Trades", icon: "📉", color: "hover:text-red-400" }
+              { id: "all", label: t.tradingJournal.allTrades, icon: "📋", color: "hover:text-yellow-400" },
+              { id: "open", label: t.tradingJournal.openPositions, icon: "⏳", color: "hover:text-amber-400" },
+              { id: "win", label: t.tradingJournal.winningTrades, icon: "🏆", color: "hover:text-emerald-400" },
+              { id: "loss", label: t.tradingJournal.losingTrades, icon: "📉", color: "hover:text-red-400" }
             ] as const).map((tab) => (
               <button
                 key={tab.id}
@@ -382,21 +382,21 @@ export default function TradingJournalPage() {
                     {/* Center: Execution Details */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:flex-1 relative z-10 py-4 lg:py-0 border-y lg:border-y-0 border-white/5">
                       <div>
-                        <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1">Entry</p>
+                        <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1">{t.tradingJournal.entry}</p>
                         <p className="font-mono font-bold text-neutral-200 text-sm">{entry.entry_price}</p>
                       </div>
                       <div>
-                        <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1">Exit</p>
+                        <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1">{t.tradingJournal.exit}</p>
                         <p className="font-mono font-bold text-sm">
-                          {entry.exit_price ? <span className="text-neutral-200">{entry.exit_price}</span> : <span className="text-amber-500 animate-pulse">Running</span>}
+                          {entry.exit_price ? <span className="text-neutral-200">{entry.exit_price}</span> : <span className="text-amber-500 animate-pulse">{t.tradingJournal.running}</span>}
                         </p>
                       </div>
                       <div>
-                        <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1">Lot Size</p>
+                        <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1">{t.tradingJournal.lotSize}</p>
                         <p className="font-mono font-bold text-neutral-300 text-sm">{entry.lot_size || "-"}</p>
                       </div>
                       <div>
-                        <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1">Risk:Reward</p>
+                        <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1">{t.tradingJournal.riskReward}</p>
                         <p className="font-mono font-bold text-neutral-300 text-sm">{entry.rr_multiple ? `${entry.rr_multiple}R` : "-"}</p>
                       </div>
                     </div>
@@ -404,7 +404,7 @@ export default function TradingJournalPage() {
                     {/* Right: PNL */}
                     <div className="flex justify-between items-center lg:justify-end lg:w-1/4 relative z-10">
                       <div className="text-left lg:text-right">
-                        <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">Net PnL</p>
+                        <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">{t.tradingJournal.netPnL}</p>
                         {!isOpen ? (
                           <p className={`text-2xl font-black tracking-tight drop-shadow-[0_0_10px_currentColor] ${isWin ? "text-emerald-400" : isLoss ? "text-red-400" : "text-neutral-400"}`}>
                             {isWin ? "+" : ""}${Number(entry.profit_loss_usd).toFixed(2)}
@@ -412,7 +412,7 @@ export default function TradingJournalPage() {
                         ) : (
                           <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-500">
                             <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
-                            <span className="text-xs font-black uppercase tracking-widest">Open</span>
+                            <span className="text-xs font-black uppercase tracking-widest">{t.tradingJournal.open}</span>
                           </div>
                         )}
                       </div>
@@ -424,8 +424,8 @@ export default function TradingJournalPage() {
           ) : (
             <div className="bg-gradient-to-br from-neutral-900/40 to-black p-12 rounded-[3rem] border border-white/5 flex flex-col items-center justify-center text-center shadow-2xl min-h-[500px]">
               <div className="w-24 h-24 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-5xl mb-6 shadow-2xl">📈</div>
-              <h3 className="text-2xl font-black text-white mb-2">No Trades Found</h3>
-              <p className="text-neutral-400 font-medium mb-8 max-w-sm">Your trading journal is empty. Log your first setup to start building your edge.</p>
+              <h3 className="text-2xl font-black text-white mb-2">{t.tradingJournal.noTradesFound}</h3>
+              <p className="text-neutral-400 font-medium mb-8 max-w-sm">{t.tradingJournal.noTradesFoundDesc}</p>
               <button onClick={() => setIsModalOpen(true)} className="px-8 py-4 bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-black uppercase tracking-widest text-xs rounded-xl hover:scale-105 transition-all shadow-[0_10px_20px_rgba(245,158,11,0.3)]">
                 Log First Trade
               </button>
@@ -446,8 +446,8 @@ export default function TradingJournalPage() {
             <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-white/[0.02] shrink-0 relative z-10">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-amber-500/10 blur-[50px] pointer-events-none"></div>
               <div>
-                <h2 className="text-2xl font-black text-white tracking-tight">Log Execution</h2>
-                <p className="text-neutral-500 text-[10px] font-bold uppercase tracking-widest mt-1">Record your setup & manage risk</p>
+                <h2 className="text-2xl font-black text-white tracking-tight">{t.tradingJournal.logExecution}</h2>
+                <p className="text-neutral-500 text-[10px] font-bold uppercase tracking-widest mt-1">{t.tradingJournal.logExecutionDesc}</p>
               </div>
               <button onClick={() => setIsModalOpen(false)} className="w-10 h-10 bg-white/5 hover:bg-red-500/20 text-neutral-400 hover:text-red-400 rounded-full flex items-center justify-center transition-all border border-white/5 hover:border-red-500/30">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -458,65 +458,65 @@ export default function TradingJournalPage() {
               <form id="tradeForm" onSubmit={handleAddTrade} className="space-y-8">
                 
                 <div>
-                  <h4 className="text-xs font-black text-white uppercase tracking-widest border-l-2 border-amber-500 pl-3 mb-4">Core Info</h4>
+                  <h4 className="text-xs font-black text-white uppercase tracking-widest border-l-2 border-amber-500 pl-3 mb-4">{t.tradingJournal.coreInfo}</h4>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Date *</label>
+                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.tradingJournal.date} *</label>
                       <input type="date" required value={formData.trade_date} onChange={(e) => setFormData({...formData, trade_date: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-amber-500/50 transition-colors" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Pair / Symbol *</label>
-                      <input required type="text" placeholder="e.g. XAUUSD" value={formData.symbol} onChange={(e) => setFormData({...formData, symbol: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-white font-mono uppercase text-sm focus:outline-none focus:border-amber-500/50 transition-colors" />
+                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.tradingJournal.pairSymbol} *</label>
+                      <input required type="text" placeholder={t.tradingJournal.pairPlaceholder} value={formData.symbol} onChange={(e) => setFormData({...formData, symbol: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-white font-mono uppercase text-sm focus:outline-none focus:border-amber-500/50 transition-colors" />
                     </div>
                     <div className="space-y-1.5 col-span-2 sm:col-span-1">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Position Type *</label>
+                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.tradingJournal.positionType} *</label>
                       <div className="flex p-1 bg-black/50 border border-white/10 rounded-2xl">
-                        <button type="button" onClick={() => setFormData({...formData, position_type: "LONG"})} className={`flex-1 py-2.5 rounded-xl text-xs font-black tracking-widest transition-all ${formData.position_type === "LONG" ? "bg-emerald-500 text-black shadow-[0_0_10px_rgba(16,185,129,0.3)]" : "text-neutral-500 hover:text-white"}`}>LONG</button>
-                        <button type="button" onClick={() => setFormData({...formData, position_type: "SHORT"})} className={`flex-1 py-2.5 rounded-xl text-xs font-black tracking-widest transition-all ${formData.position_type === "SHORT" ? "bg-red-500 text-white shadow-[0_0_10px_rgba(239,68,68,0.3)]" : "text-neutral-500 hover:text-white"}`}>SHORT</button>
+                        <button type="button" onClick={() => setFormData({...formData, position_type: "LONG"})} className={`flex-1 py-2.5 rounded-xl text-xs font-black tracking-widest transition-all ${formData.position_type === "LONG" ? "bg-emerald-500 text-black shadow-[0_0_10px_rgba(16,185,129,0.3)]" : "text-neutral-500 hover:text-white"}`}>{t.tradingJournal.long}</button>
+                        <button type="button" onClick={() => setFormData({...formData, position_type: "SHORT"})} className={`flex-1 py-2.5 rounded-xl text-xs font-black tracking-widest transition-all ${formData.position_type === "SHORT" ? "bg-red-500 text-white shadow-[0_0_10px_rgba(239,68,68,0.3)]" : "text-neutral-500 hover:text-white"}`}>{t.tradingJournal.short}</button>
                       </div>
                     </div>
                     <div className="space-y-1.5 col-span-2 sm:col-span-1">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Strategy / Setup</label>
-                      <input type="text" placeholder="e.g. SMC, Breakout" value={formData.setup_strategy} onChange={(e) => setFormData({...formData, setup_strategy: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-amber-500/50 transition-colors" />
+                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.tradingJournal.strategySetup}</label>
+                      <input type="text" placeholder={t.tradingJournal.strategyPlaceholder} value={formData.setup_strategy} onChange={(e) => setFormData({...formData, setup_strategy: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-amber-500/50 transition-colors" />
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-black text-white uppercase tracking-widest border-l-2 border-amber-500 pl-3 mb-4">Execution</h4>
+                  <h4 className="text-xs font-black text-white uppercase tracking-widest border-l-2 border-amber-500 pl-3 mb-4">{t.tradingJournal.execution}</h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Lot Size</label>
+                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.tradingJournal.lotSize}</label>
                       <input type="number" step="any" placeholder="0.10" value={formData.lot_size} onChange={(e) => setFormData({...formData, lot_size: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-3 py-3 text-white font-mono text-sm focus:outline-none focus:border-amber-500/50" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-amber-500 uppercase tracking-widest ml-1">Entry *</label>
+                      <label className="text-[10px] font-bold text-amber-500 uppercase tracking-widest ml-1">{t.tradingJournal.entry} *</label>
                       <input required type="number" step="any" placeholder="0.00" value={formData.entry_price} onChange={(e) => setFormData({...formData, entry_price: e.target.value})} className="w-full bg-black/50 border border-amber-500/30 rounded-2xl px-3 py-3 text-white font-mono text-sm focus:outline-none focus:border-amber-500/80 shadow-[inset_0_0_10px_rgba(245,158,11,0.05)]" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Stop Loss</label>
+                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.tradingJournal.stopLoss}</label>
                       <input type="number" step="any" placeholder="0.00" value={formData.stop_loss} onChange={(e) => setFormData({...formData, stop_loss: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-3 py-3 text-white font-mono text-sm focus:outline-none focus:border-red-500/50" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Take Profit</label>
+                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.tradingJournal.takeProfit}</label>
                       <input type="number" step="any" placeholder="0.00" value={formData.take_profit} onChange={(e) => setFormData({...formData, take_profit: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-3 py-3 text-white font-mono text-sm focus:outline-none focus:border-emerald-500/50" />
                     </div>
                   </div>
                 </div>
 
                 <div className="p-5 bg-white/[0.02] border border-white/5 rounded-[2rem]">
-                  <h4 className="text-xs font-black text-white uppercase tracking-widest border-l-2 border-emerald-500 pl-3 mb-4">Results (Leave blank if open)</h4>
+                  <h4 className="text-xs font-black text-white uppercase tracking-widest border-l-2 border-emerald-500 pl-3 mb-4">{t.tradingJournal.resultsOpen}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Exit Price</label>
+                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.tradingJournal.exitPrice}</label>
                       <input type="number" step="any" placeholder="0.00" value={formData.exit_price} onChange={(e) => setFormData({...formData, exit_price: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-amber-500/50" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Net PnL ($)</label>
+                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.tradingJournal.netPnLForm}</label>
                       <input type="number" step="any" placeholder="e.g. 150 or -50" value={formData.profit_loss_usd} onChange={(e) => setFormData({...formData, profit_loss_usd: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-amber-500/50" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Risk/Reward (R)</label>
+                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.tradingJournal.riskRewardForm}</label>
                       <input type="number" step="any" placeholder="e.g. 2.5" value={formData.rr_multiple} onChange={(e) => setFormData({...formData, rr_multiple: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-amber-500/50" />
                     </div>
                   </div>
@@ -524,22 +524,22 @@ export default function TradingJournalPage() {
 
                 <div className="grid grid-cols-1 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Chart Screenshot (Optional)</label>
+                    <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.tradingJournal.chartScreenshot}</label>
                     <label className="group/file relative flex items-center gap-4 p-4 border-2 border-dashed border-white/10 rounded-2xl hover:border-amber-500/50 hover:bg-amber-500/5 cursor-pointer transition-all">
                       <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={(e) => setChartFile(e.target.files?.[0] || null)} />
                       <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-500 group-hover/file:text-amber-500 transition-colors shrink-0">🖼️</div>
                       <span className="text-xs font-bold text-neutral-400 truncate group-hover/file:text-amber-400 leading-relaxed">
-                        {chartFile ? chartFile.name : "Tap to upload chart image (PNG, JPG)"}
+                        {chartFile ? chartFile.name : t.tradingJournal.tapToUploadChart}
                       </span>
                     </label>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Emotions / Psychology</label>
-                    <input type="text" placeholder="e.g. FOMO, Patient, Confident" value={formData.emotions} onChange={(e) => setFormData({...formData, emotions: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500/50" />
+                    <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.tradingJournal.emotions}</label>
+                    <input type="text" placeholder={t.tradingJournal.emotionsPlaceholder} value={formData.emotions} onChange={(e) => setFormData({...formData, emotions: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500/50" />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Analysis / Mistakes</label>
-                    <textarea placeholder="Write down your thoughts about this execution..." value={formData.analysis_notes} onChange={(e) => setFormData({...formData, analysis_notes: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500/50 resize-none h-20 custom-scrollbar"></textarea>
+                    <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.tradingJournal.analysisMistakes}</label>
+                    <textarea placeholder={t.tradingJournal.analysisPlaceholder} value={formData.analysis_notes} onChange={(e) => setFormData({...formData, analysis_notes: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500/50 resize-none h-20 custom-scrollbar"></textarea>
                   </div>
                 </div>
 

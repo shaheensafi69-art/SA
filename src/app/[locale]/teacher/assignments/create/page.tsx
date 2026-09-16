@@ -126,9 +126,9 @@ export default function CreateAssignmentPage() {
               <ArrowLeft size={14} /> Back to Terminal
             </Link>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">
-              Issue <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">Assignment</span>
+              {t.teacherPages.deployTask} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">{t.teacherPages.academicTask}</span>
             </h1>
-            <p className="text-xs sm:text-sm text-neutral-400 font-medium">Create and deploy a new academic task for a specific cohort.</p>
+            <p className="text-xs sm:text-sm text-neutral-400 font-medium">{t.teacherPages.createTaskCohortDesc}</p>
           </div>
         </header>
 
@@ -148,7 +148,7 @@ export default function CreateAssignmentPage() {
             </h3>
             
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Target Classroom *</label>
+              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.targetClassroom} *</label>
               <div className="relative">
                 <Layers size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                 {classes.length === 0 ? (
@@ -178,10 +178,10 @@ export default function CreateAssignmentPage() {
             </h3>
             
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Assignment Title *</label>
+              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.assignmentTitle} *</label>
               <input 
                 required type="text" 
-                placeholder="e.g. Chapter 4 Reading Reflection"
+                placeholder={t.teacherPages.assignmentTitlePlaceholder}
                 value={form.title}
                 onChange={(e) => setForm({...form, title: e.target.value})}
                 className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 shadow-inner" 
@@ -189,12 +189,12 @@ export default function CreateAssignmentPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Task Description / Instructions</label>
+              <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.taskDescriptionInstructions}</label>
               <div className="relative">
                 <AlignLeft size={16} className="absolute left-4 top-4 text-neutral-500" />
                 <textarea 
                   rows={5}
-                  placeholder="Provide clear instructions for the students..."
+                  placeholder={t.teacherPages.taskInstructionsPlaceholder}
                   value={form.description}
                   onChange={(e) => setForm({...form, description: e.target.value})}
                   className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 resize-none shadow-inner custom-scrollbar" 
@@ -211,7 +211,7 @@ export default function CreateAssignmentPage() {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Deadline Date & Time</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.deadlineDateTime}</label>
                 <div className="relative">
                   <input 
                     type="datetime-local" 
@@ -222,7 +222,7 @@ export default function CreateAssignmentPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Maximum Score (Points)</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.maxScorePoints}</label>
                 <div className="relative">
                   <Star size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500" />
                   <input 

@@ -87,7 +87,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-rose-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Syncing Core Metrics...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.syncingCoreMetrics}</p>
       </div>
     );
   }

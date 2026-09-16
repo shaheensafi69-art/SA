@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 import { usePathname } from "next/navigation";
 
 import { useState, useEffect } from "react";
@@ -38,6 +39,8 @@ import { createClient } from "@/utils/supabase/client";
 export default function InstructorApplicationPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingResume, setIsUploadingResume] = useState(false);
@@ -301,13 +304,13 @@ export default function InstructorApplicationPage() {
   // Benefits
   const instructorBenefits = [
     {
-      title: "Up to 70% Revenue Share",
+      title: "Up to 70% {t.publicPages.revenueShare}",
       desc: "Earn high dividends from student enrollments with direct global payouts via SafiPay, bank transfer, or crypto.",
       icon: DollarSign,
       highlight: "High Earnings"
     },
     {
-      title: "Built-in Agora Live Classrooms",
+      title: "Built-in Agora {t.publicPages.liveClassrooms}",
       desc: "Broadcast HD interactive lectures with zero lag, screen sharing, student chat, and multi-host moderation.",
       icon: Video,
       highlight: "Advanced Tech"
@@ -376,7 +379,7 @@ export default function InstructorApplicationPage() {
   ];
 
   return (
-    <main className="w-full relative bg-[#020202] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-32">
+    <main dir={isRtl ? "rtl" : "ltr"} className="w-full relative bg-[#020202] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-32">
 
       {/* Background Lighting */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
@@ -427,19 +430,19 @@ export default function InstructorApplicationPage() {
           >
             <div className="p-3 text-center">
               <div className="text-xl md:text-2xl font-black text-amber-400 font-mono">Up to 70%</div>
-              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">Revenue Share</div>
+              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">{t.publicPages.revenueShare}</div>
             </div>
             <div className="p-3 text-center border-l border-white/5">
               <div className="text-xl md:text-2xl font-black text-white font-mono">50,000+</div>
-              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">Global Students</div>
+              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">{t.publicPages.globalStudents}</div>
             </div>
             <div className="p-3 text-center border-l border-white/5">
               <div className="text-xl md:text-2xl font-black text-amber-400 font-mono">Agora HD</div>
-              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">Live Classrooms</div>
+              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">{t.publicPages.liveClassrooms}</div>
             </div>
             <div className="p-3 text-center border-l border-white/5">
               <div className="text-xl md:text-2xl font-black text-white font-mono">48-72h</div>
-              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">Review Window</div>
+              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">{t.publicPages.reviewWindow}</div>
             </div>
           </motion.div>
         </div>
@@ -567,14 +570,14 @@ export default function InstructorApplicationPage() {
                         </div>
                         <div className="text-center sm:text-left">
                           <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
-                            <h4 className="text-sm font-bold text-white">Instructor Profile Photo</h4>
+                            <h4 className="text-sm font-bold text-white">{t.publicPages.instructorProfilePhoto}</h4>
                             <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">
                               Mandatory *
                             </span>
                           </div>
                           <p className="text-xs text-neutral-400">
                             {isUploadingAvatar ? (
-                              <span className="text-amber-400 font-semibold animate-pulse">Uploading photo to secure vault...</span>
+                              <span className="text-amber-400 font-semibold animate-pulse">{t.publicPages.uploadingPhoto}</span>
                             ) : formData.avatarUrl ? (
                               <span className="text-emerald-400 font-semibold flex items-center gap-1 justify-center sm:justify-start">
                                 <Check size={14} /> Profile photo uploaded & verified
@@ -980,13 +983,13 @@ export default function InstructorApplicationPage() {
                           Application Summary
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-neutral-300">
-                          <div><span className="text-neutral-500">Applicant:</span> {formData.firstName} {formData.lastName}</div>
+                          <div><span className="text-neutral-500">{t.publicPages.applicantLabel}</span> {formData.firstName} {formData.lastName}</div>
                           <div><span className="text-neutral-500">Email:</span> {formData.email}</div>
                           <div><span className="text-neutral-500">Category:</span> {formData.category}</div>
                           <div><span className="text-neutral-500">Format:</span> {formData.teachingFormat}</div>
                         </div>
                         <div className="pt-2">
-                          <span className="text-neutral-500 block mb-1">Proposed Course:</span>
+                          <span className="text-neutral-500 block mb-1">{t.publicPages.proposedCourseLabel}</span>
                           <span className="text-white font-semibold text-sm">{formData.courseTitle}</span>
                         </div>
                       </div>
@@ -1027,7 +1030,7 @@ export default function InstructorApplicationPage() {
                       onClick={nextStep}
                       className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs uppercase tracking-wider transition-all shadow-[0_10px_25px_rgba(245,158,11,0.25)] hover:scale-105 active:scale-95"
                     >
-                      <span>Continue</span>
+                      <span>{t.publicPages.continueBtn}</span>
                       <ArrowRight size={14} />
                     </button>
                   ) : (
@@ -1039,11 +1042,11 @@ export default function InstructorApplicationPage() {
                       {isSubmitting ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Submitting Application...</span>
+                          <span>{t.publicPages.submittingApplication}</span>
                         </>
                       ) : (
                         <>
-                          <span>Submit Instructor Application</span>
+                          <span>{t.publicPages.submitInstructorApplication}</span>
                           <CheckCircle2 size={16} />
                         </>
                       )}
@@ -1075,9 +1078,9 @@ export default function InstructorApplicationPage() {
                 </div>
 
                 <div className="p-5 rounded-2xl bg-neutral-900 border border-white/10 inline-block max-w-sm w-full font-mono text-xs text-neutral-300">
-                  <div className="text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Application Reference Code</div>
+                  <div className="text-neutral-500 text-[10px] uppercase tracking-wider mb-1">{t.publicPages.applicationReferenceCode}</div>
                   <div className="text-lg font-bold text-amber-400">{applicationId}</div>
-                  <div className="text-[11px] text-neutral-500 mt-2">Check your email for confirmation and updates.</div>
+                  <div className="text-[11px] text-neutral-500 mt-2">{t.publicPages.checkEmailForConfirmation}</div>
                 </div>
 
                 <div className="pt-4 flex flex-wrap items-center justify-center gap-4">

@@ -82,23 +82,23 @@ export default function AddCoursePage() {
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
-                  <p className="text-sm uppercase tracking-[0.35em] text-yellow-300">Fast content flow</p>
-                  <p className="mt-3 text-sm leading-7 text-neutral-300">Everything is grouped logically so you can move from title to launch in seconds.</p>
+                  <p className="text-sm uppercase tracking-[0.35em] text-yellow-300">{t.adminPages.courseBuilder}</p>
+                  <p className="mt-3 text-sm leading-7 text-neutral-300">{t.adminPages.createFirstCourseDesc}</p>
                 </div>
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
-                  <p className="text-sm uppercase tracking-[0.35em] text-yellow-300">Premium visual polish</p>
-                  <p className="mt-3 text-sm leading-7 text-neutral-300">Soft glows, rounded cards, and gradient accents create a luxury admin aesthetic.</p>
+                  <p className="text-sm uppercase tracking-[0.35em] text-yellow-300">{t.adminPages.pricing}</p>
+                  <p className="mt-3 text-sm leading-7 text-neutral-300">{t.adminPages.courseBuilder}</p>
                 </div>
               </div>
             </div>
 
             <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-8 shadow-[0_40px_120px_rgba(0,0,0,0.35)] backdrop-blur-3xl">
               <div className="rounded-3xl bg-gradient-to-br from-yellow-500/10 to-white/5 p-6 shadow-inner shadow-yellow-500/5">
-                <p className="text-sm font-semibold uppercase tracking-[0.35em] text-yellow-300">Quick Setup Guide</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.35em] text-yellow-300">{t.adminPages.courseBuilder}</p>
                 <div className="mt-6 space-y-4 text-sm text-neutral-300">
-                  <p>Use the left side for course details and instructor setup.</p>
-                  <p>Upload a striking thumbnail that looks great in course listings.</p>
-                  <p>Keep descriptions benefit-led and outcomes-focused.</p>
+                  <p>{t.adminPages.curriculumDescription}</p>
+                  <p>{t.adminPages.courseCoverThumbnail}</p>
+                  <p>{t.adminPages.curriculumDescription}</p>
                 </div>
               </div>
             </div>
@@ -109,8 +109,8 @@ export default function AddCoursePage() {
               <div className="space-y-4">
                 <div>
                   <div className="mb-3 flex items-center justify-between gap-4">
-                    <label className="text-sm font-semibold text-white">Course Title</label>
-                    <span className="text-xs uppercase tracking-[0.35em] text-neutral-500">Required</span>
+                    <label className="text-sm font-semibold text-white">{t.adminPages.courseTitle}</label>
+                    <span className="text-xs uppercase tracking-[0.35em] text-neutral-500">{t.common.status}</span>
                   </div>
                   <input
                     required
@@ -122,7 +122,7 @@ export default function AddCoursePage() {
 
                 <div className="grid gap-4 lg:grid-cols-2">
                   <div>
-                    <label className="mb-3 block text-sm font-semibold text-white">Category</label>
+                    <label className="mb-3 block text-sm font-semibold text-white">{t.teacherPages.category}</label>
                     <input
                       required
                       className="w-full rounded-[1.5rem] border border-white/10 bg-white/5 px-5 py-4 text-white outline-none transition focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20"
@@ -132,7 +132,7 @@ export default function AddCoursePage() {
                   </div>
 
                   <div>
-                    <label className="mb-3 block text-sm font-semibold text-white">Language</label>
+                    <label className="mb-3 block text-sm font-semibold text-white">{t.teacherPages.language}</label>
                     <select
                       className="w-full rounded-[1.5rem] border border-white/10 bg-white/5 px-5 py-4 text-white outline-none transition focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20"
                       onChange={(e) => setCourseData({ ...courseData, language: e.target.value })}
@@ -145,7 +145,7 @@ export default function AddCoursePage() {
                 </div>
 
                 <div>
-                  <label className="mb-3 block text-sm font-semibold text-white">Description</label>
+                  <label className="mb-3 block text-sm font-semibold text-white">{t.adminPages.curriculumDescription}</label>
                   <textarea
                     required
                     className="min-h-[180px] w-full rounded-[1.5rem] border border-white/10 bg-white/5 px-5 py-4 text-white outline-none transition focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20"
@@ -158,10 +158,10 @@ export default function AddCoursePage() {
               <div className="space-y-6 rounded-[1.75rem] border border-white/10 bg-white/5 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.18)]">
                 <div className="mb-5 flex items-center justify-between">
                   <div>
-                    <p className="text-lg font-semibold text-white">Instructor 1</p>
-                    <p className="text-sm text-neutral-400">Primary course instructor</p>
+                    <p className="text-lg font-semibold text-white">{t.adminPages.leadInstructor}</p>
+                    <p className="text-sm text-neutral-400">{t.adminPages.leadInstructor}</p>
                   </div>
-                  <span className="rounded-full bg-yellow-500/10 px-3 py-1 text-xs uppercase tracking-[0.35em] text-yellow-300">Required</span>
+                  <span className="rounded-full bg-yellow-500/10 px-3 py-1 text-xs uppercase tracking-[0.35em] text-yellow-300">{t.common.status}</span>
                 </div>
 
                 <div className="space-y-4">
@@ -186,10 +186,10 @@ export default function AddCoursePage() {
               <div className="space-y-6 rounded-[1.75rem] border border-white/10 bg-white/5 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.18)]">
                 <div className="mb-5 flex items-center justify-between">
                   <div>
-                    <p className="text-lg font-semibold text-white">Instructor 2</p>
-                    <p className="text-sm text-neutral-400">Optional co-instructor</p>
+                    <p className="text-lg font-semibold text-white">{t.teacherPages.coInstructor}</p>
+                    <p className="text-sm text-neutral-400">{t.teacherPages.coInstructor}</p>
                   </div>
-                  <span className="text-xs uppercase tracking-[0.35em] text-neutral-500">Optional</span>
+                  <span className="text-xs uppercase tracking-[0.35em] text-neutral-500">{t.common.optional}</span>
                 </div>
 
                 <div className="space-y-4">
@@ -219,8 +219,8 @@ export default function AddCoursePage() {
                     <span className="font-black text-2xl">+</span>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.35em] text-yellow-300">Asset Upload</p>
-                    <p className="text-sm text-neutral-400">Add the hero image that will make the course pop.</p>
+                    <p className="text-sm font-semibold uppercase tracking-[0.35em] text-yellow-300">{t.adminPages.courseCoverThumbnail}</p>
+                    <p className="text-sm text-neutral-400">{t.adminPages.courseCoverThumbnail}</p>
                   </div>
                 </div>
 
@@ -231,7 +231,7 @@ export default function AddCoursePage() {
                     ) : (
                       <div className="flex h-full flex-col items-center justify-center gap-3 text-neutral-400">
                         <div className="text-4xl">🖼️</div>
-                        <p className="text-sm">Upload a 16:9 thumbnail for the course card.</p>
+                        <p className="text-sm">{t.adminPages.courseCoverThumbnail}</p>
                       </div>
                     )}
                   </div>
@@ -243,7 +243,7 @@ export default function AddCoursePage() {
 
                 <div className="mt-6 grid gap-4">
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-white">Price</label>
+                    <label className="mb-2 block text-sm font-semibold text-white">{t.adminPages.pricing}</label>
                     <input
                       required
                       type="number"
@@ -254,7 +254,7 @@ export default function AddCoursePage() {
                   </div>
 
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-white">Preview</label>
+                    <label className="mb-2 block text-sm font-semibold text-white">{t.common.view}</label>
                     <div className="rounded-[1.5rem] bg-black/40 px-5 py-4 text-sm text-neutral-300 border border-white/10">
                       The course is saved as a draft and will be published after you submit. You can edit it later from the admin panel.
                     </div>
@@ -271,7 +271,7 @@ export default function AddCoursePage() {
               </button>
 
               <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-6 text-sm text-neutral-400">
-                <p className="font-semibold text-white">Pro tip</p>
+                <p className="font-semibold text-white">{t.adminPages.courseBuilder}</p>
                 <p className="mt-2 leading-7">
                   Use a strong title and a short description that emphasizes transformation, not only features. Add a polished thumbnail and instructor image URLs to increase trust.
                 </p>

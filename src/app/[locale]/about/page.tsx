@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useEffect, useState, forwardRef } from "react";
 import Link from "next/link";
@@ -347,6 +348,8 @@ const techPillars = [
 export default function AboutPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   const [teachers, setTeachers] = useState<TeacherInfo[]>([]);
   const [isLoadingTeachers, setIsLoadingTeachers] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -416,7 +419,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white font-sans selection:bg-yellow-500/30 overflow-hidden" >
+    <div dir={isRtl ? "rtl" : "ltr"} className="min-h-screen bg-[#020202] text-white font-sans selection:bg-yellow-500/30 overflow-hidden">
 
       {/* ================= AMBIENT BACKGROUND LIGHTING ================= */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
@@ -431,7 +434,7 @@ export default function AboutPage() {
         {/* Verification Pill */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-xs font-black uppercase tracking-widest mb-8 animate-[fadeInDown_0.5s_ease-out] shadow-[0_0_20px_rgba(234,179,8,0.2)]">
           <ShieldCheck size={16} />
-          <span>Part of Safi International Capital LTD • London, UK</span>
+          <span>{t.publicPages.partOfSafiInternational}</span>
         </div>
 
         <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tight mb-8 leading-[1.08] animate-[fadeInUp_0.6s_ease-out]">
@@ -449,19 +452,19 @@ export default function AboutPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto p-4 bg-neutral-900/80 border border-white/10 rounded-3xl backdrop-blur-xl shadow-2xl">
           <div className="p-4 text-center">
             <div className="text-2xl sm:text-3xl md:text-4xl font-black text-yellow-400 font-mono">50,000+</div>
-            <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-1">Students Enrolled</div>
+            <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-1">{t.publicPages.studentsEnrolled}</div>
           </div>
           <div className="p-4 text-center border-l border-white/5">
             <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white font-mono">150+</div>
-            <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-1">Countries Reached</div>
+            <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-1">{t.publicPages.countriesReached}</div>
           </div>
           <div className="p-4 text-center border-l border-white/5">
             <div className="text-2xl sm:text-3xl md:text-4xl font-black text-yellow-400 font-mono">17063286</div>
-            <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-1">UK Registered Entity</div>
+            <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-1">{t.publicPages.ukRegisteredEntity}</div>
           </div>
           <div className="p-4 text-center border-l border-white/5">
             <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white font-mono">98.4%</div>
-            <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-1">Graduate Success Rate</div>
+            <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-1">{t.publicPages.graduateSuccessRate}</div>
           </div>
         </div>
       </section>
@@ -488,7 +491,7 @@ export default function AboutPage() {
                 For decades, traditional higher education has failed to keep pace with the hyper-accelerated evolution of modern capitalism and technology. Students spend years accumulating debt for theoretical degrees that are rendered obsolete before graduation. Meanwhile, geographic barriers continue to prevent brilliant minds in emerging economies from accessing world-class financial and technological knowledge.
               </p>
               <p>
-                <strong>Safi Academy was founded to shatter these limitations.</strong> Initiated by visionary entrepreneur <strong className="text-white">Shaheen Safi</strong> and backed by the financial infrastructure of <strong className="text-white">Safi International Capital LTD</strong>, we set out to build an uncompromising institution where teaching is delivered exclusively by active practitioners—senior engineers who write production code, e-commerce titans who generate millions in revenue, and institutional traders who manage substantial market capital.
+                <strong>{t.publicPages.shatterLimitations}</strong> Initiated by visionary entrepreneur <strong className="text-white">Shaheen Safi</strong> and backed by the financial infrastructure of <strong className="text-white">Safi International Capital LTD</strong>, we set out to build an uncompromising institution where teaching is delivered exclusively by active practitioners—senior engineers who write production code, e-commerce titans who generate millions in revenue, and institutional traders who manage substantial market capital.
               </p>
               <p>
                 From our corporate headquarters in Covent Garden, London, we serve as an educational launching pad. We do not simply teach students; we integrate them into our global network, connect them with our fintech platform <strong className="text-yellow-400">SafiPay</strong>, guide them through forming legal US entities, and celebrate their victories on our public Wall of Fame.
@@ -501,24 +504,24 @@ export default function AboutPage() {
                 <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 mb-4">
                   <Award className="w-5 h-5" />
                 </div>
-                <h4 className="text-base font-bold text-white mb-1">Uncompromising Excellence</h4>
-                <p className="text-xs text-neutral-400 leading-relaxed">Every lesson, project, and code repository is audited to meet international enterprise benchmarks.</p>
+                <h4 className="text-base font-bold text-white mb-1">{t.publicPages.uncompromisingExcellence}</h4>
+                <p className="text-xs text-neutral-400 leading-relaxed">{t.publicPages.uncompromisingExcellenceDesc}</p>
               </div>
 
               <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
                 <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 mb-4">
                   <Globe className="w-5 h-5" />
                 </div>
-                <h4 className="text-base font-bold text-white mb-1">Borderless Opportunity</h4>
-                <p className="text-xs text-neutral-400 leading-relaxed">Talent is universally distributed; opportunity is not. We bring global education to every corner of the earth.</p>
+                <h4 className="text-base font-bold text-white mb-1">{t.publicPages.borderlessOpportunity}</h4>
+                <p className="text-xs text-neutral-400 leading-relaxed">{t.publicPages.borderlessOpportunityDesc}</p>
               </div>
 
               <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
                 <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 mb-4">
                   <HeartHandshake className="w-5 h-5" />
                 </div>
-                <h4 className="text-base font-bold text-white mb-1">Student-First Prosperity</h4>
-                <p className="text-xs text-neutral-400 leading-relaxed">We measure our institutional success not by enrollment numbers, but by the financial sovereignty of our graduates.</p>
+                <h4 className="text-base font-bold text-white mb-1">{t.publicPages.studentFirstProsperity}</h4>
+                <p className="text-xs text-neutral-400 leading-relaxed">{t.publicPages.studentFirstProsperityDesc}</p>
               </div>
             </div>
 
@@ -661,7 +664,7 @@ export default function AboutPage() {
           </div>
         ) : teachers.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-neutral-500 font-bold">Faculty listings are currently synchronizing with the central registry.</p>
+            <p className="text-neutral-500 font-bold">{t.publicPages.facultyListingsSync}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
@@ -692,7 +695,7 @@ export default function AboutPage() {
                     <div className="bg-black/40 border border-white/5 p-4 rounded-2xl mb-5">
                       <div className="flex items-center justify-center md:justify-start gap-2 mb-2 text-fuchsia-400">
                         <Award size={14} />
-                        <span className="text-[10px] font-black uppercase tracking-widest">Key Credentials</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest">{t.publicPages.keyCredentials}</span>
                       </div>
                       <p className="text-xs text-neutral-300 leading-relaxed italic">
                         "{teacher.achievements}"
@@ -728,7 +731,7 @@ export default function AboutPage() {
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-fuchsia-600/20 hover:bg-fuchsia-600/30 border border-fuchsia-500/40 text-fuchsia-300 font-bold text-xs uppercase tracking-wider transition-all hover:scale-105 shadow-xl"
           >
             <GraduationCap className="w-4 h-4" />
-            <span>Apply to Join the Faculty Board</span>
+            <span>{t.publicPages.applyToJoinFacultyBoard}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -816,12 +819,12 @@ export default function AboutPage() {
 
               {/* Corporate Identity Key Facts Table */}
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono bg-black/40 p-6 rounded-2xl border border-white/5">
-                <div><span className="text-neutral-500">Legal Name:</span> Safi International Capital LTD</div>
-                <div><span className="text-neutral-500">Company Number:</span> 17063286</div>
-                <div><span className="text-neutral-500">Jurisdiction:</span> England and Wales (UK)</div>
-                <div><span className="text-neutral-500">Corporate Status:</span> Active & In Good Standing</div>
+                <div><span className="text-neutral-500">{t.publicPages.legalNameLabel}</span> Safi International Capital LTD</div>
+                <div><span className="text-neutral-500">{t.publicPages.companyNumberLabel}</span> 17063286</div>
+                <div><span className="text-neutral-500">{t.publicPages.jurisdictionLabel}</span> England and Wales (UK)</div>
+                <div><span className="text-neutral-500">{t.publicPages.corporateStatusLabel}</span> Active & In Good Standing</div>
                 <div className="sm:col-span-2 pt-2 border-t border-white/5">
-                  <span className="text-neutral-500">Headquarters:</span> 71-75 Shelton Street, Covent Garden, London, UK
+                  <span className="text-neutral-500">{t.publicPages.headquartersLabel}</span> 71-75 Shelton Street, Covent Garden, London, UK
                 </div>
               </div>
 
@@ -888,7 +891,7 @@ export default function AboutPage() {
               <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 mb-4">
                 <MapPin className="w-5 h-5" />
               </div>
-              <h4 className="text-sm font-bold text-white mb-1">Global Headquarters</h4>
+              <h4 className="text-sm font-bold text-white mb-1">{t.publicPages.globalHeadquarters}</h4>
               <p className="text-xs text-neutral-400 leading-relaxed">
                 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ, United Kingdom
               </p>
@@ -898,7 +901,7 @@ export default function AboutPage() {
               <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 mb-4">
                 <Mail className="w-5 h-5" />
               </div>
-              <h4 className="text-sm font-bold text-white mb-1">Admissions & Support</h4>
+              <h4 className="text-sm font-bold text-white mb-1">{t.publicPages.admissionsAndSupport}</h4>
               <p className="text-xs text-neutral-400 leading-relaxed">
                 contact@safiacademy.org<br />
                 info@safiacademy.org
@@ -909,7 +912,7 @@ export default function AboutPage() {
               <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 mb-4">
                 <ShieldCheck className="w-5 h-5" />
               </div>
-              <h4 className="text-sm font-bold text-white mb-1">Legal & Corporate</h4>
+              <h4 className="text-sm font-bold text-white mb-1">{t.publicPages.legalAndCorporate}</h4>
               <p className="text-xs text-neutral-400 leading-relaxed">
                 Safi International Capital LTD<br />
                 UK Registry: 17063286
@@ -922,7 +925,7 @@ export default function AboutPage() {
       {/* ================= FOOTER CTA ================= */}
       <section className="relative py-24 px-6 md:px-12 max-w-4xl mx-auto z-10 text-center">
         <div className="bg-gradient-to-br from-yellow-500/20 to-amber-600/5 border border-yellow-500/20 rounded-[3rem] p-12 backdrop-blur-md shadow-[0_0_50px_rgba(234,179,8,0.1)]">
-          <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight">Ready to Shape Your Future?</h2>
+          <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight">{t.publicPages.readyToShapeFuture}</h2>
           <p className="text-neutral-300 text-sm md:text-base mb-10 max-w-xl mx-auto leading-relaxed">
             Join thousands of ambitious students worldwide who are acquiring elite skills, earning verifiable certifications, and thriving in the Safi Ecosystem.
           </p>

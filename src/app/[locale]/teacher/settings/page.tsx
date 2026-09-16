@@ -166,7 +166,7 @@ export default function TeacherSettingsPage() {
     return (
       <div className="min-h-screen bg-[#030305] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-fuchsia-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Settings Panel...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.teacherPages.loadingSettingsPanel}</p>
       </div>
     );
   }
@@ -190,9 +190,9 @@ export default function TeacherSettingsPage() {
             </div>
             <div>
               <h1 className="text-3xl sm:text-4xl font-black tracking-tight mb-2">
-                Account <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-400">Settings</span>
+                {t.common.profile} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-400">{t.teacherPages.settings}</span>
               </h1>
-              <p className="text-xs sm:text-sm text-neutral-400 font-medium">Manage your complete profile database, referrals, and security credentials.</p>
+              <p className="text-xs sm:text-sm text-neutral-400 font-medium">{t.teacherPages.manageProfileDesc}</p>
             </div>
           </div>
         </header>
@@ -223,14 +223,14 @@ export default function TeacherSettingsPage() {
               </div>
 
               <h2 className="text-xl font-black text-white">{profile.first_name || profile.last_name ? `${profile.first_name} ${profile.last_name}` : 'Instructor'}</h2>
-              <p className="text-xs text-fuchsia-400 font-black uppercase tracking-widest mt-1 mb-6">Academy Instructor</p>
+              <p className="text-xs text-fuchsia-400 font-black uppercase tracking-widest mt-1 mb-6">{t.teacherPages.academyInstructor}</p>
               
               <div className="w-full space-y-3 pt-6 border-t border-white/5 text-left">
                 <div className="flex items-center gap-3 text-xs text-neutral-400 font-medium bg-black/40 p-3.5 rounded-2xl border border-white/5">
                   <Mail size={14} className="text-neutral-500 shrink-0"/> <span className="truncate">{profile.email}</span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-neutral-400 font-medium bg-black/40 p-3.5 rounded-2xl border border-white/5">
-                  <Shield size={14} className="text-emerald-500 shrink-0"/> <span>Security: Protected</span>
+                  <Shield size={14} className="text-emerald-500 shrink-0"/> <span>{t.teacherPages.securityProtected}</span>
                 </div>
               </div>
             </div>
@@ -247,14 +247,14 @@ export default function TeacherSettingsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">First Name *</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.settings?.firstName || "First Name"} *</label>
                   <input 
                     type="text" required value={profile.first_name} onChange={e => setProfile({...profile, first_name: e.target.value})}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 shadow-inner" 
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Last Name *</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.settings?.lastName || "Last Name"} *</label>
                   <input 
                     type="text" required value={profile.last_name} onChange={e => setProfile({...profile, last_name: e.target.value})}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 shadow-inner" 
@@ -263,7 +263,7 @@ export default function TeacherSettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Father Name</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.fatherName}</label>
                 <input 
                   type="text" value={profile.father_name} onChange={e => setProfile({...profile, father_name: e.target.value})}
                   className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 shadow-inner" 
@@ -274,8 +274,8 @@ export default function TeacherSettingsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-4 rounded-2xl bg-white/[0.01] border border-white/5">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between ml-1">
-                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Email Address</label>
-                    <span className="text-[9px] font-bold text-amber-400/80 flex items-center gap-1"><Lock size={9}/> Locked</span>
+                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{t.teacherPages.email}</label>
+                    <span className="text-[9px] font-bold text-amber-400/80 flex items-center gap-1"><Lock size={9}/> {t.teacherPages.locked}</span>
                   </div>
                   <div className="relative">
                     <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600" />
@@ -288,8 +288,8 @@ export default function TeacherSettingsPage() {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between ml-1">
-                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Phone Number</label>
-                    <span className="text-[9px] font-bold text-amber-400/80 flex items-center gap-1"><Lock size={9}/> Locked</span>
+                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{t.teacherPages.phone}</label>
+                    <span className="text-[9px] font-bold text-amber-400/80 flex items-center gap-1"><Lock size={9}/> {t.teacherPages.locked}</span>
                   </div>
                   <div className="relative">
                     <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600" />
@@ -303,7 +303,7 @@ export default function TeacherSettingsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Country / Region</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.countryOrigin}</label>
                   <div className="relative">
                     <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
@@ -313,7 +313,7 @@ export default function TeacherSettingsPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Date of Birth</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.dateOfBirth}</label>
                   <div className="relative">
                     <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
@@ -330,7 +330,7 @@ export default function TeacherSettingsPage() {
                 {/* Referral Code */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between ml-1">
-                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Referral Code</label>
+                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{t.teacherPages.referralCode}</label>
                     <button 
                       type="button" 
                       onClick={() => copyToClipboard(profile.referral_code, 'code')}
@@ -351,7 +351,7 @@ export default function TeacherSettingsPage() {
                 {/* Referral Link */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between ml-1">
-                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Referral Link</label>
+                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{t.teacherPages.referralLink}</label>
                     <button 
                       type="button" 
                       onClick={() => copyToClipboard(profile.referral_link, 'link')}
@@ -372,8 +372,8 @@ export default function TeacherSettingsPage() {
                 {/* Discount Rate */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between ml-1">
-                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Discount Rate</label>
-                    <span className="text-[9px] font-bold text-amber-400/80 flex items-center gap-1"><Lock size={9}/> Locked</span>
+                    <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{t.teacherPages.discountRate}</label>
+                    <span className="text-[9px] font-bold text-amber-400/80 flex items-center gap-1"><Lock size={9}/> {t.teacherPages.locked}</span>
                   </div>
                   <div className="relative">
                     <Percent size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-600" />
@@ -386,7 +386,7 @@ export default function TeacherSettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Avatar Image URL</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.avatarImageUrl}</label>
                 <div className="relative">
                   <Camera size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                   <input 
@@ -397,11 +397,11 @@ export default function TeacherSettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Professional Biography</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.professionalBiography}</label>
                 <div className="relative">
                   <BookOpen size={16} className="absolute left-4 top-4 text-neutral-500" />
                   <textarea 
-                    rows={4} placeholder="Write a short bio about your expertise and background..."
+                    rows={4} placeholder={t.teacherPages.bioPlaceholder}
                     value={profile.bio} onChange={e => setProfile({...profile, bio: e.target.value})}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 resize-none shadow-inner custom-scrollbar" 
                   />
@@ -426,7 +426,7 @@ export default function TeacherSettingsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">New Password</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.newPassword}</label>
                   <div className="relative">
                     <Key size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
@@ -437,7 +437,7 @@ export default function TeacherSettingsPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Confirm New Password</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.confirmNewPassword}</label>
                   <div className="relative">
                     <Key size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input

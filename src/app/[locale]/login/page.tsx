@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -30,6 +31,7 @@ function TypewriterText({ text }: { text: string }) {
 }
 
 export default function LoginPage() {
+  const t = getPortalTranslation();
   const router = useRouter();
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
@@ -220,13 +222,13 @@ export default function LoginPage() {
                        <span className={`text-base font-bold ${selectedRoleTab === 'super_admin' ? 'text-purple-400' : selectedRoleTab === 'teacher' ? 'text-blue-400' : 'text-yellow-400'}`}>{userData.first_name.charAt(0)}</span>
                      )}
                   </div>
-                  <h3 className="text-xs font-bold text-white">Welcome back, <span className="text-yellow-400">{userData.first_name}</span>!</h3>
+                  <h3 className="text-xs font-bold text-white">{t.auth.welcomeBack} <span className="text-yellow-400">{userData.first_name}</span>!</h3>
                 </div>
               )}
 
               <form onSubmit={handleLogin} className="space-y-3.5" autoComplete="on">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 ml-1">Email Address</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 ml-1">{t.auth.emailAddress}</label>
                   <div className="relative">
                     <input 
                       required 
@@ -234,7 +236,7 @@ export default function LoginPage() {
                       name="email" 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="name@example.com" 
+                      placeholder={t.auth.emailPlaceholder} 
                       className="w-full bg-black/70 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-500 transition-all shadow-inner"
                       autoComplete="email"
                     />
@@ -248,8 +250,8 @@ export default function LoginPage() {
 
                 <div className="space-y-1">
                   <div className="flex justify-between items-center ml-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Password</label>
-                    <Link href={`/${locale}/forgot-password`} className="text-[10px] text-yellow-400 hover:text-yellow-300 font-bold transition-colors">Forgot?</Link>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{t.auth.password}</label>
+                    <Link href={`/${locale}/forgot-password`} className="text-[10px] text-yellow-400 hover:text-yellow-300 font-bold transition-colors">{t.auth.forgotPassword}</Link>
                   </div>
                   <div className="relative">
                     <input 
@@ -277,13 +279,13 @@ export default function LoginPage() {
                       'bg-gradient-to-r from-yellow-400 to-amber-500 text-black shadow-[0_10px_25px_rgba(234,179,8,0.4)]'
                   }`}
                 >
-                  {isLoading ? <><Loader2 size={14} className="animate-spin" /> Authenticating...</> : "Sign In & Access Portal 🚀"}
+                  {isLoading ? <><Loader2 size={14} className="animate-spin" /> {t.publicPages.authenticating}</> : "Sign In & Access Portal 🚀"}
                 </button>
               </form>
 
               {selectedRoleTab === 'student' && (
                 <div className="mt-4 pt-3 border-t border-white/10 text-center text-xs">
-                  <span className="text-neutral-400">Don't have an account?</span>{" "}
+                  <span className="text-neutral-400">{t.auth.dontHaveAccount}</span>{" "}
                   <Link href={`/${locale}/register`} className="text-yellow-400 font-bold hover:text-yellow-300 transition-colors ml-1">
                     Create one
                   </Link>

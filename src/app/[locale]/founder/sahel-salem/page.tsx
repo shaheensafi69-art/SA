@@ -1,4 +1,5 @@
-'use client';
+"use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
@@ -33,6 +34,8 @@ const InstagramIcon = ({ size = 18 }: { size?: number }) => (
 export default function SahelSalemExecutiveDossier() {
   const pathname = usePathname() || '/en';
   const currentLocale = pathname.split('/')[1] || 'en';
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -139,7 +142,7 @@ export default function SahelSalemExecutiveDossier() {
               <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#0a0a12]/90 border border-emerald-500/30 backdrop-blur-2xl shadow-2xl">
                 <Landmark size={20} className="text-emerald-400" />
                 <div className="text-left">
-                  <p className="text-[10px] uppercase font-black tracking-wider text-emerald-400">SEPA & Banking</p>
+                  <p className="text-[10px] uppercase font-black tracking-wider text-emerald-400">{t.publicPages.sepaBanking}</p>
                   <p className="text-xs font-bold text-white">EU Integration</p>
                 </div>
               </div>
@@ -151,7 +154,7 @@ export default function SahelSalemExecutiveDossier() {
             >
               <div className="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-black font-black tracking-widest text-xs uppercase shadow-[0_10px_35px_rgba(16,185,129,0.4)] flex items-center gap-2">
                 <Globe size={15} />
-                <span>Global Director</span>
+                <span>{t.publicPages.globalDirector}</span>
               </div>
             </motion.div>
           </motion.div>
@@ -214,7 +217,7 @@ export default function SahelSalemExecutiveDossier() {
             
             <div className="flex items-center gap-3 mb-8">
               <span className="w-3 h-8 rounded-full bg-gradient-to-b from-emerald-400 to-teal-600" />
-              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">The Next-Generation Leader</h2>
+              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">{t.publicPages.nextGenLeader}</h2>
             </div>
 
             <div className="space-y-6 text-neutral-300 text-base sm:text-lg leading-relaxed text-justify font-normal">

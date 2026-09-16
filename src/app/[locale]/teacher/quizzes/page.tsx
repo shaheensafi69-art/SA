@@ -127,7 +127,7 @@ export default function TeacherQuizzesOverviewPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-fuchsia-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Exams Hub...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.teacherPages.loadingExamsHub}</p>
       </div>
     );
   }
@@ -149,9 +149,9 @@ export default function TeacherQuizzesOverviewPage() {
             </div>
             <div>
               <h1 className="text-3xl sm:text-5xl font-black tracking-tight mb-2">
-                Exam <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-indigo-400">Hub</span>
+                {t.teacherPages.exams} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-indigo-400">{t.teacherPages.terminalWord}</span>
               </h1>
-              <p className="text-xs sm:text-sm text-neutral-400 font-medium">Design essay exams, manage chance tests, and grade student submissions.</p>
+              <p className="text-xs sm:text-sm text-neutral-400 font-medium">{t.teacherPages.examsHubDesc}</p>
             </div>
           </div>
           
@@ -184,8 +184,8 @@ export default function TeacherQuizzesOverviewPage() {
         {filteredQuizzes.length === 0 ? (
           <div className="bg-[#0a0a0f]/60 border border-white/5 rounded-[2.5rem] p-12 text-center flex flex-col items-center justify-center backdrop-blur-xl shadow-2xl min-h-[400px]">
             <ShieldAlert size={48} className="text-neutral-600 mb-6" />
-            <h3 className="text-2xl font-black text-white mb-2">No Exams Deployed</h3>
-            <p className="text-neutral-500 font-medium max-w-sm">You haven't created any exams in this category yet. Click "Deploy Exam" to get started.</p>
+            <h3 className="text-2xl font-black text-white mb-2">{t.teacherPages.noExamsDeployed}</h3>
+            <p className="text-neutral-500 font-medium max-w-sm">{t.teacherPages.noExamsDeployedDesc}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
@@ -218,10 +218,10 @@ export default function TeacherQuizzesOverviewPage() {
                 {/* Exam Details & Pending Review Alert */}
                 <div className="flex flex-wrap items-center gap-3 sm:gap-6 mb-8 mt-auto">
                   <div className="flex items-center gap-2 text-xs font-bold text-neutral-300">
-                    <span className="text-neutral-500">Pass Mark:</span> {quiz.passing_score}%
+                    <span className="text-neutral-500">{t.teacherPages.passMark}</span> {quiz.passing_score}%
                   </div>
                   <div className="flex items-center gap-2 text-xs font-bold text-neutral-300">
-                    <span className="text-neutral-500">Type:</span> 
+                    <span className="text-neutral-500">{t.teacherPages.type}</span> 
                     <span className={quiz.quiz_type === 'chance' ? 'text-rose-400' : 'text-fuchsia-400'}>
                       {quiz.quiz_type.toUpperCase()}
                     </span>

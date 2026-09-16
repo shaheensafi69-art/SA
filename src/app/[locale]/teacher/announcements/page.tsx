@@ -82,7 +82,7 @@ export default function AnnouncementsPage() {
             </div>
             <div>
               <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-2">
-                Official <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-500">Announcements</span>
+                {t.teacherPages.classroomName} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-500">{t.teacherPages.announcementsWord}</span>
               </h1>
               <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-xl leading-relaxed">
                 Stay updated with the latest news, system upgrades, live class schedules, and important notices from Safi Academy administration.
@@ -166,7 +166,7 @@ export default function AnnouncementsPage() {
               <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-6 shadow-inner border border-white/10">
                 <BellRing className="w-10 h-10 text-neutral-600" />
               </div>
-              <h2 className="text-2xl font-black text-white mb-2">No Announcements Yet</h2>
+              <h2 className="text-2xl font-black text-white mb-2">{t.teacherPages.noAnnouncementsYet}</h2>
               <p className="text-neutral-500 text-sm max-w-sm leading-relaxed">
                 You're all caught up! Any future updates, scheduled maintenance, or news from the administration will appear here.
               </p>

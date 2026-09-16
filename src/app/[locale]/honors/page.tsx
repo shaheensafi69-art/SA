@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -19,6 +20,10 @@ type HonorStudent = {
 export default function WallOfFamePage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
+
+  
   const [students, setStudents] = useState<HonorStudent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -80,7 +85,7 @@ export default function WallOfFamePage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-amber-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Academy Legends...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.publicPages.loadingAcademyLegends}</p>
       </div>
     );
   }
@@ -100,7 +105,7 @@ export default function WallOfFamePage() {
             <Trophy size={14} /> Safi Academy Wall of Fame
           </span>
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white">
-            Hall of <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-400 to-orange-500 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]">Excellence</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-400 to-orange-500 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]">{t.publicPages.hallOfExcellence}</span>
           </h1>
           <p className="text-neutral-400 text-sm md:text-base font-medium leading-relaxed">
             Click on any scholar's card to explore their dedicated profile, awards, and exclusive feedback from our expert instructors.
@@ -110,8 +115,8 @@ export default function WallOfFamePage() {
         {students.length === 0 ? (
           <div className="text-center py-20 border border-white/5 rounded-3xl bg-black/40 backdrop-blur-md">
             <Star size={48} className="mx-auto mb-4 text-neutral-600" />
-            <h3 className="text-xl font-bold text-white">The Leaderboard is Waiting</h3>
-            <p className="text-neutral-500 text-sm mt-2">Start earning points to be the first legend here!</p>
+            <h3 className="text-xl font-bold text-white">{t.publicPages.leaderboardWaiting}</h3>
+            <p className="text-neutral-500 text-sm mt-2">{t.publicPages.startEarningPointsDesc}</p>
           </div>
         ) : (
           <div className="space-y-16">
@@ -149,7 +154,7 @@ export default function WallOfFamePage() {
                         </div>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-white flex items-center gap-1">View Profile <ChevronRight size={12}/></span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-white flex items-center gap-1">{t.publicPages.viewProfile} <ChevronRight size={12}/></span>
                       </div>
                     </div>
 
@@ -212,7 +217,7 @@ export default function WallOfFamePage() {
                       )}
                       {/* Gradient Overlay on hover */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                        <span className="text-xs font-bold text-amber-400">View Full Profile</span>
+                        <span className="text-xs font-bold text-amber-400">{t.publicPages.viewFullProfile}</span>
                       </div>
                     </div>
                     

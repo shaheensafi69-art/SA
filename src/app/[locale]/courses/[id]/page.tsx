@@ -1,3 +1,4 @@
+import { getPortalTranslation } from "@/utils/portalTranslations";
 import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -14,6 +15,8 @@ export default async function CourseDetailPage({
   const supabase = await createClient();
   const { id, locale } = await params;
   const currentLocale = locale || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
   const appliedCouponCode = (await searchParams)?.coupon?.trim() || "";
 
   const { data: { session } } = await supabase.auth.getSession();
@@ -100,14 +103,14 @@ export default async function CourseDetailPage({
     : null;
 
   const highlights = [
-    { label: "Duration", value: "12 Weeks" },
-    { label: "Skill Level", value: "All Levels" },
-    { label: "Language", value: course.language || "English" },
-    { label: "AI Integration", value: "Included", accent: true },
+    { label: t.publicPages.duration, value: t.publicPages.twelveWeeks },
+    { label: t.publicPages.skillLevel, value: t.publicPages.allLevels },
+    { label: t.publicPages.language, value: course.language || "English" },
+    { label: t.publicPages.aiIntegration, value: t.publicPages.included, accent: true },
   ];
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(234,179,8,0.18),_transparent_35%),linear-gradient(135deg,_#060606_0%,_#0f0f10_100%)] px-4 py-24 text-white sm:px-6 lg:px-8 selection:bg-yellow-500 selection:text-black font-sans relative overflow-hidden">
+    <main dir={isRtl ? "rtl" : "ltr"} className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(234,179,8,0.18),_transparent_35%),linear-gradient(135deg,_#060606_0%,_#0f0f10_100%)] px-4 py-24 text-white sm:px-6 lg:px-8 selection:bg-yellow-500 selection:text-black font-sans relative overflow-hidden">
 
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
@@ -121,7 +124,7 @@ export default async function CourseDetailPage({
           className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2.5 text-xs tracking-widest font-black uppercase text-neutral-300 transition-all duration-300 hover:border-yellow-500/40 hover:bg-yellow-500/10 hover:text-yellow-400 backdrop-blur-md"
         >
           <span className="text-base leading-none">←</span>
-          <span>Back to Hub</span>
+          <span>{t.publicPages.backToHub}</span>
         </Link>
 
         {/* هدر دوره */}
@@ -137,7 +140,7 @@ export default async function CourseDetailPage({
               {totalDiscountRate > 0 && (
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-yellow-400 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
                   <Sparkles size={14} className="animate-pulse" />
-                  Total Discount Applied: {totalDiscountRate}% OFF
+                  {t.publicPages.totalDiscountApplied} {totalDiscountRate}% OFF
                 </div>
               )}
 
@@ -149,12 +152,12 @@ export default async function CourseDetailPage({
                 {course.title}
               </h1>
               <p className="mt-5 text-base sm:text-lg leading-relaxed text-neutral-300 font-medium text-justify">
-                A premium learning experience designed to help you build real-world skills with clarity, confidence, and modern tools.
+                {t.publicPages.premiumExperienceDesc}
               </p>
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-black/60 px-6 py-5 text-right shadow-inner flex flex-col justify-center min-w-[200px] backdrop-blur-md">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500 mb-1">Tuition Fee</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500 mb-1">{t.publicPages.tuitionFee}</p>
 
               {totalDiscountRate > 0 ? (
                 <div className="flex flex-col items-end">
@@ -196,7 +199,7 @@ export default async function CourseDetailPage({
                   <div className="p-3 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 shadow-inner">
                     <BookOpen size={22} />
                   </div>
-                  <h2 className="text-2xl font-black text-white tracking-tight">Curriculum Overview</h2>
+                  <h2 className="text-2xl font-black text-white tracking-tight">{t.publicPages.curriculumOverview}</h2>
                 </div>
 
                 <div className="rounded-3xl border border-white/10 bg-black/50 p-6 sm:p-8 shadow-inner backdrop-blur-md">
@@ -215,8 +218,8 @@ export default async function CourseDetailPage({
                   <GraduationCap size={24} />
                 </div>
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-500 block">Expert Faculty</span>
-                  <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Course Instructor</h2>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-500 block">{t.publicPages.expertFaculty}</span>
+                  <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t.publicPages.courseInstructor}</h2>
                 </div>
               </div>
 
@@ -231,7 +234,7 @@ export default async function CourseDetailPage({
                   </div>
                   <div className="mt-4 text-center">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-black uppercase tracking-wider">
-                      <Award size={14} /> Lead Architect
+                      <Award size={14} /> {t.publicPages.leadArchitect}
                     </span>
                   </div>
                 </div>
@@ -259,7 +262,7 @@ export default async function CourseDetailPage({
                     </div>
                     <div className="mt-4 text-center">
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-wider">
-                        <Award size={14} /> Co-Instructor
+                        <Award size={14} /> {t.publicPages.secondInstructor}
                       </span>
                     </div>
                   </div>
@@ -276,7 +279,7 @@ export default async function CourseDetailPage({
             </section>
 
             <section className="rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-neutral-900/95 via-neutral-950/95 to-black/95 p-8 shadow-2xl backdrop-blur-2xl sm:p-12">
-              <h2 className="text-2xl font-black text-white tracking-tight">What You Will Master</h2>
+              <h2 className="text-2xl font-black text-white tracking-tight">{t.publicPages.whatYouWillMaster}</h2>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 {[
                   "Structured Frameworks",
@@ -318,15 +321,9 @@ export default async function CourseDetailPage({
                   <Clock className="w-6 h-6 text-blue-400 mt-0.5 shrink-0" />
                   <div className="space-y-4">
                     <div>
-                      <h4 className="text-sm font-bold text-white mb-1">7-Day Free Trial</h4>
+                      <h4 className="text-sm font-bold text-white mb-1">{t.publicPages.freeTrial}</h4>
                       <p className="text-xs text-blue-200/80 leading-relaxed text-justify">
                         Anyone can get a 7-day free trial. Each student has the right to use the free trial in up to 5 courses. After 7 days, the course will automatically lock.
-                      </p>
-                    </div>
-                    <div className="border-t border-blue-500/20 pt-4">
-                      <h4 className="text-sm font-bold text-white mb-1 text-right" dir="rtl">دوره آزمایشی ۷ روزه</h4>
-                      <p className="text-xs text-blue-200/80 leading-relaxed text-justify" dir="rtl">
-                        هر کسی می‌تواند یک دوره آزمایشی ۷ روزه رایگان دریافت کند. هر شاگرد حق دارد در ۵ کورس مختلف از دوره آزمایشی استفاده نماید. پس از ۷ روز، دسترسی به دوره به صورت خودکار قفل خواهد شد.
                       </p>
                     </div>
                   </div>
@@ -342,7 +339,7 @@ export default async function CourseDetailPage({
                       type="text"
                       name="coupon"
                       defaultValue={appliedCouponCode}
-                      placeholder="Enter coupon code"
+                      placeholder={t.publicPages.enterCouponCode}
                       className="w-full rounded-2xl border border-white/10 bg-black/50 pl-10 pr-4 py-3 text-sm text-white placeholder-neutral-600 focus:border-yellow-500/50 focus:outline-none"
                     />
                   </div>
@@ -350,7 +347,7 @@ export default async function CourseDetailPage({
                     type="submit"
                     className="rounded-2xl bg-white/10 hover:bg-white/20 border border-white/10 px-5 py-3 text-xs font-black uppercase tracking-widest text-white transition-all cursor-pointer"
                   >
-                    Apply
+                    {t.publicPages.apply}
                   </button>
                 </form>
                 {couponError && <p className="mt-2 text-xs font-bold text-red-400">{couponError}</p>}
@@ -363,13 +360,13 @@ export default async function CourseDetailPage({
                     <div className="bg-emerald-900/10 border border-emerald-500/20 p-5 rounded-2xl flex flex-col gap-2">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/70 flex items-center gap-1.5">
-                          <Wallet size={12} /> Wallet Bonus Used
+                          <Wallet size={12} /> {t.publicPages.walletCredit}
                         </span>
                         <span className="font-mono font-bold text-emerald-400">${walletDeduction.toFixed(2)}</span>
                       </div>
 
                       <div className="flex items-center justify-between border-t border-emerald-500/10 pt-2 mt-1">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Final Amount Due</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{t.publicPages.finalAmountDue}</span>
                         <span className="font-mono font-black text-white text-lg">
                           ${finalPayableAmount.toFixed(2)}
                         </span>
@@ -386,19 +383,19 @@ export default async function CourseDetailPage({
                 ) : (
                   <div className="space-y-4">
                     <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl text-center">
-                      <p className="text-xs font-bold text-amber-500">Sign in to apply network discounts and use wallet balance.</p>
+                      <p className="text-xs font-bold text-amber-500">{t.publicPages.signInToApplyDiscounts}</p>
                     </div>
                     <Link
                       href={`/${currentLocale}/login`}
                       className="flex w-full items-center justify-center rounded-2xl bg-white px-6 py-4 text-sm font-black uppercase tracking-widest text-black transition-all duration-300 hover:bg-neutral-200"
                     >
-                      Sign In to Enroll
+                      {t.auth.signIn}
                     </Link>
                   </div>
                 )}
 
                 <div className="mt-5 flex items-center justify-center gap-2 opacity-60">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Secured via SafiPay</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{t.publicPages.securedViaSafiPay}</span>
                 </div>
               </div>
             </section>

@@ -189,7 +189,7 @@ export default function StudentExamPaperPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Distributing Exam Papers...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.quizzes.distributingExam}</p>
       </div>
     );
   }
@@ -228,9 +228,9 @@ export default function StudentExamPaperPage() {
     return (
       <div className="min-h-screen bg-[#020202] text-white flex flex-col items-center justify-center p-6 text-center pb-32">
         <AlertCircle size={48} className="text-neutral-600 mb-4" />
-        <h2 className="text-2xl font-black mb-2">No Questions Found</h2>
-        <p className="text-neutral-500 text-sm max-w-sm mb-6">The instructor hasn't added any questions to this exam yet.</p>
-        <Link href={`/${currentLocale}/dashboard/quizzes`} className="px-6 py-3 bg-white/10 rounded-xl font-bold">Go Back</Link>
+        <h2 className="text-2xl font-black mb-2">{t.quizzes.noQuestionsFound}</h2>
+        <p className="text-neutral-500 text-sm max-w-sm mb-6">{t.quizzes.noQuestionsDesc}</p>
+        <Link href={`/${currentLocale}/dashboard/quizzes`} className="px-6 py-3 bg-white/10 rounded-xl font-bold">{t.quizzes.goBack}</Link>
       </div>
     );
   }
@@ -266,7 +266,7 @@ export default function StudentExamPaperPage() {
         <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-5 sm:p-6 flex gap-4 items-start shadow-inner">
           <PenTool className="text-indigo-400 shrink-0 mt-1" size={24} />
           <div>
-            <h4 className="text-indigo-300 font-black text-sm mb-1 uppercase tracking-widest">Instructions</h4>
+            <h4 className="text-indigo-300 font-black text-sm mb-1 uppercase tracking-widest">{t.quizzes.instructions}</h4>
             <p className="text-xs sm:text-sm text-indigo-200/70 font-medium leading-relaxed">
               Read each question carefully. Select an option for multiple-choice questions, or type your answer for descriptive ones. Scroll down to view all questions.
             </p>
@@ -333,7 +333,7 @@ export default function StudentExamPaperPage() {
                     // ================= رابط کاربری سوالات تشریحی =================
                     <textarea 
                       rows={6}
-                      placeholder="Type your detailed answer here..."
+                      placeholder={t.quizzes.typeAnswerPlaceholder}
                       value={answers[q.id] || ""}
                       onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                       className="w-full bg-black/50 border border-white/10 rounded-2xl p-5 text-white text-sm sm:text-base font-medium focus:outline-none focus:border-indigo-500/50 resize-y shadow-inner custom-scrollbar placeholder:text-neutral-600"

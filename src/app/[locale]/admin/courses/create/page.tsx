@@ -132,7 +132,7 @@ export default function CreateCoursePage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-violet-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Initializing Course Builder...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.initializingCourseBuilder}</p>
       </div>
     );
   }
@@ -155,7 +155,7 @@ export default function CreateCoursePage() {
               <ArrowLeft size={14} /> Back to Library
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
-              Course <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-500">Builder</span>
+              {t.adminPages.courseBuilder}
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-xl">
               Construct a new educational program. Set the syllabus, pricing, and assign a lead instructor.
@@ -182,11 +182,11 @@ export default function CreateCoursePage() {
               
               {/* Title */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Course Title *</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.courseTitle}</label>
                 <div className="relative">
                   <Type size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                   <input 
-                    required type="text" placeholder="e.g. Masterclass in Advanced AI"
+                    required type="text" placeholder={t.adminPages.courseTitlePlaceholder}
                     value={form.title} onChange={(e) => setForm({...form, title: e.target.value})}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm font-bold focus:outline-none focus:border-violet-500/50 shadow-inner" 
                   />
@@ -195,11 +195,11 @@ export default function CreateCoursePage() {
 
               {/* Description */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Curriculum Description</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.curriculumDescription}</label>
                 <div className="relative">
                   <AlignLeft size={16} className="absolute left-4 top-5 text-neutral-500" />
                   <textarea 
-                    rows={4} placeholder="Describe the course syllabus and goals..."
+                    rows={4} placeholder={t.adminPages.curriculumDescPlaceholder}
                     value={form.description} onChange={(e) => setForm({...form, description: e.target.value})}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm font-medium focus:outline-none focus:border-violet-500/50 shadow-inner resize-y custom-scrollbar" 
                   />
@@ -210,7 +210,7 @@ export default function CreateCoursePage() {
                 
                 {/* Price */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Enrollment Price (USD)</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.enrollmentPriceUsd}</label>
                   <div className="relative">
                     <DollarSign size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500" />
                     <input 
@@ -219,12 +219,12 @@ export default function CreateCoursePage() {
                       className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-emerald-400 text-lg font-black focus:outline-none focus:border-violet-500/50 shadow-inner" 
                     />
                   </div>
-                  <p className="text-[9px] text-neutral-500 ml-1">Set to 0 to make it a free course.</p>
+                  <p className="text-[9px] text-neutral-500 ml-1">{t.adminPages.setZeroFreeDesc}</p>
                 </div>
 
                 {/* Status Toggle */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Publication Status</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.publicationStatus}</label>
                   <div className="bg-black/60 border border-white/10 rounded-2xl p-2.5 flex shadow-inner h-[60px]">
                     <button
                       type="button"
@@ -261,7 +261,7 @@ export default function CreateCoursePage() {
               
               {/* Custom Teacher Dropdown (With Avatars) */}
               <div className="space-y-2" ref={dropdownRef}>
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Lead Instructor *</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.leadInstructor}</label>
                 
                 <div className="relative">
                   <button
@@ -286,7 +286,7 @@ export default function CreateCoursePage() {
                     ) : (
                       <div className="flex items-center gap-3 pl-2 text-neutral-500">
                         <User size={18} />
-                        <span className="text-sm font-medium">Select an instructor from the database...</span>
+                        <span className="text-sm font-medium">{t.adminPages.selectInstructorDb}</span>
                       </div>
                     )}
                     <ChevronDown size={18} className={`text-neutral-500 transition-transform ${isTeacherDropdownOpen ? "rotate-180" : ""}`} />
@@ -296,7 +296,7 @@ export default function CreateCoursePage() {
                   {isTeacherDropdownOpen && (
                     <div className="absolute top-full left-0 right-0 mt-2 bg-neutral-950 border border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] z-50 max-h-64 overflow-y-auto custom-scrollbar animate-[fadeInDown_0.2s_ease-out]">
                       {teachers.length === 0 ? (
-                        <div className="p-4 text-center text-xs text-neutral-500">No teachers found in database.</div>
+                        <div className="p-4 text-center text-xs text-neutral-500">{t.adminPages.noTeachersInDb}</div>
                       ) : (
                         <ul className="p-2 space-y-1">
                           {teachers.map(teacher => (
@@ -340,7 +340,7 @@ export default function CreateCoursePage() {
               {/* Course Thumbnail */}
               <div className="space-y-4 pt-4 border-t border-white/5">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Course Cover (Thumbnail)</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.courseCoverThumbnail}</label>
                   <div className="relative flex items-center">
                     <input 
                       type="file" accept="image/*"
@@ -352,7 +352,7 @@ export default function CreateCoursePage() {
 
                 <div className="flex items-center gap-3">
                   <hr className="flex-1 border-white/5" />
-                  <span className="text-[9px] font-black text-neutral-600 uppercase tracking-widest">OR PASTE URL</span>
+                  <span className="text-[9px] font-black text-neutral-600 uppercase tracking-widest">{t.adminPages.orPasteUrl}</span>
                   <hr className="flex-1 border-white/5" />
                 </div>
 

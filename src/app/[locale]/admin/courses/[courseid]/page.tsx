@@ -157,7 +157,7 @@ export default function CourseDetailsAdminPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-violet-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Compiling Course Analytics...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.compilingCourseAnalytics}</p>
       </div>
     );
   }
@@ -166,9 +166,9 @@ export default function CourseDetailsAdminPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center p-6 text-center">
         <ShieldAlert size={48} className="text-neutral-600 mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">Course Not Found</h2>
-        <p className="text-neutral-500 mb-6">This course does not exist or has been deleted.</p>
-        <Link href={`/${currentLocale}/admin/courses`} className="px-6 py-3 bg-white/10 text-white rounded-xl font-bold hover:bg-white/20 transition">Return to Library</Link>
+        <h2 className="text-xl font-bold text-white mb-2">{t.adminPages.courseNotFound}</h2>
+        <p className="text-neutral-500 mb-6">{t.adminPages.courseNotFoundDesc}</p>
+        <Link href={`/${currentLocale}/admin/courses`} className="px-6 py-3 bg-white/10 text-white rounded-xl font-bold hover:bg-white/20 transition">{t.adminPages.returnToLibrary}</Link>
       </div>
     );
   }
@@ -231,23 +231,23 @@ export default function CourseDetailsAdminPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <div className="bg-[#0a0a0f]/80 p-5 sm:p-6 rounded-[2rem] border border-white/5 shadow-xl backdrop-blur-xl">
             <div className="w-10 h-10 bg-violet-500/10 text-violet-400 rounded-xl flex items-center justify-center mb-4"><Users size={20}/></div>
-            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">Total Enrolled</p>
+            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">{t.adminPages.totalEnrolled}</p>
             <p className="text-3xl font-black text-white">{stats.total}</p>
           </div>
           <div className="bg-[#0a0a0f]/80 p-5 sm:p-6 rounded-[2rem] border border-white/5 shadow-xl backdrop-blur-xl">
             <div className="w-10 h-10 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center mb-4"><Activity size={20}/></div>
-            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">Currently Studying</p>
+            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">{t.adminPages.currentlyStudying}</p>
             <p className="text-3xl font-black text-white">{stats.active}</p>
           </div>
           <div className="bg-[#0a0a0f]/80 p-5 sm:p-6 rounded-[2rem] border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.05)] backdrop-blur-xl relative overflow-hidden group">
             <div className="absolute inset-0 bg-emerald-500/5"></div>
             <div className="relative z-10 w-10 h-10 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center mb-4 border border-emerald-500/20"><Award size={20}/></div>
-            <p className="relative z-10 text-[10px] font-black text-emerald-500/70 uppercase tracking-widest mb-1">Completed & Certified</p>
+            <p className="relative z-10 text-[10px] font-black text-emerald-500/70 uppercase tracking-widest mb-1">{t.adminPages.completedAndCertified}</p>
             <p className="relative z-10 text-3xl font-black text-emerald-400">{stats.completed}</p>
           </div>
           <div className="bg-[#0a0a0f]/80 p-5 sm:p-6 rounded-[2rem] border border-white/5 shadow-xl backdrop-blur-xl">
             <div className="w-10 h-10 bg-green-500/10 text-green-400 rounded-xl flex items-center justify-center mb-4"><DollarSign size={20}/></div>
-            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">Estimated Revenue</p>
+            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">{t.adminPages.estimatedRevenue}</p>
             <p className="text-3xl font-black text-white">${stats.revenue.toLocaleString()}</p>
           </div>
         </div>
@@ -268,7 +268,7 @@ export default function CourseDetailsAdminPage() {
                 <div className="bg-black/40 p-2 rounded-2xl border border-white/5 flex items-center gap-2 w-full sm:max-w-xs shadow-inner">
                   <div className="pl-3 text-neutral-500"><Search size={14} /></div>
                   <input 
-                    type="text" placeholder="Find student..."
+                    type="text" placeholder={t.adminPages.findStudentPlaceholder}
                     value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-transparent border-none text-white text-xs focus:outline-none py-2 pr-3 font-medium placeholder:text-neutral-600"
                   />
@@ -279,7 +279,7 @@ export default function CourseDetailsAdminPage() {
                 {filteredStudents.length === 0 ? (
                   <div className="text-center py-16 border border-dashed border-white/5 rounded-3xl bg-black/20 text-neutral-500 flex flex-col items-center">
                     <Users size={32} className="mb-3 opacity-50"/>
-                    <p className="text-sm font-bold">No students are currently enrolled in this course.</p>
+                    <p className="text-sm font-bold">{t.adminPages.noStudentsEnrolledCourse}</p>
                   </div>
                 ) : (
                   filteredStudents.map((student) => (
@@ -300,7 +300,7 @@ export default function CourseDetailsAdminPage() {
                       
                       <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-auto w-full border-t border-white/5 sm:border-0 pt-3 sm:pt-0">
                         <div className="text-left sm:text-right hidden sm:block">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">Enrolled</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">{t.adminPages.enrolled}</p>
                           <p className="text-xs font-bold text-neutral-300 mt-0.5">{new Date(student.enrolled_at).toLocaleDateString()}</p>
                         </div>
                         <span className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border shrink-0 flex items-center gap-1.5 ${
@@ -350,7 +350,7 @@ export default function CourseDetailsAdminPage() {
               ) : (
                 <div className="text-center py-12 text-neutral-500">
                   <User size={32} className="mx-auto mb-3 opacity-50"/>
-                  <p className="text-sm font-bold">No instructor assigned.</p>
+                  <p className="text-sm font-bold">{t.adminPages.noInstructorAssigned}</p>
                 </div>
               )}
             </section>

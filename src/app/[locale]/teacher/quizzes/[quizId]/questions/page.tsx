@@ -175,7 +175,7 @@ export default function TeacherManageQuizQuestionsPage() {
     return (
       <div className="min-h-screen bg-[#030305] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-fuchsia-500 animate-spin" />
-        <p className="text-fuchsia-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Question Bank...</p>
+        <p className="text-fuchsia-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.teacherPages.loadingQuestionBank}</p>
       </div>
     );
   }
@@ -198,9 +198,9 @@ export default function TeacherManageQuizQuestionsPage() {
               <ArrowLeft size={14} /> Back to Exam Hub
             </Link>
             <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white mb-2">
-              {quizTitle} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">Bank</span>
+              {quizTitle} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">{t.teacherPages.terminalWord}</span>
             </h1>
-            <p className="text-xs sm:text-sm text-neutral-400 font-medium">Manage and compile multiple-choice or descriptive questions for this assessment.</p>
+            <p className="text-xs sm:text-sm text-neutral-400 font-medium">{t.teacherPages.manageQuestionBankDesc}</p>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-3 shrink-0 relative z-10">
@@ -257,9 +257,9 @@ export default function TeacherManageQuizQuestionsPage() {
           <form onSubmit={handleAddQuestion} className="space-y-6 relative z-10">
             {/* Question Text */}
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-fuchsia-400 uppercase tracking-widest ml-1">Question Prompt *</label>
+              <label className="text-[10px] font-black text-fuchsia-400 uppercase tracking-widest ml-1">{t.teacherPages.questionPrompt} *</label>
               <textarea 
-                required placeholder="Type the question clearly here..." rows={3}
+                required placeholder={t.teacherPages.questionPromptPlaceholder} rows={3}
                 value={newQ.question_text} onChange={e => setNewQ({...newQ, question_text: e.target.value})}
                 className="w-full bg-[#050508] border border-white/10 rounded-2xl p-5 text-white text-base font-medium focus:outline-none focus:border-fuchsia-500/50 resize-y shadow-inner custom-scrollbar"
               />
@@ -268,7 +268,7 @@ export default function TeacherManageQuizQuestionsPage() {
             {/* Options (Only for MCQ) */}
             {questionType === "mcq" && (
               <div className="bg-white/[0.02] border border-white/5 p-5 rounded-2xl space-y-4">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest block mb-2">Answers & Correct Option *</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest block mb-2">{t.teacherPages.answersCorrectOption} *</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {(["A", "B", "C", "D"] as const).map((opt) => (
                     <div key={opt} className={`flex items-center gap-3 p-2 rounded-xl border transition-all ${newQ.correct_option === opt ? 'bg-fuchsia-500/10 border-fuchsia-500/40' : 'bg-black/40 border-white/10'}`}>
@@ -276,7 +276,7 @@ export default function TeacherManageQuizQuestionsPage() {
                         type="button"
                         onClick={() => setNewQ({ ...newQ, correct_option: opt })}
                         className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border transition-all ${newQ.correct_option === opt ? 'bg-fuchsia-500 border-fuchsia-500 text-white' : 'bg-white/5 border-white/10 text-neutral-500 hover:text-white'}`}
-                        title="Mark as correct answer"
+                        title={t.teacherPages.markCorrectAnswer}
                       >
                         {newQ.correct_option === opt ? <CheckCircle2 size={16} /> : opt}
                       </button>
@@ -296,7 +296,7 @@ export default function TeacherManageQuizQuestionsPage() {
 
             <div className="flex flex-col sm:flex-row gap-5 items-end justify-between border-t border-white/5 pt-6">
               <div className="w-full sm:w-1/3">
-                <label className="text-[10px] font-black text-fuchsia-400 uppercase tracking-widest ml-1">Assigned Points *</label>
+                <label className="text-[10px] font-black text-fuchsia-400 uppercase tracking-widest ml-1">{t.teacherPages.assignedPoints} *</label>
                 <input 
                   required type="number" min="1" max="100"
                   value={newQ.points} onChange={e => setNewQ({...newQ, points: Number(e.target.value)})}
@@ -322,7 +322,7 @@ export default function TeacherManageQuizQuestionsPage() {
           
           {questions.length === 0 ? (
             <div className="text-center py-12 bg-[#0a0a0f]/50 border border-dashed border-white/10 rounded-[2rem]">
-              <p className="text-neutral-500 text-sm font-bold">No questions added yet. Start building your exam above.</p>
+              <p className="text-neutral-500 text-sm font-bold">{t.teacherPages.noQuestionsYet}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -375,7 +375,7 @@ export default function TeacherManageQuizQuestionsPage() {
                         onClick={() => handleDeleteQuestion(q.id)} 
                         className="p-3 sm:px-4 sm:py-2 bg-red-500/5 hover:bg-red-500/20 text-red-500/70 hover:text-red-400 rounded-xl transition-all border border-red-500/10 active:scale-95 flex items-center justify-center gap-2 text-xs font-bold sm:w-full"
                       >
-                        <Trash2 size={14}/> <span className="sm:hidden">Delete</span>
+                        <Trash2 size={14}/> <span className="sm:hidden">{t.teacherPages.delete}</span>
                       </button>
                     </div>
 

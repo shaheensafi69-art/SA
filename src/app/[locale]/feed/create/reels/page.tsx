@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -10,6 +11,8 @@ import Link from "next/link";
 export default function CreateReelPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("Technology");
@@ -90,7 +93,7 @@ export default function CreateReelPage() {
                         <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
                             <Video className="text-[#C2185B]" size={24} /> Create New Reel
                         </h1>
-                        <p className="text-xs text-neutral-400 font-medium mt-0.5">Share short vertical videos with the academy</p>
+                        <p className="text-xs text-neutral-400 font-medium mt-0.5">{t.feed.shareShortVideos}</p>
                     </div>
                 </div>
             </div>
@@ -101,10 +104,10 @@ export default function CreateReelPage() {
                 <form onSubmit={handleSubmit} className="lg:col-span-7 bg-[#0a0a0f]/90 border border-white/5 p-6 sm:p-8 rounded-[2.5rem] backdrop-blur-xl shadow-2xl space-y-6">
 
                     <div>
-                        <label className="block text-xs font-black uppercase tracking-widest text-neutral-400 mb-2">Reel Title *</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-neutral-400 mb-2">{t.feed.reelTitle} *</label>
                         <input
                             type="text"
-                            placeholder="What is this reel about?"
+                            placeholder={t.feed.reelTitlePlaceholder}
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             required
@@ -113,24 +116,24 @@ export default function CreateReelPage() {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-black uppercase tracking-widest text-neutral-400 mb-2">Category</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-neutral-400 mb-2">{t.feed.category}</label>
                         <select
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
                             className="w-full bg-neutral-900 border border-white/10 rounded-2xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#C2185B] transition-colors font-medium"
                         >
-                            <option value="Explore">Explore</option>
-                            <option value="Technology">Technology & Coding</option>
-                            <option value="Trading">Financial Markets & Trading</option>
-                            <option value="Campus">Live Campus & Study</option>
-                            <option value="General">General & Lifestyle</option>
+                            <option value="Explore">{t.feed.exploreCat}</option>
+                            <option value="Technology">{t.feed.techCodingCat}</option>
+                            <option value="Trading">{t.feed.financeTradingCat}</option>
+                            <option value="Campus">{t.feed.campusStudyCat}</option>
+                            <option value="General">{t.feed.lifestyleCat}</option>
                         </select>
                     </div>
 
                     <div>
-                        <label className="block text-xs font-black uppercase tracking-widest text-neutral-400 mb-2">Description</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-neutral-400 mb-2">{t.feed.description}</label>
                         <textarea
-                            placeholder="Add some details or hashtags..."
+                            placeholder={t.feed.descriptionPlaceholder}
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             rows={4}
@@ -160,7 +163,7 @@ export default function CreateReelPage() {
                 {/* بخش آپلود و پیش‌نمایش ویدیو */}
                 <div className="lg:col-span-5 bg-[#0a0a0f]/90 border border-white/5 p-6 sm:p-8 rounded-[2.5rem] backdrop-blur-xl shadow-2xl flex flex-col items-center">
 
-                    <h3 className="text-xs font-black uppercase tracking-widest text-neutral-400 mb-4 w-full text-left">Video Preview</h3>
+                    <h3 className="text-xs font-black uppercase tracking-widest text-neutral-400 mb-4 w-full text-left">{t.feed.videoPreview}</h3>
 
                     {videoPreviewUrl ? (
                         <div className="w-full max-w-[260px] h-[450px] bg-black rounded-3xl border border-white/10 overflow-hidden relative shadow-2xl flex items-center justify-center">
@@ -182,8 +185,8 @@ export default function CreateReelPage() {
                             <div className="w-16 h-16 rounded-2xl bg-[#C2185B]/10 border border-[#C2185B]/30 flex items-center justify-center text-[#C2185B] mb-4 group-hover:scale-110 transition-transform">
                                 <Upload size={28} />
                             </div>
-                            <span className="text-xs font-black text-white uppercase tracking-wider">Select Vertical Video</span>
-                            <span className="text-[10px] text-neutral-500 font-bold mt-1">MP4, MOV (Max 50MB)</span>
+                            <span className="text-xs font-black text-white uppercase tracking-wider">{t.feed.selectVerticalVideo}</span>
+                            <span className="text-[10px] text-neutral-500 font-bold mt-1">{t.feed.videoFormat}</span>
                             <input
                                 type="file"
                                 accept="video/mp4,video/quicktime,video/webm"

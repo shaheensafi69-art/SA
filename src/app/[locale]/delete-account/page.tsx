@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -35,6 +36,8 @@ import {
 export default function AccountDeletionPortal() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
 
   // Form State
   const [email, setEmail] = useState("");
@@ -115,7 +118,7 @@ export default function AccountDeletionPortal() {
   ];
 
   return (
-    <main className="w-full relative bg-[#030307] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-32 selection:bg-rose-500 selection:text-white">
+    <main dir={isRtl ? "rtl" : "ltr"} className="w-full relative bg-[#030307] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-32 selection:bg-rose-500 selection:text-white">
       {/* ================= BACKGROUND COSMIC SYSTEM ================= */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         {/* Cyber Grid */}
@@ -159,7 +162,7 @@ export default function AccountDeletionPortal() {
         {/* ================= HERO THEATER ================= */}
         <div className="text-center max-w-4xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-black uppercase tracking-[0.25em] mb-6 shadow-inner">
-            <ShieldAlert size={14} className="animate-pulse" /> Data Protection & Privacy Erasure Portal
+            <ShieldAlert size={14} className="animate-pulse" /> {t.publicPages.deleteAccountTitle}
           </div>
 
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white mb-6 leading-tight">
@@ -177,7 +180,7 @@ export default function AccountDeletionPortal() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-10">
             <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-xl text-left">
               <div className="flex items-center gap-2 text-rose-400 mb-2 font-black text-xs uppercase tracking-wider">
-                <Clock size={16} /> 30-Day Grace Window
+                <Clock size={16} /> {t.publicPages.thirtyDayGracePeriod}
               </div>
               <p className="text-xs text-neutral-400 leading-relaxed">
                 Your data is safely frozen for 30 calendar days, allowing cancellation before permanent cryptographic destruction.
@@ -207,7 +210,7 @@ export default function AccountDeletionPortal() {
         {/* ================= 3 OFFICIAL DELETION METHODS ================= */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <span className="text-xs font-black uppercase tracking-[0.25em] text-yellow-400 mb-2 block">Choose Your Channel</span>
+            <span className="text-xs font-black uppercase tracking-[0.25em] text-yellow-400 mb-2 block">{t.publicPages.chooseChannel}</span>
             <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Three Ways to Terminate Your Account</h2>
           </div>
 
@@ -337,13 +340,13 @@ export default function AccountDeletionPortal() {
                   <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-5 shadow-lg">
                     <CheckCircle2 size={36} />
                   </div>
-                  <h3 className="text-2xl font-black text-white mb-2">Erasure Request Registered Successfully</h3>
+                  <h3 className="text-2xl font-black text-white mb-2">{t.publicPages.deletionRequestSubmitted}</h3>
                   <p className="text-neutral-300 text-sm max-w-xl mx-auto mb-6 leading-relaxed">
                     Your request has been logged and assigned to our automated compliance queue. A formal confirmation dispatch has been routed to your registered email address.
                   </p>
 
                   <div className="inline-flex items-center gap-3 p-4 rounded-2xl bg-black/60 border border-emerald-500/30 mb-6">
-                    <span className="text-xs text-neutral-400 uppercase font-black tracking-wider">Ticket Ref:</span>
+                    <span className="text-xs text-neutral-400 uppercase font-black tracking-wider">{t.publicPages.referenceTicketId}:</span>
                     <span className="font-mono text-emerald-400 font-black text-base">{ticketId}</span>
                     <button
                       onClick={copyTicket}
@@ -483,12 +486,12 @@ export default function AccountDeletionPortal() {
                     {formStatus === "loading" ? (
                       <>
                         <Loader2 size={16} className="animate-spin" />
-                        <span>Transmitting Erasure Request...</span>
+                        <span>{t.publicPages.submittingRequest}</span>
                       </>
                     ) : (
                       <>
                         <Trash2 size={16} />
-                        <span>Submit Account Erasure Request</span>
+                        <span>{t.publicPages.submitDeletionRequest}</span>
                       </>
                     )}
                   </button>

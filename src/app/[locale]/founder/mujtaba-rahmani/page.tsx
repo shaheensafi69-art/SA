@@ -1,4 +1,5 @@
-'use client';
+"use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
@@ -47,6 +48,8 @@ const InstagramIcon = ({ size = 18 }: { size?: number }) => (
 export default function MujtabaRahmaniExecutiveDossier() {
   const pathname = usePathname() || '/en';
   const currentLocale = pathname.split('/')[1] || 'en';
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -138,7 +141,7 @@ export default function MujtabaRahmaniExecutiveDossier() {
               <div className="relative h-full w-full rounded-[3rem] overflow-hidden bg-[#07070d]">
                 <Image 
                   src="/team/mujtaba.jpeg" 
-                  alt="Sayed Mujtaba Rahmani - COO & CISO" 
+                  alt="Sayed Mujtaba Rahmani - {t.publicPages.cooCiso}" 
                   fill 
                   className="object-cover object-top" 
                   priority 
@@ -155,7 +158,7 @@ export default function MujtabaRahmaniExecutiveDossier() {
               <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#0a0a12]/90 border border-blue-500/30 backdrop-blur-2xl shadow-2xl">
                 <TrendingUp size={20} className="text-blue-400" />
                 <div className="text-left">
-                  <p className="text-[10px] uppercase font-black tracking-wider text-blue-400">Forex Specialist</p>
+                  <p className="text-[10px] uppercase font-black tracking-wider text-blue-400">{t.publicPages.forexSpecialist}</p>
                   <p className="text-xs font-bold text-white">Macro Order Flow</p>
                 </div>
               </div>
@@ -167,7 +170,7 @@ export default function MujtabaRahmaniExecutiveDossier() {
             >
               <div className="px-5 py-3 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white font-black tracking-widest text-xs uppercase shadow-[0_10px_35px_rgba(37,99,235,0.4)] flex items-center gap-2">
                 <Lock size={15} />
-                <span>COO & CISO</span>
+                <span>{t.publicPages.cooCiso}</span>
               </div>
             </motion.div>
           </motion.div>
@@ -230,7 +233,7 @@ export default function MujtabaRahmaniExecutiveDossier() {
             
             <div className="flex items-center gap-3 mb-8">
               <span className="w-3 h-8 rounded-full bg-gradient-to-b from-blue-400 to-indigo-600" />
-              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">The Co-Founder's Mission</h2>
+              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">{t.publicPages.coFounderMission}</h2>
             </div>
 
             <div className="space-y-6 text-neutral-300 text-base sm:text-lg leading-relaxed text-justify font-normal">

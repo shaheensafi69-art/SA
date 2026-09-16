@@ -170,7 +170,7 @@ export default function AdminTicketsListPage() {
     return (
       <div className="min-h-screen bg-[#030305] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-rose-500 animate-spin" />
-        <p className="text-rose-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Command Center...</p>
+        <p className="text-rose-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.loadingCommandCenter}</p>
       </div>
     );
   }
@@ -186,8 +186,8 @@ export default function AdminTicketsListPage() {
         {/* HEADER */}
         <header className="flex items-center justify-between mb-8 mt-2 sm:mt-0">
           <div className="flex flex-col">
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white">Support Command Center</h1>
-            <p className="text-[11px] font-bold tracking-widest uppercase text-neutral-500 mt-1">Manage Live Chat Escalations</p>
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white">{t.adminPages.supportCommandCenter}</h1>
+            <p className="text-[11px] font-bold tracking-widest uppercase text-neutral-500 mt-1">{t.adminPages.manageChatEscalations}</p>
           </div>
           <button
             onClick={handleRefresh}
@@ -205,7 +205,7 @@ export default function AdminTicketsListPage() {
               <Hourglass size={20} className="text-amber-400" />
               <span className="text-2xl sm:text-3xl font-black text-white leading-none">{stats.pending}</span>
             </div>
-            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-neutral-500 relative z-10">Pending</span>
+            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-neutral-500 relative z-10">{t.adminPages.pending}</span>
           </div>
 
           <div className="bg-[#0a0a0e]/80 backdrop-blur-xl border border-white/5 rounded-[1.5rem] p-4 flex flex-col justify-between shadow-lg relative overflow-hidden group">
@@ -214,7 +214,7 @@ export default function AdminTicketsListPage() {
               <Headset size={20} className="text-emerald-400" />
               <span className="text-2xl sm:text-3xl font-black text-white leading-none">{stats.active}</span>
             </div>
-            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-neutral-500 relative z-10">Active</span>
+            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-neutral-500 relative z-10">{t.adminPages.active}</span>
           </div>
 
           <div className="bg-[#0a0a0e]/80 backdrop-blur-xl border border-white/5 rounded-[1.5rem] p-4 flex flex-col justify-between shadow-lg relative overflow-hidden group">
@@ -223,7 +223,7 @@ export default function AdminTicketsListPage() {
               <CheckCircle2 size={20} className="text-rose-500" />
               <span className="text-2xl sm:text-3xl font-black text-white leading-none">{stats.closed}</span>
             </div>
-            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-neutral-500 relative z-10">Closed</span>
+            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-neutral-500 relative z-10">{t.adminPages.closed}</span>
           </div>
         </div>
 
@@ -233,7 +233,7 @@ export default function AdminTicketsListPage() {
             <Search size={18} className="text-neutral-500" />
             <input
               type="text"
-              placeholder="Search name, subject or message..."
+              placeholder={t.adminPages.searchTicketPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-transparent border-none w-full text-sm text-white placeholder-neutral-600 focus:outline-none focus:ring-0"
@@ -267,7 +267,7 @@ export default function AdminTicketsListPage() {
           {filteredTickets.length === 0 ? (
             <div className="text-center py-16 bg-white/[0.02] border border-white/5 rounded-[2rem]">
               <Headset size={40} className="mx-auto mb-3 text-neutral-600" />
-              <p className="text-sm font-bold text-neutral-400">No tickets found in database.</p>
+              <p className="text-sm font-bold text-neutral-400">{t.adminPages.noTicketsDb}</p>
             </div>
           ) : (
             filteredTickets.map((ticket) => {

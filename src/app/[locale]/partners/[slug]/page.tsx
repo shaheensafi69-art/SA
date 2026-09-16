@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useState, useEffect } from "react";
 import {  useParams, useRouter , usePathname } from "next/navigation";
@@ -21,6 +22,10 @@ type Partner = {
 export default function EnglishPartnerDetailPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
+
+  
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
@@ -34,13 +39,14 @@ export default function EnglishPartnerDetailPage() {
       const supabase = createClient();
       
       try {
-        const { data, error } = await supabase
+        let { data, error } = await supabase
           .from("partners")
           .select("*")
-          .eq("language", "en") // قفل روی زبان انگلیسی
-          .eq("slug", slug)
-          .eq("is_active", true)
-          .single();
+          .eq("language", currentLocale).eq("slug", slug).eq("is_active", true).maybeSingle();
+        if (!data) {
+          const fb = await supabase.from("partners").select("*").eq("language", "en").eq("slug", slug).eq("is_active", true).maybeSingle();
+          if (fb.data) data = fb.data;
+        }
 
         if (error) throw error;
         if (data) setPartner(data);
@@ -63,7 +69,7 @@ export default function EnglishPartnerDetailPage() {
     return (
       <div className="min-h-screen bg-[#050508] flex flex-col items-center justify-center">
         <div className="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mb-6 shadow-[0_0_15px_rgba(234,179,8,0.5)]"></div>
-        <p className="text-yellow-500 font-bold tracking-widest uppercase text-xs animate-pulse">Loading Partner Profile...</p>
+        <p className="text-yellow-500 font-bold tracking-widest uppercase text-xs animate-pulse">{t.publicPages.loadingPartnerProfile}</p>
       </div>
     );
   }
@@ -72,16 +78,16 @@ export default function EnglishPartnerDetailPage() {
     return (
       <div className="min-h-screen bg-[#050508] flex flex-col items-center justify-center text-center px-6">
         <h1 className="text-6xl font-black text-white mb-4">404</h1>
-        <p className="text-neutral-400 mb-8">Partner profile not found or is currently inactive.</p>
+        <p className="text-neutral-400 mb-8">{t.publicPages.partnerNotFound}</p>
         <Link href={`/${currentLocale}/partners`} className="px-6 py-3 rounded-xl font-bold text-black bg-gradient-to-r from-yellow-500 to-amber-500 hover:scale-105 transition-all">
-          Back to Network
+          {t.publicPages.backToPartners}
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#050508] text-white font-sans pb-32 overflow-hidden selection:bg-yellow-500/30" >
+    <div className="min-h-screen bg-[#050508] text-white font-sans pb-32 overflow-hidden selection:bg-yellow-500/30" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* ================= BACKGROUND EFFECTS ================= */}
       <div className="fixed inset-0 z-0 pointer-events-none">
@@ -96,7 +102,7 @@ export default function EnglishPartnerDetailPage() {
           onClick={() => router.push(`/${currentLocale}/partners`)}
           className="flex items-center gap-2 px-4 py-2.5 bg-black/50 backdrop-blur-xl border border-white/10 rounded-full text-xs font-black uppercase tracking-widest text-neutral-300 hover:text-white hover:bg-white/10 transition-all duration-300 shadow-xl group"
         >
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> {t.common.back}
         </button>
       </div>
 
@@ -128,7 +134,7 @@ export default function EnglishPartnerDetailPage() {
               </div>
               <div className="absolute top-6 right-6 z-20">
                 <span className="bg-gradient-to-r from-yellow-500 to-amber-500 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-[0_0_15px_rgba(234,179,8,0.4)]">
-                  <Handshake size={14} /> Connected
+                  <Handshake size={14} /> {t.publicPages.connected}
                 </span>
               </div>
             </div>
@@ -140,7 +146,7 @@ export default function EnglishPartnerDetailPage() {
 
             <div className="bg-white/[0.01] border border-white/5 rounded-[2.5rem] p-6 sm:p-10 shadow-inner mb-12">
               <h2 className="text-xl sm:text-2xl font-black mb-6 flex items-center gap-3 text-white">
-                <Building2 className="text-yellow-500" size={24} /> About {partner.name}
+                <Building2 className="text-yellow-500" size={24} /> {t.publicPages.aboutPartner} {partner.name}
               </h2>
               {/* استفاده از HTML برای رندر کردن استایل‌های تگ‌های دیتابیس */}
               <div 
@@ -156,14 +162,14 @@ export default function EnglishPartnerDetailPage() {
             {/* Website Info Card */}
             <div className="bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] p-6 shadow-2xl">
               <h3 className="text-sm font-black tracking-widest uppercase text-neutral-500 mb-6 flex items-center gap-2">
-                <LinkIcon size={16} /> Partner Hub
+                <LinkIcon size={16} /> {t.publicPages.partnerHub}
               </h3>
               
               <div className="bg-white/5 rounded-xl p-4 flex items-center justify-between border border-white/5 hover:border-white/10 transition-colors group">
                 <div className="overflow-hidden">
-                  <p className="text-[10px] uppercase text-neutral-500 font-bold mb-1">Official Website</p>
+                  <p className="text-[10px] uppercase text-neutral-500 font-bold mb-1">{t.publicPages.officialWebsite}</p>
                   <p className="text-sm font-bold text-white truncate max-w-[150px] sm:max-w-[200px]">
-                    {partner.website_url && partner.website_url !== "#" ? partner.website_url.replace(/^https?:\/\//, '') : "Internal Platform"}
+                    {partner.website_url && partner.website_url !== "#" ? partner.website_url.replace(/^https?:\/\//, '') : t.publicPages.internalPlatform}
                   </p>
                 </div>
                 {partner.website_url && partner.website_url !== "#" && (
@@ -177,7 +183,7 @@ export default function EnglishPartnerDetailPage() {
             {/* NDA Legal Status Card */}
             <div className="bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] p-6 shadow-2xl">
               <h3 className="text-sm font-black tracking-widest uppercase text-neutral-500 mb-6 flex items-center gap-2">
-                <ShieldCheck size={16} /> Legal & Compliance
+                <ShieldCheck size={16} /> {t.publicPages.legalCompliance}
               </h3>
 
               {partner.nda_signed_date ? (
@@ -186,19 +192,19 @@ export default function EnglishPartnerDetailPage() {
                     <div className="flex items-center gap-3">
                       <ShieldCheck size={18} className="text-emerald-500" />
                       <div>
-                        <p className="text-[10px] uppercase text-emerald-500/80 font-black">NDA Status</p>
-                        <p className="text-xs font-black text-emerald-400">Active & Signed</p>
+                        <p className="text-[10px] uppercase text-emerald-500/80 font-black">{t.publicPages.ndaStatus}</p>
+                        <p className="text-xs font-black text-emerald-400">{t.publicPages.activeAndSigned}</p>
                       </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="p-3 bg-white/5 rounded-xl border border-white/5">
-                      <p className="text-[9px] uppercase text-neutral-500 font-bold mb-1">Signed Date</p>
+                      <p className="text-[9px] uppercase text-neutral-500 font-bold mb-1">{t.publicPages.signedDate}</p>
                       <p className="text-xs font-bold text-white flex items-center gap-1"><Calendar size={12}/> {formatDate(partner.nda_signed_date)}</p>
                     </div>
                     <div className="p-3 bg-white/5 rounded-xl border border-white/5">
-                      <p className="text-[9px] uppercase text-neutral-500 font-bold mb-1">Expiry Date</p>
+                      <p className="text-[9px] uppercase text-neutral-500 font-bold mb-1">{t.publicPages.expiryDate}</p>
                       <p className="text-xs font-bold text-red-400 flex items-center gap-1"><Calendar size={12}/> {formatDate(partner.nda_expiry_date)}</p>
                     </div>
                   </div>
@@ -209,14 +215,14 @@ export default function EnglishPartnerDetailPage() {
                       target="_blank"
                       className="w-full mt-2 py-3.5 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-yellow-500 hover:bg-white/10 transition-all group"
                     >
-                      <FileText size={14} /> View Document
+                      <FileText size={14} /> {t.publicPages.viewDocument}
                     </Link>
                   )}
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center p-6 bg-red-500/5 border border-red-500/10 rounded-xl text-center">
                   <AlertCircle size={24} className="text-red-500/50 mb-3" />
-                  <p className="text-xs font-bold text-red-400">No active Non-Disclosure Agreement (NDA) on file.</p>
+                  <p className="text-xs font-bold text-red-400">{t.publicPages.noNdaOnFile}</p>
                 </div>
               )}
             </div>

@@ -135,7 +135,7 @@ export default function TeacherAssignmentsPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-fuchsia-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Terminal...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.teacherPages.loadingTerminal}</p>
       </div>
     );
   }
@@ -157,7 +157,7 @@ export default function TeacherAssignmentsPage() {
             </div>
             <div>
               <h1 className="text-3xl sm:text-5xl font-black tracking-tight mb-2">
-                Assignments <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">Terminal</span>
+                {t.teacherPages.academicTask} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">{t.teacherPages.terminalWord}</span>
               </h1>
               <p className="text-xs sm:text-base text-neutral-400 font-medium max-w-md leading-relaxed tracking-wide">
                 Issue academic operations, manage deadlines, and evaluate student submittals.
@@ -178,27 +178,27 @@ export default function TeacherAssignmentsPage() {
           <div className="bg-[#0a0a0f]/60 border border-white/5 p-6 rounded-2xl flex items-center gap-5 backdrop-blur-xl shadow-lg">
             <div className="w-12 h-12 bg-fuchsia-500/10 text-fuchsia-400 rounded-xl flex items-center justify-center border border-fuchsia-500/10"><FileText size={20}/></div>
             <div>
-              <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest">Total Issued</p>
+              <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest">{t.teacherPages.totalIssued}</p>
               <h3 className="text-2xl font-black text-white mt-0.5">{stats.total} Tasks</h3>
             </div>
           </div>
           <div className="bg-[#0a0a0f]/60 border border-white/5 p-6 rounded-2xl flex items-center gap-5 backdrop-blur-xl shadow-lg">
             <div className="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-xl flex items-center justify-center border border-purple-500/10"><Clock size={20}/></div>
             <div>
-              <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest">Active Deadlines</p>
+              <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest">{t.teacherPages.activeDeadlines}</p>
               <h3 className="text-2xl font-black text-white mt-0.5">{stats.dueSoon} Pending</h3>
             </div>
           </div>
           <div className="bg-[#0a0a0f]/60 border border-white/5 p-5 rounded-2xl flex items-center gap-4 backdrop-blur-xl shadow-lg sm:col-span-2 lg:col-span-1">
             <div className="w-12 h-12 bg-white/5 text-neutral-400 rounded-xl flex items-center justify-center border border-white/5 shrink-0"><Filter size={18}/></div>
             <div className="flex-1">
-              <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest ml-1 mb-1">Filter by Class</p>
+              <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest ml-1 mb-1">{t.teacherPages.filterByClass}</p>
               <select 
                 value={selectedClassFilter}
                 onChange={(e) => setSelectedClassFilter(e.target.value)}
                 className="w-full bg-black border border-white/10 rounded-xl px-3 py-2 text-xs text-neutral-300 focus:outline-none focus:border-fuchsia-500/50 appearance-none shadow-inner"
               >
-                <option value="all">All Classroom Roster</option>
+                <option value="all">{t.teacherPages.allClassroomRoster}</option>
                 {classes.map(c => (
                   <option key={c.id} value={c.id}>{c.class_name}</option>
                 ))}
@@ -211,8 +211,8 @@ export default function TeacherAssignmentsPage() {
         {filteredAssignments.length === 0 ? (
           <div className="text-center py-24 bg-white/[0.01] border border-dashed border-white/10 rounded-[2.5rem] backdrop-blur-md shadow-2xl">
             <BarChart3 size={56} className="text-neutral-700 mx-auto mb-4" />
-            <h3 className="text-xl font-black text-white mb-2">No Assignments Found</h3>
-            <p className="text-neutral-400 text-sm max-w-xs mx-auto">There are no operational tasks issued under this configuration filter.</p>
+            <h3 className="text-xl font-black text-white mb-2">{t.teacherPages.noAssignmentsFound}</h3>
+            <p className="text-neutral-400 text-sm max-w-xs mx-auto">{t.teacherPages.noAssignmentsFilterDesc}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -248,7 +248,7 @@ export default function TeacherAssignmentsPage() {
                       <Link 
                         href={`/${currentLocale}/teacher/assignments/${task.id}/submissions`}
                         className="p-3 bg-white/5 hover:bg-fuchsia-500/10 text-neutral-400 hover:text-white border border-white/5 hover:border-fuchsia-500/30 rounded-xl transition-all active:scale-95 shadow-md"
-                        title="Review Submissions"
+                        title={t.teacherPages.reviewSubmissions}
                       >
                         <Eye size={15} />
                       </Link>
@@ -257,7 +257,7 @@ export default function TeacherAssignmentsPage() {
                         onClick={() => handleDeleteAssignment(task.id, task.title)}
                         disabled={isDeletingId === task.id}
                         className="p-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/10 hover:border-red-500/30 rounded-xl transition-all active:scale-95 shadow-md disabled:opacity-40"
-                        title="Delete Assignment"
+                        title={t.teacherPages.deleteAssignment}
                       >
                         {isDeletingId === task.id ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
                       </button>

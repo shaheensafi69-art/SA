@@ -236,7 +236,7 @@ export default function TeacherAchievementsPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-amber-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Achievements Hub...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.teacherPages.loadingAchievementsHub}</p>
       </div>
     );
   }
@@ -258,9 +258,9 @@ export default function TeacherAchievementsPage() {
             </div>
             <div>
               <h1 className="text-3xl sm:text-5xl font-black tracking-tight mb-2">
-                Honors & <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Awards</span>
+                {t.teacherPages.honorsWord} <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">{t.teacherPages.awardsWord}</span>
               </h1>
-              <p className="text-xs sm:text-sm text-neutral-400 font-medium">Issue official certificates and grant special awards to your top students.</p>
+              <p className="text-xs sm:text-sm text-neutral-400 font-medium">{t.teacherPages.issueCertificatesSubtitle}</p>
             </div>
           </div>
         </header>
@@ -286,12 +286,12 @@ export default function TeacherAchievementsPage() {
               
               {/* Student Search & Select */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Select Student *</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.selectStudent} *</label>
                 <div className="flex gap-2 mb-2">
                   <div className="relative flex-1">
                     <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
-                      type="text" placeholder="Search student by name or email..."
+                      type="text" placeholder={t.teacherPages.searchStudentPlaceholder}
                       value={studentSearchQuery} onChange={(e) => setStudentSearchQuery(e.target.value)}
                       className="w-full bg-black/40 border border-white/5 rounded-xl pl-9 pr-3 py-2 text-white text-xs focus:outline-none focus:border-indigo-500/50"
                     />
@@ -303,7 +303,7 @@ export default function TeacherAchievementsPage() {
                     required value={certForm.student_id} onChange={(e) => setCertForm({...certForm, student_id: e.target.value})}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-indigo-500/50 appearance-none shadow-inner cursor-pointer"
                   >
-                    {filteredStudents.length === 0 ? <option value="">No matching students found</option> : null}
+                    {filteredStudents.length === 0 ? <option value="">{t.teacherPages.noMatchingStudents}</option> : null}
                     {filteredStudents.map(s => <option key={s.id} value={s.id}>{s.first_name} {s.last_name} ({s.email})</option>)}
                   </select>
                 </div>
@@ -311,14 +311,14 @@ export default function TeacherAchievementsPage() {
 
               {/* Course Select */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Related Course *</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.relatedCourse} *</label>
                 <div className="relative">
                   <BookOpen size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                   <select 
                     required value={certForm.course_id} onChange={(e) => setCertForm({...certForm, course_id: e.target.value})}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-indigo-500/50 appearance-none shadow-inner cursor-pointer"
                   >
-                    {courses.length === 0 ? <option value="">No courses available</option> : null}
+                    {courses.length === 0 ? <option value="">{t.teacherPages.noCoursesAvailable}</option> : null}
                     {courses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
                   </select>
                 </div>
@@ -327,15 +327,15 @@ export default function TeacherAchievementsPage() {
               {/* Certificate Code with Auto-Generator */}
               <div className="space-y-2">
                 <div className="flex justify-between items-end">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Certificate Code (ID) *</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.certificateCode} *</label>
                   <button type="button" onClick={generateAutoCode} className="text-[9px] font-black uppercase text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded hover:bg-indigo-500/20 transition-colors flex items-center gap-1">
-                    <Wand2 size={10}/> Auto Generate
+                    <Wand2 size={10}/> {t.teacherPages.autoGenerate}
                   </button>
                 </div>
                 <div className="relative">
                   <Hash size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                   <input 
-                    required type="text" placeholder="e.g. SAFI-2026-X89"
+                    required type="text" placeholder={t.teacherPages.certCodePlaceholder}
                     value={certForm.certificate_code} onChange={(e) => setCertForm({...certForm, certificate_code: e.target.value})}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-indigo-500/50 shadow-inner uppercase" 
                   />
@@ -345,7 +345,7 @@ export default function TeacherAchievementsPage() {
               {/* File Upload OR URL */}
               <div className="space-y-4 pt-2 border-t border-white/5">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Upload Certificate File (PDF/Image)</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.uploadCertFile}</label>
                   <div className="relative flex items-center">
                     <input 
                       type="file" accept=".pdf,image/*"
@@ -353,12 +353,12 @@ export default function TeacherAchievementsPage() {
                       className="w-full text-sm text-neutral-400 file:mr-4 file:py-3 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:tracking-widest file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20 cursor-pointer bg-black/40 border border-white/10 rounded-2xl" 
                     />
                   </div>
-                  <p className="text-[9px] text-neutral-500 italic ml-1">File will be uploaded to Supabase Storage securely.</p>
+                  <p className="text-[9px] text-neutral-500 italic ml-1">{t.teacherPages.fileUploadedSupabaseDesc}</p>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <hr className="flex-1 border-white/10" />
-                  <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">OR USE EXTERNAL LINK</span>
+                  <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{t.teacherPages.orUseExternalLink}</span>
                   <hr className="flex-1 border-white/10" />
                 </div>
 
@@ -366,7 +366,7 @@ export default function TeacherAchievementsPage() {
                   <div className="relative">
                     <LinkIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
-                      type="url" placeholder="Paste direct URL (https://...)" disabled={!!certFile}
+                      type="url" placeholder={t.teacherPages.pasteDirectUrlPlaceholder} disabled={!!certFile}
                       value={certForm.certificate_url} onChange={(e) => setCertForm({...certForm, certificate_url: e.target.value})}
                       className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-indigo-500/50 shadow-inner disabled:opacity-30 disabled:cursor-not-allowed" 
                     />
@@ -394,24 +394,24 @@ export default function TeacherAchievementsPage() {
             <form onSubmit={handleGrantAward} className="space-y-6 relative z-10 flex flex-col flex-1">
               
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Select Student *</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.selectStudent} *</label>
                 <div className="relative">
                   <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                   <select 
                     required value={awardForm.student_id} onChange={(e) => setAwardForm({...awardForm, student_id: e.target.value})}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-amber-500/50 appearance-none shadow-inner cursor-pointer"
                   >
-                    {students.length === 0 ? <option value="">No students available</option> : null}
+                    {students.length === 0 ? <option value="">{t.teacherPages.noStudentsAvailable}</option> : null}
                     {students.map(s => <option key={s.id} value={s.id}>{s.first_name} {s.last_name}</option>)}
                   </select>
                 </div>
               </div>
 
               <div className="space-y-2 flex-1">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Select Badge / Award *</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.selectBadgeAward}</label>
                 <div className="grid grid-cols-1 gap-3 mt-2 max-h-[220px] overflow-y-auto custom-scrollbar pr-2">
                   {awards.length === 0 ? (
-                    <div className="text-center py-6 border border-dashed border-white/10 rounded-xl text-neutral-500 text-sm">No awards configured in database.</div>
+                    <div className="text-center py-6 border border-dashed border-white/10 rounded-xl text-neutral-500 text-sm">{t.teacherPages.noAwardsConfiguredDb}</div>
                   ) : null}
                   {awards.map(award => (
                     <div 

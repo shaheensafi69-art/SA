@@ -100,7 +100,7 @@ export default function AdminClassesPage() {
     return (
       <div className="min-h-screen bg-[#030305] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-rose-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Organizing Class Cohorts...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.organizingClassCohorts}</p>
       </div>
     );
   }
@@ -123,7 +123,7 @@ export default function AdminClassesPage() {
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
-              Class <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-purple-500">Cohorts</span>
+              {t.adminPages.classCohorts}
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-xl">
               Monitor active groups, review completed classes, and track newly formed cohorts across all courses.
@@ -134,7 +134,7 @@ export default function AdminClassesPage() {
              <div className="bg-[#0a0a0f]/60 p-2 rounded-2xl border border-white/5 backdrop-blur-xl flex items-center gap-3 w-full sm:w-80 shadow-lg">
               <div className="pl-4 text-neutral-500"><Search size={18} /></div>
               <input 
-                type="text" placeholder="Search classes, courses..."
+                type="text" placeholder={t.adminPages.searchClassesPlaceholder}
                 value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent border-none text-white text-sm focus:outline-none py-3 pr-4 font-medium placeholder:text-neutral-600"
               />
@@ -146,8 +146,8 @@ export default function AdminClassesPage() {
         {Object.keys(groupedClasses).length === 0 ? (
            <div className="text-center py-20 bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] backdrop-blur-md shadow-2xl">
              <ShieldAlert size={48} className="mx-auto text-neutral-600 mb-4" />
-             <h3 className="text-xl font-black text-white mb-2">No Classes Found</h3>
-             <p className="text-neutral-500 text-sm">There are no classes matching your search or none have been created yet.</p>
+             <h3 className="text-xl font-black text-white mb-2">{t.adminPages.noClassesFound}</h3>
+             <p className="text-neutral-500 text-sm">{t.adminPages.noClassesMatchingSearch}</p>
            </div>
         ) : (
           <div className="space-y-12">
@@ -204,7 +204,7 @@ export default function AdminClassesPage() {
                               )}
                             </div>
                             <div className="min-w-0">
-                              <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">Instructor</p>
+                              <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">{t.common.profile}</p>
                               <p className="text-xs font-bold text-white truncate">{cls.teacher?.first_name} {cls.teacher?.last_name}</p>
                             </div>
                           </div>

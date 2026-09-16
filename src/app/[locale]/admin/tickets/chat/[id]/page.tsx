@@ -267,7 +267,7 @@ export default function AdminTicketChatScreen({ params }: { params: { id: string
                   {msg.attachment_url && (
                     <div className="mt-3 pt-3 border-t border-white/10 flex items-center gap-2">
                       <a href={msg.attachment_url} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs text-rose-300 hover:underline">
-                        <FileText size={16} /> View Attachment <Download size={14} />
+                        <FileText size={16} /> {t.common.view} <Download size={14} />
                       </a>
                     </div>
                   )}

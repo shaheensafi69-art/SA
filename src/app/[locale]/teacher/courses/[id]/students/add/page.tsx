@@ -153,7 +153,7 @@ export default function AddStudentToClassPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-fuchsia-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Academy Roster...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.teacherPages.loadingAcademyRoster}</p>
       </div>
     );
   }
@@ -172,7 +172,7 @@ export default function AddStudentToClassPage() {
             <CheckCircle size={20} />
           </div>
           <div>
-            <p className="text-emerald-400 font-black text-sm">Successfully Enrolled!</p>
+            <p className="text-emerald-400 font-black text-sm">{t.teacherPages.successfullyEnrolled}</p>
             <p className="text-xs text-emerald-500/70 font-bold mt-0.5">{successMessage.name} was added to the class.</p>
           </div>
         </div>
@@ -187,7 +187,7 @@ export default function AddStudentToClassPage() {
               <ArrowLeft size={14} /> Back to Manage
             </Link>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white mb-2 flex items-center gap-3">
-              <Globe className="text-fuchsia-400" size={32} /> Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">Roster</span>
+              <Globe className="text-fuchsia-400" size={32} /> {t.teacherPages.studentDirectory} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">{t.teacherPages.roster}</span>
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium tracking-wide">
               Assign new students to: <strong className="text-white bg-white/5 px-2 py-0.5 rounded-md ml-1">{className}</strong>
@@ -198,7 +198,7 @@ export default function AddStudentToClassPage() {
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-fuchsia-400 transition-colors" />
             <input 
               type="text" 
-              placeholder="Search student..." 
+              placeholder={t.teacherPages.searchStudentPlaceholder} 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-black/60 border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 transition-colors shadow-inner"
@@ -211,8 +211,8 @@ export default function AddStudentToClassPage() {
           {filteredStudents.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-[40vh] opacity-60 p-10 text-center">
               <ShieldAlert size={64} className="text-neutral-600 mb-6" />
-              <h3 className="text-xl font-black text-white mb-2">No Students Found</h3>
-              <p className="text-neutral-400 text-sm">We couldn't find any students matching your search criteria.</p>
+              <h3 className="text-xl font-black text-white mb-2">{t.teacherPages.noStudentsFound}</h3>
+              <p className="text-neutral-400 text-sm">{t.teacherPages.noStudentsMatchingCriteria}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

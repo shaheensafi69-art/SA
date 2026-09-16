@@ -102,8 +102,8 @@ export default function CreateBlogPage() {
                         <PenTool size={28} strokeWidth={1.5} />
                     </div>
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">Create New Blog</h1>
-                        <p className="text-xs sm:text-sm text-neutral-400 mt-1">Draft and publish a new article to the academy.</p>
+                        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">{t.adminPages.createNewBlog}</h1>
+                        <p className="text-xs sm:text-sm text-neutral-400 mt-1">{t.adminPages.draftPublishArticleDesc}</p>
                     </div>
                 </div>
 
@@ -125,7 +125,7 @@ export default function CreateBlogPage() {
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                     className="w-full rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-3.5 text-sm text-white placeholder-neutral-600 focus:border-yellow-500/50 focus:bg-white/[0.05] focus:outline-none transition-all shadow-inner"
-                                    placeholder="Enter a captivating title"
+                                    placeholder={t.adminPages.enterCaptivatingTitle}
                                 />
                             </div>
 
@@ -156,7 +156,7 @@ export default function CreateBlogPage() {
                                         value={formData.author_name}
                                         onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
                                         className="w-full rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-3.5 text-sm text-white placeholder-neutral-600 focus:border-yellow-500/50 focus:bg-white/[0.05] focus:outline-none transition-all shadow-inner"
-                                        placeholder="Author name"
+                                        placeholder={t.adminPages.authorName}
                                     />
                                 </div>
 
@@ -197,7 +197,7 @@ export default function CreateBlogPage() {
                                 {uploadingImage ? (
                                     <div className="flex flex-col items-center gap-3 text-yellow-500">
                                         <Loader2 size={32} className="animate-spin" />
-                                        <span className="text-xs font-bold uppercase tracking-widest">Uploading to Bucket...</span>
+                                        <span className="text-xs font-bold uppercase tracking-widest">{t.adminPages.uploadingToBucket}</span>
                                     </div>
                                 ) : formData.cover_image ? (
                                     <>
@@ -233,8 +233,8 @@ export default function CreateBlogPage() {
                                             <UploadCloud size={32} />
                                         </div>
                                         <div className="text-center space-y-1">
-                                            <p className="text-sm font-bold text-white">Click to upload cover</p>
-                                            <p className="text-[10px] uppercase tracking-widest">SVG, PNG, JPG or GIF (MAX. 50MB)</p>
+                                            <p className="text-sm font-bold text-white">{t.adminPages.clickToUploadCover}</p>
+                                            <p className="text-[10px] uppercase tracking-widest">{t.adminPages.maxFileSizeNotice}</p>
                                         </div>
                                     </button>
                                 )}
@@ -254,7 +254,7 @@ export default function CreateBlogPage() {
                             value={formData.content}
                             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                             className="w-full rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-4 text-sm text-white placeholder-neutral-600 focus:border-yellow-500/50 focus:bg-white/[0.05] focus:outline-none transition-all resize-y shadow-inner leading-relaxed"
-                            placeholder="Write the full article content here..."
+                            placeholder={t.adminPages.writeFullArticlePlaceholder}
                         />
                     </div>
 
@@ -267,8 +267,8 @@ export default function CreateBlogPage() {
                                 <div className={`h-4 w-4 rounded-full bg-white transition-transform duration-300 shadow-sm ${formData.is_published ? 'translate-x-5' : 'translate-x-0'}`} />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-sm font-bold text-white">Publish Immediately</span>
-                                <span className="text-[10px] text-neutral-500 uppercase tracking-widest">Make visible to public</span>
+                                <span className="text-sm font-bold text-white">{t.adminPages.publishImmediately}</span>
+                                <span className="text-[10px] text-neutral-500 uppercase tracking-widest">{t.adminPages.makeVisiblePublic}</span>
                             </div>
                         </div>
 
@@ -278,7 +278,7 @@ export default function CreateBlogPage() {
                             disabled={loading || uploadingImage}
                             className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 px-8 py-4 text-sm font-black uppercase tracking-widest text-black transition-all disabled:opacity-50 shadow-[0_0_30px_rgba(234,179,8,0.2)] hover:shadow-[0_0_40px_rgba(234,179,8,0.4)] w-full sm:w-auto"
                         >
-                            {loading ? "Publishing..." : <><Save size={18} /> Save & Publish</>}
+                            {loading ? "Publishing..." : <><Save size={18} /> {t.adminPages.saveAndPublish}</>}
                         </button>
                     </div>
 

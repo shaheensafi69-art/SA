@@ -1,5 +1,7 @@
 "use client";
 
+import { getPortalTranslation } from "@/utils/portalTranslations";
+
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import {  useSearchParams , usePathname } from "next/navigation";
@@ -118,6 +120,7 @@ function Typewriter({
 function RegisterFormContent() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
   const searchParams = useSearchParams();
   const refCode = searchParams?.get("ref") || "";
 
@@ -282,8 +285,8 @@ function RegisterFormContent() {
                <img src="/logo-without-b.png" alt="Safi Academy Logo" className="relative z-10 w-full h-full object-contain drop-shadow-[0_8px_15px_rgba(234,179,8,0.3)]" />
              </div>
           </Link>
-          <h1 className="text-2xl font-black text-white tracking-tight">Create Account</h1>
-          <p className="text-neutral-400 text-xs">Join Safi Academy digital ecosystem.</p>
+          <h1 className="text-2xl font-black text-white tracking-tight">{t.auth.createAccount}</h1>
+          <p className="text-neutral-400 text-xs">{t.auth.joinAcademyDesc}</p>
         </div>
       )}
 
@@ -318,7 +321,7 @@ function RegisterFormContent() {
             
             {/* English Texts */}
             <div>
-              <h2 className="text-2xl font-black text-white tracking-tight mb-1">Registration Complete!</h2>
+              <h2 className="text-2xl font-black text-white tracking-tight mb-1">{t.auth.registrationComplete}</h2>
               <p className="text-neutral-400 text-xs leading-relaxed">
                 Welcome to Safi Academy. We've sent a secure verification link to your email address.
               </p>
@@ -378,27 +381,27 @@ function RegisterFormContent() {
                       {photoPreview ? <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" /> : <Sparkles className="w-6 h-6 text-yellow-400 group-hover:scale-110 transition-transform" />}
                     </div>
                   </div>
-                  <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">ID Photo *</span>
+                  <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">{t.publicPages.idPhotoLabel}</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">First Name *</label>
-                    <input type="text" name="first_name" value={formDataState.first_name} onChange={handleChange} placeholder="John" className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
+                    <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">{t.auth.firstName}</label>
+                    <input type="text" name="first_name" value={formDataState.first_name} onChange={handleChange} placeholder={t.auth.firstName} className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">Last Name *</label>
-                    <input type="text" name="last_name" value={formDataState.last_name} onChange={handleChange} placeholder="Doe" className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
+                    <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">{t.auth.lastName}</label>
+                    <input type="text" name="last_name" value={formDataState.last_name} onChange={handleChange} placeholder={t.auth.lastName} className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">Father's Name *</label>
-                    <input type="text" name="father_name" value={formDataState.father_name} onChange={handleChange} placeholder="Michael" className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
+                    <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">{t.auth.fatherName}</label>
+                    <input type="text" name="father_name" value={formDataState.father_name} onChange={handleChange} placeholder={t.auth.fatherName} className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">Date of Birth *</label>
+                    <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">{t.auth.dateOfBirth}</label>
                     <input type="date" name="date_of_birth" value={formDataState.date_of_birth} onChange={handleChange} className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-neutral-300 focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all [color-scheme:dark]" />
                   </div>
                 </div>
@@ -410,23 +413,23 @@ function RegisterFormContent() {
               <div className="space-y-4 animate-[fadeIn_0.3s_ease-out]">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">Country *</label>
-                    <input type="text" name="country" value={formDataState.country} onChange={handleChange} placeholder="United Kingdom" className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
+                    <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">{t.auth.country}</label>
+                    <input type="text" name="country" value={formDataState.country} onChange={handleChange} placeholder={t.auth.country} className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">Phone *</label>
+                    <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">{t.auth.phone}</label>
                     <input type="tel" name="phone_number" value={formDataState.phone_number} onChange={handleChange} placeholder="+44 20..." className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 font-mono focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">Biography</label>
-                  <textarea name="bio" rows={2} value={formDataState.bio} onChange={handleChange} placeholder="Brief background..." className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 resize-none focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all"></textarea>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">{t.auth.biography}</label>
+                  <textarea name="bio" rows={2} value={formDataState.bio} onChange={handleChange} placeholder={t.auth.bioPlaceholder} className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 resize-none focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all"></textarea>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">Referral Code (Optional)</label>
-                  <input type="text" name="referral_code" value={formDataState.referral_code} onChange={handleChange} placeholder="e.g. SAFI-X" className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-yellow-400 font-mono font-bold uppercase focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
+                  <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">{t.auth.referralCodeOptional}</label>
+                  <input type="text" name="referral_code" value={formDataState.referral_code} onChange={handleChange} placeholder={t.auth.referralCodePlaceholder || "SAFI-X"} className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-yellow-400 font-mono font-bold uppercase focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
                 </div>
               </div>
             )}
@@ -435,12 +438,12 @@ function RegisterFormContent() {
             {step === 3 && (
               <div className="space-y-4 animate-[fadeIn_0.3s_ease-out]">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">Email Address *</label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">{t.auth.emailAddress} *</label>
                   <input type="email" name="email" value={formDataState.email} onChange={handleChange} placeholder="name@example.com" className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">Password *</label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">{t.auth.password} *</label>
                   <div className="relative">
                     <input type={showPassword ? "text" : "password"} name="password" value={formDataState.password} onChange={handleChange} placeholder="••••••••" className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 pr-9 text-xs text-white focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
                     <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition-colors">
@@ -450,7 +453,7 @@ function RegisterFormContent() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">Confirm Password *</label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-neutral-400 ml-1">{t.auth.confirmPassword}</label>
                   <div className="relative">
                     <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword" value={formDataState.confirmPassword} onChange={handleChange} placeholder="••••••••" className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 pr-9 text-xs text-white focus:outline-none focus:border-yellow-400 focus:shadow-[0_0_10px_rgba(250,204,21,0.1)] transition-all" />
                     <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition-colors">
@@ -481,7 +484,7 @@ function RegisterFormContent() {
                 </button>
               ) : (
                 <button type="submit" disabled={isLoading} className="flex-1 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_15px_rgba(234,179,8,0.4)] disabled:opacity-70 flex items-center justify-center gap-2 group hover:scale-[1.02]">
-                  {isLoading ? <><Loader2 size={14} className="animate-spin" /> Authorizing...</> : "Complete & Register 🚀"}
+                  {isLoading ? <><Loader2 size={14} className="animate-spin" /> {t.publicPages.authorizing}</> : "Complete & Register 🚀"}
                 </button>
               )}
             </div>
@@ -491,7 +494,7 @@ function RegisterFormContent() {
 
         {!isSuccess && (
           <div className="mt-5 text-center text-xs">
-            <span className="text-neutral-400">Already have an account?</span>{" "}
+            <span className="text-neutral-400">{t.auth.alreadyHaveAccount}</span>{" "}
             <Link href={`/${currentLocale}/login`} className="text-yellow-400 font-bold hover:text-yellow-300 transition-colors ml-1">
               Sign In
             </Link>
@@ -507,6 +510,7 @@ function RegisterFormContent() {
 // 3. MAIN REGISTER PAGE WITH 3D ASTRONAUT & STARS BACKGROUND
 // ==========================================
 export default function RegisterPage() {
+  const t = getPortalTranslation();
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   return (

@@ -194,14 +194,14 @@ export default function AdminApplicationFormPage() {
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-neutral-300 hover:text-white transition-colors disabled:opacity-50"
           >
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
-            <span>Refresh</span>
+            <span>{t.adminPages.syncingCoreMetrics}</span>
           </button>
           <Link
             href={`/${currentLocale}/instructor-application`}
             target="_blank"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20"
           >
-            <span>Public Application Form</span>
+            <span>{t.adminPages.applicationDossier}</span>
             <ExternalLink size={13} />
           </Link>
         </div>
@@ -223,7 +223,7 @@ export default function AdminApplicationFormPage() {
       {/* Metric Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="p-5 rounded-2xl bg-[#08080d] border border-white/10 relative overflow-hidden">
-          <div className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Total Submissions</div>
+          <div className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1">{t.adminPages.totalSubmissions}</div>
           <div className="text-2xl md:text-3xl font-black text-white font-mono">{totalCount}</div>
           <div className="absolute top-4 right-4 text-neutral-600">
             <GraduationCap size={24} />
@@ -233,7 +233,7 @@ export default function AdminApplicationFormPage() {
         <div className="p-5 rounded-2xl bg-amber-500/[0.04] border border-amber-500/20 relative overflow-hidden">
           <div className="text-[11px] font-bold uppercase tracking-wider text-amber-400 mb-1 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-            <span>Pending Review</span>
+            <span>{t.adminPages.pendingReview}</span>
           </div>
           <div className="text-2xl md:text-3xl font-black text-amber-400 font-mono">{pendingCount}</div>
           <div className="absolute top-4 right-4 text-amber-500/30">
@@ -242,7 +242,7 @@ export default function AdminApplicationFormPage() {
         </div>
 
         <div className="p-5 rounded-2xl bg-emerald-500/[0.04] border border-emerald-500/20 relative overflow-hidden">
-          <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-400 mb-1">Approved Faculty</div>
+          <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-400 mb-1">{t.adminPages.approvedFaculty}</div>
           <div className="text-2xl md:text-3xl font-black text-emerald-400 font-mono">{approvedCount}</div>
           <div className="absolute top-4 right-4 text-emerald-500/30">
             <CheckCircle2 size={24} />
@@ -250,7 +250,7 @@ export default function AdminApplicationFormPage() {
         </div>
 
         <div className="p-5 rounded-2xl bg-rose-500/[0.04] border border-rose-500/20 relative overflow-hidden">
-          <div className="text-[11px] font-bold uppercase tracking-wider text-rose-400 mb-1">Archived / Rejected</div>
+          <div className="text-[11px] font-bold uppercase tracking-wider text-rose-400 mb-1">{t.adminPages.archivedRejected}</div>
           <div className="text-2xl md:text-3xl font-black text-rose-400 font-mono">{rejectedCount}</div>
           <div className="absolute top-4 right-4 text-rose-500/30">
             <XCircle size={24} />
@@ -287,7 +287,7 @@ export default function AdminApplicationFormPage() {
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 w-4 h-4" />
           <input
             type="text"
-            placeholder="Search candidate, course, email..."
+            placeholder={t.adminPages.searchCandidatePlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white text-xs focus:border-amber-400 focus:outline-none transition-colors"
@@ -306,7 +306,7 @@ export default function AdminApplicationFormPage() {
       ) : filteredApplications.length === 0 ? (
         <div className="py-24 text-center border border-dashed border-white/10 rounded-3xl bg-[#08080d]">
           <GraduationCap className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-white mb-1">No Applications Found</h3>
+          <h3 className="text-lg font-bold text-white mb-1">{t.adminPages.noApplicationsFound}</h3>
           <p className="text-xs text-neutral-400 max-w-sm mx-auto">
             {searchQuery
               ? "No instructor application matched your search criteria."
@@ -433,13 +433,13 @@ export default function AdminApplicationFormPage() {
                     className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs uppercase tracking-wider transition-all shadow-md shadow-amber-500/10 hover:scale-105 active:scale-95"
                   >
                     <Eye size={13} />
-                    <span>View Dossier</span>
+                    <span>{t.adminPages.viewDossier}</span>
                   </Link>
 
                   <div className="flex items-center gap-1.5">
                     {app.status !== "approved" && (
                       <button
-                        title="Quick Approve (Dispatches Onboarding Invite)"
+                        title={t.adminPages.quickApprove}
                         disabled={actionLoadingId === app.id}
                         onClick={() => handleQuickStatus(app.id, "approved")}
                         className="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 transition-colors disabled:opacity-50"
@@ -450,7 +450,7 @@ export default function AdminApplicationFormPage() {
 
                     {app.status !== "rejected" && (
                       <button
-                        title="Quick Reject (Dispatches Consideration Email)"
+                        title={t.adminPages.quickReject}
                         disabled={actionLoadingId === app.id}
                         onClick={() => handleQuickStatus(app.id, "rejected")}
                         className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 transition-colors disabled:opacity-50"
@@ -460,7 +460,7 @@ export default function AdminApplicationFormPage() {
                     )}
 
                     <button
-                      title="Delete Application"
+                      title={t.adminPages.deleteApplication}
                       disabled={actionLoadingId === app.id}
                       onClick={() => handleDelete(app.id)}
                       className="p-2 rounded-xl bg-white/5 hover:bg-rose-500/15 text-neutral-400 hover:text-rose-400 transition-colors disabled:opacity-50"

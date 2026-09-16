@@ -130,7 +130,7 @@ export default function TeacherLiveClassesPage() {
           <div className="text-center py-24 sm:py-40 bg-white/[0.01] border border-dashed border-white/10 rounded-[3rem] backdrop-blur-md mx-2 sm:mx-0 shadow-2xl">
             <MonitorPlay size={64} className="text-neutral-700 mx-auto mb-6" />
             <h3 className="text-2xl font-black text-white mb-4">{t.liveClasses.noLive}</h3>
-            <p className="text-neutral-400 text-sm max-w-xs mx-auto leading-relaxed">You haven't scheduled any live cohorts yet. Go to your courses to initialize a class.</p>
+            <p className="text-neutral-400 text-sm max-w-xs mx-auto leading-relaxed">{t.teacherPages.noLiveCohortsScheduledDesc}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
@@ -181,7 +181,7 @@ export default function TeacherLiveClassesPage() {
 
                     <div className="flex items-center gap-3.5 text-neutral-300 text-xs sm:text-sm font-bold bg-white/[0.02] px-4 py-4 rounded-2xl border border-white/5">
                       <Users size={18} className="text-purple-500 shrink-0"/> 
-                      <span><strong className="text-white text-lg">{cls.student_count}</strong> Active Enrolled Students</span>
+                      <span><strong className="text-white text-lg">{cls.student_count}</strong> {t.teacherPages.activeEnrolledStudents}</span>
                     </div>
                   </div>
                   

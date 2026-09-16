@@ -1,7 +1,9 @@
 "use client";
 
+import { getPortalTranslation } from "@/utils/portalTranslations";
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Code2,
@@ -37,6 +39,11 @@ import {
 } from "lucide-react";
 
 export default function DevelopmentServicesPage() {
+  const pathname = usePathname() || "/en";
+  const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -361,7 +368,7 @@ export default function DevelopmentServicesPage() {
   ];
 
   return (
-    <main className="w-full relative bg-[#030307] text-white font-sans overflow-hidden min-h-screen pt-32 pb-28">
+    <main dir={isRtl ? "rtl" : "ltr"} className="w-full relative bg-[#030307] text-white font-sans overflow-hidden min-h-screen pt-32 pb-28">
       {/* Dynamic Background Ambient Lighting */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:36px_36px] opacity-40"></div>
@@ -395,7 +402,7 @@ export default function DevelopmentServicesPage() {
               href="#quote-form"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 text-white font-black text-sm uppercase tracking-widest rounded-2xl transition-all shadow-[0_10px_35px_rgba(6,182,212,0.35)] hover:shadow-[0_15px_45px_rgba(6,182,212,0.55)] hover:scale-105 active:scale-95 group"
             >
-              <span>Request Free Technical Proposal</span>
+              <span>{t.publicPages.requestProposal}</span>
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </a>
             <a
@@ -410,15 +417,15 @@ export default function DevelopmentServicesPage() {
           <div className="mt-12 pt-8 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
             <div>
               <div className="text-2xl font-black text-white">99.99%</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">Uptime SLA Guaranteed</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">{t.publicPages.uptimeSla}</div>
             </div>
             <div>
               <div className="text-2xl font-black text-cyan-400">Sub-100ms</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">Global API Latency</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">{t.publicPages.globalApiLatency}</div>
             </div>
             <div>
               <div className="text-2xl font-black text-white">100%</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">Code & IP Ownership</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">{t.publicPages.codeIpOwnership}</div>
             </div>
             <div>
               <div className="text-2xl font-black text-emerald-400">Zero-Trust</div>

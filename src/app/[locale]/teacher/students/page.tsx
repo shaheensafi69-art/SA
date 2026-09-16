@@ -147,7 +147,7 @@ export default function TeacherAllStudentsPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-fuchsia-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Academy Roster...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.teacherPages.loadingAcademyRoster}</p>
       </div>
     );
   }
@@ -165,7 +165,7 @@ export default function TeacherAllStudentsPage() {
         <header className="flex flex-col md:flex-row justify-between md:items-center gap-6 bg-[#0a0a0f]/80 p-6 sm:p-8 rounded-[2rem] border border-white/5 backdrop-blur-3xl shadow-2xl">
           <div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white mb-2 flex items-center gap-3">
-              <Users className="text-fuchsia-400" size={32} /> My <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">Students</span>
+              <Users className="text-fuchsia-400" size={32} /> {t.teacherPages.myCourses} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">{t.teacherPages.students}</span>
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium tracking-wide">
               Global directory of all students enrolled across your classes (<strong className="text-white">{students.length} Total</strong>)
@@ -177,7 +177,7 @@ export default function TeacherAllStudentsPage() {
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-fuchsia-400 transition-colors" />
             <input 
               type="text" 
-              placeholder="Search by name, email..." 
+              placeholder={t.teacherPages.searchStudentPlaceholder} 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-black border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-white text-sm focus:outline-none focus:border-fuchsia-500/50 transition-colors shadow-inner"
@@ -191,11 +191,11 @@ export default function TeacherAllStudentsPage() {
             <table className="w-full text-left border-collapse whitespace-nowrap min-w-[800px]">
               <thead>
                 <tr className="bg-white/[0.03] border-b border-white/5 text-[10px] sm:text-[11px] font-black text-neutral-500 uppercase tracking-widest">
-                  <th className="p-6">Student Profile</th>
-                  <th className="p-6">Contact Details</th>
-                  <th className="p-6">Active Cohorts</th>
-                  <th className="p-6 text-center">Score</th>
-                  <th className="p-6 text-right">Actions</th>
+                  <th className="p-6">{t.teacherPages.studentProfile}</th>
+                  <th className="p-6">{t.teacherPages.contactDetails}</th>
+                  <th className="p-6">{t.teacherPages.activeCohorts}</th>
+                  <th className="p-6 text-center">{t.teacherPages.score}</th>
+                  <th className="p-6 text-right">{t.teacherPages.actions}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -204,7 +204,7 @@ export default function TeacherAllStudentsPage() {
                     <td colSpan={5} className="p-20 text-center">
                       <div className="flex flex-col items-center justify-center space-y-4 opacity-50">
                         <ShieldAlert size={48} className="text-neutral-600" />
-                        <p className="text-neutral-400 text-sm font-bold">No students found matching your criteria.</p>
+                        <p className="text-neutral-400 text-sm font-bold">{t.teacherPages.noStudentsMatchingCriteria}</p>
                       </div>
                     </td>
                   </tr>
@@ -298,7 +298,7 @@ export default function TeacherAllStudentsPage() {
                 </div>
                 <div>
                   <h2 className="text-2xl font-black text-white">{selectedStudent.first_name} {selectedStudent.last_name}</h2>
-                  <p className="text-xs text-neutral-400 font-mono mt-1">Safi Academy Scholar</p>
+                  <p className="text-xs text-neutral-400 font-mono mt-1">{t.teacherPages.safiAcademyScholar}</p>
                 </div>
               </div>
               <button onClick={() => setSelectedStudent(null)} className="w-10 h-10 bg-white/5 hover:bg-red-500/20 text-neutral-400 hover:text-red-400 rounded-full flex items-center justify-center transition-all border border-white/5 relative z-10">
@@ -313,42 +313,42 @@ export default function TeacherAllStudentsPage() {
                 <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
                   <Mail size={18} className="text-neutral-500" />
                   <div>
-                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Email Address</p>
+                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t.teacherPages.email}</p>
                     <p className="text-sm text-white font-mono mt-0.5">{selectedStudent.email}</p>
                   </div>
                 </div>
                 <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
                   <Phone size={18} className="text-neutral-500" />
                   <div>
-                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Phone Number</p>
+                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t.teacherPages.phone}</p>
                     <p className="text-sm text-white font-mono mt-0.5">{selectedStudent.phone_number}</p>
                   </div>
                 </div>
                 <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
                   <UserCheck size={18} className="text-neutral-500" />
                   <div>
-                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Father's Name</p>
+                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t.teacherPages.fatherName}</p>
                     <p className="text-sm text-white mt-0.5">{selectedStudent.father_name}</p>
                   </div>
                 </div>
                 <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
                   <Calendar size={18} className="text-neutral-500" />
                   <div>
-                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Date of Birth</p>
+                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t.teacherPages.dateOfBirth}</p>
                     <p className="text-sm text-white font-mono mt-0.5">{selectedStudent.date_of_birth}</p>
                   </div>
                 </div>
                 <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
                   <MapPin size={18} className="text-neutral-500" />
                   <div>
-                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Country / Origin</p>
+                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t.teacherPages.countryOrigin}</p>
                     <p className="text-sm text-white mt-0.5">{selectedStudent.country}</p>
                   </div>
                 </div>
                 <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
                   <CreditCard size={18} className="text-emerald-500" />
                   <div>
-                    <p className="text-[10px] text-emerald-500 uppercase tracking-widest font-bold">Wallet Balance</p>
+                    <p className="text-[10px] text-emerald-500 uppercase tracking-widest font-bold">{t.teacherPages.walletBalance}</p>
                     <p className="text-sm text-emerald-400 font-mono mt-0.5">${selectedStudent.wallet_balance}</p>
                   </div>
                 </div>
@@ -357,18 +357,18 @@ export default function TeacherAllStudentsPage() {
               {/* Bio & Referral */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="md:col-span-2 bg-white/[0.01] border border-white/5 rounded-2xl p-5">
-                  <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold mb-2">Student Biography</p>
+                  <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold mb-2">{t.teacherPages.studentBiography}</p>
                   <p className="text-sm text-neutral-300 leading-relaxed font-medium">{selectedStudent.bio}</p>
                 </div>
                 <div className="bg-purple-500/5 border border-purple-500/10 rounded-2xl p-5 flex flex-col justify-center items-center text-center">
-                  <p className="text-[10px] text-purple-400 uppercase tracking-widest font-bold mb-1">Referral Code</p>
+                  <p className="text-[10px] text-purple-400 uppercase tracking-widest font-bold mb-1">{t.teacherPages.referralCode}</p>
                   <p className="text-xl font-black text-white font-mono bg-black/40 px-4 py-2 rounded-xl border border-white/5 mt-1 tracking-wider">{selectedStudent.referral_code}</p>
                 </div>
               </div>
 
               {/* Class Members لیست کلاس‌ها */}
               <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-5">
-                <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold mb-3">Enrolled In Your Classes</p>
+                <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold mb-3">{t.teacherPages.enrolledInYourClasses}</p>
                 <div className="flex flex-wrap gap-2">
                   {selectedStudent.enrolled_classes.map((cls, idx) => (
                     <span key={idx} className="px-4 py-2 bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-400 rounded-xl text-xs font-black uppercase tracking-wider">

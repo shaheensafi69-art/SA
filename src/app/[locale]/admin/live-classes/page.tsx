@@ -128,7 +128,7 @@ export default function AdminLiveClassesPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-rose-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Establishing Live Connection...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.establishingLiveConnection}</p>
       </div>
     );
   }
@@ -151,7 +151,7 @@ export default function AdminLiveClassesPage() {
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2 flex items-center gap-3">
-              Live <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-purple-500">Sessions</span>
+              {t.adminPages.liveSessions}
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-xl">
               Monitor active class rooms, manage meeting URLs (Zoom/Meet), and ensure students have correct access to live environments.
@@ -163,7 +163,7 @@ export default function AdminLiveClassesPage() {
             <div className="bg-black/60 p-2 rounded-2xl border border-white/5 flex items-center gap-3 shadow-inner">
               <div className="pl-4 text-neutral-500"><Search size={16} /></div>
               <input 
-                type="text" placeholder="Search cohorts..."
+                type="text" placeholder={t.adminPages.searchCohortsPlaceholder}
                 value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent border-none text-white text-sm focus:outline-none py-2 pr-4 font-medium placeholder:text-neutral-600"
               />
@@ -175,8 +175,8 @@ export default function AdminLiveClassesPage() {
         {filteredClasses.length === 0 ? (
            <div className="text-center py-20 bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] backdrop-blur-md shadow-2xl">
              <ShieldAlert size={48} className="mx-auto text-neutral-600 mb-4" />
-             <h3 className="text-xl font-black text-white mb-2">No Sessions Found</h3>
-             <p className="text-neutral-500 text-sm">There are no classes matching your criteria.</p>
+             <h3 className="text-xl font-black text-white mb-2">{t.adminPages.noSessionsFound}</h3>
+             <p className="text-neutral-500 text-sm">{t.adminPages.noClassesMatchingCriteria}</p>
            </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -212,11 +212,11 @@ export default function AdminLiveClassesPage() {
                 {/* Schedule Info */}
                 <div className="bg-black/40 border border-white/5 rounded-xl p-3 mb-5 space-y-2 relative z-10">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-neutral-500 flex items-center gap-1.5"><CalendarDays size={14}/> Days</span>
+                    <span className="text-neutral-500 flex items-center gap-1.5"><CalendarDays size={14}/> {t.adminPages.days}</span>
                     <span className="font-bold text-neutral-300 truncate pl-2">{cls.class_days || "Not set"}</span>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-neutral-500 flex items-center gap-1.5"><Clock size={14}/> Time</span>
+                    <span className="text-neutral-500 flex items-center gap-1.5"><Clock size={14}/> {t.adminPages.time}</span>
                     <span className="font-bold text-neutral-300 font-mono">{cls.class_time || "Not set"}</span>
                   </div>
                 </div>
@@ -224,12 +224,12 @@ export default function AdminLiveClassesPage() {
                 {/* Links Status */}
                 <div className="space-y-2 mb-6 relative z-10 flex-1">
                   <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-                    <span className="text-neutral-500 flex items-center gap-1"><Video size={12}/> Meeting URL</span>
-                    {cls.meeting_link ? <span className="text-emerald-400 flex items-center gap-1"><CheckCircle2 size={10}/> Active</span> : <span className="text-rose-400">Missing</span>}
+                    <span className="text-neutral-500 flex items-center gap-1"><Video size={12}/> {t.adminPages.meetingUrl}</span>
+                    {cls.meeting_link ? <span className="text-emerald-400 flex items-center gap-1"><CheckCircle2 size={10}/> {t.adminPages.active}</span> : <span className="text-rose-400">{t.adminPages.missing}</span>}
                   </div>
                   <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-                    <span className="text-neutral-500 flex items-center gap-1"><MessageCircle size={12}/> Comms Group</span>
-                    {cls.signal_group_link ? <span className="text-emerald-400 flex items-center gap-1"><CheckCircle2 size={10}/> Active</span> : <span className="text-rose-400">Missing</span>}
+                    <span className="text-neutral-500 flex items-center gap-1"><MessageCircle size={12}/> {t.adminPages.commsGroup}</span>
+                    {cls.signal_group_link ? <span className="text-emerald-400 flex items-center gap-1"><CheckCircle2 size={10}/> {t.adminPages.active}</span> : <span className="text-rose-400">{t.adminPages.missing}</span>}
                   </div>
                 </div>
 
@@ -240,11 +240,11 @@ export default function AdminLiveClassesPage() {
                       href={cls.meeting_link} target="_blank" rel="noopener noreferrer"
                       className="flex-1 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 px-3 py-3 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95"
                     >
-                      <Video size={14}/> Join
+                      <Video size={14}/> {t.adminClasses.joinLive}
                     </a>
                   ) : (
                     <button disabled className="flex-1 rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-600 px-3 py-3 text-[10px] font-black uppercase tracking-widest cursor-not-allowed flex items-center justify-center gap-2">
-                      No Link
+                      {t.adminClasses.noLink}
                     </button>
                   )}
                   
@@ -252,7 +252,7 @@ export default function AdminLiveClassesPage() {
                     onClick={() => openLinkModal(cls)}
                     className="flex-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white px-3 py-3 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95"
                   >
-                    <Edit3 size={14}/> Manage
+                    <Edit3 size={14}/> {t.adminClasses.manage}
                   </button>
                 </div>
 
@@ -272,7 +272,7 @@ export default function AdminLiveClassesPage() {
             
             <div className="p-6 border-b border-white/5 bg-neutral-900/40 shrink-0 flex justify-between items-center">
               <div>
-                <h2 className="text-base font-black text-white">Manage Access Links</h2>
+                <h2 className="text-base font-black text-white">{t.adminPages.manageAccessLinks}</h2>
                 <p className="text-[10px] text-rose-400 font-black uppercase tracking-widest mt-0.5 truncate max-w-[200px]">{selectedClass.class_name}</p>
               </div>
               <button disabled={isSaving} onClick={() => setSelectedClass(null)} className="w-10 h-10 bg-white/5 hover:bg-white/10 text-neutral-400 rounded-full flex items-center justify-center transition-all shrink-0">
@@ -292,7 +292,7 @@ export default function AdminLiveClassesPage() {
               <form onSubmit={handleUpdateLinks} className="space-y-6">
                 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1 flex items-center gap-1.5"><Video size={12}/> Live Meeting URL</label>
+                  <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1 flex items-center gap-1.5"><Video size={12}/> {t.adminPages.meetingUrl}</label>
                   <div className="relative">
                     <LinkIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
@@ -301,11 +301,11 @@ export default function AdminLiveClassesPage() {
                       className="w-full bg-black border border-white/10 rounded-xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-rose-500/50 transition-colors shadow-inner"
                     />
                   </div>
-                  <p className="text-[9px] text-neutral-600 ml-1">Paste Zoom, Google Meet, or Microsoft Teams link.</p>
+                  <p className="text-[9px] text-neutral-600 ml-1">{t.adminPages.pasteZoomMeetTeamsDesc}</p>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1 flex items-center gap-1.5"><MessageCircle size={12}/> Communication Group URL</label>
+                  <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1 flex items-center gap-1.5"><MessageCircle size={12}/> {t.adminPages.commsGroup}</label>
                   <div className="relative">
                     <LinkIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                     <input 
@@ -314,7 +314,7 @@ export default function AdminLiveClassesPage() {
                       className="w-full bg-black border border-white/10 rounded-xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50 transition-colors shadow-inner"
                     />
                   </div>
-                  <p className="text-[9px] text-neutral-600 ml-1">Paste Telegram, WhatsApp, or Signal group link.</p>
+                  <p className="text-[9px] text-neutral-600 ml-1">{t.adminPages.pasteSocialGroupDesc}</p>
                 </div>
 
                 <button 

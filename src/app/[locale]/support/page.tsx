@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -14,6 +15,7 @@ type SupportTicket = {
 };
 
 export default function MinimalSupportPage() {
+  const t = getPortalTranslation();
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   const router = useRouter();
@@ -154,8 +156,8 @@ export default function MinimalSupportPage() {
                 <MessageCircle className="w-6 h-6" />
               </div>
               <div>
-                <h2 className="text-lg sm:text-xl font-black text-white group-hover:text-pink-300 transition-colors">Start Live Chat</h2>
-                <p className="text-xs sm:text-sm text-neutral-500 font-medium mt-1">Connect with AI or human agent instantly.</p>
+                <h2 className="text-lg sm:text-xl font-black text-white group-hover:text-pink-300 transition-colors">{t.publicPages.startLiveChat}</h2>
+                <p className="text-xs sm:text-sm text-neutral-500 font-medium mt-1">{t.publicPages.connectWithAgent}</p>
               </div>
             </div>
             <button
@@ -172,7 +174,7 @@ export default function MinimalSupportPage() {
         <div>
           <div className="flex items-center gap-3 mb-6 px-2">
             <Clock3 className="w-5 h-5 text-neutral-500" />
-            <h3 className="text-sm font-black text-neutral-300 uppercase tracking-widest">Recent Conversations</h3>
+            <h3 className="text-sm font-black text-neutral-300 uppercase tracking-widest">{t.publicPages.recentConversations}</h3>
           </div>
 
           <div className="space-y-3">
@@ -216,7 +218,7 @@ export default function MinimalSupportPage() {
             ) : (
               <div className="text-center py-16 bg-white/[0.01] border border-white/[0.03] rounded-3xl">
                 <LifeBuoy className="w-10 h-10 mx-auto text-neutral-700 mb-4" strokeWidth={1.5} />
-                <p className="text-neutral-400 text-sm font-medium">No active support history.</p>
+                <p className="text-neutral-400 text-sm font-medium">{t.publicPages.noActiveSupportHistory}</p>
               </div>
             )}
           </div>

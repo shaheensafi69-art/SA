@@ -149,7 +149,7 @@ export default function AdminAnnouncementsPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-rose-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Initializing Broadcast Tower...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.initializingBroadcastTower}</p>
       </div>
     );
   }
@@ -171,7 +171,7 @@ export default function AdminAnnouncementsPage() {
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2 flex items-center gap-3">
-              Broadcast <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-orange-500">Tower</span> <Radio size={32} className="text-rose-500 animate-pulse hidden sm:block"/>
+              {t.adminPages.broadcastTower} <Radio size={32} className="text-rose-500 animate-pulse hidden sm:block"/>
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-xl">
               Dispatch critical updates, academy news, and system alerts to specific user roles or across the entire Safi Ecosystem instantly.
@@ -180,7 +180,7 @@ export default function AdminAnnouncementsPage() {
 
           <div className="flex gap-3 shrink-0 relative z-10">
             <div className="bg-black/40 border border-white/5 px-6 py-4 rounded-2xl flex flex-col items-center justify-center shadow-inner">
-              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1 flex items-center gap-1.5"><BellRing size={12}/> Total Dispatches</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1 flex items-center gap-1.5"><BellRing size={12}/> {t.adminPages.totalDispatches}</p>
               <p className="text-3xl font-black text-rose-400">{announcements.length}</p>
             </div>
           </div>
@@ -207,7 +207,7 @@ export default function AdminAnnouncementsPage() {
 
               <form onSubmit={handleBroadcast} className="space-y-6 relative z-10">
                 <div className="space-y-3">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1.5"><Target size={12}/> Target Audience</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1.5"><Target size={12}/> {t.adminPages.targetAudience}</label>
                   <div className="grid grid-cols-3 gap-2 bg-black/60 border border-white/10 rounded-2xl p-2 shadow-inner">
                     <button
                       type="button"
@@ -240,18 +240,18 @@ export default function AdminAnnouncementsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Transmission Title *</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.transmissionTitle}</label>
                   <input 
-                    required type="text" placeholder="e.g. System Maintenance Update"
+                    required type="text" placeholder={t.adminPages.transmissionPlaceholder}
                     value={form.title} onChange={(e) => setForm({...form, title: e.target.value})}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm font-bold focus:outline-none focus:border-rose-500/50 shadow-inner" 
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Message Content *</label>
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.messageContent}</label>
                   <textarea 
-                    required rows={5} placeholder="Write your broadcast message here..."
+                    required rows={5} placeholder={t.adminPages.messageContentPlaceholder}
                     value={form.messageText} onChange={(e) => setForm({...form, messageText: e.target.value})}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm focus:outline-none focus:border-rose-500/50 shadow-inner resize-y custom-scrollbar" 
                   />
@@ -279,8 +279,8 @@ export default function AdminAnnouncementsPage() {
               {announcements.length === 0 ? (
                 <div className="text-center py-20 border border-dashed border-white/5 rounded-3xl bg-black/20 text-neutral-500 flex flex-col items-center">
                   <Radio size={48} className="mb-4 opacity-30"/>
-                  <p className="text-sm font-bold">The frequency is clear.</p>
-                  <p className="text-[10px] mt-1 uppercase tracking-widest">No signals have been dispatched yet.</p>
+                  <p className="text-sm font-bold">{t.adminPages.frequencyClear}</p>
+                  <p className="text-[10px] mt-1 uppercase tracking-widest">{t.adminPages.noSignalsDispatched}</p>
                 </div>
               ) : (
                 announcements.map((announcement) => {
@@ -310,7 +310,7 @@ export default function AdminAnnouncementsPage() {
                           onClick={() => handleDelete(announcement.id)}
                           disabled={deletingId === announcement.id}
                           className="w-8 h-8 rounded-lg bg-red-500/5 hover:bg-red-500/20 border border-transparent hover:border-red-500/20 text-neutral-500 hover:text-red-400 flex items-center justify-center transition-all disabled:opacity-50"
-                          title="Recall Broadcast"
+                          title={t.adminPages.recallBroadcast}
                         >
                           {deletingId === announcement.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14}/>}
                         </button>

@@ -160,7 +160,7 @@ export default function AdminAddStudentToClassPage() {
               </Link>
               
               <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
-                Enroll <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-purple-500">Student</span>
+                {t.teacherPages.enrollStudent} <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-purple-500">{t.common.profile}</span>
               </h1>
               <p className="text-sm text-neutral-400 font-medium max-w-lg">
                 Browse the directory or search by Name, Email, Phone, Father's Name, or Referral Code to quickly find and enroll a student.
@@ -172,7 +172,7 @@ export default function AdminAddStudentToClassPage() {
               <Search size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-rose-500" />
               <input 
                 type="text" 
-                placeholder="Search students..." 
+                placeholder={t.adminPages.findStudentPlaceholder} 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-[#030305]/60 border border-white/10 rounded-2xl py-4 pl-14 pr-4 text-sm text-white focus:border-rose-500 focus:bg-black focus:outline-none transition-all shadow-[0_0_20px_rgba(244,63,94,0.1)] placeholder:text-neutral-600"
@@ -185,13 +185,13 @@ export default function AdminAddStudentToClassPage() {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-4">
             <Loader2 size={40} className="animate-spin text-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.5)] rounded-full" />
-            <p className="text-xs font-black uppercase tracking-widest text-rose-500 animate-pulse">Loading Global Directory...</p>
+            <p className="text-xs font-black uppercase tracking-widest text-rose-500 animate-pulse">{t.adminPages.loadingStudentRecords}</p>
           </div>
         ) : (
           <div className="space-y-6">
             <div className="flex items-center gap-2 px-2">
               <Users size={18} className="text-rose-500" />
-              <h2 className="text-lg font-black text-white">Student Directory</h2>
+              <h2 className="text-lg font-black text-white">{t.adminStudents.title}</h2>
               <span className="bg-white/10 text-neutral-400 text-[10px] font-black px-2 py-0.5 rounded-md ml-2 border border-white/5">
                 {filteredStudents.length} Results
               </span>
@@ -200,8 +200,8 @@ export default function AdminAddStudentToClassPage() {
             {filteredStudents.length === 0 ? (
               <div className="text-center py-20 bg-[#0a0a0f]/80 border border-dashed border-white/10 rounded-[2.5rem] backdrop-blur-md">
                 <ShieldAlert size={48} className="mx-auto text-neutral-600 mb-4" />
-                <h3 className="text-xl font-black text-white mb-2">No Student Found</h3>
-                <p className="text-neutral-500 text-sm">No profiles match your current search query.</p>
+                <h3 className="text-xl font-black text-white mb-2">{t.adminStudents.noStudents}</h3>
+                <p className="text-neutral-500 text-sm">{t.adminStudents.noStudents}</p>
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -245,15 +245,15 @@ export default function AdminAddStudentToClassPage() {
                     {/* Meta Data Grid */}
                     <div className="grid grid-cols-2 gap-4 relative z-10">
                       <div className="space-y-1 col-span-2">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-neutral-600 flex items-center gap-1"><Mail size={10} className="text-rose-500/70"/> Email</p>
+                        <p className="text-[9px] font-black uppercase tracking-widest text-neutral-600 flex items-center gap-1"><Mail size={10} className="text-rose-500/70"/> {t.common.email}</p>
                         <p className="text-xs font-mono text-neutral-300 truncate" title={user.email}>{user.email}</p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-neutral-600 flex items-center gap-1"><Phone size={10} className="text-rose-500/70"/> Phone</p>
+                        <p className="text-[9px] font-black uppercase tracking-widest text-neutral-600 flex items-center gap-1"><Phone size={10} className="text-rose-500/70"/> {t.common.phone}</p>
                         <p className="text-xs font-mono text-neutral-300 truncate">{user.phone_number || 'N/A'}</p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-neutral-600 flex items-center gap-1"><BadgeCent size={10} className="text-rose-500/70"/> Referral</p>
+                        <p className="text-[9px] font-black uppercase tracking-widest text-neutral-600 flex items-center gap-1"><BadgeCent size={10} className="text-rose-500/70"/> {t.auth.referralCode}</p>
                         <p className="text-xs font-mono text-rose-400 truncate">{user.referral_code || 'None'}</p>
                       </div>
                     </div>
@@ -279,7 +279,7 @@ export default function AdminAddStudentToClassPage() {
                 )}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-black text-white truncate">Ready to Enroll: {selectedStudent.first_name} {selectedStudent.last_name}</p>
+                <p className="text-sm font-black text-white truncate">{t.adminClasses.readyToEnroll} {selectedStudent.first_name} {selectedStudent.last_name}</p>
                 <div className="flex items-center gap-3 mt-1.5">
                   <label className="flex items-center gap-2 cursor-pointer group">
                     <input 
@@ -289,7 +289,7 @@ export default function AdminAddStudentToClassPage() {
                       className="w-4 h-4 rounded border-white/20 text-rose-500 focus:ring-rose-500 bg-black cursor-pointer"
                     />
                     <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 group-hover:text-white transition-colors">
-                      Mark as <span className="text-emerald-400">PAID</span>
+                      {t.adminClasses.markAs} <span className="text-emerald-400">{t.adminFinance.paid}</span>
                     </span>
                   </label>
                 </div>
@@ -301,14 +301,14 @@ export default function AdminAddStudentToClassPage() {
                 onClick={() => setSelectedStudent(null)}
                 className="px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-neutral-300 transition-all flex-1 sm:flex-none"
               >
-                Cancel
+                {t.common.cancel}
               </button>
               <button 
                 onClick={handleEnrollStudent}
                 disabled={isEnrolling}
                 className="flex-1 sm:flex-none bg-rose-500 hover:bg-rose-600 text-white px-8 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(244,63,94,0.3)] border border-rose-500"
               >
-                {isEnrolling ? <Loader2 size={16} className="animate-spin" /> : <><UserPlus size={16} /> Confirm</>}
+                {isEnrolling ? <Loader2 size={16} className="animate-spin" /> : <><UserPlus size={16} /> {t.common.save}</>}
               </button>
             </div>
 

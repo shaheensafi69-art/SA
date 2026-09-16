@@ -207,7 +207,7 @@ export default function ClassStudentsManagePage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-fuchsia-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Roster...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.teacherPages.loadingAcademyRoster}</p>
       </div>
     );
   }
@@ -228,7 +228,7 @@ export default function ClassStudentsManagePage() {
               <ArrowLeft size={14} /> Back to Hub
             </Link>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white mb-2">
-              Class <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">Roster</span>
+              {t.teacherPages.classroomName} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">{t.teacherPages.roster}</span>
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium tracking-wide">
               Managing enrolled students for: <strong className="text-white bg-white/5 px-2 py-0.5 rounded-md ml-1">{className}</strong>
@@ -241,8 +241,8 @@ export default function ClassStudentsManagePage() {
           {enrolledStudents.length === 0 ? (
             <div className="col-span-full py-32 flex flex-col items-center justify-center bg-[#0a0a0f]/40 border border-white/5 rounded-[2.5rem] backdrop-blur-md shadow-2xl">
               <UserCircle size={64} className="text-neutral-700 mb-6" />
-              <h3 className="text-xl font-black text-white mb-2">No Students Found</h3>
-              <p className="text-neutral-500 text-sm">There are no students enrolled in this class yet.</p>
+              <h3 className="text-xl font-black text-white mb-2">{t.teacherPages.noStudentsFound}</h3>
+              <p className="text-neutral-500 text-sm">{t.teacherPages.noStudentsEnrolledDesc}</p>
             </div>
           ) : (
             enrolledStudents.map((student) => (
@@ -313,72 +313,72 @@ export default function ClassStudentsManagePage() {
                 
                 {/* Left Col: Profile Details */}
                 <div className="lg:col-span-2 space-y-6">
-                  <h3 className="text-sm font-black text-fuchsia-400 uppercase tracking-widest border-b border-white/5 pb-2">Student Information</h3>
+                  <h3 className="text-sm font-black text-fuchsia-400 uppercase tracking-widest border-b border-white/5 pb-2">{t.teacherPages.studentInformation}</h3>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
                       <Mail size={18} className="text-neutral-500" />
                       <div>
-                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Email</p>
+                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t.teacherPages.email}</p>
                         <p className="text-sm text-white font-mono">{selectedStudent.email}</p>
                       </div>
                     </div>
                     <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
                       <Phone size={18} className="text-neutral-500" />
                       <div>
-                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Phone</p>
+                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t.teacherPages.phone}</p>
                         <p className="text-sm text-white font-mono">{selectedStudent.phone_number}</p>
                       </div>
                     </div>
                     <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
                       <UserCheck size={18} className="text-neutral-500" />
                       <div>
-                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Father's Name</p>
+                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t.teacherPages.fatherName}</p>
                         <p className="text-sm text-white">{selectedStudent.father_name}</p>
                       </div>
                     </div>
                     <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
                       <Calendar size={18} className="text-neutral-500" />
                       <div>
-                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Date of Birth</p>
+                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t.teacherPages.dateOfBirth}</p>
                         <p className="text-sm text-white font-mono">{selectedStudent.date_of_birth}</p>
                       </div>
                     </div>
                     <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
                       <MapPin size={18} className="text-neutral-500" />
                       <div>
-                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Country</p>
+                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">{t.teacherPages.country}</p>
                         <p className="text-sm text-white">{selectedStudent.country}</p>
                       </div>
                     </div>
                     <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
                       <CreditCard size={18} className="text-emerald-500" />
                       <div>
-                        <p className="text-[10px] text-emerald-500 uppercase tracking-widest font-bold">Wallet Balance</p>
+                        <p className="text-[10px] text-emerald-500 uppercase tracking-widest font-bold">{t.teacherPages.walletBalance}</p>
                         <p className="text-sm text-emerald-400 font-mono">${selectedStudent.wallet_balance}</p>
                       </div>
                     </div>
                   </div>
 
                   <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-5">
-                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold mb-2">Biography</p>
+                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold mb-2">{t.teacherPages.biography}</p>
                     <p className="text-sm text-neutral-300 leading-relaxed">{selectedStudent.bio}</p>
                   </div>
                 </div>
 
                 {/* Right Col: Actions */}
                 <div className="space-y-6">
-                  <h3 className="text-sm font-black text-fuchsia-400 uppercase tracking-widest border-b border-white/5 pb-2">Cohort Actions</h3>
+                  <h3 className="text-sm font-black text-fuchsia-400 uppercase tracking-widest border-b border-white/5 pb-2">{t.teacherPages.cohortActions}</h3>
                   
                   {/* Score Form */}
                   <form onSubmit={handleAddScore} className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-5 space-y-4">
                     <div className="flex items-center justify-between">
-                      <p className="text-xs font-black text-amber-500 uppercase tracking-widest flex items-center gap-2"><Star size={14}/> Current Score</p>
+                      <p className="text-xs font-black text-amber-500 uppercase tracking-widest flex items-center gap-2"><Star size={14}/> {t.teacherPages.currentScore}</p>
                       <span className="text-xl font-black text-amber-400">{selectedStudent.total_score}</span>
                     </div>
                     <div className="relative">
                       <input 
-                        type="number" min="1" required placeholder="Add Points..."
+                        type="number" min="1" required placeholder={t.teacherPages.addPointsPlaceholder}
                         value={scoreToAdd} onChange={(e) => setScoreToAdd(e.target.value)}
                         className="w-full bg-black/60 border border-amber-500/20 rounded-xl px-4 py-3 text-amber-400 text-sm focus:outline-none focus:border-amber-500/50"
                       />
@@ -425,7 +425,7 @@ export default function ClassStudentsManagePage() {
               <div className="w-16 h-16 rounded-[1.2rem] bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4 shadow-[0_0_30px_rgba(52,211,153,0.2)]">
                 <UserCheck size={32} />
               </div>
-              <h3 className="text-xl font-black text-white">Log Attendance</h3>
+              <h3 className="text-xl font-black text-white">{t.teacherPages.logAttendance}</h3>
               <p className="text-xs sm:text-sm text-neutral-400 mt-2 font-medium leading-relaxed">
                 Mark attendance status for <strong className="text-emerald-400">{selectedStudent.first_name}</strong>.
               </p>
@@ -433,7 +433,7 @@ export default function ClassStudentsManagePage() {
 
             <form onSubmit={handleLogAttendance} className="space-y-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Session Date</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.sessionDate}</label>
                 <div className="relative">
                   <CalendarDays size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                   <input 
@@ -446,7 +446,7 @@ export default function ClassStudentsManagePage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Status</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.common?.status || "Status"}</label>
                 <div className="grid grid-cols-3 gap-2">
                   {["Present", "Late", "Absent"].map(status => (
                     <button
@@ -467,11 +467,11 @@ export default function ClassStudentsManagePage() {
               </div>
 
               <div className="space-y-2 pb-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">Notes (Optional)</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.teacherPages.notesOptional}</label>
                 <div className="relative">
                   <FileText size={16} className="absolute left-4 top-4 text-neutral-500" />
                   <textarea 
-                    rows={2} placeholder="Add a note..."
+                    rows={2} placeholder={t.teacherPages.addNotePlaceholder}
                     value={attendanceForm.notes} onChange={(e) => setAttendanceForm({...attendanceForm, notes: e.target.value})}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-emerald-500/50 resize-none custom-scrollbar"
                   />
@@ -479,7 +479,7 @@ export default function ClassStudentsManagePage() {
               </div>
 
               <div className="flex gap-3 pt-2 border-t border-white/5">
-                <button type="button" onClick={() => setIsAttendanceModalOpen(false)} className="flex-1 py-4 bg-white/5 hover:bg-white/10 text-neutral-400 rounded-xl text-xs font-black uppercase tracking-widest transition-colors active:scale-95">Cancel</button>
+                <button type="button" onClick={() => setIsAttendanceModalOpen(false)} className="flex-1 py-4 bg-white/5 hover:bg-white/10 text-neutral-400 rounded-xl text-xs font-black uppercase tracking-widest transition-colors active:scale-95">{t.teacherPages.cancel}</button>
                 <button type="submit" disabled={isLoggingAttendance} className="flex-[2] py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-[0_10px_20px_rgba(16,185,129,0.2)] disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95">
                   {isLoggingAttendance ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save
                 </button>

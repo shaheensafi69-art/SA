@@ -1,4 +1,5 @@
 "use client";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 import { useEffect, useState } from "react";
 import {  useParams , usePathname } from "next/navigation";
@@ -28,6 +29,10 @@ type FeedbackItem = {
 export default function StudentHonorProfilePage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
+
+  
   const params = useParams();
   const studentId = params.id as string;
 
@@ -155,7 +160,7 @@ export default function StudentHonorProfilePage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-amber-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Scholar Profile...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.publicPages.loadingScholarProfile}</p>
       </div>
     );
   }
@@ -163,8 +168,8 @@ export default function StudentHonorProfilePage() {
   if (!profile) {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center text-white">
-        <h2 className="text-2xl font-bold mb-4">Profile Not Found</h2>
-        <Link href={`/${currentLocale}/honors`} className="text-amber-500 hover:underline">Return to Wall of Fame</Link>
+        <h2 className="text-2xl font-bold mb-4">{t.publicPages.profileNotFound}</h2>
+        <Link href={`/${currentLocale}/honors`} className="text-amber-500 hover:underline">{t.publicPages.returnToWallOfFame}</Link>
       </div>
     );
   }
@@ -207,14 +212,14 @@ export default function StudentHonorProfilePage() {
               <div className="bg-black/40 border border-white/5 px-6 py-4 rounded-2xl flex items-center gap-4">
                 <Flame size={24} className="text-amber-500"/>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Academic Score</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">{t.publicPages.academicScore}</p>
                   <p className="text-2xl font-black text-white font-mono">{profile.total_score}</p>
                 </div>
               </div>
               <div className="bg-black/40 border border-white/5 px-6 py-4 rounded-2xl flex items-center gap-4">
                 <CalendarDays size={24} className="text-neutral-500"/>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Joined Academy</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">{t.publicPages.joinedAcademy}</p>
                   <p className="text-lg font-bold text-white">{new Date(profile.created_at).toLocaleDateString()}</p>
                 </div>
               </div>
@@ -233,7 +238,7 @@ export default function StudentHonorProfilePage() {
                 <GraduationCap size={20} className="text-emerald-400"/> Official Certifications
               </h3>
               {certificates.length === 0 ? (
-                <p className="text-sm text-neutral-500 italic">No certificates earned yet.</p>
+                <p className="text-sm text-neutral-500 italic">{t.publicPages.noCertificatesEarnedYet}</p>
               ) : (
                 <div className="space-y-4">
                   {certificates.map((cert, i) => (
@@ -252,7 +257,7 @@ export default function StudentHonorProfilePage() {
                 <Trophy size={20} className="text-amber-400"/> Honors & Medals
               </h3>
               {awards.length === 0 ? (
-                <p className="text-sm text-neutral-500 italic">Exploring paths to earn the first medal.</p>
+                <p className="text-sm text-neutral-500 italic">{t.publicPages.exploringFirstMedal}</p>
               ) : (
                 <div className="grid grid-cols-2 gap-4">
                   {awards.map((award, i) => (
@@ -280,8 +285,8 @@ export default function StudentHonorProfilePage() {
               {feedbacks.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-neutral-500 py-12">
                   <BookOpen size={48} className="mb-4 opacity-30"/>
-                  <p className="text-sm font-bold">This scholar's academic journey is just beginning.</p>
-                  <p className="text-xs mt-2">Check back later for verified instructor reviews.</p>
+                  <p className="text-sm font-bold">{t.publicPages.scholarJourneyBeginning}</p>
+                  <p className="text-xs mt-2">{t.publicPages.checkBackLaterInstructorReviews}</p>
                 </div>
               ) : (
                 <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/10 before:to-transparent">
@@ -312,7 +317,7 @@ export default function StudentHonorProfilePage() {
                             "{item.feedback}"
                           </p>
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Score / Grade:</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">{t.publicPages.scoreGrade}</span>
                             <span className="text-xs font-bold text-white bg-white/10 px-2 py-0.5 rounded">{item.score}</span>
                           </div>
                         </div>

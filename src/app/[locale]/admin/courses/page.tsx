@@ -64,7 +64,7 @@ export default function AdminCoursesPage() {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-violet-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">Loading Course Library...</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.loadingCourseLibrary}</p>
       </div>
     );
   }
@@ -87,7 +87,7 @@ export default function AdminCoursesPage() {
               <ArrowLeft size={14} /> Command Center
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
-              Course <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-500">Library</span>
+              {t.adminPages.courseLibrary}
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-xl">
               Manage existing educational programs or build new courses to expand your academy's offerings.
@@ -111,7 +111,7 @@ export default function AdminCoursesPage() {
             <div className="pl-4 text-neutral-500"><Search size={18} /></div>
             <input 
               type="text" 
-              placeholder="Search courses by title..."
+              placeholder={t.adminPages.searchCoursesPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-transparent border-none text-white text-sm focus:outline-none focus:ring-0 py-3 pr-4 font-medium placeholder:text-neutral-600"
@@ -122,7 +122,7 @@ export default function AdminCoursesPage() {
             <div className="bg-black/40 border border-white/5 px-5 py-3 rounded-2xl flex items-center gap-3 shadow-inner flex-1 sm:flex-none">
               <div className="w-8 h-8 bg-violet-500/10 rounded-lg flex items-center justify-center text-violet-400"><BookOpen size={16}/></div>
               <div>
-                <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">Total Courses</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">{t.adminPages.totalCourses}</p>
                 <p className="text-lg font-black text-white">{courses.length}</p>
               </div>
             </div>
@@ -133,8 +133,8 @@ export default function AdminCoursesPage() {
         {filteredCourses.length === 0 ? (
            <div className="text-center py-20 bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] backdrop-blur-md shadow-2xl">
              <ShieldAlert size={48} className="mx-auto text-neutral-600 mb-4" />
-             <h3 className="text-xl font-black text-white mb-2">No Courses Found</h3>
-             <p className="text-neutral-500 text-sm">Create your first course using the button above.</p>
+             <h3 className="text-xl font-black text-white mb-2">{t.adminPages.noCoursesFound}</h3>
+             <p className="text-neutral-500 text-sm">{t.adminPages.createFirstCourseDesc}</p>
            </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -174,13 +174,13 @@ export default function AdminCoursesPage() {
 
                   <div className="flex items-center justify-between pt-4 border-t border-white/5 mb-6">
                     <div className="flex flex-col">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-neutral-500 mb-1">Pricing</span>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-neutral-500 mb-1">{t.adminPages.pricing}</span>
                       <span className={`font-mono text-lg font-black tracking-tight ${course.price > 0 ? "text-emerald-400" : "text-amber-400"}`}>
                         {course.price > 0 ? `$${course.price}` : "FREE"}
                       </span>
                     </div>
                     <div className="flex flex-col text-right">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-neutral-500 mb-1">Created At</span>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-neutral-500 mb-1">{t.adminPages.createdAt}</span>
                       <span className="text-xs font-mono text-neutral-300">
                         {new Date(course.created_at).toLocaleDateString()}
                       </span>
