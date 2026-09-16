@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import {  useRouter , usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import Link from "next/link";
 import { Video, MessageCircle, Clock, Calendar, Users, MonitorPlay, Loader2, Layers, Activity, ArrowLeft, Settings2 } from "lucide-react";
 
@@ -22,6 +23,8 @@ type LiveClass = {
 export default function TeacherLiveClassesPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const router = useRouter();
   const [classGroups, setClassGroups] = useState<LiveClass[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -89,7 +92,7 @@ export default function TeacherLiveClassesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white animate-[fadeIn_0.5s_ease-out] relative overflow-hidden pb-32" dir="ltr">
+    <div className="min-h-screen bg-[#020202] text-white animate-[fadeIn_0.5s_ease-out] relative overflow-hidden pb-32" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* ================= BACKGROUND AMBIENT GLOWS ================= */}
       <div className="fixed top-[-10%] left-[-10%] w-[60vw] h-[60vw] bg-fuchsia-600/5 rounded-full blur-[160px] pointer-events-none z-0"></div>
@@ -105,13 +108,13 @@ export default function TeacherLiveClassesPage() {
             </div>
             <div>
               <Link href={`/${currentLocale}/teacher/courses`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
-                <ArrowLeft size={12} /> Dashboard
+                <ArrowLeft size={12} /> {t.teacherPages.commandCenter}
               </Link>
               <h1 className="text-3xl sm:text-5xl font-black tracking-tight mb-2">
-                Live <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-500">Streaming</span>
+                {t.liveClasses.title}
               </h1>
               <p className="text-xs sm:text-base text-neutral-400 font-medium max-w-md leading-relaxed tracking-wide">
-                Launch live lectures, manage active channels, and connect with your cohorts instantly.
+                {t.liveClasses.desc}
               </p>
             </div>
           </div>
@@ -121,12 +124,12 @@ export default function TeacherLiveClassesPage() {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-32 space-y-6">
             <Loader2 className="w-12 h-12 text-purple-500 animate-spin" />
-            <p className="text-neutral-500 text-xs font-black uppercase tracking-[0.3em] animate-pulse">Connecting Live Streams...</p>
+            <p className="text-neutral-500 text-xs font-black uppercase tracking-[0.3em] animate-pulse">{t.liveClasses.teamsProcessing}</p>
           </div>
         ) : classGroups.length === 0 ? (
           <div className="text-center py-24 sm:py-40 bg-white/[0.01] border border-dashed border-white/10 rounded-[3rem] backdrop-blur-md mx-2 sm:mx-0 shadow-2xl">
             <MonitorPlay size={64} className="text-neutral-700 mx-auto mb-6" />
-            <h3 className="text-2xl font-black text-white mb-4">No Live Broadcasts</h3>
+            <h3 className="text-2xl font-black text-white mb-4">{t.liveClasses.noLive}</h3>
             <p className="text-neutral-400 text-sm max-w-xs mx-auto leading-relaxed">You haven't scheduled any live cohorts yet. Go to your courses to initialize a class.</p>
           </div>
         ) : (

@@ -1,5 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -25,6 +26,8 @@ type Referral = {
 export default function WalletPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"transactions" | "referrals">("referrals");
   
@@ -156,7 +159,7 @@ export default function WalletPage() {
   };
 
   return (
-    <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-20 min-h-screen">
+    <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-20 min-h-screen" dir={isRtl ? "rtl" : "ltr"}>
       
       <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-emerald-600/10 rounded-full blur-[150px] pointer-events-none z-0 animate-pulse"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-amber-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
@@ -169,10 +172,10 @@ export default function WalletPage() {
           
           <div className="relative z-10">
             <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-3">
-              Wallet & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Assets</span>
+              {t.wallet.title}
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-xl leading-relaxed">
-              Manage your digital funds, track transactions, and earn instant cash bonuses by expanding the Safi network.
+              {t.wallet.subtitle}
             </p>
           </div>
 
@@ -182,7 +185,7 @@ export default function WalletPage() {
                 <UserPlus size={20} />
               </div>
               <div>
-                <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest">Invited By</p>
+                <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest">{t.wallet.invitedBy}</p>
                 <p className="text-sm font-bold text-white mt-1">{wallet.invitedBy}</p>
               </div>
             </div>
@@ -214,7 +217,7 @@ export default function WalletPage() {
 
               <div className="mb-10 relative z-10">
                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                  Available Balance
+                  {t.wallet.availableBalance}
                 </p>
                 <h2 className="text-5xl sm:text-6xl font-black text-white tracking-tight flex items-center gap-1">
                   <span className="text-emerald-500 opacity-80 text-4xl">$</span>

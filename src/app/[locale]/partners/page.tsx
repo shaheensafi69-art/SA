@@ -72,7 +72,7 @@ export default function EnglishPartnersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030307] text-white font-sans selection:bg-yellow-500/30 overflow-hidden relative" dir="ltr">
+    <div className="min-h-screen bg-[#030307] text-white font-sans selection:bg-yellow-500/30 overflow-hidden relative" >
       
       {/* ================= LUXURY AMBIENT BACKGROUND SYSTEM ================= */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">

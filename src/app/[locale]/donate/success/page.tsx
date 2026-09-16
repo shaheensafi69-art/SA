@@ -101,7 +101,7 @@ export default function DonationSuccessPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   return (
-    <main className="min-h-screen bg-[#050508] text-white font-sans selection:bg-yellow-500/30 overflow-hidden relative" dir="ltr">
+    <main className="min-h-screen bg-[#050508] text-white font-sans selection:bg-yellow-500/30 overflow-hidden relative" >
       {/* Background ambient lighting */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[60vw] h-[40vw] bg-yellow-600/10 rounded-full blur-[180px]"></div>

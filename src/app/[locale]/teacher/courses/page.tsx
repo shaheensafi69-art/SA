@@ -1,5 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -20,6 +21,8 @@ type ClassGroup = {
 export default function TeacherCoursesPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const [classGroups, setClassGroups] = useState<ClassGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -78,7 +81,7 @@ export default function TeacherCoursesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white animate-[fadeIn_0.5s_ease-out] relative overflow-hidden pb-32" dir="ltr">
+    <div className="min-h-screen bg-[#020202] text-white animate-[fadeIn_0.5s_ease-out] relative overflow-hidden pb-32" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* Background Ambient Glows */}
       <div className="fixed top-[-10%] left-[-10%] w-[60vw] h-[60vw] bg-fuchsia-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>

@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
 import {  useRouter , usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import { LineChart, Loader2, Search, ArrowUpRight, ArrowDownRight, Eye, X, Save, ShieldAlert, Star, MessageSquare, Image, Landmark } from "lucide-react";
 
 // شناسه ثابت کورس فارکس (فقط اساتید این دوره می‌توانند به ژورنال دسترسی داشته باشند)
@@ -37,6 +38,8 @@ type TradingJournal = {
 export default function TeacherTradingJournalDashboard() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [journals, setJournals] = useState<TradingJournal[]>([]);
@@ -217,7 +220,7 @@ export default function TeacherTradingJournalDashboard() {
   // UI 2: داشبورد اصلی ژورنال برای اساتید مجاز
   // ============================================================================
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-24" dir="ltr">
+    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-24" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* Background Neon Shadows */}
       <div className="fixed top-[-10%] left-[-10%] w-[60vw] h-[60vw] bg-purple-600/5 rounded-full blur-[160px] pointer-events-none z-0"></div>

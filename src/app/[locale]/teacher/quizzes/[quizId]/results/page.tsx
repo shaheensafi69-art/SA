@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
 import {  useParams, useRouter , usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import Link from "next/link";
 import { ArrowLeft, Loader2, FileText, CheckCircle2, XCircle, Users, Target, Clock, ShieldAlert, X, Edit3, Save, AlertCircle } from "lucide-react";
 
@@ -43,6 +44,8 @@ type StudentAnswer = {
 export default function TeacherQuizResultsPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const params = useParams();
   const router = useRouter();
   const quizId = params.quizId as string;
@@ -239,7 +242,7 @@ export default function TeacherQuizResultsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32" dir="ltr">
+    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32" dir={isRtl ? "rtl" : "ltr"}>
       
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-fuchsia-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
       <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>

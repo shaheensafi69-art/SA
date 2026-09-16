@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
 import {  useRouter , usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import Link from "next/link";
 import { Users, Search, Loader2, ShieldAlert, ArrowLeft, Mail, Phone, MapPin, Calendar, CreditCard, UserCheck, FileText, X, Star, Eye } from "lucide-react";
 
@@ -26,6 +27,8 @@ type StudentProfile = {
 export default function TeacherAllStudentsPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [students, setStudents] = useState<StudentProfile[]>([]);
@@ -150,7 +153,7 @@ export default function TeacherAllStudentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-24" dir="ltr">
+    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-24" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* Background Ambient Glows */}
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-fuchsia-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>

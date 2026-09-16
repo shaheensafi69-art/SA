@@ -87,7 +87,7 @@ export default function ShaheenSafiExecutiveDossier() {
   return (
     <div 
       className="min-h-screen bg-[#030307] text-white font-sans overflow-x-hidden selection:bg-yellow-500 selection:text-black" 
-      dir="ltr" 
+       
       onMouseMove={handleMouseMove}
     >
       {/* ================= BACKGROUND COSMIC SYSTEM ================= */}

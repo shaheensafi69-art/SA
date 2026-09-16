@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import { createClient } from "@/utils/supabase/client";
 import { MessageSquare, ExternalLink, Search, Globe, User, ShieldCheck } from "lucide-react";
 
@@ -17,6 +18,8 @@ type GroupCard = {
 export default function MyGroupsPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const router = useRouter();
   const [groups, setGroups] = useState<GroupCard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -138,7 +141,7 @@ export default function MyGroupsPage() {
   const filteredGroups = groups.filter(g => g.class_name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-8 lg:p-12 relative overflow-hidden font-sans" dir="ltr">
+    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-8 lg:p-12 relative overflow-hidden font-sans" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* Background Lighting Effects */}
       <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
@@ -150,10 +153,10 @@ export default function MyGroupsPage() {
         <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div>
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white">
-              Safi <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-amber-400">Community</span>
+              {t.groups.title}
             </h1>
             <p className="text-neutral-500 text-sm md:text-base font-medium mt-3 max-w-lg">
-              Experience real-time encrypted connection. Access your official classroom operations pipelines on Signal directly.
+              {t.groups.subtitle}
             </p>
           </div>
           
@@ -163,7 +166,7 @@ export default function MyGroupsPage() {
               type="text" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search active channels..." 
+              placeholder={t.groups.searchPlaceholder} 
               className="relative w-full bg-neutral-900/80 border border-white/10 rounded-[1.2rem] pl-12 pr-4 py-4 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all backdrop-blur-md"
             />
             <svg className="w-5 h-5 text-neutral-500 absolute left-4 top-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -180,7 +183,7 @@ export default function MyGroupsPage() {
           ) : filteredGroups.length === 0 ? (
             <div className="bg-neutral-900/20 border border-white/5 border-dashed rounded-[3rem] py-32 text-center">
                <span className="text-7xl block mb-6 opacity-20">💬</span>
-               <h3 className="text-2xl font-black text-white">No Enrolled Channels</h3>
+               <h3 className="text-2xl font-black text-white">{t.groups.noGroups}</h3>
                <p className="text-neutral-500 max-w-xs mx-auto mt-2">Join an active course curriculum to unlock your priority workspace sector.</p>
             </div>
           ) : (

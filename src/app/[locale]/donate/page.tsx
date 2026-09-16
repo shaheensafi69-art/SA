@@ -242,7 +242,7 @@ export default function EnglishDonatePage() {
   return (
     <div
       className="min-h-screen bg-[#040408] text-white font-sans selection:bg-amber-500/30 overflow-hidden relative"
-      dir="ltr"
+      
     >
       {/* Dynamic Background Ambient Glow */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">

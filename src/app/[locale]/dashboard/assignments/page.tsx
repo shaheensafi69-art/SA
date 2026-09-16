@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
 import { 
@@ -35,6 +36,8 @@ type AssignmentItem = {
 export default function StudentHubPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [assignments, setAssignments] = useState<AssignmentItem[]>([]);
@@ -219,7 +222,7 @@ export default function StudentHubPage() {
   };
 
   return (
-    <div className="w-full relative overflow-x-hidden overflow-y-auto bg-[#030305] font-sans pb-24 lg:pb-12 min-h-screen custom-scrollbar" dir="ltr">
+    <div className="w-full relative overflow-x-hidden overflow-y-auto bg-[#030305] font-sans pb-24 lg:pb-12 min-h-screen custom-scrollbar" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* ================= BACKGROUND GLOWS ================= */}
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-amber-500/5 rounded-full blur-[140px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '8s' }}></div>
@@ -228,9 +231,9 @@ export default function StudentHubPage() {
       {/* ================= HEADER ================= */}
       <header className="px-4 sm:px-8 pt-8 sm:pt-10 flex flex-col gap-2 relative z-10 mb-8 sm:mb-10 max-w-[85rem] mx-auto">
         <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-          Student <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">Hub</span>
+          {t.assignments.title}
         </h1>
-        <p className="text-neutral-500 text-xs sm:text-sm font-medium max-w-xl">Sign today's attendance, submit your homework, and track your academic progress smoothly.</p>
+        <p className="text-neutral-500 text-xs sm:text-sm font-medium max-w-xl">{t.assignments.subtitle}</p>
       </header>
 
       <div className="px-4 sm:px-8 max-w-[85rem] mx-auto relative z-10 space-y-8 sm:space-y-12">
@@ -244,8 +247,8 @@ export default function StudentHubPage() {
               <ClipboardCheck size={24} />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">Today's Check-in</h2>
-              <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest mt-1">Live Classes Roster</p>
+              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">{t.assignments.todaysCheckin}</h2>
+              <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest mt-1">{t.assignments.liveRoster}</p>
             </div>
           </div>
 
@@ -281,7 +284,7 @@ export default function StudentHubPage() {
 
                   {cls.already_signed ? (
                     <div className="flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500/10 text-emerald-400 rounded-xl text-[11px] font-black uppercase tracking-widest border border-emerald-500/20 shadow-lg w-full sm:w-auto">
-                      <CheckCircle2 size={16} /> Signed In
+                      <CheckCircle2 size={16} /> {t.assignments.attended}
                     </div>
                   ) : (
                     <button 
@@ -292,7 +295,7 @@ export default function StudentHubPage() {
                       {signingId === cls.id ? (
                         <><Loader2 size={16} className="animate-spin"/> Processing...</>
                       ) : (
-                        <><ClipboardCheck size={16} /> Sign Now</>
+                        <><ClipboardCheck size={16} /> {t.assignments.signAttendance}</>
                       )}
                     </button>
                   )}
@@ -304,7 +307,7 @@ export default function StudentHubPage() {
               <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-neutral-600 mb-2">
                 <CalendarDays size={20} />
               </div>
-              <p className="text-neutral-400 text-sm font-bold tracking-wide">No live classes scheduled for today.</p>
+              <p className="text-neutral-400 text-sm font-bold tracking-wide">{t.liveClasses.noScheduled}</p>
               <p className="text-neutral-600 text-xs">Take a break or review your pending assignments.</p>
             </div>
           )}
@@ -318,7 +321,7 @@ export default function StudentHubPage() {
                 <FileText size={20} />
               </div>
               <div>
-                <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">Homework & Projects</h2>
+                <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">{t.assignments.courseAssignments}</h2>
                 <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest mt-1">Academic Tasks</p>
               </div>
             </div>
@@ -398,9 +401,9 @@ export default function StudentHubPage() {
                           className="w-full py-3.5 flex items-center justify-center gap-2 bg-[#C2185B] hover:bg-pink-700 text-white rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-[0_0_15px_rgba(194,24,91,0.3)] disabled:opacity-50 disabled:hover:scale-100"
                         >
                           {uploadingId === task.id ? (
-                            <><Loader2 size={16} className="animate-spin" /> Uploading...</>
+                            <><Loader2 size={16} className="animate-spin" /> {t.assignments.uploading}</>
                           ) : (
-                            <><UploadCloud size={16} /> Submit Assignment</>
+                            <><UploadCloud size={16} /> {t.assignments.submitHomework}</>
                           )}
                         </button>
                       </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { Megaphone, BellRing, CalendarDays, Clock, Info, ShieldAlert } from "lucide-react";
@@ -18,6 +19,8 @@ type Announcement = {
 export default function AnnouncementsPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -61,7 +64,7 @@ export default function AnnouncementsPage() {
   }, []);
 
   return (
-    <div className="w-full relative overflow-x-hidden overflow-y-auto bg-[#030305] font-sans pb-24 lg:pb-12 min-h-screen custom-scrollbar">
+    <div className="w-full relative overflow-x-hidden overflow-y-auto bg-[#030305] font-sans pb-24 lg:pb-12 min-h-screen custom-scrollbar" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* ================= BACKGROUND GLOW EFFECTS ================= */}
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '8s' }}></div>
@@ -73,16 +76,16 @@ export default function AnnouncementsPage() {
         <header className="bg-[#0a0a0f]/80 p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] border border-white/5 backdrop-blur-xl shadow-2xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none transition-all duration-700"></div>
           
-          <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 text-center sm:text-left">
+          <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 text-center sm:text-start">
             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-indigo-500/20 to-blue-500/10 rounded-[1.2rem] sm:rounded-3xl flex items-center justify-center border border-indigo-500/30 shadow-inner shrink-0 group-hover:scale-105 transition-transform duration-500">
               <Megaphone className="w-8 h-8 sm:w-10 sm:h-10 text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
             </div>
             <div className="flex-1">
               <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white mb-2 sm:mb-3">
-                Official <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-400">Announcements</span>
+                {t.announcements.title}
               </h1>
               <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-2xl leading-relaxed">
-                Stay updated with the latest news, system upgrades, live class schedules, and important notices directly from Safi Academy administration.
+                {t.announcements.subtitle}
               </p>
             </div>
           </div>
@@ -127,7 +130,7 @@ export default function AnnouncementsPage() {
                     
                     {/* Header (عنوان و تگ‌ها) */}
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                      <div className="flex-1 pr-0 sm:pr-8">
+                      <div className="flex-1 pr-0 sm:pr-8 rtl:sm:pr-0 rtl:sm:pl-8">
                         <div className="flex items-center gap-3 mb-2 sm:mb-3">
                           <h2 className="text-lg sm:text-2xl font-black text-white leading-tight">
                             {announcement.title}
@@ -167,7 +170,7 @@ export default function AnnouncementsPage() {
                     {/* فوتر کارت (نقش هدف) */}
                     <div className="mt-2 flex items-center gap-2 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-neutral-500 bg-white/5 w-fit px-3 py-1.5 rounded-lg border border-white/5">
                       <Info size={12} className="text-indigo-400" />
-                      Target Audience: <span className="text-white">{announcement.target_role === "all" ? "Entire Academy" : announcement.target_role}</span>
+                      {t.announcements.targetAudience}: <span className="text-white">{announcement.target_role === "all" ? "{t.announcements.entireAcademy}" : announcement.target_role}</span>
                     </div>
 
                   </div>
@@ -180,9 +183,9 @@ export default function AnnouncementsPage() {
               <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/5 rounded-full flex items-center justify-center mb-5 sm:mb-6 shadow-inner border border-white/10">
                 <BellRing className="w-8 h-8 sm:w-10 sm:h-10 text-neutral-600" />
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-white mb-2">No Announcements Yet</h2>
+              <h2 className="text-xl sm:text-2xl font-black text-white mb-2">{t.announcements.noAnnouncements}</h2>
               <p className="text-neutral-500 text-xs sm:text-sm max-w-sm leading-relaxed">
-                You're all caught up! Any future updates, scheduled maintenance, or news from the administration will appear here.
+                {t.announcements.noAnnouncementsDesc}
               </p>
             </div>
           )}

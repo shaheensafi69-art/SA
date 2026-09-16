@@ -1,5 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -20,6 +21,8 @@ type StudentProfile = {
 export default function ManageStudentsPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const [isLoading, setIsLoading] = useState(true);
   const [students, setStudents] = useState<StudentProfile[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -119,7 +122,7 @@ export default function ManageStudentsPage() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir="ltr">
+    <div className="w-full min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* Background Ambience (Emerald/Teal for Students) */}
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-emerald-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
@@ -133,13 +136,13 @@ export default function ManageStudentsPage() {
           
           <div>
             <Link href={`/${currentLocale}/admin`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-emerald-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
-              <ArrowLeft size={14} /> Command Center
+              <ArrowLeft size={14} /> {t.adminStudents.commandCenter}
             </Link>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
-              Student <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Registry</span>
+              {t.adminStudents.title}
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-xl">
-              Manage enrolled students, monitor their academic points, and handle their financial wallet balances globally.
+              {t.adminStudents.subtitle}
             </p>
           </div>
 
@@ -148,14 +151,14 @@ export default function ManageStudentsPage() {
             <div className="bg-black/40 border border-white/5 px-5 py-3 rounded-2xl flex items-center gap-3">
               <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-400"><Users size={18}/></div>
               <div>
-                <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">Total Users</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">{t.adminStudents.totalUsers}</p>
                 <p className="text-xl font-black text-white">{stats.total}</p>
               </div>
             </div>
             <div className="bg-black/40 border border-white/5 px-5 py-3 rounded-2xl flex items-center gap-3 hidden sm:flex">
               <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-400"><Wallet size={18}/></div>
               <div>
-                <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">Total Funds</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">{t.adminStudents.totalFunds}</p>
                 <p className="text-xl font-black text-emerald-400">${stats.totalWalletFunds.toLocaleString()}</p>
               </div>
             </div>
@@ -167,7 +170,7 @@ export default function ManageStudentsPage() {
           <div className="pl-4 text-neutral-500"><Search size={18} /></div>
           <input 
             type="text" 
-            placeholder="Search student by name, email..."
+            placeholder={t.adminStudents.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-transparent border-none text-white text-sm focus:outline-none focus:ring-0 py-3 pr-4 font-medium placeholder:text-neutral-600"

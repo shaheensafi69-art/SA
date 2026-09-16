@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import {  useRouter , usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import { uploadFileToR2 } from "@/utils/upload";
 import {
     GraduationCap,
@@ -22,6 +23,8 @@ import { createClient } from "@/utils/supabase/client";
 export default function CreateScholarshipPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
     const router = useRouter();
     const supabase = createClient();
     const fileInputRef = useRef<HTMLInputElement>(null);

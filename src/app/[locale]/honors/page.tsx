@@ -86,7 +86,7 @@ export default function WallOfFamePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white pt-24 pb-32 relative overflow-hidden" dir="ltr">
+    <div className="min-h-screen bg-[#020202] text-white pt-24 pb-32 relative overflow-hidden" >
       {/* Background Ambience */}
       <div className="absolute top-[-10%] left-[10%] w-[50vw] h-[50vw] bg-amber-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
       <div className="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] bg-orange-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>

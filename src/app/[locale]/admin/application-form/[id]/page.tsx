@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import {  useParams, useRouter , usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import Link from "next/link";
 import {
   GraduationCap,
@@ -61,6 +62,8 @@ interface InstructorApplication {
 export default function AdminApplicationDetailPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;

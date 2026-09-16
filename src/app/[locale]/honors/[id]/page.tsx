@@ -170,7 +170,7 @@ export default function StudentHonorProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white pt-24 pb-32 relative overflow-hidden" dir="ltr">
+    <div className="min-h-screen bg-[#020202] text-white pt-24 pb-32 relative overflow-hidden" >
       {/* Background Ambience */}
       <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-amber-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
       

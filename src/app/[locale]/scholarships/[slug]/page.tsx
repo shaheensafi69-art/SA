@@ -102,7 +102,7 @@ export default function EnglishScholarshipDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050508] text-white font-sans pb-32 overflow-hidden selection:bg-yellow-500/30" dir="ltr">
+    <div className="min-h-screen bg-[#050508] text-white font-sans pb-32 overflow-hidden selection:bg-yellow-500/30" >
       
       {/* ================= BACKGROUND EFFECTS ================= */}
       <div className="fixed inset-0 z-0 pointer-events-none">

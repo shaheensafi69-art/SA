@@ -1,5 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -57,6 +58,8 @@ interface InstructorApplication {
 export default function AdminApplicationFormPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const [applications, setApplications] = useState<InstructorApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>("all");

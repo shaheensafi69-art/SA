@@ -72,7 +72,7 @@ export default function SahelSalemExecutiveDossier() {
   return (
     <div 
       className="min-h-screen bg-[#030307] text-white font-sans overflow-x-hidden selection:bg-emerald-500 selection:text-black" 
-      dir="ltr" 
+       
       onMouseMove={handleMouseMove}
     >
       {/* ================= BACKGROUND COSMIC SYSTEM ================= */}

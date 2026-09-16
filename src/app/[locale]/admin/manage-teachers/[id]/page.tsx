@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {  useParams, useRouter , usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, ArrowLeft, Mail, Wallet, BookOpen, Users, CheckCircle2, AlertCircle, TrendingUp, History, CreditCard, Award, X, ShieldAlert } from "lucide-react";
@@ -36,6 +37,8 @@ type PayoutTransaction = {
 export default function TeacherProfileAdminPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const params = useParams();
   const router = useRouter();
   const teacherId = params.id as string;
@@ -205,7 +208,7 @@ export default function TeacherProfileAdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir="ltr">
+    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* Background Ambience */}
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>

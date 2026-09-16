@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import {  useParams, useRouter , usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import Link from "next/link";
 import { Video, MessageCircle, Clock, Calendar, Users, Loader2, ArrowLeft, ExternalLink, User, ShieldCheck, Layers, BadgeAlert, Settings, GraduationCap, FileText, FolderArchive } from "lucide-react";
 
@@ -29,6 +30,8 @@ type LiveClassDetails = {
 export default function LiveClassDetailsPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const params = useParams();
   const router = useRouter();
   
@@ -135,7 +138,7 @@ export default function LiveClassDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white animate-[fadeIn_0.4s_ease-out] relative overflow-hidden pb-32" dir="ltr">
+    <div className="min-h-screen bg-[#020202] text-white animate-[fadeIn_0.4s_ease-out] relative overflow-hidden pb-32" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* ================= BACKGROUND AMBIENT GLOWS ================= */}
       <div className="fixed top-[-10%] left-[-10%] w-[60vw] h-[60vw] bg-purple-600/10 rounded-full blur-[160px] pointer-events-none z-0"></div>
@@ -225,7 +228,7 @@ export default function LiveClassDetailsPage() {
             </div>
           </div>
 
-          {/* Right Col: Counter Dashboard */}
+          {/* Right Col: Counter {t.teacherPages.commandCenter} */}
           <div className="bg-gradient-to-b from-[#0a0a0f] to-[#050508] border border-white/5 rounded-[2.5rem] p-6 sm:p-8 text-center flex flex-col items-center justify-center relative overflow-hidden shadow-2xl h-full min-h-[250px]">
             <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 blur-[50px] pointer-events-none"></div>
             <div className="w-20 h-20 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-3xl flex items-center justify-center mb-6 shadow-inner relative z-10">

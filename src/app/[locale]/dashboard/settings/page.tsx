@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
@@ -23,6 +24,8 @@ type UserProfile = {
 export default function SettingsPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -220,7 +223,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-12">
+    <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-12" dir={isRtl ? "rtl" : "ltr"}>
 
       {/* ================= پس‌زمینه نوری زنده ================= */}
       <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-amber-600/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
@@ -229,9 +232,9 @@ export default function SettingsPage() {
       {/* ================= Header ================= */}
       <header className="px-6 md:px-12 pt-8 md:pt-12 flex flex-col gap-2 relative z-10 mb-8">
         <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-          Account <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500">Settings</span>
+          {t.settings.title}
         </h1>
-        <p className="text-neutral-500 text-sm md:text-base font-medium max-w-xl">Customize your identity, secure your data, and manage preferences.</p>
+        <p className="text-neutral-500 text-sm md:text-base font-medium max-w-xl">{t.settings.subtitle}</p>
       </header>
 
       {/* ================= نوتیفیکیشن شناور (Dynamic Toast) ================= */}
@@ -250,7 +253,7 @@ export default function SettingsPage() {
         <div className="w-full md:w-80 shrink-0">
           {/* ساختار کاملاً عمودی (flex-col) برای تمام دستگاه‌ها */}
           <div className="flex flex-col bg-neutral-900/40 backdrop-blur-2xl p-3 rounded-[2.5rem] border border-white/5 shadow-2xl space-y-2 md:sticky md:top-32 animate-[fadeIn_0.3s_ease-out]">
-            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] px-4 pt-4 pb-2">Settings Menu</p>
+            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] px-4 pt-4 pb-2">{t.settings.menu}</p>
 
             <button
               onClick={() => setActiveTab("profile")}
@@ -259,7 +262,7 @@ export default function SettingsPage() {
                 : "text-neutral-400 hover:bg-white/5 hover:text-white"
                 }`}
             >
-              <span className="text-xl">👤</span> Personal Info
+              <span className="text-xl">👤</span> {t.settings.personalInfo}
             </button>
 
             <button

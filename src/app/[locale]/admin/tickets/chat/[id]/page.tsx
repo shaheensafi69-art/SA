@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import {  useRouter , usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
 import {
@@ -28,6 +29,8 @@ type TicketInfo = {
 export default function AdminTicketChatScreen({ params }: { params: { id: string } }) {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const router = useRouter();
   const supabase = createClient();
   const scrollRef = useRef<HTMLDivElement>(null);

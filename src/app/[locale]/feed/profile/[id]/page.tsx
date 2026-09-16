@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { uploadFileToR2 } from "@/utils/upload";
 import AuthRequiredModal from "@/components/feed/AuthRequiredModal";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 // ================= TYPES =================
 interface ProfileData {
@@ -101,6 +102,8 @@ interface StreakItem {
 export default function UserProfilePage({ params }: { params: { id: string } }) {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const router = useRouter();
   const supabase = createClient();
   const targetUserId = params.id;
@@ -314,8 +317,8 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
   if (!profileData) {
     return (
       <div className="w-full h-[80vh] flex flex-col items-center justify-center">
-        <h2 className="text-2xl font-black text-white">Profile Not Found</h2>
-        <Link href={`/${currentLocale}/feed`} className="mt-4 text-[#C2185B] hover:underline font-bold">Return to Feed</Link>
+        <h2 className="text-2xl font-black text-white">{t.profile.notFound}</h2>
+        <Link href={`/${currentLocale}/feed`} className="mt-4 text-[#C2185B] hover:underline font-bold">{t.profile.returnFeed}</Link>
       </div>
     );
   }
@@ -324,15 +327,17 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
   const isFaculty = profileData.role === 'teacher' || profileData.role === 'admin' || profileData.role === 'super_admin';
 
   return (
-    <div className="w-full max-w-[85rem] mx-auto pb-24 pt-4 sm:pt-0 font-sans relative min-h-screen bg-[#030305]">
+    <div dir={t.dir} className="w-full max-w-[85rem] mx-auto pb-24 pt-4 sm:pt-0 font-sans relative min-h-screen bg-[#030305]">
 
       <div className="hidden sm:flex items-center gap-4 px-8 py-6">
         <button onClick={() => router.back()} className="w-12 h-12 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-white hover:border-white/20 transition-all shadow-lg">
-          <ArrowLeft size={20} />
+          <ArrowLeft size={20} className={isRtl ? "rotate-180" : ""} />
         </button>
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Academy Profile</h1>
-          <p className="text-xs text-[#C2185B] font-bold mt-1 uppercase tracking-widest">{profileData.role.replace('_', ' ')}</p>
+          <h1 className="text-3xl font-black text-white tracking-tight">{t.profile.academyProfile}</h1>
+          <p className="text-xs text-[#C2185B] font-bold mt-1 uppercase tracking-widest">
+            {profileData.role === 'student' ? t.profile.student : profileData.role === 'teacher' ? t.profile.instructor : profileData.role === 'admin' ? t.profile.admin : profileData.role.replace('_', ' ')}
+          </p>
         </div>
       </div>
 
@@ -359,16 +364,16 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
 
             {/* Upload Cover Photo Button (Only for Profile Owner) */}
             {isMyProfile && (
-              <label className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 px-3.5 py-2 sm:px-4 sm:py-2 bg-black/60 hover:bg-black/85 backdrop-blur-md border border-white/20 hover:border-[#C2185B] rounded-2xl flex items-center gap-2 text-white text-xs font-bold transition-all cursor-pointer shadow-xl hover:scale-105 active:scale-95">
+              <label className={`absolute top-4 ${isRtl ? "left-4 sm:left-6" : "right-4 sm:right-6"} z-20 px-3.5 py-2 sm:px-4 sm:py-2 bg-black/60 hover:bg-black/85 backdrop-blur-md border border-white/20 hover:border-[#C2185B] rounded-2xl flex items-center gap-2 text-white text-xs font-bold transition-all cursor-pointer shadow-xl hover:scale-105 active:scale-95`}>
                 {isUploadingCover ? (
                   <>
                     <div className="w-4 h-4 border-2 border-[#C2185B] border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-[11px] sm:text-xs">Uploading...</span>
+                    <span className="text-[11px] sm:text-xs">{t.profile.uploading}</span>
                   </>
                 ) : (
                   <>
                     <Camera size={16} className="text-[#C2185B]" />
-                    <span className="text-[11px] sm:text-xs font-semibold">Change Cover</span>
+                    <span className="text-[11px] sm:text-xs font-semibold">{t.profile.changeCover}</span>
                   </>
                 )}
                 <input
@@ -383,7 +388,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
           </div>
 
           <div className="px-5 sm:px-10 relative z-10 -mt-12 sm:-mt-20">
-            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6 text-center sm:text-left">
+            <div className={`flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6 text-center ${isRtl ? "sm:text-right" : "sm:text-left"}`}>
 
               {/* Avatar */}
               <div className="relative">
@@ -413,17 +418,17 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                 <div className="flex items-center justify-center sm:justify-start gap-2 sm:gap-6 mt-2 w-full">
                   <div className="flex-1 sm:flex-none flex flex-col items-center sm:flex-row sm:gap-2 bg-white/5 sm:bg-transparent border sm:border-0 border-white/5 py-2 sm:py-0 rounded-xl">
                     <span className="text-lg sm:text-xl font-black text-white">{friendsCount}</span>
-                    <span className="text-[9px] sm:text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Network</span>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t.profile.network}</span>
                   </div>
                   {!isFaculty && (
                     <div className="flex-1 sm:flex-none flex flex-col items-center sm:flex-row sm:gap-2 bg-[#C2185B]/10 sm:bg-transparent border sm:border-0 border-[#C2185B]/20 py-2 sm:py-0 rounded-xl">
                       <span className="text-lg sm:text-xl font-black text-[#C2185B]">{profileData.total_score || 0}</span>
-                      <span className="text-[9px] sm:text-[10px] font-bold text-[#C2185B]/70 uppercase tracking-widest">Score</span>
+                      <span className="text-[9px] sm:text-[10px] font-bold text-[#C2185B]/70 uppercase tracking-widest">{t.profile.score}</span>
                     </div>
                   )}
                   <div className="flex-1 sm:flex-none flex flex-col items-center sm:flex-row sm:gap-2 bg-white/5 sm:bg-transparent border sm:border-0 border-white/5 py-2 sm:py-0 rounded-xl">
                     <span className="text-lg sm:text-xl font-black text-white">{posts.length}</span>
-                    <span className="text-[9px] sm:text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Posts</span>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t.profile.posts}</span>
                   </div>
                 </div>
               </div>
@@ -442,10 +447,10 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                   >
                     {isActionLoading ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div> : (
                       <>
-                        {friendshipStatus === 'friends' && <><span className="group-hover:hidden flex items-center gap-2"><UserCheck size={16} /> Connected</span> <span className="hidden group-hover:flex items-center gap-2"><UserMinus size={16} /> Remove</span></>}
-                        {friendshipStatus === 'pending_sent' && <><Clock size={16} /> Pending</>}
-                        {friendshipStatus === 'pending_received' && <><UserPlus size={16} /> Accept</>}
-                        {friendshipStatus === 'none' && <><UserPlus size={16} /> Connect</>}
+                        {friendshipStatus === 'friends' && <><span className="group-hover:hidden flex items-center gap-2"><UserCheck size={16} /> {t.profile.connected}</span> <span className="hidden group-hover:flex items-center gap-2"><UserMinus size={16} /> {t.feed.delete}</span></>}
+                        {friendshipStatus === 'pending_sent' && <><Clock size={16} /> {t.profile.requestSent}</>}
+                        {friendshipStatus === 'pending_received' && <><UserPlus size={16} /> {t.profile.acceptRequest}</>}
+                        {friendshipStatus === 'none' && <><UserPlus size={16} /> {t.profile.connect}</>}
                       </>
                     )}
                   </button>
@@ -456,7 +461,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                       href={`/${currentLocale}/feed/chats/screen?userId=${targetUserId}`}
                       className="px-6 py-3.5 sm:py-4 bg-gradient-to-r from-pink-600 to-[#C2185B] text-white border border-pink-500/40 rounded-2xl flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest shadow-[0_0_20px_rgba(194,24,91,0.4)] hover:scale-105 transition-all"
                     >
-                      <MessageSquare size={16} /> Message
+                      <MessageSquare size={16} /> {t.feed.messages}
                     </Link>
                   )}
                 </div>
@@ -473,11 +478,11 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
           <div className="lg:col-span-4 xl:col-span-3 space-y-6 lg:sticky lg:top-8">
             <div className="bg-[#0a0a0f]/80 sm:border border-white/10 p-5 sm:p-8 rounded-3xl sm:rounded-[2.5rem] backdrop-blur-md sm:shadow-xl">
               <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-widest mb-4 flex items-center gap-2">
-                <UserCheck size={16} className="text-[#C2185B]" /> Biography
+                <UserCheck size={16} className="text-[#C2185B]" /> {t.profile.biography}
               </h3>
               <div className="mb-6 bg-white/5 p-4 rounded-2xl border border-white/5">
                 <p className={`text-neutral-300 text-sm leading-relaxed whitespace-pre-wrap transition-all ${!isBioExpanded ? 'line-clamp-3' : ''}`}>
-                  {profileData.bio || "No biography provided yet."}
+                  {profileData.bio || t.profile.noBio}
                 </p>
                 {profileData.bio && profileData.bio.length > 90 && (
                   <button
@@ -491,8 +496,8 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
               </div>
 
               <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
-                <InfoRow icon={<Globe size={16} />} label="Location" value={profileData.country || "Global"} />
-                <InfoRow icon={<Calendar size={16} />} label="Joined" value={new Date(profileData.created_at).toLocaleDateString()} />
+                <InfoRow icon={<Globe size={16} />} label={t.profile.location} value={profileData.country || "Global"} />
+                <InfoRow icon={<Calendar size={16} />} label={t.profile.joined} value={new Date(profileData.created_at).toLocaleDateString()} />
                 {streak && streak.current_streak > 0 && (
                   <InfoRow icon={<Flame size={16} />} label="Streak" value={`${streak.current_streak} Days`} />
                 )}
@@ -519,10 +524,10 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
             {/* TABS */}
             <div className="sticky top-0 sm:top-0 z-30 flex overflow-x-auto scrollbar-hide gap-2 p-1.5 bg-[#0a0a0f]/90 backdrop-blur-xl sm:border border-white/5 sm:rounded-2xl -mx-4 px-4 sm:mx-0 sm:px-1.5 shadow-md sm:shadow-none">
               {[
-                { id: 'posts', label: 'Posts', icon: <MessageSquare size={16} /> },
-                { id: 'reels', label: 'Reels', icon: <Video size={16} /> },
-                { id: 'learning', label: 'Learning', icon: <BookOpen size={16} /> },
-                { id: 'achievements', label: 'Awards', icon: <Award size={16} /> },
+                { id: 'posts', label: t.profile.posts, icon: <MessageSquare size={16} /> },
+                { id: 'reels', label: t.profile.reels, icon: <Video size={16} /> },
+                { id: 'learning', label: t.profile.learning, icon: <BookOpen size={16} /> },
+                { id: 'achievements', label: t.profile.awards, icon: <Award size={16} /> },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -545,7 +550,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
               {activeTab === 'posts' && (
                 <div className="space-y-4 sm:space-y-6">
                   {posts.length === 0 ? (
-                    <EmptyState icon={<FileText size={40} />} title="No Discussions" description="This user hasn't published any posts yet." />
+                    <EmptyState icon={<FileText size={40} />} title={t.profile.noDiscussions} description={t.profile.noPostsYet} />
                   ) : (
                     posts.map((post) => (
                       <div key={post.id} className="bg-[#0a0a0f]/80 sm:border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] p-5 sm:p-8 backdrop-blur-md space-y-4 sm:space-y-5 shadow-lg">
@@ -570,7 +575,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                           )}
                         </div>
 
-                        <div className="inline-block px-3 py-1 bg-[#C2185B]/10 border-l-2 border-[#C2185B] rounded-r-lg text-pink-300 text-[9px] sm:text-[10px] font-black uppercase tracking-widest shadow-sm">
+                        <div className={`inline-block px-3 py-1 bg-[#C2185B]/10 ${isRtl ? "border-r-2 rounded-l-lg" : "border-l-2 rounded-r-lg"} border-[#C2185B] text-pink-300 text-[9px] sm:text-[10px] font-black uppercase tracking-widest shadow-sm`}>
                           {post.moodTag}
                         </div>
 
@@ -590,7 +595,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                               <span className="text-white">{post.likesCount}</span>
                             </div>
                           ) : <span />}
-                          {post.commentsCount > 0 && <span>{post.commentsCount} Comments</span>}
+                          {post.commentsCount > 0 && <span>{post.commentsCount} {t.feed.commentsCount}</span>}
                         </div>
 
                         <hr className="border-white/5 my-3" />
@@ -598,7 +603,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                         <div className="flex items-center justify-between gap-2">
                           <button onClick={() => toggleLike(post)} className={`flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-xl sm:rounded-[1rem] transition-all font-black text-xs ${post.isLikedByMe ? "text-[#C2185B] bg-[#C2185B]/10 border border-[#C2185B]/30 shadow-[0_0_15px_rgba(194,24,91,0.15)]" : "text-neutral-400 bg-white/[0.02] border border-transparent hover:bg-white/5 hover:text-white"}`}>
                             <ThumbsUp size={16} className={post.isLikedByMe ? "fill-current" : ""} />
-                            <span>Like</span>
+                            <span>{t.feed.like}</span>
                           </button>
                           <button
                             onClick={() => {
@@ -612,7 +617,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                             className="flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-xl sm:rounded-[1rem] transition-all font-black text-xs text-neutral-400 bg-white/[0.02] hover:bg-white/5 hover:text-white border border-transparent"
                           >
                             <MessageSquare size={16} />
-                            <span>Comment</span>
+                            <span>{t.feed.comment}</span>
                           </button>
                         </div>
                       </div>
@@ -625,7 +630,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
               {activeTab === 'reels' && (
                 <div className="space-y-4">
                   {reels.length === 0 ? (
-                    <EmptyState icon={<Video size={40} />} title="No Reels Yet" description="This user hasn't published any reels yet." />
+                    <EmptyState icon={<Video size={40} />} title={t.profile.noReels} description={t.profile.noReels} />
                   ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                       {reels.map((reel) => (

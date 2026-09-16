@@ -88,7 +88,7 @@ export default function MujtabaRahmaniExecutiveDossier() {
   return (
     <div 
       className="min-h-screen bg-[#030307] text-white font-sans overflow-x-hidden selection:bg-blue-600 selection:text-white" 
-      dir="ltr" 
+       
       onMouseMove={handleMouseMove}
     >
       {/* ================= BACKGROUND COSMIC SYSTEM ================= */}

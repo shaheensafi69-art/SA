@@ -6,6 +6,7 @@ import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
 import { LockKeyhole } from "lucide-react";
 import Link from "next/link";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 // تایپ اسکریپت حرفه‌ای منطبق بر دیتابیس
 type JournalEntry = {
@@ -33,6 +34,8 @@ const FOREX_COURSE_ID = "d9fa8678-76b4-4705-b579-7860407d43e8";
 export default function TradingJournalPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const [isLoading, setIsLoading] = useState(true);
   const [hasAccess, setHasAccess] = useState(false); // استیت کنترل دسترسی
   
@@ -214,7 +217,7 @@ export default function TradingJournalPage() {
   // ============================================================================
   if (!hasAccess) {
     return (
-      <div className="w-full relative overflow-hidden bg-[#020202] font-sans h-screen flex flex-col items-center justify-center px-4">
+      <div className="w-full relative overflow-hidden bg-[#020202] font-sans h-screen flex flex-col items-center justify-center px-4" dir={isRtl ? "rtl" : "ltr"}>
         <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-red-600/10 rounded-full blur-[150px] pointer-events-none"></div>
         <div className="absolute bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-yellow-600/5 rounded-full blur-[150px] pointer-events-none"></div>
 
@@ -222,9 +225,9 @@ export default function TradingJournalPage() {
           <div className="w-24 h-24 bg-red-500/10 border border-red-500/20 rounded-3xl flex items-center justify-center text-red-500 mb-8 shadow-[inset_0_0_20px_rgba(239,68,68,0.2)]">
             <LockKeyhole size={40} />
           </div>
-          <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">Access Restricted</h2>
+          <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">{t.tradingJournal.accessRestricted}</h2>
           <p className="text-neutral-400 text-sm md:text-base leading-relaxed mb-10 max-w-md">
-            The Professional Trading Journal is an exclusive tool reserved strictly for students enrolled in the <strong className="text-yellow-500">Financial Markets & Forex Trading</strong> masterclass.
+            {t.tradingJournal.accessRestrictedDesc}
           </p>
           <Link href={`/${currentLocale}/dashboard/courses`} className="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-black uppercase tracking-widest text-xs rounded-2xl hover:scale-105 transition-all shadow-[0_10px_30px_rgba(245,158,11,0.3)]">
             Explore Courses
@@ -238,7 +241,7 @@ export default function TradingJournalPage() {
   // UI 2: اگر کاربر دسترسی داشت (ژورنال اصلی)
   // ============================================================================
   return (
-    <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-10 min-h-screen">
+    <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-10 min-h-screen" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* Global Glows */}
       <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-emerald-600/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
@@ -248,9 +251,9 @@ export default function TradingJournalPage() {
       <header className="px-6 md:px-12 pt-8 md:pt-12 flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10 mb-8">
         <div>
           <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-            Trading <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500">Journal</span>
+            {t.tradingJournal.title}
           </h1>
-          <p className="text-neutral-500 text-sm md:text-base font-medium max-w-xl mt-2">Log your executions, manage risk, and track your edge in the markets.</p>
+          <p className="text-neutral-500 text-sm md:text-base font-medium max-w-xl mt-2">{t.tradingJournal.subtitle}</p>
         </div>
         
         <button 
@@ -296,7 +299,7 @@ export default function TradingJournalPage() {
             <div className="bg-gradient-to-br from-neutral-900/50 to-black p-5 rounded-[2rem] border border-white/10 backdrop-blur-xl flex items-center gap-5 cursor-default">
               <div className="w-12 h-12 bg-amber-500/10 rounded-[1rem] flex items-center justify-center text-xl text-amber-500 border border-amber-500/20 shrink-0">🎯</div>
               <div>
-                <p className="text-amber-500/80 text-[9px] font-black uppercase tracking-widest mb-0.5">Win Rate</p>
+                <p className="text-amber-500/80 text-[9px] font-black uppercase tracking-widest mb-0.5">{t.tradingJournal.winRate}</p>
                 <h3 className="text-2xl font-black text-white leading-none">{stats.winRate}%</h3>
               </div>
             </div>

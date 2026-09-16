@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import {  useRouter , usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import { Award, Trophy, ScrollText, Medal } from "lucide-react";
 
 // ================= TYPES =================
@@ -25,6 +26,8 @@ type AwardItem = {
 export default function AchievementsPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [totalScore, setTotalScore] = useState(0);
@@ -116,7 +119,7 @@ export default function AchievementsPage() {
   }, [router]);
 
   return (
-    <div className="relative w-full min-h-screen bg-[#030305] font-sans pb-24 lg:pb-8">
+    <div className="relative w-full min-h-screen bg-[#030305] font-sans pb-24 lg:pb-8" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* ================= BACKGROUND GLOW EFFECTS ================= */}
       <div className="fixed top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none z-0"></div>
@@ -127,9 +130,9 @@ export default function AchievementsPage() {
         <div>
           <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
             <Trophy className="text-blue-500" size={28} />
-            My Achievements
+            {t.achievements.title}
           </h1>
-          <p className="text-xs text-neutral-500 mt-1.5 font-bold uppercase tracking-widest">A structured record of your academic milestones</p>
+          <p className="text-xs text-neutral-500 mt-1.5 font-bold uppercase tracking-widest">{t.achievements.subtitle}</p>
         </div>
         
         {/* TOTAL POINTS BADGE */}
@@ -138,7 +141,7 @@ export default function AchievementsPage() {
             <Medal size={20} />
           </div>
           <div>
-            <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest leading-none mb-1">Total Points</p>
+            <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest leading-none mb-1">{t.achievements.totalPoints}</p>
             <p className="text-xl font-black text-white leading-none tracking-tight">
               {isLoading ? "..." : totalScore.toLocaleString()}
             </p>
@@ -174,7 +177,7 @@ export default function AchievementsPage() {
         <section className="animate-[fadeIn_0.3s_ease-out]">
           <div className="flex items-center gap-3 mb-6 sm:mb-8 border-b border-white/5 pb-4">
             <ScrollText className="text-indigo-400" size={20} />
-            <h2 className="text-lg sm:text-xl font-black text-white tracking-wide">Official Certificates</h2>
+            <h2 className="text-lg sm:text-xl font-black text-white tracking-wide">{t.achievements.officialCertificates}</h2>
             <span className="px-2.5 py-1 bg-white/5 rounded-md text-[10px] sm:text-xs font-bold text-neutral-400">{certificates.length}</span>
           </div>
 

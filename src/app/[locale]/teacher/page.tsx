@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import {  useRouter , usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import { Video, MessageSquare, ExternalLink } from "lucide-react";
 
 type ClassGroup = {
@@ -20,6 +21,8 @@ type ClassGroup = {
 export default function TeacherOverview() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   
@@ -151,7 +154,7 @@ export default function TeacherOverview() {
   }
 
   return (
-    <div className="w-full relative overflow-hidden bg-transparent font-sans" dir="ltr">
+    <div className="w-full relative overflow-hidden bg-transparent font-sans" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* ================= BACKGROUND EFFECTS ================= */}
       <div className="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] bg-fuchsia-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
@@ -163,7 +166,7 @@ export default function TeacherOverview() {
         <div className="relative w-full bg-gradient-to-br from-neutral-900/90 to-black border border-white/10 rounded-[2.5rem] p-6 md:p-10 overflow-hidden shadow-2xl animate-[fadeIn_0.4s_ease-out] group">
           <div className="absolute top-0 right-0 w-64 h-64 bg-fuchsia-500/10 rounded-full blur-[80px] group-hover:bg-fuchsia-500/20 transition-all duration-700 pointer-events-none"></div>
           
-          <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
+          <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-start">
             <div className="w-24 h-24 md:w-28 md:h-28 rounded-[2rem] bg-neutral-800 border-2 border-fuchsia-500/30 p-1.5 shrink-0 shadow-[0_0_30px_rgba(217,70,239,0.15)] group-hover:scale-105 transition-transform duration-500">
               <div className="w-full h-full rounded-[1.5rem] overflow-hidden bg-neutral-900 flex items-center justify-center">
                 {instructor.avatar ? (
@@ -176,7 +179,7 @@ export default function TeacherOverview() {
             
             <div className="flex-1 pt-2">
               <div className="inline-block px-3 py-1 bg-fuchsia-500/10 border border-fuchsia-500/20 rounded-lg text-fuchsia-400 text-[10px] font-black uppercase tracking-widest mb-3">
-                Academy Instructor
+                {t.teacherPages.facultyRole}
               </div>
               <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight mb-1">
                 {instructor.first_name} {instructor.last_name}
@@ -185,7 +188,7 @@ export default function TeacherOverview() {
             </div>
 
             <div className="mt-4 md:mt-0 bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col items-center justify-center min-w-[140px] backdrop-blur-md hover:bg-white/10 transition-colors cursor-default">
-              <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">Wallet Balance</span>
+              <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">{t.teacherPages.walletBalance}</span>
               <span className="text-2xl font-black text-green-400 drop-shadow-[0_0_10px_rgba(74,222,128,0.3)]">${instructor.wallet}</span>
             </div>
           </div>
@@ -196,16 +199,16 @@ export default function TeacherOverview() {
           
           <div className="bg-gradient-to-br from-indigo-900/20 to-black border border-indigo-500/20 p-5 md:p-6 rounded-[2rem] flex flex-col items-center md:items-start md:flex-row gap-4 hover:-translate-y-1.5 transition-all duration-300 shadow-lg cursor-default">
             <div className="w-12 h-12 md:w-14 md:h-14 bg-indigo-500/10 rounded-[1rem] flex items-center justify-center text-2xl">👥</div>
-            <div className="text-center md:text-left">
-              <p className="text-indigo-400/70 text-[9px] font-black uppercase tracking-widest mb-0.5">Students</p>
+            <div className="text-center md:text-start">
+              <p className="text-indigo-400/70 text-[9px] font-black uppercase tracking-widest mb-0.5">{t.teacherPages.students}</p>
               <h3 className="text-2xl font-black text-white">{stats.totalStudents}</h3>
             </div>
           </div>
 
           <div className="bg-gradient-to-br from-fuchsia-900/20 to-black border border-fuchsia-500/20 p-5 md:p-6 rounded-[2rem] flex flex-col items-center md:items-start md:flex-row gap-4 hover:-translate-y-1.5 transition-all duration-300 shadow-lg cursor-default">
             <div className="w-12 h-12 md:w-14 md:h-14 bg-fuchsia-500/10 rounded-[1rem] flex items-center justify-center text-2xl">🔴</div>
-            <div className="text-center md:text-left">
-              <p className="text-fuchsia-400/70 text-[9px] font-black uppercase tracking-widest mb-0.5">Live Classes</p>
+            <div className="text-center md:text-start">
+              <p className="text-fuchsia-400/70 text-[9px] font-black uppercase tracking-widest mb-0.5">{t.teacherPages.liveClasses}</p>
               <h3 className="text-2xl font-black text-white">{stats.totalClasses}</h3>
             </div>
           </div>
@@ -215,16 +218,16 @@ export default function TeacherOverview() {
                📝
                {stats.pendingGrading > 0 && <span className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full animate-ping"></span>}
             </div>
-            <div className="text-center md:text-left">
-              <p className="text-rose-400/70 text-[9px] font-black uppercase tracking-widest mb-0.5">Needs Grading</p>
+            <div className="text-center md:text-start">
+              <p className="text-rose-400/70 text-[9px] font-black uppercase tracking-widest mb-0.5">{t.teacherPages.needsGrading}</p>
               <h3 className="text-2xl font-black text-white">{stats.pendingGrading}</h3>
             </div>
           </div>
 
           <div className="bg-gradient-to-br from-emerald-900/20 to-black border border-emerald-500/20 p-5 md:p-6 rounded-[2rem] flex flex-col items-center md:items-start md:flex-row gap-4 hover:-translate-y-1.5 transition-all duration-300 shadow-lg cursor-default">
             <div className="w-12 h-12 md:w-14 md:h-14 bg-emerald-500/10 rounded-[1rem] flex items-center justify-center text-2xl">✅</div>
-            <div className="text-center md:text-left">
-              <p className="text-emerald-400/70 text-[9px] font-black uppercase tracking-widest mb-0.5">Present Today</p>
+            <div className="text-center md:text-start">
+              <p className="text-emerald-400/70 text-[9px] font-black uppercase tracking-widest mb-0.5">{t.teacherPages.presentToday}</p>
               <h3 className="text-2xl font-black text-white">{stats.todayAttendance}</h3>
             </div>
           </div>
@@ -237,17 +240,17 @@ export default function TeacherOverview() {
           {/* بخش چپ: هاب کنترل کلاس‌ها (متصل به تیمز و سیگنال) */}
           <section className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-black text-white tracking-wide">Command Center</h2>
+              <h2 className="text-lg font-black text-white tracking-wide">{t.teacherPages.commandCenter}</h2>
               <Link href={`/${currentLocale}/teacher/live-classes`} className="text-fuchsia-400 hover:text-fuchsia-300 text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-1">
-                Manage Hubs →
+                {t.teacherPages.manageHubs} →
               </Link>
             </div>
             
             {classes.length === 0 ? (
               <div className="bg-neutral-900/40 p-8 rounded-[2.5rem] border border-white/5 flex flex-col items-center justify-center text-center h-[220px]">
-                <p className="text-neutral-400 font-bold mb-5">You are not assigned to any active classrooms yet.</p>
+                <p className="text-neutral-400 font-bold mb-5">{t.teacherPages.noClassesAssigned}</p>
                 <Link href={`/${currentLocale}/teacher/courses`} className="px-8 py-3.5 bg-fuchsia-600 text-white font-black uppercase tracking-widest text-[10px] rounded-xl hover:bg-fuchsia-500 transition-colors shadow-[0_0_20px_rgba(217,70,239,0.3)] hover:scale-105">
-                  View Course Materials
+                  {t.teacherPages.viewCourseMaterials}
                 </Link>
               </div>
             ) : (
@@ -276,7 +279,7 @@ export default function TeacherOverview() {
                         <a href={room.meeting_link} target="_blank" rel="noopener noreferrer" className={`py-2.5 rounded-lg text-center text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 ${
                           room.is_active ? "bg-red-600 text-white hover:bg-red-500 shadow-[0_0_15px_rgba(220,38,38,0.4)]" : "bg-white/10 text-neutral-300 hover:bg-white/20"
                         }`}>
-                          <Video size={12} /> Launch Teams
+                          <Video size={12} /> {t.teacherPages.launchTeams}
                         </a>
                       ) : (
                         <button disabled className="py-2.5 rounded-lg text-center text-[9px] font-black uppercase tracking-widest bg-black/50 text-neutral-600 cursor-not-allowed border border-white/5">
@@ -286,7 +289,7 @@ export default function TeacherOverview() {
 
                       {room.signal_group_link ? (
                         <a href={room.signal_group_link} target="_blank" rel="noopener noreferrer" className="py-2.5 rounded-lg text-center text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 bg-indigo-600/20 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-600/40 hover:text-white">
-                          <MessageSquare size={12} /> Open Signal
+                          <MessageSquare size={12} /> {t.teacherPages.openSignal}
                         </a>
                       ) : (
                         <button disabled className="py-2.5 rounded-lg text-center text-[9px] font-black uppercase tracking-widest bg-black/50 text-neutral-600 cursor-not-allowed border border-white/5">
@@ -304,7 +307,7 @@ export default function TeacherOverview() {
           {/* بخش راست: ابزارهای استاد */}
           <section className="lg:col-span-1 flex flex-col gap-6">
             <div className="flex items-center justify-between mb-0">
-              <h2 className="text-lg font-black text-white tracking-wide">Instructor Tools</h2>
+              <h2 className="text-lg font-black text-white tracking-wide">{t.teacherPages.instructorTools}</h2>
             </div>
             
             <Link href={`/${currentLocale}/teacher/ai-assistant`} className="rounded-[2rem] border border-fuchsia-500/20 bg-gradient-to-br from-fuchsia-900/20 to-black p-6 relative overflow-hidden group hover:border-fuchsia-500/50 transition-all duration-300 shadow-lg hover:-translate-y-1 flex-1 min-h-[140px]">
@@ -313,8 +316,8 @@ export default function TeacherOverview() {
                  <div className="flex items-center gap-4">
                    <div className="w-12 h-12 bg-fuchsia-500/10 text-fuchsia-400 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🤖</div>
                    <div>
-                     <h3 className="font-black text-white">AI Teaching Assistant</h3>
-                     <p className="text-[10px] text-fuchsia-200/60 mt-0.5">Generate quizzes & grading</p>
+                     <h3 className="font-black text-white">{t.teacherPages.aiAssistant}</h3>
+                     <p className="text-[10px] text-fuchsia-200/60 mt-0.5">{t.teacherPages.aiAssistantDesc}</p>
                    </div>
                  </div>
                </div>
@@ -326,8 +329,8 @@ export default function TeacherOverview() {
                  <div className="flex items-center gap-4">
                    <div className="w-12 h-12 bg-rose-500/10 text-rose-400 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">📝</div>
                    <div>
-                     <h3 className="font-black text-white">Review Submissions</h3>
-                     <p className="text-[10px] text-rose-200/60 mt-0.5">Grade homework & projects</p>
+                     <h3 className="font-black text-white">{t.teacherPages.reviewSubmissions}</h3>
+                     <p className="text-[10px] text-rose-200/60 mt-0.5">{t.teacherPages.reviewSubmissionsDesc}</p>
                    </div>
                  </div>
                </div>

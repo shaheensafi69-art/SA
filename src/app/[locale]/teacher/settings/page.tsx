@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import {  useRouter , usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import { 
   Loader2, Save, User, Mail, Phone, MapPin, 
   Calendar, BookOpen, Shield, Key, Camera, CheckCircle2, 
@@ -12,6 +13,8 @@ import {
 export default function TeacherSettingsPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
@@ -169,7 +172,7 @@ export default function TeacherSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#030305] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32" dir="ltr">
+    <div className="min-h-screen bg-[#030305] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* Background Ambience (Teacher Theme Glows) */}
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-fuchsia-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
@@ -415,7 +418,7 @@ export default function TeacherSettingsPage() {
               </div>
             </form>
 
-            {/* Form 2: Security & Password */}
+            {/* Form 2: {t.settings.security} */}
             <form onSubmit={handleUpdatePassword} className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-6 sm:p-10 backdrop-blur-xl shadow-2xl space-y-8">
               <h3 className="text-lg font-black text-fuchsia-400 flex items-center gap-2 border-b border-white/5 pb-4">
                 <Shield size={18} /> Security & Authentication

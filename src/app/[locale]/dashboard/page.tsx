@@ -3,11 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import {  useRouter , usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 export default function DashboardOverview() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   
@@ -101,17 +104,16 @@ export default function DashboardOverview() {
   }
 
   return (
-    <div className="w-full relative overflow-hidden bg-transparent font-sans">
+    <div className="w-full relative overflow-hidden bg-transparent font-sans" dir={isRtl ? "rtl" : "ltr"}>
       
       <div className="px-6 md:px-12 pt-8 pb-32 max-w-7xl mx-auto relative z-10 space-y-8">
         
         {/* ================= 1. PREMIUM PROFILE BOX ================= */}
         <div className="relative w-full bg-gradient-to-br from-neutral-900/90 to-black border border-white/10 rounded-[2.5rem] p-6 md:p-10 overflow-hidden shadow-2xl animate-[fadeIn_0.4s_ease-out] group">
-          {/* افکت نوری پس زمینه باکس پروفایل */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-[80px] group-hover:bg-yellow-500/20 transition-all duration-700"></div>
           
-          <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
-            {/* آواتار کاربر */}
+          <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-start">
+            {/* User Avatar */}
             <div className="w-24 h-24 md:w-28 md:h-28 rounded-[2rem] bg-neutral-800 border-2 border-yellow-500/30 p-1.5 shrink-0 shadow-[0_0_30px_rgba(234,179,8,0.15)] group-hover:scale-105 transition-transform duration-500">
               <div className="w-full h-full rounded-[1.5rem] overflow-hidden bg-neutral-900 flex items-center justify-center">
                 {student.avatar ? (
@@ -122,10 +124,10 @@ export default function DashboardOverview() {
               </div>
             </div>
             
-            {/* اطلاعات کاربر */}
+            {/* User Info */}
             <div className="flex-1 pt-2">
               <div className="inline-block px-3 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-yellow-400 text-[10px] font-black uppercase tracking-widest mb-3">
-                Academy Student
+                {t.dashboardPages.studentRole}
               </div>
               <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight mb-1">
                 {student.first_name} {student.last_name}
@@ -133,40 +135,40 @@ export default function DashboardOverview() {
               <p className="text-sm text-neutral-400 font-medium">{student.email}</p>
             </div>
 
-            {/* کیف پول (نمایش جذاب) */}
+            {/* Wallet Card */}
             <div className="mt-4 md:mt-0 bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col items-center justify-center min-w-[140px] backdrop-blur-md hover:bg-white/10 transition-colors cursor-default">
-              <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">Wallet Balance</span>
+              <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">{t.dashboardPages.walletBalance}</span>
               <span className="text-2xl font-black text-green-400 drop-shadow-[0_0_10px_rgba(74,222,128,0.3)]">${student.wallet}</span>
             </div>
           </div>
         </div>
 
         {/* ================= 2. COLORFUL STATS GRID ================= */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-6 text-start">
           
-          {/* باکس دوره‌ها (آبی) */}
+          {/* Enrolled Box */}
           <div className="bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 p-6 md:p-8 rounded-[2rem] flex items-center gap-6 hover:-translate-y-1.5 transition-all duration-300 shadow-[0_10px_30px_rgba(59,130,246,0.05)] hover:shadow-[0_15px_40px_rgba(59,130,246,0.15)] group cursor-default">
             <div className="w-16 h-16 bg-blue-500/10 rounded-[1.5rem] flex items-center justify-center text-3xl group-hover:scale-110 group-hover:bg-blue-500/20 transition-all duration-500">📚</div>
             <div>
-              <p className="text-blue-400/70 text-[10px] font-black uppercase tracking-widest mb-1">Enrolled</p>
+              <p className="text-blue-400/70 text-[10px] font-black uppercase tracking-widest mb-1">{t.dashboardPages.enrolled}</p>
               <h3 className="text-3xl font-black text-white">{stats.enrolledCourses}</h3>
             </div>
           </div>
 
-          {/* باکس امتیاز (فوشیا) */}
+          {/* Score Box */}
           <div className="bg-gradient-to-br from-fuchsia-900/20 to-black border border-fuchsia-500/20 p-6 md:p-8 rounded-[2rem] flex items-center gap-6 hover:-translate-y-1.5 transition-all duration-300 shadow-[0_10px_30px_rgba(217,70,239,0.05)] hover:shadow-[0_15px_40px_rgba(217,70,239,0.15)] group cursor-default">
             <div className="w-16 h-16 bg-fuchsia-500/10 rounded-[1.5rem] flex items-center justify-center text-3xl group-hover:scale-110 group-hover:bg-fuchsia-500/20 transition-all duration-500">⚡</div>
             <div>
-              <p className="text-fuchsia-400/70 text-[10px] font-black uppercase tracking-widest mb-1">Total Score</p>
+              <p className="text-fuchsia-400/70 text-[10px] font-black uppercase tracking-widest mb-1">{t.dashboardPages.totalScore}</p>
               <h3 className="text-3xl font-black text-white">{stats.totalScore}</h3>
             </div>
           </div>
 
-          {/* باکس مدارک (زمردی) */}
+          {/* Certificates Box */}
           <div className="bg-gradient-to-br from-emerald-900/20 to-black border border-emerald-500/20 p-6 md:p-8 rounded-[2rem] flex items-center gap-6 hover:-translate-y-1.5 transition-all duration-300 shadow-[0_10px_30px_rgba(16,185,129,0.05)] hover:shadow-[0_15px_40px_rgba(16,185,129,0.15)] group cursor-default sm:col-span-2 md:col-span-1">
             <div className="w-16 h-16 bg-emerald-500/10 rounded-[1.5rem] flex items-center justify-center text-3xl group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all duration-500">🏆</div>
             <div>
-              <p className="text-emerald-400/70 text-[10px] font-black uppercase tracking-widest mb-1">Certificates</p>
+              <p className="text-emerald-400/70 text-[10px] font-black uppercase tracking-widest mb-1">{t.dashboardPages.certificates}</p>
               <h3 className="text-3xl font-black text-white">{stats.certificates}</h3>
             </div>
           </div>
@@ -176,10 +178,10 @@ export default function DashboardOverview() {
         {/* ================= 3. BOTTOM SECTIONS ================= */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* بخش چپ: Continue Learning (طلایی) */}
-          <section className="lg:col-span-2">
+          {/* Continue Learning */}
+          <section className="lg:col-span-2 text-start">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-black text-white tracking-wide">Continue Learning</h2>
+              <h2 className="text-lg font-black text-white tracking-wide">{t.dashboardPages.continueLearning}</h2>
             </div>
             
             {activeCourse ? (
@@ -194,11 +196,11 @@ export default function DashboardOverview() {
                 </div>
 
                 <div className="flex-1 w-full py-2">
-                  <p className="text-amber-500 font-black text-[10px] mb-2 uppercase tracking-widest bg-amber-500/10 inline-block px-3 py-1 rounded-md">In Progress</p>
+                  <p className="text-amber-500 font-black text-[10px] mb-2 uppercase tracking-widest bg-amber-500/10 inline-block px-3 py-1 rounded-md">{t.dashboardPages.inProgress}</p>
                   <h3 className="text-2xl font-black text-white mb-6 leading-tight">{activeCourse.title}</h3>
                   <div className="space-y-3">
                     <div className="flex justify-between text-xs font-bold">
-                      <span className="text-neutral-400">Course Progress</span>
+                      <span className="text-neutral-400">{t.dashboardPages.courseProgress}</span>
                       <span className="text-amber-400">{activeCourse.progress}%</span>
                     </div>
                     <div className="w-full h-2.5 bg-black/50 rounded-full overflow-hidden border border-white/5">
@@ -211,18 +213,18 @@ export default function DashboardOverview() {
               </div>
             ) : (
               <div className="bg-neutral-900/40 p-8 rounded-[2.5rem] border border-white/5 flex flex-col items-center justify-center text-center h-[220px]">
-                <p className="text-neutral-400 font-bold mb-5">You haven't enrolled in any courses yet.</p>
+                <p className="text-neutral-400 font-bold mb-5">{t.dashboardPages.noActiveCourses}</p>
                 <Link href={`/${currentLocale}/courses`} className="px-8 py-3.5 bg-amber-500 text-black font-black uppercase tracking-widest text-[10px] rounded-xl hover:bg-amber-400 transition-colors shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:scale-105">
-                  Explore Courses
+                  {t.dashboardPages.browseCourses}
                 </Link>
               </div>
             )}
           </section>
 
-          {/* بخش راست: Community (نیلی) */}
-          <section className="lg:col-span-1">
+          {/* Community */}
+          <section className="lg:col-span-1 text-start">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-black text-white tracking-wide">Community</h2>
+              <h2 className="text-lg font-black text-white tracking-wide">{t.dashboardPages.community}</h2>
             </div>
             
             <Link href={`/${currentLocale}/dashboard/groups`} className="block h-[220px] rounded-[2.5rem] border border-indigo-500/30 bg-gradient-to-br from-indigo-900/20 to-black p-8 relative overflow-hidden group hover:border-indigo-500/60 transition-all duration-500 shadow-[0_10px_30px_rgba(79,70,229,0.05)] hover:-translate-y-2">
@@ -230,11 +232,11 @@ export default function DashboardOverview() {
                <div className="relative z-10 h-full flex flex-col justify-between">
                  <div>
                    <div className="w-14 h-14 bg-indigo-500/10 text-indigo-400 rounded-[1rem] flex items-center justify-center text-3xl mb-5 group-hover:scale-110 transition-transform duration-500">💬</div>
-                   <h3 className="text-xl font-black text-white">Class Groups</h3>
-                   <p className="text-xs text-indigo-200/50 mt-1.5 max-w-[200px] leading-relaxed">Join discussions, ask questions, and collaborate with peers.</p>
+                   <h3 className="text-xl font-black text-white">{t.dashboardPages.classGroups}</h3>
+                   <p className="text-xs text-indigo-200/50 mt-1.5 max-w-[200px] leading-relaxed">{t.dashboardPages.classGroupsDesc}</p>
                  </div>
                  <div className="flex items-center text-indigo-400 text-[10px] font-black uppercase tracking-widest">
-                   Open Messenger <span className="ml-2 text-sm group-hover:translate-x-2 transition-transform duration-300">→</span>
+                   {t.dashboardPages.openMessenger} <span className="mx-2 text-sm group-hover:translate-x-2 transition-transform duration-300 rtl:rotate-180">→</span>
                  </div>
                </div>
             </Link>

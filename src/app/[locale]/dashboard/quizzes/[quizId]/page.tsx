@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import {  useParams, useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2, AlertCircle, Send, PenTool, Clock, CheckCircle2, Circle } from "lucide-react";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 type Question = {
   id: string;
@@ -27,6 +28,8 @@ type QuizInfo = {
 export default function StudentExamPaperPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const params = useParams();
   const router = useRouter();
   const quizId = params.quizId as string;
@@ -196,7 +199,7 @@ export default function StudentExamPaperPage() {
   // ==========================================
   if (isSubmittedSuccessfully) {
     return (
-      <div className="min-h-screen bg-[#020202] text-white flex items-center justify-center p-4 sm:p-6 pb-32 relative overflow-hidden" dir="ltr">
+      <div className="min-h-screen bg-[#020202] text-white flex items-center justify-center p-4 sm:p-6 pb-32 relative overflow-hidden" dir={isRtl ? "rtl" : "ltr"}>
         <div className="absolute inset-0 bg-indigo-600/10 blur-[150px] pointer-events-none transition-colors duration-1000"></div>
         
         <div className="relative z-10 w-full max-w-xl bg-[#0a0a0f]/90 border border-white/10 rounded-[3rem] p-10 md:p-16 text-center backdrop-blur-3xl shadow-2xl animate-[slideInUp_0.4s_ease-out]">
@@ -204,7 +207,7 @@ export default function StudentExamPaperPage() {
             <CheckCircle2 size={48} className="text-indigo-400" />
           </div>
           
-          <h2 className="text-3xl font-black mb-2 text-white">Paper Submitted!</h2>
+          <h2 className="text-3xl font-black mb-2 text-white">{t.quizzes.paperSubmitted}</h2>
           <p className="text-neutral-400 font-medium mb-10 text-sm leading-relaxed">
             Your answers for <strong className="text-white">{quizInfo?.title}</strong> have been securely saved. 
             If your exam included descriptive questions, the instructor will review your paper and assign your final grade shortly.
@@ -214,7 +217,7 @@ export default function StudentExamPaperPage() {
             href={`/${currentLocale}/dashboard/quizzes`}
             className="block w-full py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-lg text-white font-black uppercase tracking-widest text-sm rounded-2xl transition-all"
           >
-            Return to Exam Center
+            {t.quizzes.returnToExams}
           </Link>
         </div>
       </div>
@@ -236,7 +239,7 @@ export default function StudentExamPaperPage() {
   // برگه اصلی امتحان (پشتیبانی همزمان از ۴ جوابه و تشریحی)
   // ==========================================
   return (
-    <div className="min-h-screen bg-[#020202] text-white font-sans flex flex-col relative pb-32" dir="ltr">
+    <div className="min-h-screen bg-[#020202] text-white font-sans flex flex-col relative pb-32" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* هدر چسبان */}
       <header className="h-20 border-b border-white/5 bg-[#050505]/95 backdrop-blur-xl flex items-center justify-between px-4 sm:px-6 md:px-10 shrink-0 sticky top-0 z-50 shadow-lg">
@@ -248,10 +251,10 @@ export default function StudentExamPaperPage() {
             <div className="flex items-center gap-2">
               <h1 className="text-sm md:text-base font-black text-white truncate">{quizInfo?.title}</h1>
               {quizInfo?.quiz_type === 'chance' && (
-                <span className="bg-red-500/20 text-red-400 border border-red-500/30 text-[9px] font-black uppercase px-2 py-0.5 rounded shrink-0 animate-pulse">Chance Exam</span>
+                <span className="bg-red-500/20 text-red-400 border border-red-500/30 text-[9px] font-black uppercase px-2 py-0.5 rounded shrink-0 animate-pulse">{t.quizzes.chanceExam}</span>
               )}
             </div>
-            <p className="text-[10px] text-indigo-400 font-black uppercase tracking-widest mt-0.5">Official Assessment</p>
+            <p className="text-[10px] text-indigo-400 font-black uppercase tracking-widest mt-0.5">{t.quizzes.officialAssessment}</p>
           </div>
         </div>
       </header>

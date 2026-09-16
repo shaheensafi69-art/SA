@@ -1,5 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -18,6 +19,8 @@ type AdminStats = {
 export default function AdminDashboard() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const [isLoading, setIsLoading] = useState(true);
   const [adminName, setAdminName] = useState("");
   const [stats, setStats] = useState<AdminStats>({ 
@@ -95,13 +98,13 @@ export default function AdminDashboard() {
     { name: "Faculty Office", desc: "Manage instructors", path: `/${currentLocale}/admin/manage-teachers`, icon: <UserCheck size={24}/>, color: "indigo" },
     { name: "Course Builder", desc: "Create & edit courses", path: `/${currentLocale}/admin/courses`, icon: <BookOpen size={24}/>, color: "violet" },
     { name: "Live Studio", desc: "Monitor active streams", path: `/${currentLocale}/admin/live-classes`, icon: <Radio size={24}/>, color: "red" },
-    { name: "Financial Ledger", desc: "Transactions & payouts", path: `/${currentLocale}/admin/finance`, icon: <Wallet size={24}/>, color: "green" },
-    { name: "Broadcast Hub", desc: "Global announcements", path: `/${currentLocale}/admin/announcements`, icon: <Megaphone size={24}/>, color: "orange" },
-    { name: "Honors System", desc: "Manage badges & awards", path: `/${currentLocale}/admin/awards`, icon: <Award size={24}/>, color: "amber" },
+    { name: t.adminPages.financialLedger, desc: t.adminPages.financialLedgerDesc, path: `/${currentLocale}/admin/finance`, icon: <Wallet size={24}/>, color: "green" },
+    { name: t.adminPages.broadcastHub, desc: t.adminPages.broadcastHubDesc, path: `/${currentLocale}/admin/announcements`, icon: <Megaphone size={24}/>, color: "orange" },
+    { name: t.adminPages.honorsSystem, desc: t.adminPages.honorsSystemDesc, path: `/${currentLocale}/admin/awards`, icon: <Award size={24}/>, color: "amber" },
   ];
 
   return (
-    <div className="w-full min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir="ltr">
+    <div className="w-full min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* Background Ambience */}
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-rose-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
@@ -115,23 +118,23 @@ export default function AdminDashboard() {
           
           <div className="space-y-3 relative z-10">
             <span className="inline-flex rounded-full border border-rose-500/20 bg-rose-500/5 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-rose-400">
-              System Core Overview
+              {t.adminPages.coreOverview}
             </span>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
-              Welcome back, <br className="hidden sm:block"/><span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-purple-500">{adminName || 'Admin'}</span>
+              {t.adminPages.welcomeBack} <br className="hidden sm:block"/><span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-purple-500">{adminName || 'Admin'}</span>
             </h2>
             <p className="max-w-xl text-xs sm:text-sm text-neutral-400 font-medium">
-              Here is a high-level summary of your academy's current performance and metrics.
+              {t.adminPages.summary}
             </p>
           </div>
 
           <div className="flex gap-4 relative z-10 shrink-0">
              <div className="bg-black/40 border border-white/5 px-6 py-4 rounded-2xl text-center shadow-inner">
-               <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mb-1">Active Courses</p>
+               <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mb-1">{t.adminPages.activeCourses}</p>
                <p className="text-2xl font-black text-white">{stats.activeCourses}</p>
              </div>
              <div className="bg-black/40 border border-white/5 px-6 py-4 rounded-2xl text-center shadow-inner">
-               <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mb-1">Total Faculty</p>
+               <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest mb-1">{t.adminPages.totalFaculty}</p>
                <p className="text-2xl font-black text-white">{stats.totalTeachers}</p>
              </div>
           </div>
@@ -141,27 +144,27 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <div className="bg-[#0a0a0f]/80 p-5 sm:p-6 rounded-[2rem] border border-white/5 shadow-xl backdrop-blur-xl group hover:border-emerald-500/30 transition-colors flex flex-col justify-center items-center text-center">
             <div className="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center mb-4 border border-emerald-500/20"><Users size={20}/></div>
-            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">Total Students</p>
+            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">{t.adminPages.totalStudents}</p>
             <p className="text-3xl font-black text-white">{stats.totalStudents}</p>
           </div>
 
           <div className="bg-[#0a0a0f]/80 p-5 sm:p-6 rounded-[2rem] border border-white/5 shadow-xl backdrop-blur-xl group hover:border-green-500/30 transition-colors flex flex-col justify-center items-center text-center">
             <div className="w-12 h-12 bg-green-500/10 text-green-400 rounded-xl flex items-center justify-center mb-4 border border-green-500/20"><DollarSign size={20}/></div>
-            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">Gross Revenue</p>
+            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1">{t.adminPages.grossRevenue}</p>
             <p className="text-3xl font-black text-emerald-400">${stats.totalRevenue.toLocaleString()}</p>
           </div>
 
           <div className="bg-[#0a0a0f]/80 p-5 sm:p-6 rounded-[2rem] border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.05)] backdrop-blur-xl relative overflow-hidden group flex flex-col justify-center items-center text-center">
             <div className="absolute inset-0 bg-amber-500/5 animate-pulse"></div>
             <div className="relative z-10 w-12 h-12 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center mb-4 border border-amber-500/30"><HelpCircle size={20}/></div>
-            <p className="relative z-10 text-[10px] font-black text-amber-500/70 uppercase tracking-widest mb-1">Open Tickets</p>
+            <p className="relative z-10 text-[10px] font-black text-amber-500/70 uppercase tracking-widest mb-1">{t.adminPages.openTickets}</p>
             <p className="relative z-10 text-3xl font-black text-amber-400">{stats.activeTickets}</p>
           </div>
 
           <div className="bg-[#0a0a0f]/80 p-5 sm:p-6 rounded-[2rem] border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.05)] backdrop-blur-xl relative overflow-hidden group flex flex-col justify-center items-center text-center">
             <div className="absolute inset-0 bg-rose-500/5 animate-pulse"></div>
             <div className="relative z-10 w-12 h-12 bg-rose-500/10 text-rose-400 rounded-xl flex items-center justify-center mb-4 border border-rose-500/30"><AlertCircle size={20}/></div>
-            <p className="relative z-10 text-[10px] font-black text-rose-500/70 uppercase tracking-widest mb-1">Pending Payouts</p>
+            <p className="relative z-10 text-[10px] font-black text-rose-500/70 uppercase tracking-widest mb-1">{t.adminPages.pendingWithdrawals}</p>
             <p className="relative z-10 text-3xl font-black text-rose-400">{stats.pendingWithdrawals}</p>
           </div>
         </div>
@@ -169,7 +172,7 @@ export default function AdminDashboard() {
         {/* ================= COMMAND CENTER NAVIGATION GRID ================= */}
         <section className="pt-4">
           <h3 className="text-sm font-black text-neutral-400 uppercase tracking-widest mb-6 pl-2 flex items-center gap-2">
-             System Workspaces <span className="w-10 h-px bg-white/10"></span>
+             {t.adminPages.quickOperations} <span className="w-10 h-px bg-white/10"></span>
           </h3>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {  useRouter , usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, CheckCircle2, XCircle, Clock, Lock } from "lucide-react";
 
@@ -23,6 +24,8 @@ type QuizItem = {
 export default function QuizzesPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = isRtlPortal(currentLocale);
   const router = useRouter(); 
   const [isLoading, setIsLoading] = useState(true);
   const [quizzes, setQuizzes] = useState<QuizItem[]>([]);
@@ -140,7 +143,7 @@ export default function QuizzesPage() {
   });
 
   return (
-    <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-32 min-h-screen">
+    <div className="w-full relative overflow-hidden bg-[#020202] font-sans pb-32 min-h-screen" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* Background Glows */}
       <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
@@ -149,9 +152,9 @@ export default function QuizzesPage() {
       {/* ================= Header ================= */}
       <header className="px-6 md:px-12 pt-8 md:pt-12 flex flex-col gap-2 relative z-10 mb-8">
         <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-          Examination <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500">Center</span>
+          {t.quizzes.title}
         </h1>
-        <p className="text-neutral-500 text-sm md:text-base font-medium max-w-xl">Take your academic descriptive exams and track your official grades.</p>
+        <p className="text-neutral-500 text-sm md:text-base font-medium max-w-xl">{t.quizzes.subtitle}</p>
       </header>
 
       {/* ================= Main Content Layout ================= */}
@@ -163,21 +166,21 @@ export default function QuizzesPage() {
             <div className="bg-gradient-to-br from-indigo-900/30 to-black p-5 rounded-[2rem] border border-indigo-500/20 backdrop-blur-xl flex items-center gap-5 hover:-translate-y-1 transition-all">
               <div className="w-12 h-12 bg-indigo-500/10 rounded-[1rem] flex items-center justify-center text-xl text-indigo-400 shrink-0">🎯</div>
               <div>
-                <p className="text-indigo-400/80 text-[9px] font-black uppercase tracking-widest mb-0.5">Total Exams</p>
+                <p className="text-indigo-400/80 text-[9px] font-black uppercase tracking-widest mb-0.5">{t.quizzes.totalExams}</p>
                 <h3 className="text-2xl font-extrabold text-white leading-none">{isLoading ? "-" : stats.total}</h3>
               </div>
             </div>
             <div className="bg-gradient-to-br from-emerald-900/30 to-black p-5 rounded-[2rem] border border-emerald-500/20 backdrop-blur-xl flex items-center gap-5 hover:-translate-y-1 transition-all">
               <div className="w-12 h-12 bg-emerald-500/10 rounded-[1rem] flex items-center justify-center text-xl text-emerald-400 shrink-0">✅</div>
               <div>
-                <p className="text-emerald-400/80 text-[9px] font-black uppercase tracking-widest mb-0.5">Exams Passed</p>
+                <p className="text-emerald-400/80 text-[9px] font-black uppercase tracking-widest mb-0.5">{t.quizzes.examsPassed}</p>
                 <h3 className="text-2xl font-extrabold text-white leading-none">{isLoading ? "-" : stats.passed}</h3>
               </div>
             </div>
           </div>
 
           <div className="flex flex-col bg-neutral-900/40 backdrop-blur-2xl p-2 rounded-[2rem] border border-white/5 shadow-2xl space-y-1.5">
-            <p className="text-[9px] font-black text-neutral-500 uppercase tracking-[0.2em] px-4 pt-3 pb-1 hidden md:block">Filter Quizzes</p>
+            <p className="text-[9px] font-black text-neutral-500 uppercase tracking-[0.2em] px-4 pt-3 pb-1 hidden md:block">{t.quizzes.filterQuizzes}</p>
             {([
               { id: "all", label: "All Exams", icon: "📋" },
               { id: "pending", label: "To Do", icon: "⏳" },

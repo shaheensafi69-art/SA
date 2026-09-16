@@ -65,7 +65,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
   return (
     <div 
       className="min-h-screen bg-[#030307] text-white font-sans overflow-x-hidden selection:bg-rose-500 selection:text-white" 
-      dir="ltr" 
+       
       onMouseMove={handleMouseMove}
     >
       {/* ================= BACKGROUND COSMIC SYSTEM ================= */}
