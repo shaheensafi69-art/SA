@@ -499,15 +499,15 @@ export default function HostingerAffiliatePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <div className="flex items-center gap-2.5 text-sm text-neutral-200">
                 <CheckCircle2 className="w-4 h-4 text-purple-400 shrink-0" />
-                <span>LiteSpeed Enterprise & LSCache Included</span>
+                <span>{isRtl ? "وب‌سرور پرسرعت LiteSpeed Enterprise و کش اختصاصی" : "LiteSpeed Enterprise & LSCache Included"}</span>
               </div>
               <div className="flex items-center gap-2.5 text-sm text-neutral-200">
                 <CheckCircle2 className="w-4 h-4 text-purple-400 shrink-0" />
-                <span>Free 1-Year Domain & Lifetime Free SSL</span>
+                <span>{isRtl ? "دامنه رایگان یک‌ساله و گواهی SSL نامحدود" : "Free 1-Year Domain & Lifetime Free SSL"}</span>
               </div>
               <div className="flex items-center gap-2.5 text-sm text-neutral-200">
                 <CheckCircle2 className="w-4 h-4 text-purple-400 shrink-0" />
-                <span>Automated Daily & Weekly Backups</span>
+                <span>{isRtl ? "بکاپ‌گیری خودکار روزانه و هفتگی در فضای ابری" : "Automated Daily & Weekly Backups"}</span>
               </div>
               <div className="flex items-center gap-2.5 text-sm text-neutral-200">
                 <CheckCircle2 className="w-4 h-4 text-purple-400 shrink-0" />

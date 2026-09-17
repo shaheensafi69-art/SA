@@ -1,7 +1,10 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-export const locales = ['en', 'fa', 'ps', 'ru', 'tr', 'de', 'fr', 'ar', 'ur'] as const;
+export const locales = [
+  'en', 'fa', 'ps', 'ru', 'tr', 'de', 'fr', 'ar', 'ur',
+  'es', 'zh', 'hi', 'it', 'pt', 'ja', 'ko', 'nl', 'uz', 'id'
+] as const;
 export type Locale = typeof locales[number];
 export const defaultLocale = 'en';
 

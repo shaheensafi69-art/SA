@@ -7,6 +7,16 @@ import de from './de.json';
 import fr from './fr.json';
 import ar from './ar.json';
 import ur from './ur.json';
+import es from './es.json';
+import zh from './zh.json';
+import hi from './hi.json';
+import it from './it.json';
+import pt from './pt.json';
+import ja from './ja.json';
+import ko from './ko.json';
+import nl from './nl.json';
+import uz from './uz.json';
+import id from './id.json';
 
 export const dictionaries = {
   en,
@@ -18,6 +28,16 @@ export const dictionaries = {
   fr,
   ar,
   ur,
+  es,
+  zh,
+  hi,
+  it,
+  pt,
+  ja,
+  ko,
+  nl,
+  uz,
+  id,
 } as const;
 
 export type SupportedLocale = keyof typeof dictionaries;

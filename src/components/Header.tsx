@@ -11,7 +11,7 @@ import {
   BookMarked, Landmark, Server, Code2, Rss, ShoppingCart
 } from "lucide-react";
 
-// لیست ۹ زبان رسمی آکادمی صافی با پرچم‌های وکتور دایره‌ای و گرادینت‌های اختصاصی
+// لیست ۱۹ زبان رسمی آکادمی صافی با پرچم‌های وکتور دایره‌ای و گرادینت‌های اختصاصی
 const languages = [
   { code: "en", name: "English", flagUrl: "/flags/gb.svg", gradient: "from-blue-600 via-red-500 to-blue-600" },
   { code: "fa", name: "فارسی / دری", flagUrl: "/flags/af.svg", gradient: "from-emerald-500 via-white to-red-500" },
@@ -22,16 +22,26 @@ const languages = [
   { code: "fr", name: "Français", flagUrl: "/flags/fr.svg", gradient: "from-blue-600 via-white to-red-600" },
   { code: "ar", name: "العربية", flagUrl: "/flags/sa.svg", gradient: "from-emerald-700 via-emerald-500 to-green-600" },
   { code: "ur", name: "اردو", flagUrl: "/flags/pk.svg", gradient: "from-green-700 via-emerald-400 to-green-700" },
+  { code: "es", name: "Español", flagUrl: "/flags/es.svg", gradient: "from-red-600 via-yellow-500 to-red-600" },
+  { code: "zh", name: "简体中文", flagUrl: "/flags/cn.svg", gradient: "from-red-600 via-yellow-400 to-red-600" },
+  { code: "hi", name: "हिन्दी", flagUrl: "/flags/in.svg", gradient: "from-orange-500 via-white to-green-600" },
+  { code: "it", name: "Italiano", flagUrl: "/flags/it.svg", gradient: "from-green-600 via-white to-red-600" },
+  { code: "pt", name: "Português", flagUrl: "/flags/pt.svg", gradient: "from-green-600 via-red-600 to-yellow-500" },
+  { code: "ja", name: "日本語", flagUrl: "/flags/jp.svg", gradient: "from-red-600 via-white to-red-600" },
+  { code: "ko", name: "한국어", flagUrl: "/flags/kr.svg", gradient: "from-red-600 via-blue-600 to-neutral-800" },
+  { code: "nl", name: "Nederlands", flagUrl: "/flags/nl.svg", gradient: "from-red-600 via-white to-blue-700" },
+  { code: "uz", name: "Oʻzbekcha", flagUrl: "/flags/uz.svg", gradient: "from-cyan-500 via-green-500 to-blue-600" },
+  { code: "id", name: "Bahasa Indonesia", flagUrl: "/flags/id.svg", gradient: "from-red-600 via-white to-red-600" },
 ];
 
-// دیکشنری ۹ زبانه برای ترجمه داینامیک کل هدر
+// دیکشنری ۱۹ زبانه برای ترجمه داینامیک کل هدر
 const translations: Record<string, any> = {
   en: {
     home: "Home", feed: "Feed", learn: "Learn", academy: "Academy", corporate: "Corporate",
     courses: "Courses", blog: "Blog", scholarships: "Scholarships",
     partners: "Our Partners", donate: "Donate", about: "About", contact: "Contact",
     instructorApplication: "Teach With Us",
-    store: "Digital Store", // اضافه شده
+    store: "Digital Store",
     business: "Business Setup", hosting: "Hosting Deals", development: "Development Services", bankAccountService: "Bank Account Service",
     dashboard: "Dashboard", signIn: "Sign In", getStarted: "Get Started", signOut: "Sign Out",
     welcome: "Welcome,", selectLang: "Select Language", editProfile: "Edit Profile", signedInAs: "Signed in as"
@@ -41,7 +51,7 @@ const translations: Record<string, any> = {
     courses: "کورس‌ها", blog: "بلاگ", scholarships: "بورسیه‌ها",
     partners: "شرکای ما", donate: "کمک مالی", about: "درباره ما", contact: "تماس",
     instructorApplication: "درخواست تدریس (استادی)",
-    store: "فروشگاه دیجیتال", // اضافه شده
+    store: "فروشگاه دیجیتال",
     business: "ثبت شرکت", hosting: "هاستینگ و سرور", development: "خدمات توسعه نرم‌افزار", bankAccountService: "خدمات حساب بانکی",
     dashboard: "داشـبورد", signIn: "ورود", getStarted: "شروع کنید", signOut: "خروج",
     welcome: "خوش آمدید،", selectLang: "انتخاب زبان آکادمی", editProfile: "ویرایش پروفایل", signedInAs: "وارد شده با"
@@ -51,7 +61,7 @@ const translations: Record<string, any> = {
     courses: "کورسونه", blog: "بلاګ", scholarships: "بورسیې",
     partners: "زموږ شریکان", donate: "مرسته", about: "زموږ په اړه", contact: "اړیکه",
     instructorApplication: "د ښوونکي غوښتنلیک",
-    store: "ډیجیټل پلورنځی", // اضافه شده
+    store: "ډیجیټل پلورنځی",
     business: "د شرکت ثبت", hosting: "د هوسټینګ وړاندیزونه", development: "د سافټویر جوړولو خدمتونه", bankAccountService: "د بانکي حساب خدمت",
     dashboard: "ډشبورډ", signIn: "ننوتل", getStarted: "پیل کړئ", signOut: "وتل",
     welcome: "ښه راغلاست،", selectLang: "د اکاډمۍ ژبه غوره کړئ", editProfile: "پروفایل ایډیټ کړئ", signedInAs: "ننوتل شوی په توګه"
@@ -61,7 +71,7 @@ const translations: Record<string, any> = {
     courses: "Курсы", blog: "Блог", scholarships: "Стипендии",
     partners: "Партнеры", donate: "Пожертвовать", about: "О нас", contact: "Контакты",
     instructorApplication: "Преподавать у нас",
-    store: "Цифровой магазин", // اضافه شده
+    store: "Цифровой магазин",
     business: "Регистрация бизнеса", hosting: "Хостинг и серверы", development: "Разработка ПО", bankAccountService: "Банковский счёт",
     dashboard: "Панель", signIn: "Войти", getStarted: "Начать", signOut: "Выйти",
     welcome: "Добро пожаловать,", selectLang: "Выбрать язык", editProfile: "Редактировать профиль", signedInAs: "Вы вошли как"
@@ -71,7 +81,7 @@ const translations: Record<string, any> = {
     courses: "Kurslar", blog: "Blog", scholarships: "Burslar",
     partners: "Ortaklarımız", donate: "Bağış Yap", about: "Hakkımızda", contact: "İletişim",
     instructorApplication: "Eğitmen Olun",
-    store: "Dijital Mağaza", // اضافه شده
+    store: "Dijital Mağaza",
     business: "Şirket Kuruluşu", hosting: "Hosting & Sunucu", development: "Yazılım Geliştirme", bankAccountService: "Banka Hesabı Hizmeti",
     dashboard: "Panel", signIn: "Giriş Yap", getStarted: "Başlayın", signOut: "Çıkış Yap",
     welcome: "Hoş geldiniz,", selectLang: "Dil Seçiniz", editProfile: "Profili Düzenle", signedInAs: "Giriş yapılan hesap"
@@ -81,7 +91,7 @@ const translations: Record<string, any> = {
     courses: "Kurse", blog: "Blog", scholarships: "Stipendien",
     partners: "Unsere Partner", donate: "Spenden", about: "Über uns", contact: "Kontakt",
     instructorApplication: "Dozent werden",
-    store: "Digitaler Shop", // اضافه شده
+    store: "Digitaler Shop",
     business: "Unternehmensgründung", hosting: "Hosting-Angebote", development: "Entwicklungsdienste", bankAccountService: "Bankkonto-Service",
     dashboard: "Dashboard", signIn: "Anmelden", getStarted: "Loslegen", signOut: "Abmelden",
     welcome: "Willkommen,", selectLang: "Sprache auswählen", editProfile: "Profil bearbeiten", signedInAs: "Angemeldet als"
@@ -91,7 +101,7 @@ const translations: Record<string, any> = {
     courses: "Cours", blog: "Blog", scholarships: "Bourses",
     partners: "Nos Partenaires", donate: "Faire un don", about: "À propos", contact: "Contact",
     instructorApplication: "Devenir Formateur",
-    store: "Boutique Numérique", // اضافه شده
+    store: "Boutique Numérique",
     business: "Création d'entreprise", hosting: "Offres d'hébergement", development: "Services de développement", bankAccountService: "Service de compte bancaire",
     dashboard: "Tableau de bord", signIn: "Se connecter", getStarted: "Commencer", signOut: "Se déconnecter",
     welcome: "Bienvenue,", selectLang: "Choisir la langue", editProfile: "Modifier le profil", signedInAs: "Connecté en tant que"
@@ -101,7 +111,7 @@ const translations: Record<string, any> = {
     courses: "الدورات", blog: "المدونة", scholarships: "المنح الدراسية",
     partners: "شركاؤنا", donate: "تبرع", about: "عن الأكاديمية", contact: "اتصل بنا",
     instructorApplication: "انضم كمعلم",
-    store: "المتجر الرقمي", // اضافه شده
+    store: "المتجر الرقمي",
     business: "تأسيس الأعمال", hosting: "الاستضافة والخوادم", development: "خدمات التطوير", bankAccountService: "خدمة الحساب البنكي",
     dashboard: "لوحة التحكم", signIn: "تسجيل الدخول", getStarted: "ابدأ الآن", signOut: "تسجيل الخروج",
     welcome: "مرحباً،", selectLang: "اختر اللغة", editProfile: "تعديل الملف الشخصي", signedInAs: "مسجل الدخول باسم"
@@ -111,10 +121,110 @@ const translations: Record<string, any> = {
     courses: "کورسز", blog: "بلاگ", scholarships: "اسکالرشپ",
     partners: "ہمارے شراکت دار", donate: "عطیہ", about: "ہمارے بارے میں", contact: "رابطہ",
     instructorApplication: "استاد بنیں (درخواست)",
-    store: "ڈیجیٹل اسٹور", // اضافه شده
+    store: "ڈیجیٹل اسٹور",
     business: "بزنس سیٹ اپ", hosting: "ہوسٹنگ ڈیلز", development: "ڈیولپمنٹ سروسز", bankAccountService: "بینک اکاؤنٹ سروس",
     dashboard: "ڈیش بورڈ", signIn: "سائن ان", getStarted: "شروع کریں", signOut: "سائن آؤٹ",
     welcome: "خوش آمدید،", selectLang: "اکیڈمی کی زبان منتخب کریں", editProfile: "پروفایل میں ترمیم کریں", signedInAs: "سائن ان بطور"
+  },
+  es: {
+    home: "Inicio", feed: "Noticias", learn: "Aprender", academy: "Academia", corporate: "Corporativo",
+    courses: "Cursos", blog: "Blog", scholarships: "Becas",
+    partners: "Nuestros Socios", donate: "Donar", about: "Acerca de", contact: "Contacto",
+    instructorApplication: "Enseña con Nosotros",
+    store: "Tienda Digital",
+    business: "Creación de Empresas", hosting: "Ofertas de Hosting", development: "Servicios de Desarrollo", bankAccountService: "Servicio Bancario",
+    dashboard: "Panel", signIn: "Iniciar Sesión", getStarted: "Comenzar", signOut: "Cerrar Sesión",
+    welcome: "Bienvenido,", selectLang: "Seleccionar Idioma", editProfile: "Editar Perfil", signedInAs: "Conectado como"
+  },
+  zh: {
+    home: "首页", feed: "动态", learn: "学习", academy: "学院", corporate: "企业服务",
+    courses: "课程", blog: "博客", scholarships: "奖学金",
+    partners: "合作伙伴", donate: "捐赠", about: "关于我们", contact: "联系我们",
+    instructorApplication: "成为讲师",
+    store: "数字商城",
+    business: "海外公司注册", hosting: "云主机服务", development: "软件开发服务", bankAccountService: "离岸银行账户",
+    dashboard: "控制台", signIn: "登录", getStarted: "立即加入", signOut: "登出",
+    welcome: "欢迎，", selectLang: "选择语言", editProfile: "编辑资料", signedInAs: "当前登录为"
+  },
+  hi: {
+    home: "होम", feed: "फ़ीड", learn: "सीखें", academy: "अकादमी", corporate: "कॉर्पोरेट",
+    courses: "पाठ्यक्रम", blog: "ब्लॉग", scholarships: "छात्रवृत्तियां",
+    partners: "हमारे साझेदार", donate: "दान करें", about: "हमारे बारे में", contact: "संपर्क करें",
+    instructorApplication: "हमारे साथ पढ़ाएं",
+    store: "डिजिटल स्टोर",
+    business: "व्यवसाय सेटअप", hosting: "होस्टिंग डील्स", development: "सॉफ्टवेयर सेवाएं", bankAccountService: "बैंक खाता सेवा",
+    dashboard: "डैशबोर्ड", signIn: "साइन इन", getStarted: "शुरू करें", signOut: "साइन आउट",
+    welcome: "स्वागत है,", selectLang: "भाषा चुनें", editProfile: "प्रोफ़ाइल संपादित करें", signedInAs: "के रूप में साइन इन हैं"
+  },
+  it: {
+    home: "Home", feed: "Feed", learn: "Impara", academy: "Accademia", corporate: "Corporate",
+    courses: "Corsi", blog: "Blog", scholarships: "Borse di studio",
+    partners: "Nostri Partner", donate: "Dona", about: "Chi siamo", contact: "Contatti",
+    instructorApplication: "Insegna con noi",
+    store: "Store Digitale",
+    business: "Costituzione Società", hosting: "Offerte Hosting", development: "Servizi di Sviluppo", bankAccountService: "Conto Bancario",
+    dashboard: "Dashboard", signIn: "Accedi", getStarted: "Inizia Ora", signOut: "Esci",
+    welcome: "Benvenuto,", selectLang: "Seleziona Lingua", editProfile: "Modifica Profilo", signedInAs: "Accesso effettuato come"
+  },
+  pt: {
+    home: "Início", feed: "Feed", learn: "Aprender", academy: "Academia", corporate: "Corporativo",
+    courses: "Cursos", blog: "Blog", scholarships: "Bolsas de Estudo",
+    partners: "Nossos Parceiros", donate: "Doar", about: "Sobre Nós", contact: "Contato",
+    instructorApplication: "Ensine Conosco",
+    store: "Loja Digital",
+    business: "Abertura de Empresas", hosting: "Hospedagem", development: "Desenvolvimento", bankAccountService: "Conta Bancária",
+    dashboard: "Painel", signIn: "Entrar", getStarted: "Começar", signOut: "Sair",
+    welcome: "Bem-vindo,", selectLang: "Selecionar Idioma", editProfile: "Editar Perfil", signedInAs: "Conectado como"
+  },
+  ja: {
+    home: "ホーム", feed: "フィード", learn: "学習", academy: "アカデミー", corporate: "法人サービス",
+    courses: "コース一覧", blog: "ブログ", scholarships: "奨学金",
+    partners: "提携パートナー", donate: "寄付する", about: "当校について", contact: "お問い合わせ",
+    instructorApplication: "講師として教える",
+    store: "デジタルストア",
+    business: "海外法人設立", hosting: "サーバー・ホスティング", development: "システム開発", bankAccountService: "銀行口座開設",
+    dashboard: "ダッシュボード", signIn: "ログイン", getStarted: "今すぐ始める", signOut: "ログアウト",
+    welcome: "ようこそ、", selectLang: "言語を選択", editProfile: "プロフィール編集", signedInAs: "ログイン中:"
+  },
+  ko: {
+    home: "홈", feed: "피드", learn: "학습", academy: "아카데미", corporate: "기업 서비스",
+    courses: "강좌 목록", blog: "블로그", scholarships: "장학금",
+    partners: "공식 파트너", donate: "후원하기", about: "소개", contact: "문의하기",
+    instructorApplication: "강사 지원",
+    store: "디지털 스토어",
+    business: "해외 법인 설립", hosting: "호스팅 플랜", development: "소프트웨어 개발", bankAccountService: "해외 계좌 서비스",
+    dashboard: "대시보드", signIn: "로그인", getStarted: "시작하기", signOut: "로그아웃",
+    welcome: "환영합니다,", selectLang: "언어 선택", editProfile: "프로필 수정", signedInAs: "로그인 계정:"
+  },
+  nl: {
+    home: "Home", feed: "Feed", learn: "Leren", academy: "Academie", corporate: "Zakelijk",
+    courses: "Cursussen", blog: "Blog", scholarships: "Beurzen",
+    partners: "Onze Partners", donate: "Doneren", about: "Over Ons", contact: "Contact",
+    instructorApplication: "Docent Worden",
+    store: "Digitale Winkel",
+    business: "Bedrijfsoprichting", hosting: "Hosting Deals", development: "Ontwikkeling", bankAccountService: "Bankrekening Service",
+    dashboard: "Dashboard", signIn: "Inloggen", getStarted: "Aan de Slag", signOut: "Uitloggen",
+    welcome: "Welkom,", selectLang: "Selecteer Taal", editProfile: "Profiel Bewerken", signedInAs: "Aangemeld als"
+  },
+  uz: {
+    home: "Bosh sahifa", feed: "Tasma", learn: "Ta'lim", academy: "Akademiya", corporate: "Korporativ",
+    courses: "Kurslar", blog: "Blog", scholarships: "Grantlar",
+    partners: "Hamkorlarimiz", donate: "Xayriya qilish", about: "Biz haqimizda", contact: "Aloqa",
+    instructorApplication: "Biz bilan dars bering",
+    store: "Raqamli Doʻkon",
+    business: "Biznes ochish", hosting: "Xosting xizmatlari", development: "Dasturlash xizmatlari", bankAccountService: "Bank hisobi",
+    dashboard: "Boshqaruv paneli", signIn: "Kirish", getStarted: "Boshlash", signOut: "Chiqish",
+    welcome: "Xush kelibsiz,", selectLang: "Tilni tanlang", editProfile: "Profilni tahrirlash", signedInAs: "Tizimga kirilgan:"
+  },
+  id: {
+    home: "Beranda", feed: "Feed", learn: "Belajar", academy: "Akademi", corporate: "Korporat",
+    courses: "Kursus", blog: "Blog", scholarships: "Beasiswa",
+    partners: "Mitra Kami", donate: "Donasi", about: "Tentang Kami", contact: "Kontak",
+    instructorApplication: "Mengajar Bersama Kami",
+    store: "Toko Digital",
+    business: "Pendirian Usaha", hosting: "Penawaran Hosting", development: "Layanan Pengembangan", bankAccountService: "Layanan Rekening Bank",
+    dashboard: "Dasbor", signIn: "Masuk", getStarted: "Mulai Sekarang", signOut: "Keluar",
+    welcome: "Selamat datang,", selectLang: "Pilih Bahasa", editProfile: "Edit Profil", signedInAs: "Masuk sebagai"
   }
 };
 

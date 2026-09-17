@@ -217,24 +217,24 @@ export default function ContactPage() {
         {/* Global Key Metrics Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 max-w-4xl mx-auto text-left">
           <div className="p-5 rounded-2xl bg-neutral-900/50 border border-white/5 backdrop-blur-xl">
-            <div className="text-2xl sm:text-3xl font-black text-yellow-400 font-mono mb-1">&lt; 4 Hours</div>
+            <div className="text-2xl sm:text-3xl font-black text-yellow-400 font-mono mb-1">{isRtl ? "کمتر از ۴ ساعت" : "< 4 Hours"}</div>
             <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{t.publicPages.averageResponseSla}</div>
-            <div className="text-[11px] text-neutral-500 mt-1">Priority dispatch triage</div>
+            <div className="text-[11px] text-neutral-500 mt-1">{isRtl ? "پاسخگویی سریع اولویت‌دار" : "Priority dispatch triage"}</div>
           </div>
           <div className="p-5 rounded-2xl bg-neutral-900/50 border border-white/5 backdrop-blur-xl">
-            <div className="text-2xl sm:text-3xl font-black text-white font-mono mb-1">100% Secure</div>
-            <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">End-to-End Privacy</div>
-            <div className="text-[11px] text-neutral-500 mt-1">GDPR & UK DPA compliant</div>
+            <div className="text-2xl sm:text-3xl font-black text-white font-mono mb-1">{isRtl ? "۱۰۰٪ امن" : "100% Secure"}</div>
+            <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{isRtl ? "حریم خصوصی کامل" : "End-to-End Privacy"}</div>
+            <div className="text-[11px] text-neutral-500 mt-1">{isRtl ? "مطابق با استانداردهای GDPR و DPA بریتانیا" : "GDPR & UK DPA compliant"}</div>
           </div>
           <div className="p-5 rounded-2xl bg-neutral-900/50 border border-white/5 backdrop-blur-xl">
-            <div className="text-2xl sm:text-3xl font-black text-amber-400 font-mono mb-1">London, UK</div>
+            <div className="text-2xl sm:text-3xl font-black text-amber-400 font-mono mb-1">{isRtl ? "لندن، بریتانیا" : "London, UK"}</div>
             <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{t.publicPages.corporateHeadquarters}</div>
-            <div className="text-[11px] text-neutral-500 mt-1">Reg No: 17063286</div>
+            <div className="text-[11px] text-neutral-500 mt-1">{isRtl ? "شماره ثبت رسمی: 17063286" : "Reg No: 17063286"}</div>
           </div>
           <div className="p-5 rounded-2xl bg-neutral-900/50 border border-white/5 backdrop-blur-xl">
-            <div className="text-2xl sm:text-3xl font-black text-white font-mono mb-1">5 Desks</div>
-            <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Specialized Routing</div>
-            <div className="text-[11px] text-neutral-500 mt-1">Direct domain advisors</div>
+            <div className="text-2xl sm:text-3xl font-black text-white font-mono mb-1">{isRtl ? "۵ دپارتمان" : "5 Desks"}</div>
+            <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{isRtl ? "ارتباط تخصصی" : "Specialized Routing"}</div>
+            <div className="text-[11px] text-neutral-500 mt-1">{isRtl ? "مشاوران مستقیم هر حوزه" : "Direct domain advisors"}</div>
           </div>
         </div>
 

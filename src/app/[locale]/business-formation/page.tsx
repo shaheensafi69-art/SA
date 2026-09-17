@@ -193,26 +193,28 @@ export default function BusinessFormationPage() {
             </h1>
 
             <p className="text-base md:text-lg text-neutral-300 leading-relaxed font-normal">
-              Whether you are an international founder launching a global startup or an entrepreneur expanding into the US market, proper corporate foundation is paramount. Safi Academy recommends <strong className="text-white font-semibold">Registered Agents Inc</strong> for 50-state registered agent representation, LLC/Corporation formation, and ongoing state compliance.
+              {isRtl
+                ? "چه در حال راه‌اندازی یک استارتاپ بین‌المللی باشید و چه در حال گسترش کسب‌وکار خود در بازار آمریکا، ساختار رسمی حقوقی نقشی حیاتی دارد. آکادمی صافی خدمات رسمی Registered Agents Inc را برای ثبت شرکت LLC و C-Corp در تمامی ۵۰ ایالت آمریکا پیشنهاد می‌کند."
+                : "Whether you are an international founder launching a global startup or an entrepreneur expanding into the US market, proper corporate foundation is paramount. Safi Academy recommends Registered Agents Inc for 50-state registered agent representation, LLC/Corporation formation, and ongoing state compliance."}
             </p>
 
             {/* Quick Benefits Bullet Points */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <div className="flex items-center gap-2.5 text-sm text-neutral-200">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Registered Agent Services Available in All 50 States</span>
+                <span>{isRtl ? "خدمات نماینده رسمی ثبت شرکت در تمامی ۵۰ ایالت آمریکا" : "Registered Agent Services Available in All 50 States"}</span>
               </div>
               <div className="flex items-center gap-2.5 text-sm text-neutral-200">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Personal Address Privacy (Where Permitted by Law)</span>
+                <span>{isRtl ? "حفظ کامل حریم خصوصی آدرس شخصی (مطابق قانون)" : "Personal Address Privacy (Where Permitted by Law)"}</span>
               </div>
               <div className="flex items-center gap-2.5 text-sm text-neutral-200">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Same-Day Digital Document Scanning</span>
+                <span>{isRtl ? "اسکن دیجیتال اسناد و مدارک شرکتی در همان روز" : "Same-Day Digital Document Scanning"}</span>
               </div>
               <div className="flex items-center gap-2.5 text-sm text-neutral-200">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>FinCEN BOI Updates & Annual Report Support</span>
+                <span>{isRtl ? "پشتیبانی کامل از گزارش‌های سالانه و الزامات FinCEN BOI" : "FinCEN BOI Updates & Annual Report Support"}</span>
               </div>
             </div>
 
@@ -224,7 +226,7 @@ export default function BusinessFormationPage() {
                 rel="sponsored noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold text-sm uppercase tracking-wider rounded-xl transition-all shadow-[0_10px_25px_rgba(245,158,11,0.25)] hover:shadow-[0_15px_35px_rgba(245,158,11,0.4)] hover:-translate-y-0.5 active:translate-y-0"
               >
-                <span>Visit Registered Agents Inc</span>
+                <span>{isRtl ? "مشاهده پورتال Registered Agents Inc" : "Visit Registered Agents Inc"}</span>
                 <ExternalLink className="w-4 h-4" />
               </a>
 
@@ -232,7 +234,7 @@ export default function BusinessFormationPage() {
                 href="#services"
                 className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-bold text-sm rounded-xl border border-white/10 transition-colors"
               >
-                <span>Explore Services</span>
+                <span>{isRtl ? "بررسی جزئیات خدمات" : "Explore Services"}</span>
                 <ChevronRight className="w-4 h-4" />
               </a>
             </div>

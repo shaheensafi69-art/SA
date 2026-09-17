@@ -135,7 +135,9 @@ export default function PrivacyPolicyPage() {
             transition={{ delay: 0.2 }}
             className="text-neutral-400 text-sm md:text-base leading-relaxed"
           >
-            Safi Academy operates under the highest standards of data integrity and regulatory compliance. Learn how Safi International Capital LTD processes, secures, and honors your personal data.
+            {isRtl
+              ? "آکادمی صافی تحت بالاترین استانداردهای یکپارچگی داده‌ها و انطباق با قوانین حریم خصوصی فعالیت می‌کند. در این بخش با نحوه پردازش و امنیت داده‌های شما در Safi International Capital LTD آشنا می‌شوید."
+              : "Safi Academy operates under the highest standards of data integrity and regulatory compliance. Learn how Safi International Capital LTD processes, secures, and honors your personal data."}
           </motion.p>
 
           {/* Metadata Pill Bar */}
@@ -173,7 +175,7 @@ export default function PrivacyPolicyPage() {
                   <p className="text-xs text-neutral-400 leading-relaxed">{item.desc}</p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-white/5 flex items-center gap-1.5 text-[11px] text-emerald-400 font-bold uppercase tracking-wider">
-                  <Check className="w-3.5 h-3.5" /> Guaranteed Standard
+                  <Check className="w-3.5 h-3.5" /> {isRtl ? "استاندارد تضمین‌شده" : "Guaranteed Standard"}
                 </div>
               </motion.div>
             );
@@ -190,7 +192,7 @@ export default function PrivacyPolicyPage() {
             <div className="bg-neutral-900/80 border border-white/10 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
                 <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">{t.publicPages.navigationIndex}</span>
-                <span className="text-[11px] font-mono text-neutral-500">8 Sections</span>
+                <span className="text-[11px] font-mono text-neutral-500">{isRtl ? "۸ بخش قانونی" : "8 Sections"}</span>
               </div>
 
               <nav className="space-y-1">

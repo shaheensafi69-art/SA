@@ -2,668 +2,710 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  Globe,
+  Building2,
+  CreditCard,
+  ShieldCheck,
+  Zap,
+  ArrowRight,
+  ArrowLeft,
+  CheckCircle2,
+  Sparkles,
+  Lock,
+  Layers,
+  ChevronDown,
+  Clock,
+  HelpCircle,
+  Laptop
+} from "lucide-react";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 type AccountType = "Personal" | "Business";
 
-const partners = [
-    {
-        name: "Wise",
-        domain: "wise.com",
-        accent: "International money movement",
-        description:
-            "Wise is a global financial technology platform focused on international money movement and multi-currency account functionality. Its core proposition is to make cross-border transfers and currency management more transparent and efficient. For international users, the platform is commonly associated with holding multiple currencies, receiving money through supported account details, and converting funds between currencies. Availability of individual features depends on the customer’s country, verification status, product configuration, and local regulatory requirements.",
-        details: [
-            "Multi-currency money management",
-            "International transfers and currency conversion",
-            "Local receiving details in supported markets",
-            "Transparent fee presentation",
-            "Digital-first account experience",
-        ],
-    },
-    {
-        name: "Payoneer",
-        domain: "payoneer.com",
-        accent: "Global business payments",
-        description:
-            "Payoneer is a financial technology company serving freelancers, marketplaces, agencies, and businesses that receive or send cross-border commercial payments. Its services are particularly relevant to international commerce because businesses can use supported receiving accounts and payment tools to interact with global clients and marketplaces. Exact receiving currencies, account details, fees, limits, and eligibility vary by jurisdiction and customer profile, so users should verify the current terms directly with Payoneer before relying on a particular feature.",
-        details: [
-            "Cross-border business payment infrastructure",
-            "Marketplace and commercial payment workflows",
-            "Supported receiving accounts in selected regions",
-            "Business-oriented payment tools",
-            "Compliance and verification workflows",
-        ],
-    },
-    {
-        name: "Wirex",
-        domain: "wirexapp.com",
-        accent: "Digital money & card ecosystem",
-        description:
-            "Wirex is a digital money platform that combines account, payment-card, and digital-asset functionality in supported markets. The platform is designed around a mobile-first experience and gives eligible customers tools for spending, transferring, and managing supported currencies and assets. Product availability is market-specific and can change as regulation and product coverage evolve. Users should always confirm current card, account, currency, and asset availability in their own jurisdiction.",
-        details: [
-            "Mobile-first digital money management",
-            "Payment-card products in supported markets",
-            "Multi-currency functionality",
-            "Digital-asset functionality where available",
-            "Identity verification and compliance controls",
-        ],
-    },
-    {
-        name: "WorldFirst",
-        domain: "worldfirst.com",
-        accent: "International business payments",
-        description:
-            "WorldFirst focuses on international payment and foreign-exchange infrastructure for businesses engaged in global trade. Its services are designed around receiving and paying money across borders, managing foreign currencies, and reducing operational friction for international commerce. Business eligibility, available currencies, account details, fees, limits, and supported corridors depend on jurisdiction and onboarding checks. The platform is therefore best understood as business payment infrastructure rather than a conventional high-street bank.",
-        details: [
-            "International business payments",
-            "Foreign-exchange and currency management",
-            "Global marketplace payment workflows",
-            "Business receiving and settlement tools",
-            "Jurisdiction-specific onboarding and compliance",
-        ],
-    },
+interface Partner {
+  name: string;
+  domain: string;
+  accent: string;
+  badge: string;
+  description: string;
+  details: string[];
+}
+
+const partners: Partner[] = [
+  {
+    name: "Wise",
+    domain: "wise.com",
+    accent: "Multi-Currency & Low-Fee Global Transfers",
+    badge: "Personal & Business",
+    description:
+      "Wise is a premier global financial technology platform specialized in multi-currency borderless accounts. It allows holding 40+ currencies with real mid-market exchange rates, dedicated local bank account details (IBAN in Europe, routing numbers in the US, sort codes in the UK), and low-cost cross-border payments.",
+    details: [
+      "Local account details (EUR IBAN, USD ACH, GBP Sort Code)",
+      "Real mid-market exchange rate without hidden markups",
+      "Digital & physical international debit cards",
+      "Direct integration with global payment gateways and marketplaces",
+      "Stringent regulatory safeguarding under UK FCA and European authorities"
+    ]
+  },
+  {
+    name: "Payoneer",
+    domain: "payoneer.com",
+    accent: "Commercial Freelance & Marketplace Payouts",
+    badge: "B2B & Freelance Hub",
+    description:
+      "Payoneer is the benchmark cross-border infrastructure for international freelancers, digital agencies, and e-commerce merchants. Seamlessly receive payouts from global marketplaces including Upwork, Fiverr, Amazon, and direct B2B foreign clients into dedicated receiving accounts.",
+    details: [
+      "Automated marketplace payouts from 2,000+ global platforms",
+      "Multi-currency receiving accounts in EUR, USD, GBP, JPY, CAD",
+      "Commercial debit cards for corporate ad spend and SaaS tools",
+      "Fast withdrawal to local bank accounts across 150+ countries",
+      "Enterprise billing and automated invoice generation tools"
+    ]
+  },
+  {
+    name: "Wirex",
+    domain: "wirexapp.com",
+    accent: "Next-Gen Digital Asset & Card Infrastructure",
+    badge: "Crypto-Fiat Hybrid",
+    description:
+      "Wirex unites traditional fiat banking rails with digital asset capabilities in supported corridors. Featuring mobile-first multi-currency accounts and cards, it enables instant conversion between traditional fiat currencies and digital stablecoins with worldwide point-of-sale acceptance.",
+    details: [
+      "Seamless bridge between digital stablecoins and fiat currencies",
+      "Multi-currency contactless payment cards (Visa / Mastercard)",
+      "Instant zero-fee peer-to-peer digital remittances",
+      "Institutional-grade digital asset custody and multi-sig security",
+      "High daily spending and ATM withdrawal allowances in supported regions"
+    ]
+  },
+  {
+    name: "WorldFirst",
+    domain: "worldfirst.com",
+    accent: "Enterprise Foreign Exchange & Trade Settlements",
+    badge: "Enterprise Trade",
+    description:
+      "WorldFirst is an enterprise foreign-exchange powerhouse and global payment infrastructure built for high-volume cross-border trade, international import/export, and wholesale global merchant settlement with dedicated account managers.",
+    details: [
+      "High-volume wholesale foreign exchange hedging and spot contracts",
+      "Dedicated multi-currency corporate receiving accounts",
+      "Same-day settlement across major international trade corridors",
+      "Personalized treasury management and corporate compliance desk",
+      "Built-in compliance clearing for large-scale enterprise transactions"
+    ]
+  }
 ];
 
-const featureCards = [
-    {
-        number: "01",
-        title: "Multi-Currency Architecture",
-        text: "A structured environment for international users who need to think beyond a single domestic currency. Present supported currencies, balances, transfers and settlement workflows through one coherent experience.",
-        icon: "◎",
-    },
-    {
-        number: "02",
-        title: "International Account Rails",
-        text: "Understand the difference between a payment account, local receiving details, an IBAN, a wallet and a traditional bank account. The interface explains the infrastructure without hiding important limitations.",
-        icon: "⌘",
-    },
-    {
-        number: "03",
-        title: "Virtual & Physical Cards",
-        text: "A premium card-oriented experience for users who need a clear route from onboarding to everyday spending, online payments and supported international transactions.",
-        icon: "▣",
-    },
-    {
-        number: "04",
-        title: "Compliance First",
-        text: "Verification, eligibility, source-of-funds information and jurisdictional restrictions are presented as part of the process rather than treated as fine print.",
-        icon: "◇",
-    },
-];
-
-const currencies = ["EUR", "USD", "GBP", "PLN", "SEK", "NOK", "RON", "HUF", "CZK", "DKK"];
+const currencies = ["EUR", "USD", "GBP", "AED", "CAD", "CHF", "JPY", "AUD", "SGD", "AFN"];
 
 const faqs = [
-    ["Is this a traditional bank account?", "The service should not be presented as a traditional high-street bank unless the specific provider actually operates as a bank in the relevant jurisdiction. Depending on the selected provider, the underlying product may be an electronic-money account, payment account, wallet, receiving account or card programme."],
-    ["Why are several providers shown?", "International finance is not one single rail. Different providers specialize in different use cases, currencies, markets and customer profiles. The page therefore explains several recognizable international payment platforms instead of suggesting that every provider offers identical products."],
-    ["Will every currency be available to every applicant?", "No. Currency availability, receiving details, card availability, limits and other services can depend on residence, nationality, verification, product type and the provider’s current rules."],
-    ["Can an applicant be asked for additional documents?", "Yes. Financial service providers commonly use identity, address, business, tax, source-of-funds and other compliance checks where applicable. Additional documentation can be requested during onboarding or later reviews."],
-    ["Are the logos proof that every provider is a direct banking partner?", "No. Logos on this page are informational and should not be interpreted as a statement that every provider is a direct partner, sponsor, correspondent bank or guaranteed service provider unless a separate written agreement says so."],
+  {
+    q: "Is this a traditional high-street bank account?",
+    a: "Depending on the selected provider, the underlying facility is an authorized electronic money institution (EMI), payment institution, or commercial receiving account backed by regulated European or UK tier-1 safeguarding banks."
+  },
+  {
+    q: "Why does Safi Academy showcase multiple providers?",
+    a: "International financial operations are multifaceted. Freelancers, international students, and e-commerce companies have distinct cross-border needs. We guide you toward the optimal rail based on your location and transaction profile."
+  },
+  {
+    q: "Will every applicant receive dedicated European or US receiving details?",
+    a: "Account feature availability (including dedicated IBANs, local routing numbers, or debit cards) is contingent upon your nationality, verified residency, compliance screening, and the provider's regulatory license."
+  },
+  {
+    q: "What compliance documentation is required for onboarding?",
+    a: "Standard verification requires a valid passport or national ID card, proof of residential address (utility bill or bank statement), and a brief declaration of account purpose or source of funds."
+  },
+  {
+    q: "How does Safi Academy assist in the onboarding workflow?",
+    a: "Our specialized advisory desk reviews your profile, prepares your documentation dossier, and directs you through the most viable compliant onboarding pipeline to ensure maximum approval probability."
+  }
 ];
 
 export default function BankAccountServicePage() {
-    const [accountType, setAccountType] = useState<AccountType>("Personal");
-    const [activePartner, setActivePartner] = useState(0);
-    const [openFaq, setOpenFaq] = useState<number | null>(0);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const pathname = usePathname();
+  const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
 
-    const [formData, setFormData] = useState({
+  const [accountType, setAccountType] = useState<AccountType>("Personal");
+  const [activePartner, setActivePartner] = useState(0);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    country: "",
+    companyName: "",
+    companyRegNumber: ""
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((curr) => ({ ...curr, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+
+    try {
+      const response = await fetch("/api/bank-account-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accountType, ...formData })
+      });
+
+      if (!response.ok) throw new Error("Request failed");
+
+      setSubmitStatus("success");
+      setFormData({
         firstName: "",
         lastName: "",
         email: "",
         phone: "",
         country: "",
         companyName: "",
-        companyRegNumber: "",
-    });
+        companyRegNumber: ""
+      });
+    } catch {
+      setSubmitStatus("error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData((current) => ({ ...current, [e.target.name]: e.target.value }));
-    };
+  return (
+    <main
+      dir={isRtl ? "rtl" : "ltr"}
+      className="min-h-screen bg-[#030508] text-white selection:bg-amber-500/20 selection:text-amber-200 relative overflow-hidden font-sans pt-28 md:pt-36 pb-32"
+    >
+      {/* Dynamic Ambient Background Glows */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-[-15%] left-1/2 -translate-x-1/2 w-[70vw] h-[50vw] bg-gradient-to-b from-amber-500/10 via-yellow-500/5 to-transparent rounded-full blur-[160px]" />
+        <div className="absolute top-[35%] right-[-10%] w-[45vw] h-[45vw] bg-cyan-500/5 rounded-full blur-[160px]" />
+        <div className="absolute bottom-[10%] left-[-10%] w-[50vw] h-[50vw] bg-blue-600/5 rounded-full blur-[180px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff04_1px,transparent_1px),linear-gradient(to_bottom,#ffffff04_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+      </div>
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        setSubmitStatus("idle");
-
-        try {
-            /*
-             * SECURITY NOTE:
-             * Do not put a Telegram bot token in a NEXT_PUBLIC_* variable or hard-code it
-             * in client-side JavaScript. The browser can expose both. This form expects a
-             * server-side endpoint at /api/bank-account-request that owns the Telegram
-             * credentials and performs the dispatch.
-             */
-            const response = await fetch("/api/bank-account-request", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ accountType, ...formData }),
-            });
-
-            if (!response.ok) throw new Error("Request failed");
-
-            setSubmitStatus("success");
-            setFormData({
-                firstName: "",
-                lastName: "",
-                email: "",
-                phone: "",
-                country: "",
-                companyName: "",
-                companyRegNumber: "",
-            });
-        } catch {
-            setSubmitStatus("error");
-        } finally {
-            setIsSubmitting(false);
-            window.setTimeout(() => setSubmitStatus("idle"), 6000);
-        }
-    };
-
-    return (
-        <main className="min-h-screen overflow-hidden bg-[#030508] text-white selection:bg-cyan-400/20 selection:text-cyan-100">
-            <style jsx global>{`
-        html { scroll-behavior: smooth; }
-        body { background: #030508; }
-        .bank-grid {
-          background-image:
-            linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
-          background-size: 48px 48px;
-          mask-image: linear-gradient(to bottom, black 0%, transparent 85%);
-        }
-        .aurora { animation: aurora 12s ease-in-out infinite alternate; }
-        .float-card { animation: floatCard 7s ease-in-out infinite; }
-        .float-card-delay { animation: floatCard 8s ease-in-out 1s infinite; }
-        .scanline { animation: scan 6s linear infinite; }
-        @keyframes aurora {
-          from { transform: translate3d(-3%, -2%, 0) scale(1); }
-          to { transform: translate3d(3%, 2%, 0) scale(1.08); }
-        }
-        @keyframes floatCard {
-          0%,100% { transform: translateY(0) rotateX(3deg) rotateY(-4deg); }
-          50% { transform: translateY(-14px) rotateX(-1deg) rotateY(4deg); }
-        }
-        @keyframes scan {
-          0% { transform: translateY(-120%); }
-          100% { transform: translateY(120%); }
-        }
-        .perspective { perspective: 1400px; }
-      `}</style>
-
-            {/* Ambient 3D stage */}
-            <div className="pointer-events-none fixed inset-0 -z-10">
-                <div className="absolute inset-0 bank-grid opacity-70" />
-                <div className="aurora absolute left-1/2 top-[-18rem] h-[48rem] w-[48rem] -translate-x-1/2 rounded-full bg-cyan-500/10 blur-[120px]" />
-                <div className="absolute right-[-15rem] top-[25rem] h-[34rem] w-[34rem] rounded-full bg-blue-600/10 blur-[120px]" />
-                <div className="absolute left-[-12rem] top-[60rem] h-[30rem] w-[30rem] rounded-full bg-violet-600/10 blur-[120px]" />
+      <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
+        {/* ======================================================== */}
+        {/* HERO SECTION */}
+        {/* ======================================================== */}
+        <section className="grid lg:grid-cols-[1.1fr_.9fr] gap-12 lg:gap-16 items-center mb-24 lg:mb-32">
+          <div>
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/5 border border-amber-500/30 text-amber-300 text-xs font-black uppercase tracking-widest shadow-[0_0_20px_rgba(245,158,11,0.15)] mb-8">
+              <Sparkles size={14} className="animate-pulse" />
+              <span>{t.bankService?.badge || "Global Banking Infrastructure"}</span>
             </div>
 
-            {/* Hero */}
-            <section className="relative mx-auto max-w-7xl px-5 pb-20 pt-28 sm:px-8 lg:px-12 lg:pt-36">
-                <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_.95fr]">
-                    <div>
-                        <div className="mb-7 inline-flex items-center gap-3 rounded-full border border-cyan-300/15 bg-white/[.035] px-4 py-2 text-[10px] font-bold uppercase tracking-[.28em] text-cyan-300 backdrop-blur-xl">
-                            <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-300 shadow-[0_0_18px_#67e8f9]" />
-                            Global Banking Infrastructure
-                        </div>
+            {/* Main Headline */}
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.05] mb-6">
+              {t.bankService?.heroTitle || "Banking without borders."}
+            </h1>
 
-                        <h1 className="max-w-4xl text-5xl font-black leading-[.95] tracking-[-.055em] sm:text-7xl lg:text-[6.7rem]">
-                            Banking without
-                            <span className="block bg-gradient-to-r from-white via-cyan-200 to-blue-400 bg-clip-text text-transparent">
-                                borders.
-                            </span>
-                        </h1>
+            {/* Subtitle */}
+            <p className="text-neutral-300 text-base sm:text-lg leading-relaxed max-w-2xl font-normal mb-10">
+              {t.bankService?.heroSubtitle ||
+                "A premium international-account experience designed for people and businesses operating across currencies, countries and digital markets."}
+            </p>
 
-                        <p className="mt-8 max-w-2xl text-base leading-8 text-slate-400 sm:text-lg">
-                            A premium international-account experience designed for people and businesses operating across currencies,
-                            countries and digital markets. Explore the architecture, understand the providers, then submit an application
-                            for the route that matches your profile.
-                        </p>
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-4 mb-10">
+              <a
+                href="#application"
+                className="px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-black font-black uppercase tracking-wider text-xs shadow-[0_0_30px_rgba(245,158,11,0.35)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+              >
+                <span>{t.bankService?.startApplication || "Start Application"}</span>
+                {isRtl ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
+              </a>
 
-                        <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-                            <a href="#application" className="rounded-2xl bg-white px-7 py-4 text-center text-sm font-extrabold text-slate-950 transition hover:-translate-y-1 hover:bg-cyan-100">
-                                Start application
-                            </a>
-                            <a href="#providers" className="rounded-2xl border border-white/10 bg-white/[.035] px-7 py-4 text-center text-sm font-bold text-white backdrop-blur-xl transition hover:-translate-y-1 hover:border-cyan-300/30">
-                                Explore providers
-                            </a>
-                        </div>
+              <a
+                href="#providers"
+                className="px-8 py-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 text-white font-black uppercase tracking-wider text-xs backdrop-blur-xl transition-all flex items-center gap-2"
+              >
+                <span>{t.bankService?.exploreProviders || "Explore Providers"}</span>
+                <Globe size={16} className="text-amber-400" />
+              </a>
+            </div>
 
-                        <div className="mt-10 flex flex-wrap gap-2">
-                            {currencies.map((currency) => (
-                                <span key={currency} className="rounded-full border border-white/8 bg-white/[.025] px-3 py-1.5 text-[10px] font-bold tracking-[.16em] text-slate-500">
-                                    {currency}
-                                </span>
-                            ))}
-                        </div>
+            {/* Currencies Bar */}
+            <div className="flex flex-wrap items-center gap-2 pt-6 border-t border-white/10">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mr-2 rtl:ml-2">
+                Settlement Currencies:
+              </span>
+              {currencies.map((curr) => (
+                <span
+                  key={curr}
+                  className="px-3 py-1 rounded-lg bg-white/[0.03] border border-white/8 text-[11px] font-mono font-bold text-amber-300/80 hover:text-white hover:border-amber-400/40 transition-colors"
+                >
+                  {curr}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* 3D Visual Card Hologram */}
+          <div className="relative flex justify-center items-center py-6">
+            <div className="w-full max-w-md relative group">
+              {/* Glow Behind Card */}
+              <div className="absolute -inset-2 bg-gradient-to-r from-amber-500/30 via-yellow-500/20 to-cyan-500/30 rounded-[2.5rem] blur-2xl opacity-60 group-hover:opacity-90 transition-opacity duration-700" />
+
+              {/* Holographic Card */}
+              <div className="relative rounded-[2.2rem] bg-gradient-to-br from-[#121622]/95 via-[#0b0e17]/95 to-[#060810]/95 border border-amber-500/30 p-8 shadow-[0_30px_80px_rgba(0,0,0,0.8)] backdrop-blur-2xl overflow-hidden">
+                {/* Ambient Top Light Beam */}
+                <div className="absolute top-0 right-0 w-48 h-48 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
+
+                <div className="flex items-center justify-between mb-12 relative z-10">
+                  <div>
+                    <div className="text-xs font-black uppercase tracking-[0.25em] text-amber-400">
+                      SAFI GLOBAL
                     </div>
-
-                    <div className="perspective relative min-h-[430px]">
-                        {/* 3D card */}
-                        <div className="float-card absolute right-0 top-3 w-[min(100%,430px)] rounded-[2rem] border border-white/15 bg-gradient-to-br from-white/[.16] via-white/[.06] to-cyan-400/[.04] p-7 shadow-[0_50px_120px_-35px_rgba(0,0,0,.95)] backdrop-blur-2xl">
-                            <div className="mb-16 flex items-center justify-between">
-                                <div>
-                                    <div className="text-[10px] font-bold uppercase tracking-[.3em] text-cyan-200">Safi Global</div>
-                                    <div className="mt-2 text-sm font-semibold text-white/70">International account</div>
-                                </div>
-                                <div className="rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-xs font-black">VISA</div>
-                            </div>
-                            <div className="mb-8 h-11 w-14 rounded-xl border border-white/20 bg-gradient-to-br from-amber-100/70 to-amber-400/30 shadow-inner" />
-                            <div className="text-2xl font-bold tracking-[.18em] text-white">•••• 4821</div>
-                            <div className="mt-7 flex justify-between text-[9px] uppercase tracking-[.22em] text-slate-400">
-                                <span>Global access</span><span>Premium digital rail</span>
-                            </div>
-                        </div>
-
-                        <div className="float-card-delay absolute bottom-0 left-0 w-64 rounded-[1.5rem] border border-cyan-300/15 bg-[#071018]/85 p-5 shadow-[0_35px_80px_-25px_rgba(34,211,238,.28)] backdrop-blur-2xl">
-                            <div className="flex items-center justify-between">
-                                <span className="text-[9px] font-bold uppercase tracking-[.22em] text-slate-500">Live settlement</span>
-                                <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_14px_#34d399]" />
-                            </div>
-                            <div className="mt-4 text-3xl font-black">10+</div>
-                            <div className="mt-1 text-xs text-slate-500">supported currencies shown in the ecosystem</div>
-                        </div>
-
-                        <div className="absolute -right-4 top-1/2 h-28 w-28 rounded-full border border-cyan-300/20 bg-cyan-300/5 blur-[1px] shadow-[0_0_70px_rgba(34,211,238,.2)]" />
+                    <div className="text-[11px] font-semibold text-neutral-400 mt-1">
+                      Multi-Currency Commercial IBAN
                     </div>
+                  </div>
+                  <div className="px-3.5 py-1.5 rounded-xl bg-white/10 border border-white/20 text-xs font-black tracking-widest text-white shadow-inner">
+                    VISA B2B
+                  </div>
                 </div>
 
-                <div className="mt-20 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 md:grid-cols-4">
-                    {[
-                        ["10+", "Currencies referenced"],
-                        ["4", "Major platforms"],
-                        ["24/7", "Digital access model"],
-                        ["UK", "Corporate ecosystem"],
-                    ].map(([value, label]) => (
-                        <div key={label} className="bg-[#05080c]/90 p-7 backdrop-blur-xl">
-                            <div className="text-3xl font-black tracking-tight text-white">{value}</div>
-                            <div className="mt-2 text-xs uppercase tracking-[.16em] text-slate-500">{label}</div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            {/* Architecture */}
-            <section className="relative mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-12">
-                <div className="max-w-3xl">
-                    <div className="text-xs font-bold uppercase tracking-[.3em] text-cyan-400">01 / Architecture</div>
-                    <h2 className="mt-4 text-4xl font-black tracking-tight sm:text-6xl">A financial interface built like a product, not a form.</h2>
-                    <p className="mt-6 leading-8 text-slate-400">
-                        The service page is intentionally structured around education, transparency and conversion. Instead of placing
-                        an application form at the top, it first explains what the infrastructure means, where provider capabilities
-                        differ, and what a user should prepare before onboarding.
-                    </p>
+                {/* Golden Electronic Smart Chip */}
+                <div className="mb-8 w-14 h-11 rounded-xl bg-gradient-to-br from-amber-200 via-amber-400 to-yellow-600 p-0.5 shadow-lg relative overflow-hidden">
+                  <div className="w-full h-full rounded-[10px] bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-500 border border-amber-100/50 flex flex-col justify-around p-1.5">
+                    <div className="h-0.5 bg-amber-900/30 rounded" />
+                    <div className="h-0.5 bg-amber-900/30 rounded" />
+                    <div className="h-0.5 bg-amber-900/30 rounded" />
+                  </div>
                 </div>
 
-                <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-                    {featureCards.map((item) => (
-                        <article key={item.number} className="group relative overflow-hidden rounded-[1.7rem] border border-white/10 bg-white/[.025] p-7 transition duration-500 hover:-translate-y-2 hover:border-cyan-300/25 hover:bg-white/[.05]">
-                            <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-cyan-400/5 blur-3xl transition group-hover:bg-cyan-400/15" />
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-bold tracking-[.2em] text-slate-600">{item.number}</span>
-                                <span className="text-2xl text-cyan-300">{item.icon}</span>
-                            </div>
-                            <h3 className="mt-12 text-xl font-bold">{item.title}</h3>
-                            <p className="mt-4 text-sm leading-7 text-slate-500">{item.text}</p>
-                        </article>
-                    ))}
+                {/* Card Number & Details */}
+                <div className="text-2xl sm:text-3xl font-mono font-bold tracking-[0.2em] text-white mb-6">
+                  •••• •••• •••• 9241
                 </div>
-            </section>
 
-            {/* Providers */}
-            <section id="providers" className="relative border-y border-white/5 bg-white/[.018] py-28">
-                <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
-                    <div className="grid gap-14 lg:grid-cols-[.75fr_1.25fr]">
-                        <div>
-                            <div className="text-xs font-bold uppercase tracking-[.3em] text-cyan-400">02 / Global providers</div>
-                            <h2 className="mt-4 text-4xl font-black tracking-tight sm:text-6xl">Know the rails behind the logo.</h2>
-                            <p className="mt-6 leading-8 text-slate-400">
-                                A professional financial page should distinguish a bank from a fintech platform, a payment account from a
-                                traditional deposit account, and a receiving detail from a universal bank account. The four platforms below
-                                are presented as distinct ecosystems with different purposes.
-                            </p>
+                <div className="flex items-center justify-between text-xs text-neutral-400 border-t border-white/10 pt-4 font-mono">
+                  <div>
+                    <div className="text-[9px] uppercase tracking-widest text-neutral-500">CARDHOLDER</div>
+                    <div className="font-bold text-neutral-200 mt-0.5">SAFI INTERNATIONAL</div>
+                  </div>
+                  <div className="text-right rtl:text-left">
+                    <div className="text-[9px] uppercase tracking-widest text-neutral-500">EXPIRY</div>
+                    <div className="font-bold text-neutral-200 mt-0.5">12/29</div>
+                  </div>
+                </div>
+              </div>
 
-                            <div className="mt-9 space-y-2">
-                                {partners.map((partner, index) => (
-                                    <button
-                                        key={partner.name}
-                                        onClick={() => setActivePartner(index)}
-                                        className={`flex w-full items-center justify-between rounded-2xl border p-4 text-left transition ${activePartner === index
-                                                ? "border-cyan-300/25 bg-cyan-300/[.06]"
-                                                : "border-white/7 bg-white/[.02] hover:border-white/15"
-                                            }`}
-                                    >
-                                        <span>
-                                            <span className="block text-sm font-bold text-white">{partner.name}</span>
-                                            <span className="mt-1 block text-[10px] uppercase tracking-[.18em] text-slate-600">{partner.accent}</span>
-                                        </span>
-                                        <span className="text-slate-600">↗</span>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+              {/* Floating Live Settlement Pill */}
+              <div className="absolute -bottom-6 -left-4 sm:-left-6 px-5 py-3.5 rounded-2xl bg-[#090d16]/95 border border-cyan-500/30 shadow-[0_20px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_12px_#34d399] animate-pulse" />
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+                    Live SEPA / SWIFT / ACH
+                  </div>
+                  <div className="text-xs font-black text-white">100% Verified Clearing Rails</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-                        <div className="relative">
-                            <div className="absolute -inset-5 rounded-[2.5rem] bg-cyan-400/[.04] blur-3xl" />
-                            <article className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-[#060b10]/95 p-8 shadow-[0_40px_100px_-40px_rgba(0,0,0,.95)] sm:p-12">
-                                <div className="scanline pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-transparent via-cyan-300/[.035] to-transparent" />
-                                <div className="flex flex-wrap items-start justify-between gap-5">
-                                    <div>
-                                        <div className="text-[10px] font-bold uppercase tracking-[.3em] text-cyan-400">Provider profile</div>
-                                        <h3 className="mt-3 text-4xl font-black">{partners[activePartner].name}</h3>
-                                        <p className="mt-2 text-xs uppercase tracking-[.2em] text-slate-600">{partners[activePartner].accent}</p>
-                                    </div>
-                                    <div className="rounded-2xl border border-white/10 bg-white/[.035] px-4 py-3 text-xs font-bold text-slate-400">
-                                        {partners[activePartner].domain}
-                                    </div>
-                                </div>
+        {/* ======================================================== */}
+        {/* ARCHITECTURE SECTION (4 Pillars) */}
+        {/* ======================================================== */}
+        <section className="mb-24 lg:mb-32">
+          <div className="max-w-3xl mb-14">
+            <div className="text-xs font-black uppercase tracking-[0.25em] text-amber-400 mb-3">
+              {t.bankService?.archBadge || "01 / Architecture"}
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-4">
+              {t.bankService?.archTitle || "A financial interface built like a product, not a form."}
+            </h2>
+            <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
+              {t.bankService?.archSubtitle ||
+                "Understand what each rail provides and prepare your dossier with precision."}
+            </p>
+          </div>
 
-                                <p className="mt-9 text-base leading-8 text-slate-400">{partners[activePartner].description}</p>
-
-                                <div className="mt-10 grid gap-3 sm:grid-cols-2">
-                                    {partners[activePartner].details.map((detail) => (
-                                        <div key={detail} className="rounded-2xl border border-white/7 bg-white/[.025] p-4">
-                                            <div className="mb-3 h-1 w-8 rounded-full bg-cyan-300/50" />
-                                            <div className="text-sm font-semibold text-slate-200">{detail}</div>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="mt-10 border-t border-white/7 pt-6 text-xs leading-6 text-slate-600">
-                                    Provider information is presented for orientation. Product availability, eligibility, pricing, limits,
-                                    currencies and regulatory status are determined by the provider and the customer’s jurisdiction.
-                                </div>
-                            </article>
-                        </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                num: "01",
+                icon: Globe,
+                title: "Multi-Currency Vault",
+                desc: "Hold and convert major international currencies with real mid-market rates across 40+ countries without hidden fees."
+              },
+              {
+                num: "02",
+                icon: Building2,
+                title: "Dedicated IBAN Rails",
+                desc: "Receive dedicated local bank credentials in Europe (SEPA), United Kingdom (Faster Payments), and the US (ACH)."
+              },
+              {
+                num: "03",
+                icon: CreditCard,
+                title: "Corporate & Virtual Cards",
+                desc: "Issue virtual cards instantly for SaaS tools, cloud servers, and international advertising campaigns."
+              },
+              {
+                num: "04",
+                icon: ShieldCheck,
+                title: "Strict Regulatory Safeguard",
+                desc: "Customer funds are safeguarded in segregated accounts under UK FCA and European Central Bank regulations."
+              }
+            ].map((feature, idx) => (
+              <div
+                key={idx}
+                className="group p-7 rounded-3xl bg-white/[0.02] border border-white/8 hover:border-amber-500/40 hover:bg-white/[0.04] transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-8">
+                    <span className="text-xs font-mono font-bold text-neutral-500 tracking-widest">
+                      {feature.num}
+                    </span>
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
+                      <feature.icon size={20} />
                     </div>
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
+                  <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+                    {feature.desc}
+                  </p>
                 </div>
-            </section>
+              </div>
+            ))}
+          </div>
+        </section>
 
-            {/* Deep-dive content */}
-            <section className="mx-auto max-w-7xl px-5 py-28 sm:px-8 lg:px-12">
-                <div className="grid gap-8 lg:grid-cols-3">
-                    <div className="rounded-[2rem] border border-white/10 bg-gradient-to-b from-white/[.05] to-white/[.015] p-8 lg:col-span-2">
-                        <div className="text-xs font-bold uppercase tracking-[.3em] text-cyan-400">03 / International banking explained</div>
-                        <h2 className="mt-5 text-3xl font-black sm:text-5xl">From domestic banking to a multi-rail financial life.</h2>
+        {/* ======================================================== */}
+        {/* PROVIDERS PROFILES SECTION */}
+        {/* ======================================================== */}
+        <section id="providers" className="mb-24 lg:mb-32 pt-8">
+          <div className="max-w-3xl mb-12">
+            <div className="text-xs font-black uppercase tracking-[0.25em] text-amber-400 mb-3">
+              {t.bankService?.providersBadge || "02 / Global Providers"}
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mb-4">
+              {t.bankService?.providersTitle || "Know the rails behind the logo."}
+            </h2>
+            <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
+              Explore the four flagship international banking and fintech ecosystems we support.
+            </p>
+          </div>
 
-                        <div className="mt-8 space-y-7 text-sm leading-8 text-slate-400">
-                            <p>
-                                International banking is not a single product. A person who works with overseas clients may need receiving
-                                details in one currency, a card for day-to-day spending, a transfer route for another currency, and a separate
-                                business payment account for invoices. A global entrepreneur may additionally need marketplace settlement,
-                                foreign-exchange management and documentation for compliance reviews. Treating all of these needs as if they
-                                were one conventional bank account creates confusion. This page is designed to make the layers visible.
-                            </p>
-                            <p>
-                                A multi-currency account can provide a central place to view supported balances, but the existence of a balance
-                                does not automatically mean that every currency is a local bank account. Some currencies may be represented
-                                through a wallet balance, while other currencies can have local receiving details or dedicated account
-                                identifiers. The exact legal and operational structure depends on the provider, the country of residence and
-                                the product being offered.
-                            </p>
-                            <p>
-                                An IBAN is also not synonymous with a complete banking relationship. An IBAN is an account identifier used
-                                in the international banking system, particularly across Europe and other participating regions. Users should
-                                always confirm who legally provides the account, what entity safeguards funds, what payment rails are supported,
-                                and whether the account is intended for personal or commercial use.
-                            </p>
-                            <p>
-                                Cards are another layer. A virtual card can be useful for online transactions while a physical card can serve
-                                in-store or ATM use where supported. Card issuance, merchant acceptance, cash withdrawal, spending limits,
-                                verification requirements and regional availability are provider-specific. A premium visual interface should
-                                therefore avoid promising universal acceptance and instead explain what the customer can verify before using
-                                the card.
-                            </p>
-                            <p>
-                                Compliance is part of the architecture. International financial services operate with identity verification,
-                                sanctions screening, transaction monitoring, customer-risk controls and other regulatory obligations. Business
-                                applicants can also be asked for incorporation documents, ownership information, tax information, business
-                                activity details and source-of-funds evidence. These checks are not an optional decoration around the service;
-                                they are part of how regulated financial infrastructure operates.
-                            </p>
-                        </div>
+          <div className="grid lg:grid-cols-[1fr_1.8fr] gap-8 items-start">
+            {/* Left Partner Selector Tabs */}
+            <div className="space-y-3">
+              {partners.map((partner, index) => (
+                <button
+                  key={partner.name}
+                  onClick={() => setActivePartner(index)}
+                  className={`w-full text-left rtl:text-right p-5 rounded-2xl border transition-all duration-300 flex items-center justify-between ${
+                    activePartner === index
+                      ? "bg-amber-500/10 border-amber-500/40 shadow-[0_0_25px_rgba(245,158,11,0.15)]"
+                      : "bg-white/[0.02] border-white/8 hover:bg-white/[0.04] hover:border-white/15"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-bold text-white text-base">{partner.name}</span>
+                      <span className="px-2 py-0.5 rounded-md bg-white/5 text-[10px] font-mono text-neutral-400">
+                        {partner.badge}
+                      </span>
                     </div>
+                    <div className="text-xs text-neutral-400 font-normal">{partner.accent}</div>
+                  </div>
+                  <div
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold transition-transform ${
+                      activePartner === index ? "bg-amber-400 text-black scale-110" : "text-neutral-500"
+                    }`}
+                  >
+                    {index + 1}
+                  </div>
+                </button>
+              ))}
+            </div>
 
-                    <aside className="rounded-[2rem] border border-cyan-300/10 bg-cyan-300/[.025] p-8">
-                        <div className="text-xs font-bold uppercase tracking-[.3em] text-cyan-400">Onboarding intelligence</div>
-                        <h3 className="mt-5 text-2xl font-black">Prepare before you apply.</h3>
-                        <div className="mt-7 space-y-3">
-                            {[
-                                "Valid identity document",
-                                "Current residential address",
-                                "Working email and phone",
-                                "Country of residence",
-                                "Business registration where applicable",
-                                "Expected account activity",
-                                "Source-of-funds information if requested",
-                                "Tax or business information where required",
-                            ].map((item, i) => (
-                                <div key={item} className="flex gap-3 rounded-xl border border-white/7 bg-black/20 p-3 text-xs text-slate-400">
-                                    <span className="font-black text-cyan-400">{String(i + 1).padStart(2, "0")}</span>
-                                    {item}
-                                </div>
-                            ))}
-                        </div>
-                    </aside>
+            {/* Right Detailed Partner Showcase */}
+            <div className="p-8 sm:p-10 rounded-3xl bg-[#080b12] border border-amber-500/25 relative overflow-hidden shadow-2xl">
+              <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/10 mb-6">
+                <div>
+                  <h3 className="text-3xl font-black text-white">{partners[activePartner].name}</h3>
+                  <p className="text-xs font-bold uppercase tracking-wider text-amber-400 mt-1">
+                    {partners[activePartner].accent}
+                  </p>
                 </div>
-            </section>
+                <span className="px-4 py-1.5 rounded-xl bg-white/5 border border-white/10 font-mono text-xs text-neutral-300 font-bold">
+                  {partners[activePartner].domain}
+                </span>
+              </div>
 
-            {/* Comparison matrix */}
-            <section className="mx-auto max-w-7xl px-5 pb-28 sm:px-8 lg:px-12">
-                <div className="mb-10">
-                    <div className="text-xs font-bold uppercase tracking-[.3em] text-cyan-400">04 / Capability map</div>
-                    <h2 className="mt-4 text-3xl font-black sm:text-5xl">Different platforms. Different jobs.</h2>
-                </div>
+              <p className="text-neutral-300 text-sm sm:text-base leading-relaxed mb-8">
+                {partners[activePartner].description}
+              </p>
 
-                <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[.02]">
-                    <div className="overflow-x-auto">
-                        <table className="w-full min-w-[780px] border-collapse text-left">
-                            <thead>
-                                <tr className="border-b border-white/10 bg-white/[.03]">
-                                    <th className="p-5 text-xs uppercase tracking-[.18em] text-slate-600">Capability</th>
-                                    {partners.map((p) => <th key={p.name} className="p-5 text-sm font-bold text-white">{p.name}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {[
-                                    ["International transfers", "Strong focus", "Supported", "Supported", "Strong focus"],
-                                    ["Business payments", "Supported", "Core use case", "Supported", "Core use case"],
-                                    ["Card ecosystem", "Available in markets", "Available in markets", "Core feature", "Market dependent"],
-                                    ["Multi-currency", "Core feature", "Supported", "Supported", "Core feature"],
-                                    ["Marketplace workflows", "Supported", "Strong focus", "Selected use cases", "Strong focus"],
-                                    ["FX / conversion", "Core feature", "Supported", "Supported", "Core feature"],
-                                ].map(([cap, ...values]) => (
-                                    <tr key={cap} className="border-b border-white/6 last:border-0">
-                                        <td className="p-5 text-sm font-semibold text-slate-300">{cap}</td>
-                                        {values.map((value, i) => <td key={i} className="p-5 text-sm text-slate-500">{value}</td>)}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+              <div className="space-y-3 mb-8">
+                <div className="text-xs font-black uppercase tracking-widest text-neutral-400 mb-2">
+                  Verified Capabilities & Rails:
                 </div>
-                <p className="mt-4 text-xs leading-6 text-slate-600">
-                    This matrix is a high-level orientation, not a product guarantee. Current availability and terms must be confirmed
-                    with the relevant provider for the applicant’s jurisdiction and account type.
+                {partners[activePartner].details.map((detail, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 flex items-center gap-3 text-xs sm:text-sm text-neutral-200"
+                  >
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+                    <span>{detail}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+                <span className="text-[11px] text-neutral-500 max-w-sm">
+                  Full eligibility, jurisdictional availability, and pricing terms are confirmed during personal advisory onboarding.
+                </span>
+                <a
+                  href="#application"
+                  className="px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-black text-xs uppercase tracking-wider transition-all"
+                >
+                  Apply for {partners[activePartner].name}
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ======================================================== */}
+        {/* APPLICATION FORM SECTION */}
+        {/* ======================================================== */}
+        <section id="application" className="mb-24 lg:mb-32">
+          <div className="max-w-4xl mx-auto rounded-[2.5rem] bg-gradient-to-b from-[#0e121d] via-[#090c14] to-[#05070c] border border-amber-500/30 p-8 sm:p-12 lg:p-14 shadow-2xl relative overflow-hidden">
+            {/* Ambient Corner Glow */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="text-center max-w-2xl mx-auto mb-10">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs font-black uppercase tracking-widest mb-4">
+                <Lock size={12} /> {t.bankService?.applyBadge || "03 / Application Portal"}
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black text-white mb-3">
+                {t.bankService?.applyTitle || "Initialize your account application."}
+              </h2>
+              <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed">
+                {t.bankService?.applySubtitle ||
+                  "Submit your basic information. Our specialized financial onboarding team will review your profile."}
+              </p>
+            </div>
+
+            {/* Account Type Toggle */}
+            <div className="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-black/40 border border-white/10 max-w-md mx-auto mb-8">
+              {(["Personal", "Business"] as AccountType[]).map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setAccountType(type)}
+                  className={`py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                    accountType === type
+                      ? "bg-amber-400 text-black shadow-lg"
+                      : "text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  {type === "Personal"
+                    ? t.bankService?.personalAccount || "Personal Account"
+                    : t.bankService?.businessAccount || "Business Account"}
+                </button>
+              ))}
+            </div>
+
+            {submitStatus === "success" && (
+              <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-center mb-8 flex flex-col items-center">
+                <CheckCircle2 size={36} className="mb-2" />
+                <h4 className="font-black text-lg text-white mb-1">
+                  {t.bankService?.successMsg || "Application Received!"}
+                </h4>
+                <p className="text-xs text-neutral-300 max-w-md">
+                  Our compliance and financial onboarding desk has received your file. An advisor will contact you via WhatsApp or Email within 24 hours.
                 </p>
-            </section>
+              </div>
+            )}
 
-            {/* 3D workflow */}
-            <section className="border-y border-white/5 bg-[#05080d] py-28">
-                <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
-                    <div className="text-center">
-                        <div className="text-xs font-bold uppercase tracking-[.3em] text-cyan-400">05 / The journey</div>
-                        <h2 className="mt-4 text-4xl font-black sm:text-6xl">A cleaner route from interest to onboarding.</h2>
-                    </div>
+            {submitStatus === "error" && (
+              <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center mb-8">
+                An error occurred while submitting your request. Please try again or reach out to us directly on WhatsApp.
+              </div>
+            )}
 
-                    <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-                        {[
-                            ["01", "Choose", "Select Personal or Business and tell us your country of residence or registration."],
-                            ["02", "Review", "Your application profile is reviewed against the relevant onboarding requirements."],
-                            ["03", "Verify", "Complete the identity and compliance checks requested for your route."],
-                            ["04", "Activate", "Once approved by the applicable provider, use the supported account and card functionality."],
-                        ].map(([num, title, text]) => (
-                            <div key={num} className="perspective">
-                                <div className="group h-full rounded-[1.8rem] border border-white/10 bg-gradient-to-br from-white/[.07] to-transparent p-7 shadow-2xl transition duration-500 hover:-translate-y-3 hover:rotate-[.4deg] hover:border-cyan-300/20">
-                                    <div className="text-5xl font-black text-white/10">{num}</div>
-                                    <h3 className="mt-10 text-xl font-bold">{title}</h3>
-                                    <p className="mt-4 text-sm leading-7 text-slate-500">{text}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-xs font-bold text-neutral-300 uppercase tracking-wider mb-2">
+                    {t.bankService?.firstName || "First Name"} *
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    placeholder="e.g. Ahmad"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
+                  />
                 </div>
-            </section>
-
-            {/* Application */}
-            <section id="application" className="relative mx-auto max-w-5xl px-5 py-28 sm:px-8">
-                <div className="absolute left-1/2 top-20 h-[30rem] w-[30rem] -translate-x-1/2 rounded-full bg-cyan-400/5 blur-[110px]" />
-                <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[.035] p-6 shadow-[0_50px_130px_-50px_rgba(0,0,0,.95)] backdrop-blur-2xl sm:p-12">
-                    <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-blue-500/10 blur-3xl" />
-                    <div className="relative">
-                        <div className="text-xs font-bold uppercase tracking-[.3em] text-cyan-400">06 / Application portal</div>
-                        <h2 className="mt-4 text-4xl font-black tracking-tight sm:text-6xl">Initialize your account.</h2>
-                        <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-500">
-                            Submit your basic information. Final eligibility, provider selection and product availability are subject to
-                            jurisdiction, verification and the applicable provider’s terms.
-                        </p>
-
-                        <div className="mt-10 grid grid-cols-2 rounded-2xl border border-white/10 bg-black/20 p-1">
-                            {(["Personal", "Business"] as AccountType[]).map((type) => (
-                                <button
-                                    key={type}
-                                    type="button"
-                                    onClick={() => setAccountType(type)}
-                                    className={`rounded-xl py-4 text-xs font-black uppercase tracking-[.2em] transition ${accountType === type ? "bg-white text-black shadow-xl" : "text-slate-600 hover:text-white"
-                                        }`}
-                                >
-                                    {type}
-                                </button>
-                            ))}
-                        </div>
-
-                        {submitStatus === "success" && (
-                            <div className="mt-7 rounded-2xl border border-emerald-400/20 bg-emerald-400/5 p-5 text-sm text-emerald-300">
-                                Your application was submitted successfully. Our team can now review the information you provided.
-                            </div>
-                        )}
-
-                        {submitStatus === "error" && (
-                            <div className="mt-7 rounded-2xl border border-red-400/20 bg-red-400/5 p-5 text-sm text-red-300">
-                                The request could not be submitted. Please check the server endpoint and try again.
-                            </div>
-                        )}
-
-                        <form onSubmit={handleSubmit} className="relative mt-10 space-y-7">
-                            <div className="grid gap-7 md:grid-cols-2">
-                                {[
-                                    ["firstName", "First name", "John"],
-                                    ["lastName", "Last name", "Doe"],
-                                    ["email", "Email address", "name@example.com"],
-                                    ["phone", "Phone number", "+44 20 0000 0000"],
-                                ].map(([name, label, placeholder]) => (
-                                    <label key={name} className="block">
-                                        <span className="mb-2 block text-[10px] font-bold uppercase tracking-[.22em] text-slate-600">{label}</span>
-                                        <input
-                                            required
-                                            name={name}
-                                            value={formData[name as keyof typeof formData]}
-                                            onChange={handleInputChange}
-                                            placeholder={placeholder}
-                                            type={name === "email" ? "email" : name === "phone" ? "tel" : "text"}
-                                            className="w-full rounded-2xl border border-white/10 bg-black/20 px-5 py-4 text-sm text-white outline-none transition placeholder:text-slate-700 focus:border-cyan-300/40 focus:bg-cyan-300/[.025]"
-                                        />
-                                    </label>
-                                ))}
-                            </div>
-
-                            <label className="block">
-                                <span className="mb-2 block text-[10px] font-bold uppercase tracking-[.22em] text-slate-600">Country of residence / registration</span>
-                                <input required name="country" value={formData.country} onChange={handleInputChange} placeholder="United Kingdom, Germany, Afghanistan..." className="w-full rounded-2xl border border-white/10 bg-black/20 px-5 py-4 text-sm text-white outline-none transition placeholder:text-slate-700 focus:border-cyan-300/40" />
-                            </label>
-
-                            {accountType === "Business" && (
-                                <div className="grid gap-7 border-t border-white/7 pt-7 md:grid-cols-2">
-                                    <label className="block">
-                                        <span className="mb-2 block text-[10px] font-bold uppercase tracking-[.22em] text-cyan-400">Company name</span>
-                                        <input required name="companyName" value={formData.companyName} onChange={handleInputChange} placeholder="Company Ltd." className="w-full rounded-2xl border border-white/10 bg-black/20 px-5 py-4 text-sm text-white outline-none focus:border-cyan-300/40" />
-                                    </label>
-                                    <label className="block">
-                                        <span className="mb-2 block text-[10px] font-bold uppercase tracking-[.22em] text-cyan-400">Registration number</span>
-                                        <input required name="companyRegNumber" value={formData.companyRegNumber} onChange={handleInputChange} placeholder="Registration number" className="w-full rounded-2xl border border-white/10 bg-black/20 px-5 py-4 text-sm text-white outline-none focus:border-cyan-300/40" />
-                                    </label>
-                                </div>
-                            )}
-
-                            <button
-                                disabled={isSubmitting}
-                                type="submit"
-                                className="group relative w-full overflow-hidden rounded-2xl bg-white px-7 py-5 text-sm font-black uppercase tracking-[.18em] text-black transition hover:-translate-y-1 hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                                <span className="relative z-10">{isSubmitting ? "Processing..." : "Submit secure application"}</span>
-                                <span className="absolute inset-y-0 left-[-30%] w-1/3 skew-x-[-20deg] bg-cyan-200/60 transition group-hover:left-[110%]" />
-                            </button>
-
-                            <p className="text-center text-[10px] leading-6 text-slate-700">
-                                Submission does not itself create an account or guarantee approval. Eligibility and product availability are
-                                determined by the applicable provider and jurisdiction.
-                            </p>
-                        </form>
-                    </div>
+                <div>
+                  <label className="block text-xs font-bold text-neutral-300 uppercase tracking-wider mb-2">
+                    {t.bankService?.lastName || "Last Name"} *
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    placeholder="e.g. Rahimi"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
+                  />
                 </div>
-            </section>
+              </div>
 
-            {/* FAQ */}
-            <section className="mx-auto max-w-5xl px-5 pb-28 sm:px-8">
-                <div className="mb-10">
-                    <div className="text-xs font-bold uppercase tracking-[.3em] text-cyan-400">07 / FAQ</div>
-                    <h2 className="mt-4 text-4xl font-black sm:text-5xl">Questions worth answering before onboarding.</h2>
+              <div className="grid sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-xs font-bold text-neutral-300 uppercase tracking-wider mb-2">
+                    {t.bankService?.email || "Email Address"} *
+                  </label>
+                  <input
+                    required
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="name@domain.com"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
+                  />
                 </div>
-
-                <div className="space-y-3">
-                    {faqs.map(([question, answer], index) => (
-                        <div key={question} className="overflow-hidden rounded-2xl border border-white/8 bg-white/[.025]">
-                            <button
-                                type="button"
-                                onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                                className="flex w-full items-center justify-between gap-5 px-6 py-5 text-left"
-                            >
-                                <span className="text-sm font-bold text-white">{question}</span>
-                                <span className="text-xl text-cyan-400">{openFaq === index ? "−" : "+"}</span>
-                            </button>
-                            {openFaq === index && <div className="border-t border-white/7 px-6 py-5 text-sm leading-7 text-slate-500">{answer}</div>}
-                        </div>
-                    ))}
+                <div>
+                  <label className="block text-xs font-bold text-neutral-300 uppercase tracking-wider mb-2">
+                    {t.bankService?.phone || "Phone / WhatsApp"} *
+                  </label>
+                  <input
+                    required
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="+93 799 000 000"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
+                  />
                 </div>
-            </section>
+              </div>
 
-            {/* Disclaimer / CTA */}
-            <section className="border-t border-white/5 bg-gradient-to-b from-cyan-400/[.035] to-transparent">
-                <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-12">
-                    <div className="flex flex-col justify-between gap-8 rounded-[2rem] border border-white/10 bg-black/25 p-8 md:flex-row md:items-center md:p-10">
-                        <div>
-                            <div className="text-xs font-bold uppercase tracking-[.3em] text-cyan-400">Safi International Ecosystem</div>
-                            <h2 className="mt-3 text-3xl font-black">Build your international financial workflow.</h2>
-                            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
-                                Explore the broader Safi Academy ecosystem, then return here when you are ready to submit an account request.
-                            </p>
-                        </div>
-                        <div className="flex shrink-0 gap-3">
-                            <Link href="/" className="rounded-xl border border-white/10 px-5 py-3 text-xs font-bold text-white transition hover:bg-white/5">Safi Academy</Link>
-                            <a href="#application" className="rounded-xl bg-white px-5 py-3 text-xs font-black text-black transition hover:bg-cyan-100">Apply now</a>
-                        </div>
-                    </div>
+              <div>
+                <label className="block text-xs font-bold text-neutral-300 uppercase tracking-wider mb-2">
+                  {t.bankService?.country || "Country of Residence"} *
+                </label>
+                <input
+                  required
+                  type="text"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleInputChange}
+                  placeholder="e.g. Afghanistan, UAE, Turkey, Germany..."
+                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
+                />
+              </div>
 
-                    <p className="mt-8 text-center text-[10px] leading-6 text-slate-700">
-                        Provider names and trademarks belong to their respective owners. References on this page are informational and do
-                        not by themselves establish a direct partnership, endorsement, sponsorship, banking relationship, or guarantee of
-                        account approval. Financial products and services are subject to jurisdiction, eligibility, provider terms and
-                        applicable law.
-                    </p>
+              {accountType === "Business" && (
+                <div className="grid sm:grid-cols-2 gap-5 pt-3 border-t border-white/10">
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 uppercase tracking-wider mb-2">
+                      {t.bankService?.companyName || "Company Name"}
+                    </label>
+                    <input
+                      type="text"
+                      name="companyName"
+                      value={formData.companyName}
+                      onChange={handleInputChange}
+                      placeholder="e.g. Safi Tech LLC"
+                      className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 uppercase tracking-wider mb-2">
+                      {t.bankService?.companyRegNumber || "Company Reg Number"}
+                    </label>
+                    <input
+                      type="text"
+                      name="companyRegNumber"
+                      value={formData.companyRegNumber}
+                      onChange={handleInputChange}
+                      placeholder="e.g. 17063286"
+                      className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
+                    />
+                  </div>
                 </div>
-            </section>
-        </main>
-    );
+              )}
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-black font-black uppercase tracking-wider text-sm shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isSubmitting ? (
+                  <span>{t.bankService?.submitting || "Transmitting Data..."}</span>
+                ) : (
+                  <>
+                    <span>{t.bankService?.submitBtn || "Submit Secure Application"}</span>
+                    {isRtl ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </section>
+
+        {/* ======================================================== */}
+        {/* FAQS SECTION */}
+        {/* ======================================================== */}
+        <section className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-black uppercase tracking-widest mb-3">
+              <HelpCircle size={14} /> Questions & Answers
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black text-white">
+              Frequently Answered Inquiries
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {faqs.map((faq, idx) => (
+              <div
+                key={idx}
+                className="rounded-2xl bg-white/[0.02] border border-white/8 overflow-hidden transition-colors"
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                  className="w-full flex items-center justify-between p-5 text-left rtl:text-right text-white font-bold text-sm sm:text-base hover:text-amber-400 transition-colors"
+                >
+                  <span className="pr-4 rtl:pr-0 rtl:pl-4">{faq.q}</span>
+                  <ChevronDown
+                    size={18}
+                    className={`text-amber-400 shrink-0 transition-transform duration-300 ${
+                      openFaq === idx ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {openFaq === idx && (
+                  <div className="px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-white/5 pt-3">
+                    {faq.a}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </main>
+  );
 }

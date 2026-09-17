@@ -154,7 +154,7 @@ export default function AccountDeletionPortal() {
             </div>
             <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold">
               <Scale size={13} />
-              <span>UK GDPR & App Store Certified</span>
+              <span>{isRtl ? "تایید شده مطابق با UK GDPR و استانداردهای اپ استور" : "UK GDPR & App Store Certified"}</span>
             </div>
           </div>
         </div>

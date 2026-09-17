@@ -190,7 +190,7 @@ export default function TermsOfServicePage() {
             <div className="bg-neutral-900/80 border border-white/10 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
                 <span className="text-xs font-bold uppercase tracking-widest text-yellow-500">{t.publicPages.navigationIndex}</span>
-                <span className="text-[11px] font-mono text-neutral-500">10 Sections</span>
+                <span className="text-[11px] font-mono text-neutral-500">{isRtl ? "۱۰ ماده حقوقی" : "10 Sections"}</span>
               </div>
 
               <nav className="space-y-1">

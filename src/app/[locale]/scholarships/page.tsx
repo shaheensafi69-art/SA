@@ -820,8 +820,8 @@ export default function EnglishScholarshipsPage() {
                     <FileText size={20} />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-sm sm:text-base">Motivation Letter (SOP) Surgery</h4>
-                    <p className="text-neutral-400 text-xs sm:text-sm mt-0.5">We analyze your narrative arc, hook, career objectives, and university alignment word-by-word.</p>
+                    <h4 className="text-white font-bold text-sm sm:text-base">{isRtl ? "ویرایش و بازنویسی تخصصی انگیزه‌نامه (SOP)" : "Motivation Letter (SOP) Surgery"}</h4>
+                    <p className="text-neutral-400 text-xs sm:text-sm mt-0.5">{isRtl ? "بررسی کلمه به کلمه ساختار روایی، هدف شغلی و تطابق با معیارهای پذیرش دانشگاه." : "We analyze your narrative arc, hook, career objectives, and university alignment word-by-word."}</p>
                   </div>
                 </div>
 
@@ -830,8 +830,8 @@ export default function EnglishScholarshipsPage() {
                     <GraduationCap size={20} />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-sm sm:text-base">Europass & US ATS CV Optimization</h4>
-                    <p className="text-neutral-400 text-xs sm:text-sm mt-0.5">Format your achievements, research publications, and leadership milestones according to international committee standards.</p>
+                    <h4 className="text-white font-bold text-sm sm:text-base">{isRtl ? "بهینه‌سازی رزومه مطابق استانداردهای یوروپس و ATS آمریکا" : "Europass & US ATS CV Optimization"}</h4>
+                    <p className="text-neutral-400 text-xs sm:text-sm mt-0.5">{isRtl ? "فرمت‌بندی دستاوردها، مقالات پژوهشی و سوابق علمی بر اساس استانداردهای کمیته‌های بین‌المللی." : "Format your achievements, research publications, and leadership milestones according to international committee standards."}</p>
                   </div>
                 </div>
 
@@ -840,8 +840,8 @@ export default function EnglishScholarshipsPage() {
                     <Users size={20} />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-sm sm:text-base">Mock Interview & Defense Panels</h4>
-                    <p className="text-neutral-400 text-xs sm:text-sm mt-0.5">Practice with past scholarship winners from Oxford, TUM Germany, and Tokyo Tech to master behavioral and academic interview questions.</p>
+                    <h4 className="text-white font-bold text-sm sm:text-base">{isRtl ? "شبیه‌سازی مصاحبه و دفاعیه با برندگان قبلی بورسیه" : "Mock Interview & Defense Panels"}</h4>
+                    <p className="text-neutral-400 text-xs sm:text-sm mt-0.5">{isRtl ? "تمرین با برندگان بورسیه از دانشگاه‌های آکسفورد و مونیخ جهت تسلط بر سوالات علمی و رفتاری." : "Practice with past scholarship winners from Oxford, TUM Germany, and Tokyo Tech to master behavioral and academic interview questions."}</p>
                   </div>
                 </div>
               </div>
@@ -851,7 +851,7 @@ export default function EnglishScholarshipsPage() {
                   href={`/${currentLocale}/support`} 
                   className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black uppercase tracking-widest text-xs shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-105 transition-all"
                 >
-                  <Sparkles size={16} /> Connect With Application Mentors
+                  <Sparkles size={16} /> {isRtl ? "ارتباط با منتورهای پذیرش تحصیلی" : "Connect With Application Mentors"}
                 </Link>
               </div>
             </div>
@@ -862,44 +862,44 @@ export default function EnglishScholarshipsPage() {
               
               <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-6">
                 <div>
-                  <h3 className="text-xl font-black text-white">Application Readiness Dossier</h3>
-                  <p className="text-xs text-neutral-400 mt-0.5">Standard requirements for competitive global applications</p>
+                  <h3 className="text-xl font-black text-white">{isRtl ? "چک‌لیست آمادگی و مدارک پذیرش" : "Application Readiness Dossier"}</h3>
+                  <p className="text-xs text-neutral-400 mt-0.5">{isRtl ? "استاندارد مدارک الزامی جهت ارسال به دانشگاه‌ها و بورسیه‌های بین‌المللی" : "Standard requirements for competitive global applications"}</p>
                 </div>
                 <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
-                  Verified Matrix
+                  {isRtl ? "الگوی تایید شده" : "Verified Matrix"}
                 </div>
               </div>
 
               <div className="space-y-4 text-xs sm:text-sm">
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <span className="text-neutral-300 font-medium">1. Official Transcripts & Degree Certificates</span>
-                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> Required</span>
+                  <span className="text-neutral-300 font-medium">{isRtl ? "۱. ریز نمرات رسمی و دانشنامه تحصیلی" : "1. Official Transcripts & Degree Certificates"}</span>
+                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> {isRtl ? "الزامی" : "Required"}</span>
                 </div>
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <span className="text-neutral-300 font-medium">2. Statement of Purpose (SOP / Motivation)</span>
-                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> Crucial</span>
+                  <span className="text-neutral-300 font-medium">{isRtl ? "۲. انگیزه‌نامه هدفمند (SOP / Motivation)" : "2. Statement of Purpose (SOP / Motivation)"}</span>
+                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> {isRtl ? "حیاتی" : "Crucial"}</span>
                 </div>
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <span className="text-neutral-300 font-medium">3. Academic Letters of Recommendation (2-3)</span>
-                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> Required</span>
+                  <span className="text-neutral-300 font-medium">{isRtl ? "۳. توصیه‌نامه‌های آکادمیک (۲ الی ۳ مورد)" : "3. Academic Letters of Recommendation (2-3)"}</span>
+                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> {isRtl ? "الزامی" : "Required"}</span>
                 </div>
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <span className="text-neutral-300 font-medium">4. English Proficiency (IELTS / TOEFL / MOI)</span>
-                  <span className="text-yellow-400 font-black flex items-center gap-1"><Check size={14} /> Waiverable</span>
+                  <span className="text-neutral-300 font-medium">{isRtl ? "۴. مدرک زبان (آیلتس، تافل یا گواهی MOI)" : "4. English Proficiency (IELTS / TOEFL / MOI)"}</span>
+                  <span className="text-yellow-400 font-black flex items-center gap-1"><Check size={14} /> {isRtl ? "قابل معافیت" : "Waiverable"}</span>
                 </div>
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <span className="text-neutral-300 font-medium">5. Detailed Academic CV / Resume (ATS Standard)</span>
-                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> Required</span>
+                  <span className="text-neutral-300 font-medium">{isRtl ? "۵. رزومه تحصیلی مطابق استاندارد ATS" : "5. Detailed Academic CV / Resume (ATS Standard)"}</span>
+                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> {isRtl ? "الزامی" : "Required"}</span>
                 </div>
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <span className="text-neutral-300 font-medium">6. Research Proposal (Masters by Research & PhD)</span>
-                  <span className="text-cyan-400 font-black flex items-center gap-1"><Check size={14} /> Program Specific</span>
+                  <span className="text-neutral-300 font-medium">{isRtl ? "۶. پروپوزال پژوهشی (ویژه مقاطع ارشد و دکتری)" : "6. Research Proposal (Masters by Research & PhD)"}</span>
+                  <span className="text-cyan-400 font-black flex items-center gap-1"><Check size={14} /> {isRtl ? "بسته به رشته" : "Program Specific"}</span>
                 </div>
               </div>
 
               <div className="mt-8 p-4 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 text-xs leading-relaxed flex items-center gap-3">
                 <Sparkles size={20} className="shrink-0 text-yellow-400" />
-                <span>Tip: Many European universities accept an <strong>English Medium of Instruction (MOI) Certificate</strong> instead of IELTS if your previous degree was in English.</span>
+                <span>{isRtl ? <>نکته کلیدی: بسیاری از دانشگاه‌های اروپایی در صورت گذراندن مقطع قبلی به زبان انگلیسی، <strong>گواهی زبان تدریس (MOI)</strong> را به جای آیلتس می‌پذیرند.</> : <>Tip: Many European universities accept an <strong>English Medium of Instruction (MOI) Certificate</strong> instead of IELTS if your previous degree was in English.</>}</span>
               </div>
             </div>
 

@@ -232,31 +232,51 @@ export default function ShaheenSafiExecutiveDossier() {
               <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">{t.publicPages.architectManifesto}</h2>
             </div>
 
-            <div className="space-y-6 text-neutral-300 text-base sm:text-lg leading-relaxed text-justify font-normal">
-              <p>
-                My professional trajectory commenced in the high-stakes, volatile environment of international financial markets. Operating as a full-time trader across the Forex markets and foreign currency matrices from 2016 through late 2024, I developed a deep, visceral understanding of global liquidity flows, order-book dynamics, and institutional risk mitigation.
-              </p>
-              
-              <p>
-                In December 2024, upon earning the prestigious <strong className="text-white font-bold underline decoration-yellow-400 underline-offset-4">International Technical Analysis Certification from IFTA (International Federation of Technical Analysts)</strong>, I recognized that true financial sovereignty cannot be achieved through trading alone—it requires architecting the underlying digital conduits and enterprise software that process global transactions.
-              </p>
-
-              {/* Callout Quote Box */}
-              <div className="my-8 bg-gradient-to-r from-yellow-500/10 via-amber-500/5 to-transparent p-8 rounded-3xl border-l-4 border-yellow-400 text-yellow-100 shadow-inner">
-                <p className="italic text-base sm:text-xl font-medium leading-relaxed">
-                  "We did not establish Safi Academy and SafiPay merely to participate in the digital economy—we founded them to build an unassailable financial and educational bridge connecting Afghan youth and global scholars directly with European and American enterprise markets."
+            {isRtl ? (
+              <div className="space-y-6 text-neutral-300 text-base sm:text-lg leading-relaxed text-justify font-normal">
+                <p>
+                  مسیر حرفه‌ای من در محیط پرنوسان و حساس بازارهای مالی بین‌المللی آغاز شد. با فعالیت تمام‌وقت در بازارهای فارکس و ارزهای جهانی از سال ۲۰۱۶ تا اواخر ۲۰۲۴، درکی عمیق از جریان‌های نقدینگی جهانی، پویایی دفتر سفارشات و مدیریت ریسک‌های نهادی به دست آوردم.
                 </p>
-                <div className="mt-4 flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-yellow-400">
-                  <span>— Shaheen Safi</span>
-                  <span>•</span>
-                  <span>London, United Kingdom</span>
+                <p>
+                  در دسامبر ۲۰۲۴، پس از اخذ گواهینامه معتبر تحلیل تکنیکال بین‌المللی از <strong className="text-white font-bold underline decoration-yellow-400 underline-offset-4">فدراسیون بین‌المللی تحلیل‌گران تکنیکال (IFTA)</strong>، دریافتم که استقلال واقعی مالی تنها با معامله‌گری حاصل نمی‌شود؛ بلکه نیازمند معماری زیرساخت‌های دیجیتال و نرم‌افزارهای سازمانی پردازش تراکنش‌هاست.
+                </p>
+                <div className="my-8 bg-gradient-to-r from-yellow-500/10 via-amber-500/5 to-transparent p-8 rounded-3xl border-r-4 border-yellow-400 text-yellow-100 shadow-inner">
+                  <p className="italic text-base sm:text-xl font-medium leading-relaxed">
+                    «ما آکادمی صافی و صافی‌پی را تنها برای حضور در اقتصاد دیجیتال تأسیس نکردیم؛ هدف ما ساختن پلی استوار و تسخیرناپذیر از آموزش و زیرساخت مالی بود تا جوانان و دانش‌پژوهان را مستقیماً به بازارهای سازمانی اروپا و آمریکا متصل سازیم.»
+                  </p>
+                  <div className="mt-4 flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-yellow-400">
+                    <span>— شاهین صافی</span>
+                    <span>•</span>
+                    <span>لندن، بریتانیا</span>
+                  </div>
                 </div>
+                <p>
+                  با داشتن مدرک لیسانس علوم کامپیوتر از <strong className="text-white font-bold">دانشگاه فنی استانبول (ITU)</strong>، مهندسی محاسباتی دقیق را با چشم‌انداز شرکتی تلفیق کرده‌ام. به عنوان بنیان‌گذار و مدیرعامل هلدینگ <strong className="text-white font-bold">Safi International Capital LTD</strong>، هدایت معماری فنی پلتفرم‌های اصلی‌مان از جمله بانکداری دیجیتال صافی‌پی، صافی تاپ‌آپ، پوشاک بین‌المللی صافی‌پرو و آکادمی صافی را بر عهده دارم.
+                </p>
               </div>
-
-              <p>
-                Holding a Bachelor of Computer Science degree from <strong className="text-white font-bold">Istanbul Technical University (ITU)</strong>, I integrate rigorous computational engineering with corporate vision. As Founder and Group CEO of <strong className="text-white font-bold">Safi International Capital LTD</strong>, I lead the technical architecture and strategic trajectory of our key platforms: SafiPay Digital Banking, Safi TopUp Global, SafiPro International Apparel, and Safi Academy.
-              </p>
-            </div>
+            ) : (
+              <div className="space-y-6 text-neutral-300 text-base sm:text-lg leading-relaxed text-justify font-normal">
+                <p>
+                  My professional trajectory commenced in the high-stakes, volatile environment of international financial markets. Operating as a full-time trader across the Forex markets and foreign currency matrices from 2016 through late 2024, I developed a deep, visceral understanding of global liquidity flows, order-book dynamics, and institutional risk mitigation.
+                </p>
+                <p>
+                  In December 2024, upon earning the prestigious <strong className="text-white font-bold underline decoration-yellow-400 underline-offset-4">International Technical Analysis Certification from IFTA (International Federation of Technical Analysts)</strong>, I recognized that true financial sovereignty cannot be achieved through trading alone—it requires architecting the underlying digital conduits and enterprise software that process global transactions.
+                </p>
+                <div className="my-8 bg-gradient-to-r from-yellow-500/10 via-amber-500/5 to-transparent p-8 rounded-3xl border-l-4 border-yellow-400 text-yellow-100 shadow-inner">
+                  <p className="italic text-base sm:text-xl font-medium leading-relaxed">
+                    "We did not establish Safi Academy and SafiPay merely to participate in the digital economy—we founded them to build an unassailable financial and educational bridge connecting Afghan youth and global scholars directly with European and American enterprise markets."
+                  </p>
+                  <div className="mt-4 flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-yellow-400">
+                    <span>— Shaheen Safi</span>
+                    <span>•</span>
+                    <span>London, United Kingdom</span>
+                  </div>
+                </div>
+                <p>
+                  Holding a Bachelor of Computer Science degree from <strong className="text-white font-bold">Istanbul Technical University (ITU)</strong>, I integrate rigorous computational engineering with corporate vision. As Founder and Group CEO of <strong className="text-white font-bold">Safi International Capital LTD</strong>, I lead the technical architecture and strategic trajectory of our key platforms: SafiPay Digital Banking, Safi TopUp Global, SafiPro International Apparel, and Safi Academy.
+                </p>
+              </div>
+            )}
           </div>
         </section>
 

@@ -438,14 +438,17 @@ export default function AboutPage() {
         </div>
 
         <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tight mb-8 leading-[1.08] animate-[fadeInUp_0.6s_ease-out]">
-          Architecting The Future of <br className="hidden md:block" />
+          {isRtl ? "معماری آینده‌ی " : "Architecting The Future of "}
+          <br className="hidden md:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-600 drop-shadow-2xl">
-            Global Education.
+            {isRtl ? "آموزش و تخصص جهانی." : "Global Education."}
           </span>
         </h1>
 
         <p className="text-neutral-300 text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed mb-12 animate-[fadeInUp_0.7s_ease-out]">
-          Safi Academy is the premier international institution within the Safi Ecosystem. Headquartered in London, we bridge the gap between real-world industry mastery and modern educational technology, empowering tens of thousands of global students to achieve financial, technological, and intellectual independence.
+          {isRtl
+            ? "آکادمی صافی نهاد بین‌المللی پیشرو در اکوسیستم صافی است. با دفتر مرکزی در لندن، ما فاصله میان تخصص واقعی بازار و فناوری‌های نوین آموزشی را پیوند می‌دهیم تا ده‌ها هزار دانشجو در سراسر جهان به استقلال مالی و فناوری دست یابند."
+            : "Safi Academy is the premier international institution within the Safi Ecosystem. Headquartered in London, we bridge the gap between real-world industry mastery and modern educational technology, empowering tens of thousands of global students to achieve financial, technological, and intellectual independence."}
         </p>
 
         {/* Core Institutional Stats Bar */}
@@ -806,11 +809,13 @@ export default function AboutPage() {
               </div>
 
               <h3 className="text-2xl sm:text-4xl font-black text-white mb-6">
-                Corporate Governance & UK Registry
+                {isRtl ? "حاکمیت شرکتی و ثبت رسمی در بریتانیا" : "Corporate Governance & UK Registry"}
               </h3>
 
               <p className="text-neutral-300">
-                Safi Academy is the educational flagship of <strong className="text-white text-lg">Safi International Capital LTD</strong>, a premier corporate financial entity officially registered in the United Kingdom under Company Number <span className="text-yellow-400 font-bold bg-yellow-500/10 px-2.5 py-1 rounded-md font-mono">17063286</span>.
+                {isRtl
+                  ? <>آکادمی صافی پرچمدار آموزشی هلدینگ بین‌المللی <strong className="text-white text-lg">Safi International Capital LTD</strong> می‌باشد که رسماً در بریتانیا تحت شماره <span className="text-yellow-400 font-bold bg-yellow-500/10 px-2.5 py-1 rounded-md font-mono">17063286</span> به ثبت رسیده است.</>
+                  : <>Safi Academy is the educational flagship of <strong className="text-white text-lg">Safi International Capital LTD</strong>, a premier corporate financial entity officially registered in the United Kingdom under Company Number <span className="text-yellow-400 font-bold bg-yellow-500/10 px-2.5 py-1 rounded-md font-mono">17063286</span>.</>}
               </p>
 
               <p className="mt-4 text-neutral-300">
@@ -934,7 +939,7 @@ export default function AboutPage() {
               href={`/${currentLocale}/register`}
               className="inline-block px-10 py-5 bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-black uppercase tracking-widest text-sm rounded-2xl hover:scale-105 transition-all shadow-[0_0_30px_rgba(234,179,8,0.4)]"
             >
-              Enroll as a Student
+              {isRtl ? "ثبت‌نام و عضویت در آکادمی" : "Enroll as a Student"}
             </Link>
 
             <Link
