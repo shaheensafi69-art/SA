@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { createClient } from '@supabase/supabase-js';
 import {
     ArrowLeft,
     ShieldCheck,
@@ -32,6 +33,11 @@ interface ProductDetailClientProps {
     currentLocale: string;
 }
 
+// اتصال به دیتابیس سوپابیس برای ثبت سفارش
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
 export default function ProductDetailClient({ product, currentLocale }: ProductDetailClientProps) {
     // فرم استیت‌ها
     const [formData, setFormData] = useState({
@@ -47,7 +53,7 @@ export default function ProductDetailClient({ product, currentLocale }: ProductD
     const [isSuccess, setIsSuccess] = useState(false);
 
     // استیت‌های ارز (Exchange Rate)
-    const [baseRate, setBaseRate] = useState<number>(70); // ریت پیش‌فرض در صورت قطعی API
+    const [baseRate, setBaseRate] = useState<number>(70); // ریت پیش‌فرض
     const [isLoadingRate, setIsLoadingRate] = useState(true);
 
     // سود ثابت شما در هر دلار (به افغانی)
@@ -71,9 +77,13 @@ export default function ProductDetailClient({ product, currentLocale }: ProductD
         fetchExchangeRate();
     }, []);
 
-    // محاسبات مالی
-    const totalUSD = product.selling_price * quantity;
-    const effectiveRate = baseRate + EXCHANGE_PROFIT_MARGIN; // نرخ گوگل + 20 افغانی سود
+    // محاسبات مالی (قیمت خرید کل، قیمت فروش کل و سود کل)
+    const totalCostPrice = product.cost_price * quantity;
+    const totalSalePrice = product.selling_price * quantity;
+    const totalProfit = totalSalePrice - totalCostPrice;
+
+    const totalUSD = totalSalePrice;
+    const effectiveRate = baseRate + EXCHANGE_PROFIT_MARGIN; // نرخ گوگل + 20 افغانی
     const totalAFN = totalUSD * effectiveRate;
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,13 +94,45 @@ export default function ProductDetailClient({ product, currentLocale }: ProductD
         e.preventDefault();
         setIsSubmitting(true);
 
-        const telegramBotToken = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN || "8668673040:AAEI6Q4r28KWiTAGwvQrT0Y9j6S92KhtwiI";
-        const telegramChatId = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID || "5195615040";
+        try {
+            // ۱. ثبت سفارش در دیتابیس سوپابیس (جدول reseller_orders)
+            const { data: orderData, error: orderError } = await supabase
+                .from('reseller_orders')
+                .insert({
+                    product_id: product.id,
+                    cost_price: totalCostPrice,
+                    sale_price: totalSalePrice,
+                    profit_amount: totalProfit,
+                    status: 'pending',
+                    order_payload: {
+                        customer_name: formData.fullName,
+                        email: formData.email,
+                        whatsapp: formData.whatsapp,
+                        telegram: formData.telegram,
+                        quantity: quantity,
+                        total_usd: totalUSD,
+                        total_afn: totalAFN,
+                        exchange_rate: effectiveRate
+                    }
+                })
+                .select()
+                .single();
 
-        // ساخت پیام حرفه‌ای برای بات تلگرام
-        const message = `
-🆕 *New Purchase Request (Safi Academy)*
+            if (orderError) {
+                console.error("Database Error:", orderError);
+                throw new Error("Failed to save order to database.");
+            }
+
+            const orderId = orderData.id;
+            const telegramBotToken = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN || "8668673040:AAEI6Q4r28KWiTAGwvQrT0Y9j6S92KhtwiI";
+            const telegramChatId = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID || "5195615040";
+
+            // ۲. ساخت پیام حرفه‌ای برای بات تلگرام (شامل شماره سفارش دیتابیس)
+            const message = `
+🆕 *New Order Submitted (Safi Academy)*
 -----------------------------------
+🛒 *Order ID:* \`${orderId}\`
+
 👤 *Customer Details:*
 • Name: ${formData.fullName}
 • Email: ${formData.email}
@@ -99,23 +141,24 @@ export default function ProductDetailClient({ product, currentLocale }: ProductD
 
 📦 *Product Details:*
 • Name: ${product.name}
-• ID: \`${product.id}\`
-• Quantity: ${quantity}
+• Product ID: \`${product.id}\`
 • Category: ${product.category}
+• Quantity: ${quantity}
 
-💰 *Financials (Per Unit):*
-• Original Cost: $${product.cost_price.toFixed(2)}
-• Selling Price: $${product.selling_price.toFixed(2)}
+💰 *Financials (Total Order):*
+• Total Cost: $${totalCostPrice.toFixed(2)}
+• Total Sale: $${totalSalePrice.toFixed(2)}
+• System Profit: *$${totalProfit.toFixed(2)}*
 
-💳 *Total Order Value:*
+💳 *Customer Pays:*
 • Total USD: *$${totalUSD.toFixed(2)}*
 • Total AFN: *${totalAFN.toLocaleString('en-US', { maximumFractionDigits: 0 })} ؋* 
-_(Base Rate: ${baseRate.toFixed(2)}, Effective Rate: ${effectiveRate.toFixed(2)})_
+_(Exchange Rate: ${baseRate.toFixed(2)} + ${EXCHANGE_PROFIT_MARGIN} ؋ Margin = ${effectiveRate.toFixed(2)})_
 
-⏳ *Status:* Pending Manual Processing (24h SLA)
-        `;
+⏳ *Status:* Pending (24h SLA)
+            `;
 
-        try {
+            // ۳. ارسال پیام به تلگرام
             const response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -129,11 +172,12 @@ _(Base Rate: ${baseRate.toFixed(2)}, Effective Rate: ${effectiveRate.toFixed(2)}
             if (response.ok) {
                 setIsSuccess(true);
             } else {
-                alert("Failed to submit request. Please try again later.");
+                throw new Error("Failed to send Telegram notification.");
             }
-        } catch (error) {
-            console.error(error);
-            alert("Network error. Please check your connection.");
+
+        } catch (error: any) {
+            console.error("Submission Error:", error);
+            alert("Error processing your request. Please try again or contact support.");
         } finally {
             setIsSubmitting(false);
         }
@@ -208,7 +252,7 @@ _(Base Rate: ${baseRate.toFixed(2)}, Effective Rate: ${effectiveRate.toFixed(2)}
                     <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full blur-[60px] pointer-events-none"></div>
 
                     {isSuccess ? (
-                        <div className="text-center py-10">
+                        <div className="text-center py-10 relative z-10">
                             <div className="w-20 h-20 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-400">
                                 <CheckCircle2 size={40} />
                             </div>

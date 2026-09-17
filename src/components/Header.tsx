@@ -5,7 +5,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ArrowRight, LogOut, LayoutDashboard, Settings, Mail, Globe, Sparkles, BookOpen, GraduationCap, Building2, HandHeart, X, Briefcase, BookMarked, Landmark, Server, Code2, Rss } from "lucide-react";
+import {
+  ChevronDown, ArrowRight, LogOut, LayoutDashboard, Settings, Mail, Globe,
+  Sparkles, BookOpen, GraduationCap, Building2, HandHeart, X, Briefcase,
+  BookMarked, Landmark, Server, Code2, Rss, ShoppingCart
+} from "lucide-react";
 
 // لیست ۹ زبان رسمی آکادمی صافی با پرچم‌های وکتور دایره‌ای و گرادینت‌های اختصاصی
 const languages = [
@@ -27,6 +31,7 @@ const translations: Record<string, any> = {
     courses: "Courses", blog: "Blog", scholarships: "Scholarships",
     partners: "Our Partners", donate: "Donate", about: "About", contact: "Contact",
     instructorApplication: "Teach With Us",
+    store: "Digital Store", // اضافه شده
     business: "Business Setup", hosting: "Hosting Deals", development: "Development Services", bankAccountService: "Bank Account Service",
     dashboard: "Dashboard", signIn: "Sign In", getStarted: "Get Started", signOut: "Sign Out",
     welcome: "Welcome,", selectLang: "Select Language", editProfile: "Edit Profile", signedInAs: "Signed in as"
@@ -36,6 +41,7 @@ const translations: Record<string, any> = {
     courses: "کورس‌ها", blog: "بلاگ", scholarships: "بورسیه‌ها",
     partners: "شرکای ما", donate: "کمک مالی", about: "درباره ما", contact: "تماس",
     instructorApplication: "درخواست تدریس (استادی)",
+    store: "فروشگاه دیجیتال", // اضافه شده
     business: "ثبت شرکت", hosting: "هاستینگ و سرور", development: "خدمات توسعه نرم‌افزار", bankAccountService: "خدمات حساب بانکی",
     dashboard: "داشـبورد", signIn: "ورود", getStarted: "شروع کنید", signOut: "خروج",
     welcome: "خوش آمدید،", selectLang: "انتخاب زبان آکادمی", editProfile: "ویرایش پروفایل", signedInAs: "وارد شده با"
@@ -45,6 +51,7 @@ const translations: Record<string, any> = {
     courses: "کورسونه", blog: "بلاګ", scholarships: "بورسیې",
     partners: "زموږ شریکان", donate: "مرسته", about: "زموږ په اړه", contact: "اړیکه",
     instructorApplication: "د ښوونکي غوښتنلیک",
+    store: "ډیجیټل پلورنځی", // اضافه شده
     business: "د شرکت ثبت", hosting: "د هوسټینګ وړاندیزونه", development: "د سافټویر جوړولو خدمتونه", bankAccountService: "د بانکي حساب خدمت",
     dashboard: "ډشبورډ", signIn: "ننوتل", getStarted: "پیل کړئ", signOut: "وتل",
     welcome: "ښه راغلاست،", selectLang: "د اکاډمۍ ژبه غوره کړئ", editProfile: "پروفایل ایډیټ کړئ", signedInAs: "ننوتل شوی په توګه"
@@ -54,6 +61,7 @@ const translations: Record<string, any> = {
     courses: "Курсы", blog: "Блог", scholarships: "Стипендии",
     partners: "Партнеры", donate: "Пожертвовать", about: "О нас", contact: "Контакты",
     instructorApplication: "Преподавать у нас",
+    store: "Цифровой магазин", // اضافه شده
     business: "Регистрация бизнеса", hosting: "Хостинг и серверы", development: "Разработка ПО", bankAccountService: "Банковский счёт",
     dashboard: "Панель", signIn: "Войти", getStarted: "Начать", signOut: "Выйти",
     welcome: "Добро пожаловать,", selectLang: "Выбрать язык", editProfile: "Редактировать профиль", signedInAs: "Вы вошли как"
@@ -63,6 +71,7 @@ const translations: Record<string, any> = {
     courses: "Kurslar", blog: "Blog", scholarships: "Burslar",
     partners: "Ortaklarımız", donate: "Bağış Yap", about: "Hakkımızda", contact: "İletişim",
     instructorApplication: "Eğitmen Olun",
+    store: "Dijital Mağaza", // اضافه شده
     business: "Şirket Kuruluşu", hosting: "Hosting & Sunucu", development: "Yazılım Geliştirme", bankAccountService: "Banka Hesabı Hizmeti",
     dashboard: "Panel", signIn: "Giriş Yap", getStarted: "Başlayın", signOut: "Çıkış Yap",
     welcome: "Hoş geldiniz,", selectLang: "Dil Seçiniz", editProfile: "Profili Düzenle", signedInAs: "Giriş yapılan hesap"
@@ -72,6 +81,7 @@ const translations: Record<string, any> = {
     courses: "Kurse", blog: "Blog", scholarships: "Stipendien",
     partners: "Unsere Partner", donate: "Spenden", about: "Über uns", contact: "Kontakt",
     instructorApplication: "Dozent werden",
+    store: "Digitaler Shop", // اضافه شده
     business: "Unternehmensgründung", hosting: "Hosting-Angebote", development: "Entwicklungsdienste", bankAccountService: "Bankkonto-Service",
     dashboard: "Dashboard", signIn: "Anmelden", getStarted: "Loslegen", signOut: "Abmelden",
     welcome: "Willkommen,", selectLang: "Sprache auswählen", editProfile: "Profil bearbeiten", signedInAs: "Angemeldet als"
@@ -81,6 +91,7 @@ const translations: Record<string, any> = {
     courses: "Cours", blog: "Blog", scholarships: "Bourses",
     partners: "Nos Partenaires", donate: "Faire un don", about: "À propos", contact: "Contact",
     instructorApplication: "Devenir Formateur",
+    store: "Boutique Numérique", // اضافه شده
     business: "Création d'entreprise", hosting: "Offres d'hébergement", development: "Services de développement", bankAccountService: "Service de compte bancaire",
     dashboard: "Tableau de bord", signIn: "Se connecter", getStarted: "Commencer", signOut: "Se déconnecter",
     welcome: "Bienvenue,", selectLang: "Choisir la langue", editProfile: "Modifier le profil", signedInAs: "Connecté en tant que"
@@ -90,6 +101,7 @@ const translations: Record<string, any> = {
     courses: "الدورات", blog: "المدونة", scholarships: "المنح الدراسية",
     partners: "شركاؤنا", donate: "تبرع", about: "عن الأكاديمية", contact: "اتصل بنا",
     instructorApplication: "انضم كمعلم",
+    store: "المتجر الرقمي", // اضافه شده
     business: "تأسيس الأعمال", hosting: "الاستضافة والخوادم", development: "خدمات التطوير", bankAccountService: "خدمة الحساب البنكي",
     dashboard: "لوحة التحكم", signIn: "تسجيل الدخول", getStarted: "ابدأ الآن", signOut: "تسجيل الخروج",
     welcome: "مرحباً،", selectLang: "اختر اللغة", editProfile: "تعديل الملف الشخصي", signedInAs: "مسجل الدخول باسم"
@@ -99,6 +111,7 @@ const translations: Record<string, any> = {
     courses: "کورسز", blog: "بلاگ", scholarships: "اسکالرشپ",
     partners: "ہمارے شراکت دار", donate: "عطیہ", about: "ہمارے بارے میں", contact: "رابطہ",
     instructorApplication: "استاد بنیں (درخواست)",
+    store: "ڈیجیٹل اسٹور", // اضافه شده
     business: "بزنس سیٹ اپ", hosting: "ہوسٹنگ ڈیلز", development: "ڈیولپمنٹ سروسز", bankAccountService: "بینک اکاؤنٹ سروس",
     dashboard: "ڈیش بورڈ", signIn: "سائن ان", getStarted: "شروع کریں", signOut: "سائن آؤٹ",
     welcome: "خوش آمدید،", selectLang: "اکیڈمی کی زبان منتخب کریں", editProfile: "پروفایل میں ترمیم کریں", signedInAs: "سائن ان بطور"
@@ -169,9 +182,10 @@ export default function Header() {
       icon: <Building2 size={15} />,
       isDropdown: true,
       items: [
+        { name: t.store, path: "/store", icon: <ShoppingCart size={14} /> }, // فروشگاه دیجیتال اضافه شد
         { name: t.business, path: "/business-formation", icon: <Briefcase size={14} /> },
         { name: t.hosting, path: "/hosting", icon: <Server size={14} /> },
-        { name: t.development, path: "/development-services", icon: <Code2 size={14} /> }, // Added Development Services link
+        { name: t.development, path: "/development-services", icon: <Code2 size={14} /> },
         { name: t.bankAccountService, path: "/bank-account-service", icon: <Landmark size={14} /> },
         { name: t.partners, path: "/partners", icon: <Building2 size={14} /> },
         { name: t.contact, path: "/contact", icon: <Mail size={14} /> },
