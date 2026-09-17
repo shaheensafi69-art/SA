@@ -2,7 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
-import {  useRouter, useParams , usePathname } from "next/navigation";
+import { useRouter, useParams, usePathname } from "next/navigation";
+import { getPortalTranslation } from "@/utils/portalTranslations";
+import GoogleAdStory from "@/components/ads/GoogleAdStory";
 
 // تایپ‌های دیتابیس
 interface Story {
@@ -40,26 +42,28 @@ const getTimeAgo = (dateString: string) => {
 export default function StoryViewerPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
-    const router = useRouter();
-    const params = useParams();
-    const storyAuthorId = params.id as string;
-    const supabase = createClient();
+  const t = getPortalTranslation(currentLocale);
+  const router = useRouter();
+  const params = useParams();
+  const storyAuthorId = params.id as string;
+  const supabase = createClient();
 
-    const [currentViewerId, setCurrentViewerId] = useState<string | null>(null);
-    const [stories, setStories] = useState<Story[]>([]);
-    const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [currentViewerId, setCurrentViewerId] = useState<string | null>(null);
+  const [stories, setStories] = useState<Story[]>([]);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
 
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [progress, setProgress] = useState(0);
-    const [isPaused, setIsPaused] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showAdSlide, setShowAdSlide] = useState(false);
 
-    // وضعیت‌های مربوط به تعاملات (لایک و ویو)
-    const [viewsCount, setViewsCount] = useState(0);
-    const [likesCount, setLikesCount] = useState(0);
-    const [isLikedByMe, setIsLikedByMe] = useState(false);
-    const [slideDirection, setSlideDirection] = useState<'next' | 'prev'>('next');
+  // وضعیت‌های مربوط به تعاملات (لایک و ویو)
+  const [viewsCount, setViewsCount] = useState(0);
+  const [likesCount, setLikesCount] = useState(0);
+  const [isLikedByMe, setIsLikedByMe] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<'next' | 'prev'>('next');
 
     // ۱. واکشی اطلاعات پایه (کاربر فعلی، پروفایل نویسنده، لیست استوری‌ها)
     useEffect(() => {
@@ -154,10 +158,12 @@ export default function StoryViewerPage() {
         if (currentIndex < stories.length - 1) {
             setCurrentIndex((prev) => prev + 1);
             setProgress(0);
+        } else if (!showAdSlide) {
+            setShowAdSlide(true);
         } else {
             router.push(`/${currentLocale}/feed`);
         }
-    }, [currentIndex, stories.length, router]);
+    }, [currentIndex, stories.length, router, currentLocale, showAdSlide]);
 
     // منطق برگشت به استوری قبلی
     const handlePrev = useCallback(() => {
@@ -194,7 +200,7 @@ export default function StoryViewerPage() {
     const deleteStory = async (e: React.MouseEvent) => {
         e.stopPropagation();
         if (!currentStory) return;
-        if (!window.confirm("Are you sure you want to delete this story?")) return;
+        if (!window.confirm(t.stories?.deleteConfirm || "Are you sure you want to delete this story?")) return;
 
         setIsPaused(true);
         try {
@@ -259,10 +265,22 @@ export default function StoryViewerPage() {
         return (
             <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center text-white">
                 <svg className="w-16 h-16 text-neutral-800 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                <p className="text-neutral-500 font-bold mb-6 tracking-wide">{error || "Story has expired or is unavailable."}</p>
+                <p className="text-neutral-500 font-bold mb-6 tracking-wide">{error || t.stories?.expiredOrUnavailable || "Story has expired or is unavailable."}</p>
                 <button onClick={() => router.push(`/${currentLocale}/feed`)} className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-[1.2rem] transition-colors font-bold text-sm backdrop-blur-md">
-                    Return to Feed
+                    {t.stories?.returnToFeed || "Return to Feed"}
                 </button>
+            </div>
+        );
+    }
+
+    if (showAdSlide) {
+        return (
+            <div className="fixed inset-0 z-[999] bg-[#050505] flex items-center justify-center overflow-hidden font-sans">
+                <GoogleAdStory
+                    currentLocale={currentLocale}
+                    onClose={() => router.push(`/${currentLocale}/feed`)}
+                    onNext={() => router.push(`/${currentLocale}/feed`)}
+                />
             </div>
         );
     }
@@ -403,7 +421,7 @@ export default function StoryViewerPage() {
                     {/* سمت چپ: آمار بازدید */}
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/10 text-white">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                        <span className="text-[13px] font-bold">{viewsCount} Views</span>
+                        <span className="text-[13px] font-bold">{viewsCount} {t.stories?.views || "Views"}</span>
                     </div>
 
                     {/* سمت راست: لایک و حذف */}

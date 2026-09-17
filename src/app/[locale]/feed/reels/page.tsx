@@ -751,6 +751,7 @@ function ReelsContent() {
                                     <InReelNativeAd
                                         adIndex={Math.floor(index / 3)}
                                         onShare={() => setShareReel(reel)}
+                                        currentLocale={currentLocale}
                                     />
                                 )}
                                 <div
@@ -917,7 +918,7 @@ function ReelsContent() {
                     <div className="p-4 sm:p-5 xl:p-6 border-b border-white/5 bg-gradient-to-b from-[#12121a] to-[#0a0a0f] flex items-center justify-between">
                         <div>
                             <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-                                <MessageCircle size={18} className="text-[#C2185B]" /> Discussion
+                                <MessageCircle size={18} className="text-[#C2185B]" /> {t.feed.commentsDiscussion || "Discussion"}
                             </h3>
                             <p className="text-[10px] text-neutral-400 font-bold mt-1">{t.feed.commentsUpdateAuto}</p>
                         </div>
@@ -932,6 +933,7 @@ function ReelsContent() {
                     <SharedCommentsView
                         reelId={reels[activeVideoIndex]?.id}
                         currentUserId={currentUserId}
+                        currentLocale={currentLocale}
                         onAuthRequired={() => {
                             setAuthModalAction("comment on this reel");
                             setShowAuthModal(true);
@@ -954,7 +956,7 @@ function ReelsContent() {
                     <div className="bg-[#0a0a0f] border-t border-white/10 rounded-t-[2.5rem] w-full max-h-[85vh] h-[75vh] flex flex-col shadow-2xl overflow-hidden pb-16">
                         <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/5 bg-[#0a0a0f]/95 shrink-0">
                             <h3 className="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
-                                <MessageCircle size={16} className="text-[#C2185B]" /> Comments
+                                <MessageCircle size={16} className="text-[#C2185B]" /> {t.feed.commentsDiscussion || t.feed.comment || "Comments"}
                             </h3>
                             <button onClick={() => setActiveReelCommentsId(null)} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-neutral-400 hover:text-white transition-colors">
                                 <X size={16} />
@@ -963,6 +965,7 @@ function ReelsContent() {
                         <SharedCommentsView
                             reelId={activeReelCommentsId}
                             currentUserId={currentUserId}
+                            currentLocale={currentLocale}
                             onAuthRequired={() => {
                                 setAuthModalAction("comment on this reel");
                                 setShowAuthModal(true);
@@ -1135,8 +1138,8 @@ function ReelsContent() {
 // =====================================================================
 // COMPONENT: SHARED COMMENTS VIEW (Used in Desktop Panel & Mobile Modal)
 // =====================================================================
-function SharedCommentsView({ reelId, currentUserId, onCommentAdded, onAuthRequired }: { reelId: string, currentUserId: string | null, onCommentAdded: () => void, onAuthRequired?: () => void }) {
-    const t = getPortalTranslation();
+function SharedCommentsView({ reelId, currentUserId, currentLocale = "en", onCommentAdded, onAuthRequired }: { reelId: string, currentUserId: string | null, currentLocale?: string, onCommentAdded: () => void, onAuthRequired?: () => void }) {
+    const t = getPortalTranslation(currentLocale);
     const [comments, setComments] = useState<ReelComment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSending, setIsSending] = useState(false);

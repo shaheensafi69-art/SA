@@ -2,19 +2,26 @@
 
 import React, { useState } from "react";
 import { Sparkles, X, ShieldCheck } from "lucide-react";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 import GoogleAdSenseAd from "./GoogleAdSenseAd";
 
 interface InFeedNativeAdProps {
   adIndex?: number;
+  currentLocale?: string;
 }
 
-export default function InFeedNativeAd({ adIndex = 0 }: InFeedNativeAdProps) {
+export default function InFeedNativeAd({ adIndex = 0, currentLocale = "en" }: InFeedNativeAdProps) {
   const [isDismissed, setIsDismissed] = useState(false);
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
 
   if (isDismissed) return null;
 
   return (
-    <div className="bg-[#0a0a0f]/85 border border-yellow-500/25 rounded-[2.5rem] p-5 sm:p-8 backdrop-blur-md space-y-4 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all relative overflow-hidden group">
+    <div
+      dir={isRtl ? "rtl" : "ltr"}
+      className="bg-[#0a0a0f]/85 border border-yellow-500/25 rounded-[2.5rem] p-5 sm:p-8 backdrop-blur-md space-y-4 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all relative overflow-hidden group"
+    >
       {/* Subtle background glow */}
       <div className="absolute top-0 right-0 w-72 h-72 bg-yellow-500/5 rounded-full blur-[100px] pointer-events-none"></div>
       <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent"></div>
@@ -28,13 +35,13 @@ export default function InFeedNativeAd({ adIndex = 0 }: InFeedNativeAdProps) {
           <div>
             <div className="flex items-center gap-1.5">
               <span className="text-white font-black text-xs sm:text-[15px] tracking-wide">
-                Google Ads Network
+                {t.publicPages.sponsorBadge || "Google Ads Network"}
               </span>
               <ShieldCheck size={15} className="text-yellow-400" />
             </div>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded-full">
-                Sponsored
+                {t.publicPages.adBadge || "Sponsored"}
               </span>
             </div>
           </div>

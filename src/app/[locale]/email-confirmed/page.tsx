@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ShieldCheck, ArrowRight, Verified } from "lucide-react";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 // ==========================================
 // 0. CUSTOM CONFETTI EFFECT (جشن موفقیت)
@@ -46,8 +47,11 @@ function ConfettiEffect() {
 export default function EmailConfirmedPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
+
   return (
-    <div className="min-h-screen w-full bg-[#030305] text-white flex items-center justify-center font-sans overflow-hidden relative p-4">
+    <div dir={isRtl ? "rtl" : "ltr"} className="min-h-screen w-full bg-[#030305] text-white flex items-center justify-center font-sans overflow-hidden relative p-4">
       
       {/* Background Ambient Glows */}
       <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-emerald-600/15 rounded-full blur-[150px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '8s' }}></div>
@@ -71,23 +75,25 @@ export default function EmailConfirmedPage() {
           
           <div className="space-y-3">
             <h1 className="text-3xl font-black text-white tracking-tight">
-              Email Verified!
+              {t.emailConfirmed?.emailVerified || "Email Verified!"}
             </h1>
             <p className="text-neutral-400 text-sm leading-relaxed max-w-sm mx-auto">
-              Your identity has been successfully confirmed. Welcome to the Safi Academy ecosystem.
+              {t.emailConfirmed?.identityConfirmed || "Your identity has been successfully confirmed. Welcome to the Safi Academy ecosystem."}
             </p>
           </div>
 
-          {/* Persian Texts (RTL) */}
-          <div className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-5 shadow-inner" dir="rtl">
-            <h3 className="text-lg font-black text-emerald-400 tracking-tight mb-2">حساب شما فعال شد!</h3>
+          {/* Localized Announcement Box */}
+          <div className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-5 shadow-inner">
+            <h3 className="text-lg font-black text-emerald-400 tracking-tight mb-2">
+              {t.emailConfirmed?.accountActivated || "Your account is active!"}
+            </h3>
             <p className="text-neutral-300 text-xs leading-relaxed">
-              ایمیل شما با موفقیت تایید شد و هویت شما در سیستم ثبت گردید. هم‌اکنون می‌توانید وارد داشبورد کاربری خود شوید.
+              {t.emailConfirmed?.accountActivatedDesc || "Your email has been verified and registered in our system. You can now access your dashboard."}
             </p>
           </div>
 
           <div className="w-full flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500/80 mb-2">
-            <ShieldCheck size={14} /> Full Access Granted
+            <ShieldCheck size={14} /> {t.emailConfirmed?.fullAccessGranted || "Full Access Granted"}
           </div>
 
           {/* Login / Dashboard Button */}
@@ -95,7 +101,7 @@ export default function EmailConfirmedPage() {
             href={`/${currentLocale}/login`} 
             className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 hover:scale-[1.02] rounded-xl text-black font-black text-sm uppercase tracking-widest transition-all shadow-[0_0_30px_rgba(16,185,129,0.3)] flex items-center justify-center gap-2 group"
           >
-            Access Dashboard <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            {t.emailConfirmed?.accessDashboard || "Access Dashboard"} <ArrowRight size={18} className={`group-hover:translate-x-1 transition-transform ${isRtl ? "rotate-180" : ""}`} />
           </Link>
 
         </div>

@@ -22,9 +22,9 @@ type TicketInfo = {
 };
 
 export default function ChatScreen({ params }: { params: { id: string } }) {
-  const t = getPortalTranslation();
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
     const router = useRouter();
     const supabase = createClient();
     const scrollRef = useRef<HTMLDivElement>(null);

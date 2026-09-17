@@ -764,7 +764,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
       </div>
 
       {activePostId && currentUserId && (
-        <CommentsModal postId={activePostId} currentUserId={currentUserId} onClose={() => { setActivePostId(null); fetchCompleteProfile(); }} />
+        <CommentsModal postId={activePostId} currentUserId={currentUserId} currentLocale={currentLocale} onClose={() => { setActivePostId(null); fetchCompleteProfile(); }} />
       )}
 
       {/* ================= AUTH REQUIRED MODAL ================= */}
@@ -806,8 +806,8 @@ function EmptyState({ icon, title, description }: any) {
 }
 
 // ================= COMMENTS MODAL COMPONENT =================
-function CommentsModal({ postId, currentUserId, onClose }: { postId: string, currentUserId: string, onClose: () => void }) {
-  const t = getPortalTranslation();
+function CommentsModal({ postId, currentUserId, currentLocale = "en", onClose }: { postId: string, currentUserId: string, currentLocale?: string, onClose: () => void }) {
+  const t = getPortalTranslation(currentLocale);
   const [comments, setComments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);

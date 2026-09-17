@@ -383,7 +383,7 @@ export default function StudentFeedPage() {
               filteredPosts.map((post, index) => (
                 <React.Fragment key={post.id}>
                   {((index > 0 && index % 3 === 0) || (filteredPosts.length <= 3 && index === 1)) && (
-                    <InFeedNativeAd adIndex={Math.floor(index / 3)} />
+                    <InFeedNativeAd adIndex={Math.floor(index / 3)} currentLocale={currentLocale} />
                   )}
                   <div className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-5 sm:p-8 backdrop-blur-md space-y-5 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all">
 
@@ -507,6 +507,7 @@ export default function StudentFeedPage() {
       {storyUserId && (
         <StoryViewerModal
           userId={storyUserId}
+          currentLocale={currentLocale}
           onClose={() => router.push(`/${currentLocale}/feed`)}
         />
       )}
@@ -669,8 +670,8 @@ function CommentsModal({ postId, currentUserId, currentLocale, onClose }: { post
 // =====================================================================
 // COMPONENT: STORY VIEWER MODAL (OVERLAY)
 // =====================================================================
-function StoryViewerModal({ userId, onClose }: { userId: string, onClose: () => void }) {
-  const t = getPortalTranslation();
+function StoryViewerModal({ userId, currentLocale = "en", onClose }: { userId: string, currentLocale?: string, onClose: () => void }) {
+  const t = getPortalTranslation(currentLocale);
   const supabase = createClient();
   const [stories, setStories] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);

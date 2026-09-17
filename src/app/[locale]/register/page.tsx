@@ -510,9 +510,9 @@ function RegisterFormContent() {
 // 3. MAIN REGISTER PAGE WITH 3D ASTRONAUT & STARS BACKGROUND
 // ==========================================
 export default function RegisterPage() {
-  const t = getPortalTranslation();
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
   return (
     <div className="h-screen w-full bg-[#020202] text-white flex flex-col lg:grid lg:grid-cols-2 font-sans overflow-hidden relative">
       

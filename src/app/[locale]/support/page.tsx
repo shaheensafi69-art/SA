@@ -15,9 +15,9 @@ type SupportTicket = {
 };
 
 export default function MinimalSupportPage() {
-  const t = getPortalTranslation();
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
+  const t = getPortalTranslation(currentLocale);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false); // جلوگیری از کلیک‌های همزمان

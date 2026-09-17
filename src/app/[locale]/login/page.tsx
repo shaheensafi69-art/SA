@@ -31,11 +31,11 @@ function TypewriterText({ text }: { text: string }) {
 }
 
 export default function LoginPage() {
-  const t = getPortalTranslation();
   const router = useRouter();
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   const locale = currentLocale;
+  const t = getPortalTranslation(currentLocale);
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

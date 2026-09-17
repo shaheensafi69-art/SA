@@ -1,6 +1,7 @@
 import "../globals.css";
 import ConditionalLayout from "@/components/ConditionalLayout";
 import type { Metadata } from "next";
+import Script from "next/script";
 
 export function generateStaticParams() {
   return [
@@ -77,6 +78,13 @@ export default function DynamicLocaleLayout({
       data-locale={locale}
       className={`w-full h-full ${isRtl ? "font-vazirmatn" : "font-sans"}`}
     >
+      <Script
+        id="google-adsense-script"
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6551903544426492"
+        crossOrigin="anonymous"
+        strategy="afterInteractive"
+      />
       <ConditionalLayout>
         {children}
       </ConditionalLayout>

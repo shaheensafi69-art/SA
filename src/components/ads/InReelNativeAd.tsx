@@ -3,17 +3,21 @@
 import React, { useState } from "react";
 import { Sparkles, Heart, Share2, ShieldCheck } from "lucide-react";
 import GoogleAdSenseAd from "./GoogleAdSenseAd";
+import { getPortalTranslation } from "@/utils/portalTranslations";
 
 interface InReelNativeAdProps {
   adIndex?: number;
   onShare?: () => void;
+  currentLocale?: string;
 }
 
-export default function InReelNativeAd({ adIndex = 0, onShare }: InReelNativeAdProps) {
+export default function InReelNativeAd({ adIndex = 0, onShare, currentLocale = "en" }: InReelNativeAdProps) {
   const [isLiked, setIsLiked] = useState(false);
+  const t = getPortalTranslation(currentLocale);
+  const isRtl = t.isRtl;
 
   return (
-    <div className="w-full h-full snap-start snap-always relative flex flex-col items-center justify-center bg-[#07070a] group overflow-hidden select-none shrink-0">
+    <div dir={isRtl ? "rtl" : "ltr"} className="w-full h-full snap-start snap-always relative flex flex-col items-center justify-center bg-[#07070a] group overflow-hidden select-none shrink-0">
       {/* Background ambient lighting */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/4 -left-20 w-80 h-80 bg-yellow-500/10 rounded-full blur-[120px]" />
@@ -21,10 +25,10 @@ export default function InReelNativeAd({ adIndex = 0, onShare }: InReelNativeAdP
       </div>
 
       {/* Top Sponsored Reel Badge */}
-      <div className="absolute top-16 left-4 z-20 flex items-center gap-2">
+      <div className={`absolute top-16 ${isRtl ? 'right-4' : 'left-4'} z-20 flex items-center gap-2`}>
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/70 backdrop-blur-xl border border-yellow-500/30 text-[10px] font-black uppercase tracking-widest text-yellow-400 shadow-xl">
           <Sparkles size={11} className="text-yellow-400" />
-          Sponsored • Google AdSense
+          {t.publicPages.sponsorBadge || "Sponsored"} • Google AdSense
         </span>
       </div>
 
@@ -42,20 +46,20 @@ export default function InReelNativeAd({ adIndex = 0, onShare }: InReelNativeAdP
       </div>
 
       {/* Bottom Info */}
-      <div className="absolute bottom-20 lg:bottom-10 left-4 z-20 space-y-1 pointer-events-auto">
+      <div className={`absolute bottom-20 lg:bottom-10 ${isRtl ? 'right-4 text-right' : 'left-4 text-left'} z-20 space-y-1 pointer-events-auto`}>
         <div className="flex items-center gap-1.5">
           <ShieldCheck size={14} className="text-yellow-400" />
           <span className="text-white font-black text-xs sm:text-sm tracking-wide drop-shadow-md">
-            Google Ads Network
+            {t.publicPages.sponsorBadge || "Google Ads Network"}
           </span>
         </div>
         <p className="text-neutral-400 text-[11px] font-medium drop-shadow-md">
-          Personalized Sponsored Content
+          {t.publicPages.adBadge || "Sponsored"}
         </p>
       </div>
 
-      {/* Right Vertical Action Bar */}
-      <div className="absolute bottom-20 lg:bottom-10 right-2.5 z-20 flex flex-col items-center gap-3.5">
+      {/* Action Bar */}
+      <div className={`absolute bottom-20 lg:bottom-10 ${isRtl ? 'left-2.5' : 'right-2.5'} z-20 flex flex-col items-center gap-3.5`}>
         {/* Like */}
         <button
           onClick={() => setIsLiked(!isLiked)}
@@ -71,7 +75,7 @@ export default function InReelNativeAd({ adIndex = 0, onShare }: InReelNativeAdP
           >
             <Heart size={20} fill={isLiked ? "currentColor" : "none"} />
           </div>
-          <span className="text-[10px] sm:text-[11px] font-bold text-neutral-300 mt-1">Ad</span>
+          <span className="text-[10px] sm:text-[11px] font-bold text-neutral-300 mt-1">{t.feed.like || "Like"}</span>
         </button>
 
         {/* Share */}
@@ -83,7 +87,7 @@ export default function InReelNativeAd({ adIndex = 0, onShare }: InReelNativeAdP
           <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 border border-white/20 text-white hover:bg-black/70 hover:scale-105 backdrop-blur-xl flex items-center justify-center transition-all shadow-lg">
             <Share2 size={19} />
           </div>
-          <span className="text-[10px] sm:text-[11px] font-bold text-neutral-300 mt-1">Share</span>
+          <span className="text-[10px] sm:text-[11px] font-bold text-neutral-300 mt-1">{t.feed.share || "Share"}</span>
         </button>
       </div>
     </div>
