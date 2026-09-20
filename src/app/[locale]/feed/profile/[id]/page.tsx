@@ -9,7 +9,7 @@ import {
   ShieldCheck, Trophy, Users, FileText, Mail, Globe,
   ThumbsUp, MessageSquare, Trash2, Send, X, BookOpen,
   Award, Flame, Wallet, Calendar, Share2, Link as LinkIcon, Activity, Video, Play, Camera,
-  Eye, Heart
+  Eye, Heart, Bookmark
 } from "lucide-react";
 import { uploadFileToR2 } from "@/utils/upload";
 import AuthRequiredModal from "@/components/feed/AuthRequiredModal";
@@ -44,6 +44,7 @@ interface PostItem {
   createdAt: string;
   likesCount: number;
   isLikedByMe: boolean;
+  isBookmarkedByMe?: boolean;
   commentsCount: number;
   moodTag: string;
   cleanTitle: string;
@@ -122,13 +123,23 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
   const [certificates, setCertificates] = useState<CertificateItem[]>([]);
   const [streak, setStreak] = useState<StreakItem | null>(null);
 
-  // Connection States
-  const [friendshipStatus, setFriendshipStatus] = useState<'none' | 'pending_sent' | 'pending_received' | 'friends'>('none');
-  const [friendsCount, setFriendsCount] = useState(0);
+  // Connection States (Followers / Following)
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowedBy, setIsFollowedBy] = useState(false);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   const [isActionLoading, setIsActionLoading] = useState(false);
 
+  // Private Saved & Liked States (Strictly for profile owner only)
+  const [savedPosts, setSavedPosts] = useState<PostItem[]>([]);
+  const [savedReels, setSavedReels] = useState<ReelItem[]>([]);
+  const [likedPosts, setLikedPosts] = useState<PostItem[]>([]);
+  const [likedReels, setLikedReels] = useState<ReelItem[]>([]);
+  const [savedSubTab, setSavedSubTab] = useState<'posts' | 'reels'>('posts');
+  const [likedSubTab, setLikedSubTab] = useState<'posts' | 'reels'>('posts');
+
   // UI States
-  const [activeTab, setActiveTab] = useState<'posts' | 'reels' | 'learning' | 'achievements'>('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'reels' | 'liked' | 'saved' | 'learning' | 'achievements'>('posts');
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [isBioExpanded, setIsBioExpanded] = useState(false);
@@ -182,7 +193,8 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
 
       const [
         { data: profileRes },
-        { count: friendsCountRes },
+        { count: followersCountRes },
+        { count: followingCountRes },
         { data: postsRes },
         { data: reelsRes },
         { data: enrollmentsRes },
@@ -191,7 +203,8 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
         { data: streakRes }
       ] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", targetUserId).maybeSingle(),
-        supabase.from("student_friends").select("id", { count: "exact", head: true }).or(`sender_id.eq.${targetUserId},receiver_id.eq.${targetUserId}`).eq("status", "accepted"),
+        supabase.from("user_follows").select("id", { count: "exact", head: true }).eq("following_id", targetUserId),
+        supabase.from("user_follows").select("id", { count: "exact", head: true }).eq("follower_id", targetUserId),
         supabase.from("discussion_posts").select("*").eq("student_id", targetUserId).order("created_at", { ascending: false }),
         supabase.from("reels").select("id, video_url, thumbnail_url, title, category, views_count, likes_count").eq("user_id", targetUserId).eq("is_published", true).order("created_at", { ascending: false }),
         supabase.from("enrollments").select("id, progress_percentage, enrolled_at, courses(id, title, thumbnail_url, category)").eq("student_id", targetUserId),
@@ -201,7 +214,8 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
       ]);
 
       if (profileRes) setProfileData(profileRes as ProfileData);
-      setFriendsCount(friendsCountRes || 0);
+      setFollowersCount(followersCountRes || 0);
+      setFollowingCount(followingCountRes || 0);
       if (reelsRes) setReels(reelsRes as ReelItem[]);
       if (enrollmentsRes) setEnrollments(enrollmentsRes as unknown as EnrollmentItem[]);
       if (awardsRes) setAwards(awardsRes as unknown as AwardItem[]);
@@ -209,16 +223,102 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
       if (streakRes) setStreak(streakRes as StreakItem);
 
       if (loggedInUserId && loggedInUserId !== targetUserId) {
-        const { data: relData } = await supabase
-          .from("student_friends")
-          .select("*")
-          .or(`and(sender_id.eq.${loggedInUserId},receiver_id.eq.${targetUserId}),and(sender_id.eq.${targetUserId},receiver_id.eq.${loggedInUserId})`)
-          .maybeSingle();
+        const [{ data: followRes }, { data: followedByRes }] = await Promise.all([
+          supabase.from("user_follows").select("id").eq("follower_id", loggedInUserId).eq("following_id", targetUserId).maybeSingle(),
+          supabase.from("user_follows").select("id").eq("follower_id", targetUserId).eq("following_id", loggedInUserId).maybeSingle()
+        ]);
+        setIsFollowing(!!followRes);
+        setIsFollowedBy(!!followedByRes);
+      }
 
-        if (relData) {
-          if (relData.status === 'accepted') setFriendshipStatus('friends');
-          else if (relData.sender_id === loggedInUserId) setFriendshipStatus('pending_sent');
-          else setFriendshipStatus('pending_received');
+      // STRICT PRIVACY: Load Saved & Liked items ONLY if current user is viewing their OWN profile
+      if (loggedInUserId && loggedInUserId === targetUserId) {
+        try {
+          // 1. Saved (Bookmarked) Posts
+          const { data: bPosts } = await supabase
+            .from("discussion_bookmarks")
+            .select("post_id")
+            .eq("user_id", loggedInUserId);
+          const bPostIds = (bPosts || []).map(b => b.post_id).filter(Boolean);
+          if (bPostIds.length > 0) {
+            const { data: rawBPosts } = await supabase
+              .from("discussion_posts")
+              .select("*")
+              .in("id", bPostIds);
+            const mappedBPosts: PostItem[] = (rawBPosts || []).map(item => ({
+              id: item.id.toString(),
+              studentId: item.student_id,
+              rawTitle: item.title || "",
+              content: item.content || "",
+              imageUrl: item.image_url,
+              createdAt: item.created_at || "",
+              likesCount: 0,
+              isLikedByMe: false,
+              isBookmarkedByMe: true,
+              commentsCount: 0,
+              moodTag: extractMood(item.title || ""),
+              cleanTitle: extractCleanTitle(item.title || "")
+            }));
+            setSavedPosts(mappedBPosts);
+          }
+
+          // 2. Saved (Bookmarked) Reels
+          const { data: bReels } = await supabase
+            .from("reel_bookmarks")
+            .select("reel_id")
+            .eq("user_id", loggedInUserId);
+          const bReelIds = (bReels || []).map(b => b.reel_id).filter(Boolean);
+          if (bReelIds.length > 0) {
+            const { data: rawBReels } = await supabase
+              .from("reels")
+              .select("id, video_url, thumbnail_url, title, category, views_count, likes_count")
+              .in("id", bReelIds);
+            setSavedReels((rawBReels as ReelItem[]) || []);
+          }
+
+          // 3. Liked Posts
+          const { data: lPosts } = await supabase
+            .from("discussion_likes")
+            .select("post_id")
+            .eq("student_id", loggedInUserId);
+          const lPostIds = (lPosts || []).map(l => l.post_id).filter(Boolean);
+          if (lPostIds.length > 0) {
+            const { data: rawLPosts } = await supabase
+              .from("discussion_posts")
+              .select("*")
+              .in("id", lPostIds);
+            const mappedLPosts: PostItem[] = (rawLPosts || []).map(item => ({
+              id: item.id.toString(),
+              studentId: item.student_id,
+              rawTitle: item.title || "",
+              content: item.content || "",
+              imageUrl: item.image_url,
+              createdAt: item.created_at || "",
+              likesCount: 0,
+              isLikedByMe: true,
+              isBookmarkedByMe: false,
+              commentsCount: 0,
+              moodTag: extractMood(item.title || ""),
+              cleanTitle: extractCleanTitle(item.title || "")
+            }));
+            setLikedPosts(mappedLPosts);
+          }
+
+          // 4. Liked Reels
+          const { data: lReels } = await supabase
+            .from("reel_likes")
+            .select("reel_id")
+            .eq("user_id", loggedInUserId);
+          const lReelIds = (lReels || []).map(l => l.reel_id).filter(Boolean);
+          if (lReelIds.length > 0) {
+            const { data: rawLReels } = await supabase
+              .from("reels")
+              .select("id, video_url, thumbnail_url, title, category, views_count, likes_count")
+              .in("id", lReelIds);
+            setLikedReels((rawLReels as ReelItem[]) || []);
+          }
+        } catch (privErr) {
+          console.error("Error loading private saved/liked items:", privErr);
         }
       }
 
@@ -255,27 +355,35 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
     }
   };
 
-  const handleConnectionAction = async () => {
+  const handleFollowAction = async () => {
     if (!currentUserId) {
-      setAuthModalAction("connect with this academy member");
+      setAuthModalAction("follow this academy member");
       setShowAuthModal(true);
       return;
     }
     if (currentUserId === targetUserId) return;
     setIsActionLoading(true);
     try {
-      if (friendshipStatus === 'none') {
-        await supabase.from("student_friends").insert({ sender_id: currentUserId, receiver_id: targetUserId, status: 'pending' });
-        setFriendshipStatus('pending_sent');
-      } else if (friendshipStatus === 'pending_sent' || friendshipStatus === 'friends') {
-        await supabase.from("student_friends").delete().or(`and(sender_id.eq.${currentUserId},receiver_id.eq.${targetUserId}),and(sender_id.eq.${targetUserId},receiver_id.eq.${currentUserId})`);
-        setFriendshipStatus('none');
-      } else if (friendshipStatus === 'pending_received') {
-        await supabase.from("student_friends").update({ status: 'accepted' }).or(`and(sender_id.eq.${targetUserId},receiver_id.eq.${currentUserId})`);
-        setFriendshipStatus('friends');
+      if (isFollowing) {
+        await supabase
+          .from("user_follows")
+          .delete()
+          .eq("follower_id", currentUserId)
+          .eq("following_id", targetUserId);
+        setIsFollowing(false);
+        setFollowersCount((prev) => Math.max(0, prev - 1));
+      } else {
+        await supabase
+          .from("user_follows")
+          .insert({
+            follower_id: currentUserId,
+            following_id: targetUserId
+          });
+        setIsFollowing(true);
+        setFollowersCount((prev) => prev + 1);
       }
     } catch (error) {
-      console.error("Connection action failed:", error);
+      console.error("Follow action failed:", error);
     } finally {
       setIsActionLoading(false);
     }
@@ -416,54 +524,70 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                 </div>
 
                 <div className="flex items-center justify-center sm:justify-start gap-2 sm:gap-6 mt-2 w-full">
-                  <div className="flex-1 sm:flex-none flex flex-col items-center sm:flex-row sm:gap-2 bg-white/5 sm:bg-transparent border sm:border-0 border-white/5 py-2 sm:py-0 rounded-xl">
-                    <span className="text-lg sm:text-xl font-black text-white">{friendsCount}</span>
-                    <span className="text-[9px] sm:text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t.profile.network}</span>
+                  <div className="flex-1 sm:flex-none flex flex-col items-center sm:flex-row sm:gap-2 bg-white/5 sm:bg-transparent border sm:border-0 border-white/5 py-2 sm:py-0 rounded-xl px-2">
+                    <span className="text-lg sm:text-xl font-black text-white">{followersCount}</span>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t.feed?.followers || "Followers"}</span>
+                  </div>
+                  <div className="flex-1 sm:flex-none flex flex-col items-center sm:flex-row sm:gap-2 bg-white/5 sm:bg-transparent border sm:border-0 border-white/5 py-2 sm:py-0 rounded-xl px-2">
+                    <span className="text-lg sm:text-xl font-black text-white">{followingCount}</span>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t.feed?.followingCount || t.feed?.following || "Following"}</span>
                   </div>
                   {!isFaculty && (
-                    <div className="flex-1 sm:flex-none flex flex-col items-center sm:flex-row sm:gap-2 bg-[#C2185B]/10 sm:bg-transparent border sm:border-0 border-[#C2185B]/20 py-2 sm:py-0 rounded-xl">
+                    <div className="flex-1 sm:flex-none flex flex-col items-center sm:flex-row sm:gap-2 bg-[#C2185B]/10 sm:bg-transparent border sm:border-0 border-[#C2185B]/20 py-2 sm:py-0 rounded-xl px-2">
                       <span className="text-lg sm:text-xl font-black text-[#C2185B]">{profileData.total_score || 0}</span>
-                      <span className="text-[9px] sm:text-[10px] font-bold text-[#C2185B]/70 uppercase tracking-widest">{t.profile.score}</span>
+                      <span className="text-[9px] sm:text-[10px] font-bold text-[#C2185B]/70 uppercase tracking-widest">{t.profile?.score || "Score"}</span>
                     </div>
                   )}
-                  <div className="flex-1 sm:flex-none flex flex-col items-center sm:flex-row sm:gap-2 bg-white/5 sm:bg-transparent border sm:border-0 border-white/5 py-2 sm:py-0 rounded-xl">
+                  <div className="flex-1 sm:flex-none flex flex-col items-center sm:flex-row sm:gap-2 bg-white/5 sm:bg-transparent border sm:border-0 border-white/5 py-2 sm:py-0 rounded-xl px-2">
                     <span className="text-lg sm:text-xl font-black text-white">{posts.length}</span>
-                    <span className="text-[9px] sm:text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t.profile.posts}</span>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{t.profile?.posts || "Posts"}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Action Buttons (Connect & Message) */}
+              {/* Action Buttons (Follow & Message) */}
               {!isMyProfile && (
                 <div className="w-full sm:w-auto mt-4 sm:mt-0 sm:pb-2 flex items-center gap-2">
                   <button
                     disabled={isActionLoading}
-                    onClick={handleConnectionAction}
-                    className={`px-6 py-3.5 sm:py-4 flex items-center justify-center gap-2 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-lg ${friendshipStatus === 'friends' ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30 group" :
-                      friendshipStatus === 'pending_sent' ? "bg-white/5 text-neutral-400 border border-white/10" :
-                        friendshipStatus === 'pending_received' ? "bg-emerald-500 text-black border border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]" :
-                          "bg-[#C2185B] text-white border border-[#C2185B] shadow-[0_0_20px_rgba(194,24,91,0.4)]"
-                      }`}
+                    onClick={handleFollowAction}
+                    className={`px-6 py-3.5 sm:py-4 flex items-center justify-center gap-2 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-lg ${
+                      isFollowing
+                        ? "bg-white/10 text-neutral-300 border border-white/20 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30 group"
+                        : isFollowedBy
+                        ? "bg-gradient-to-r from-[#C2185B] to-purple-600 text-white border border-pink-500 shadow-[0_0_20px_rgba(194,24,91,0.4)] hover:scale-105"
+                        : "bg-[#C2185B] text-white border border-[#C2185B] shadow-[0_0_20px_rgba(194,24,91,0.4)] hover:scale-105"
+                    }`}
                   >
-                    {isActionLoading ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div> : (
+                    {isActionLoading ? (
+                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                    ) : isFollowing ? (
                       <>
-                        {friendshipStatus === 'friends' && <><span className="group-hover:hidden flex items-center gap-2"><UserCheck size={16} /> {t.profile.connected}</span> <span className="hidden group-hover:flex items-center gap-2"><UserMinus size={16} /> {t.feed.delete}</span></>}
-                        {friendshipStatus === 'pending_sent' && <><Clock size={16} /> {t.profile.requestSent}</>}
-                        {friendshipStatus === 'pending_received' && <><UserPlus size={16} /> {t.profile.acceptRequest}</>}
-                        {friendshipStatus === 'none' && <><UserPlus size={16} /> {t.profile.connect}</>}
+                        <span className="group-hover:hidden flex items-center gap-2">
+                          <UserCheck size={16} /> {t.feed?.following || "Following"}
+                        </span>
+                        <span className="hidden group-hover:flex items-center gap-2">
+                          <UserMinus size={16} /> {t.feed?.unfollow || "Unfollow"}
+                        </span>
                       </>
+                    ) : isFollowedBy ? (
+                      <span className="flex items-center gap-2">
+                        <UserPlus size={16} /> {t.feed?.followBack || "Follow Back"}
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        <UserPlus size={16} /> {t.feed?.follow || "Follow"}
+                      </span>
                     )}
                   </button>
 
-                  {/* دکمه مسیج (فقط وقتی باهم فرند هستند) */}
-                  {friendshipStatus === 'friends' && (
-                    <Link
-                      href={`/${currentLocale}/feed/chats/screen?userId=${targetUserId}`}
-                      className="px-6 py-3.5 sm:py-4 bg-gradient-to-r from-pink-600 to-[#C2185B] text-white border border-pink-500/40 rounded-2xl flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest shadow-[0_0_20px_rgba(194,24,91,0.4)] hover:scale-105 transition-all"
-                    >
-                      <MessageSquare size={16} /> {t.feed.messages}
-                    </Link>
-                  )}
+                  {/* Direct Message button */}
+                  <Link
+                    href={`/${currentLocale}/feed/chats/screen?userId=${targetUserId}`}
+                    className="px-6 py-3.5 sm:py-4 bg-gradient-to-r from-pink-600 to-[#C2185B] text-white border border-pink-500/40 rounded-2xl flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest shadow-[0_0_20px_rgba(194,24,91,0.4)] hover:scale-105 transition-all"
+                  >
+                    <MessageSquare size={16} /> {t.feed?.messages || "Message"}
+                  </Link>
                 </div>
               )}
             </div>
@@ -522,160 +646,346 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
           <div className="lg:col-span-8 xl:col-span-9 space-y-6 pb-6">
 
             {/* TABS */}
-            <div className="sticky top-0 sm:top-0 z-30 flex overflow-x-auto scrollbar-hide gap-2 p-1.5 bg-[#0a0a0f]/90 backdrop-blur-xl sm:border border-white/5 sm:rounded-2xl -mx-4 px-4 sm:mx-0 sm:px-1.5 shadow-md sm:shadow-none">
-              {[
-                { id: 'posts', label: t.profile.posts, icon: <MessageSquare size={16} /> },
-                { id: 'reels', label: t.profile.reels, icon: <Video size={16} /> },
-                { id: 'learning', label: t.profile.learning, icon: <BookOpen size={16} /> },
-                { id: 'achievements', label: t.profile.awards, icon: <Award size={16} /> },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-[11px] sm:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap flex-1 sm:flex-none ${activeTab === tab.id
-                    ? "bg-[#C2185B] text-white shadow-[0_0_15px_rgba(194,24,91,0.3)] border border-[#C2185B]"
-                    : "text-neutral-500 hover:bg-white/5 hover:text-neutral-300 border border-transparent"
-                    }`}
-                >
-                  <span className="hidden sm:inline">{tab.icon}</span>
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+            {(() => {
+              const availableTabs = [
+                { id: 'posts', label: t.profile?.posts || "Posts", icon: <MessageSquare size={16} /> },
+                { id: 'reels', label: t.profile?.reels || "Reels", icon: <Video size={16} /> },
+                ...(isMyProfile ? [
+                  { id: 'liked', label: t.feed?.liked || "Liked", icon: <Heart size={16} /> },
+                  { id: 'saved', label: t.feed?.saved || "Saved", icon: <Bookmark size={16} /> },
+                ] : []),
+                { id: 'learning', label: t.profile?.learning || "Learning", icon: <BookOpen size={16} /> },
+                { id: 'achievements', label: t.profile?.awards || "Achievements", icon: <Award size={16} /> },
+              ];
+              const currentTab = (!isMyProfile && (activeTab === 'liked' || activeTab === 'saved')) ? 'posts' : activeTab;
 
-            {/* TAB CONTENTS */}
-            <div className="animate-[fadeIn_0.3s_ease-out]">
+              return (
+                <>
+                  <div className="sticky top-0 sm:top-0 z-30 flex overflow-x-auto scrollbar-hide gap-2 p-1.5 bg-[#0a0a0f]/90 backdrop-blur-xl sm:border border-white/5 sm:rounded-2xl -mx-4 px-4 sm:mx-0 sm:px-1.5 shadow-md sm:shadow-none">
+                    {availableTabs.map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id as any)}
+                        className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-[11px] sm:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap flex-1 sm:flex-none ${currentTab === tab.id
+                          ? "bg-[#C2185B] text-white shadow-[0_0_15px_rgba(194,24,91,0.3)] border border-[#C2185B]"
+                          : "text-neutral-500 hover:bg-white/5 hover:text-neutral-300 border border-transparent"
+                          }`}
+                      >
+                        <span className="hidden sm:inline">{tab.icon}</span>
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
 
-              {/* TAB: POSTS */}
-              {activeTab === 'posts' && (
-                <div className="space-y-4 sm:space-y-6">
-                  {posts.length === 0 ? (
-                    <EmptyState icon={<FileText size={40} />} title={t.profile.noDiscussions} description={t.profile.noPostsYet} />
-                  ) : (
-                    posts.map((post) => (
-                      <div key={post.id} className="bg-[#0a0a0f]/80 sm:border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] p-5 sm:p-8 backdrop-blur-md space-y-4 sm:space-y-5 shadow-lg">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3 sm:gap-4">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full sm:rounded-[1rem] bg-neutral-800 border-2 border-[#C2185B]/30 overflow-hidden flex items-center justify-center shrink-0">
-                              {profileData.avatar_url ? (
-                                <img src={profileData.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-                              ) : (
-                                <span className="text-[#C2185B] font-black">{profileData.first_name?.[0] || 'U'}</span>
+                  {/* TAB CONTENTS */}
+                  <div className="animate-[fadeIn_0.3s_ease-out]">
+
+                    {/* TAB: POSTS */}
+                    {currentTab === 'posts' && (
+                      <div className="space-y-4 sm:space-y-6">
+                        {posts.length === 0 ? (
+                          <EmptyState icon={<FileText size={40} />} title={t.profile.noDiscussions} description={t.profile.noPostsYet} />
+                        ) : (
+                          posts.map((post) => (
+                            <div key={post.id} className="bg-[#0a0a0f]/80 sm:border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] p-5 sm:p-8 backdrop-blur-md space-y-4 sm:space-y-5 shadow-lg">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3 sm:gap-4">
+                                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full sm:rounded-[1rem] bg-neutral-800 border-2 border-[#C2185B]/30 overflow-hidden flex items-center justify-center shrink-0">
+                                    {profileData.avatar_url ? (
+                                      <img src={profileData.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                                    ) : (
+                                      <span className="text-[#C2185B] font-black">{profileData.first_name?.[0] || 'U'}</span>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <h4 className="text-white font-black text-sm tracking-wide">{profileData.first_name} {profileData.last_name}</h4>
+                                    <p className="text-[10px] text-neutral-500 font-bold mt-0.5">{post.createdAt.split('T')[0]}</p>
+                                  </div>
+                                </div>
+                                {isMyProfile && (
+                                  <button onClick={() => deletePost(post.id)} className="text-neutral-500 hover:text-red-400 p-2 sm:p-2.5 bg-white/5 rounded-xl hover:bg-red-500/10 transition-colors">
+                                    <Trash2 size={16} />
+                                  </button>
+                                )}
+                              </div>
+
+                              <div className={`inline-block px-3 py-1 bg-[#C2185B]/10 ${isRtl ? "border-r-2 rounded-l-lg" : "border-l-2 rounded-r-lg"} border-[#C2185B] text-pink-300 text-[9px] sm:text-[10px] font-black uppercase tracking-widest shadow-sm`}>
+                                {post.moodTag}
+                              </div>
+
+                              {post.cleanTitle && <h3 className="text-lg sm:text-xl font-black text-white leading-tight">{post.cleanTitle}</h3>}
+                              <p className="text-neutral-300 text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap">{post.content}</p>
+
+                              {post.imageUrl && (
+                                <div className="rounded-2xl border border-white/5 bg-[#050508] mt-3 flex items-center justify-center overflow-hidden max-h-[300px] sm:max-h-[500px]">
+                                  <img src={post.imageUrl} alt="Post media" className="w-full h-full object-contain rounded-2xl" />
+                                </div>
                               )}
+
+                              <div className="flex items-center justify-between pt-3 text-[10px] sm:text-[11px] font-bold text-neutral-400">
+                                {post.likesCount > 0 ? (
+                                  <div className="flex items-center gap-1.5">
+                                    <div className="p-1 sm:p-1.5 bg-[#C2185B] rounded-full text-white shadow-[0_0_10px_rgba(194,24,91,0.5)]"><ThumbsUp size={10} className="fill-current" /></div>
+                                    <span className="text-white">{post.likesCount}</span>
+                                  </div>
+                                ) : <span />}
+                                {post.commentsCount > 0 && <span>{post.commentsCount} {t.feed.commentsCount}</span>}
+                              </div>
+
+                              <hr className="border-white/5 my-3" />
+
+                              <div className="flex items-center justify-between gap-2">
+                                <button onClick={() => toggleLike(post)} className={`flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-xl sm:rounded-[1rem] transition-all font-black text-xs ${post.isLikedByMe ? "text-[#C2185B] bg-[#C2185B]/10 border border-[#C2185B]/30 shadow-[0_0_15px_rgba(194,24,91,0.15)]" : "text-neutral-400 bg-white/[0.02] border border-transparent hover:bg-white/5 hover:text-white"}`}>
+                                  <ThumbsUp size={16} className={post.isLikedByMe ? "fill-current" : ""} />
+                                  <span>{t.feed.like}</span>
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (!currentUserId) {
+                                      setAuthModalAction("comment on this post");
+                                      setShowAuthModal(true);
+                                      return;
+                                    }
+                                    setActivePostId(post.id);
+                                  }}
+                                  className="flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-xl sm:rounded-[1rem] transition-all font-black text-xs text-neutral-400 bg-white/[0.02] hover:bg-white/5 hover:text-white border border-transparent"
+                                >
+                                  <MessageSquare size={16} />
+                                  <span>{t.feed.comment}</span>
+                                </button>
+                              </div>
                             </div>
-                            <div>
-                              <h4 className="text-white font-black text-sm tracking-wide">{profileData.first_name} {profileData.last_name}</h4>
-                              <p className="text-[10px] text-neutral-500 font-bold mt-0.5">{post.createdAt.split('T')[0]}</p>
-                            </div>
-                          </div>
-                          {isMyProfile && (
-                            <button onClick={() => deletePost(post.id)} className="text-neutral-500 hover:text-red-400 p-2 sm:p-2.5 bg-white/5 rounded-xl hover:bg-red-500/10 transition-colors">
-                              <Trash2 size={16} />
-                            </button>
-                          )}
-                        </div>
+                          ))
+                        )}
+                      </div>
+                    )}
 
-                        <div className={`inline-block px-3 py-1 bg-[#C2185B]/10 ${isRtl ? "border-r-2 rounded-l-lg" : "border-l-2 rounded-r-lg"} border-[#C2185B] text-pink-300 text-[9px] sm:text-[10px] font-black uppercase tracking-widest shadow-sm`}>
-                          {post.moodTag}
-                        </div>
-
-                        {post.cleanTitle && <h3 className="text-lg sm:text-xl font-black text-white leading-tight">{post.cleanTitle}</h3>}
-                        <p className="text-neutral-300 text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap">{post.content}</p>
-
-                        {post.imageUrl && (
-                          <div className="rounded-2xl border border-white/5 bg-[#050508] mt-3 flex items-center justify-center overflow-hidden max-h-[300px] sm:max-h-[500px]">
-                            <img src={post.imageUrl} alt="Post media" className="w-full h-full object-contain rounded-2xl" />
+                    {/* TAB: REELS */}
+                    {currentTab === 'reels' && (
+                      <div className="space-y-4">
+                        {reels.length === 0 ? (
+                          <EmptyState icon={<Video size={40} />} title={t.profile.noReels} description={t.profile.noReels} />
+                        ) : (
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            {reels.map((reel) => (
+                              <Link
+                                key={reel.id}
+                                href={`/${currentLocale}/feed/reels?id=${reel.id}`}
+                                className="group relative bg-neutral-900 rounded-2xl overflow-hidden aspect-[9/16] border border-white/10 hover:border-[#C2185B] transition-all shadow-lg flex items-center justify-center"
+                              >
+                                {reel.thumbnail_url ? (
+                                  <img src={reel.thumbnail_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                ) : (
+                                  <video src={reel.video_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                )}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-3.5">
+                                  <span className="text-[9px] font-black text-pink-300 uppercase tracking-widest bg-[#C2185B]/30 border border-[#C2185B]/40 px-2 py-0.5 rounded-md w-max mb-1.5 shadow-sm">
+                                    {reel.category}
+                                  </span>
+                                  <h4 className="text-white font-bold text-xs sm:text-sm line-clamp-1 drop-shadow-md">
+                                    {reel.title}
+                                  </h4>
+                                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/10 text-xs font-bold">
+                                    <div className="flex items-center gap-1.5 text-neutral-300">
+                                      <Eye size={17} className="text-cyan-400 shrink-0" />
+                                      <span className="text-[11px] font-black tracking-wide">{reel.views_count ?? 0}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 text-pink-400">
+                                      <Heart size={17} className="text-red-500 fill-red-500 shrink-0" />
+                                      <span className="text-[11px] font-black tracking-wide text-white">{reel.likes_count ?? 0}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+                                  <div className="w-10 h-10 rounded-full bg-[#C2185B] text-white flex items-center justify-center shadow-lg"><Play size={18} className="fill-current ml-0.5" /></div>
+                                </div>
+                              </Link>
+                            ))}
                           </div>
                         )}
+                      </div>
+                    )}
 
-                        <div className="flex items-center justify-between pt-3 text-[10px] sm:text-[11px] font-bold text-neutral-400">
-                          {post.likesCount > 0 ? (
-                            <div className="flex items-center gap-1.5">
-                              <div className="p-1 sm:p-1.5 bg-[#C2185B] rounded-full text-white shadow-[0_0_10px_rgba(194,24,91,0.5)]"><ThumbsUp size={10} className="fill-current" /></div>
-                              <span className="text-white">{post.likesCount}</span>
-                            </div>
-                          ) : <span />}
-                          {post.commentsCount > 0 && <span>{post.commentsCount} {t.feed.commentsCount}</span>}
-                        </div>
-
-                        <hr className="border-white/5 my-3" />
-
-                        <div className="flex items-center justify-between gap-2">
-                          <button onClick={() => toggleLike(post)} className={`flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-xl sm:rounded-[1rem] transition-all font-black text-xs ${post.isLikedByMe ? "text-[#C2185B] bg-[#C2185B]/10 border border-[#C2185B]/30 shadow-[0_0_15px_rgba(194,24,91,0.15)]" : "text-neutral-400 bg-white/[0.02] border border-transparent hover:bg-white/5 hover:text-white"}`}>
-                            <ThumbsUp size={16} className={post.isLikedByMe ? "fill-current" : ""} />
-                            <span>{t.feed.like}</span>
+                    {/* TAB: LIKED (Strictly Private - Only owner can see) */}
+                    {isMyProfile && currentTab === 'liked' && (
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-2 p-1 bg-white/5 border border-white/10 rounded-2xl w-max">
+                          <button
+                            onClick={() => setLikedSubTab('posts')}
+                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                              likedSubTab === 'posts'
+                                ? "bg-[#C2185B] text-white shadow-md"
+                                : "text-neutral-400 hover:text-white"
+                            }`}
+                          >
+                            {t.profile?.posts || "Posts"} ({likedPosts.length})
                           </button>
                           <button
-                            onClick={() => {
-                              if (!currentUserId) {
-                                setAuthModalAction("comment on this post");
-                                setShowAuthModal(true);
-                                return;
-                              }
-                              setActivePostId(post.id);
-                            }}
-                            className="flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-xl sm:rounded-[1rem] transition-all font-black text-xs text-neutral-400 bg-white/[0.02] hover:bg-white/5 hover:text-white border border-transparent"
+                            onClick={() => setLikedSubTab('reels')}
+                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                              likedSubTab === 'reels'
+                                ? "bg-[#C2185B] text-white shadow-md"
+                                : "text-neutral-400 hover:text-white"
+                            }`}
                           >
-                            <MessageSquare size={16} />
-                            <span>{t.feed.comment}</span>
+                            {t.profile?.reels || "Reels"} ({likedReels.length})
                           </button>
                         </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
 
-              {/* TAB: REELS */}
-              {activeTab === 'reels' && (
-                <div className="space-y-4">
-                  {reels.length === 0 ? (
-                    <EmptyState icon={<Video size={40} />} title={t.profile.noReels} description={t.profile.noReels} />
-                  ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                      {reels.map((reel) => (
-                        <Link
-                          key={reel.id}
-                          href={`/${currentLocale}/feed/reels`}
-                          className="group relative bg-neutral-900 rounded-2xl overflow-hidden aspect-[9/16] border border-white/10 hover:border-[#C2185B] transition-all shadow-lg flex items-center justify-center"
-                        >
-                          {reel.thumbnail_url ? (
-                            <img src={reel.thumbnail_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        {likedSubTab === 'posts' ? (
+                          likedPosts.length === 0 ? (
+                            <EmptyState icon={<Heart size={40} />} title={t.feed?.noLikedPosts || "No Liked Posts"} description="Posts you have liked are kept strictly private here." />
                           ) : (
-                            <video src={reel.video_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-3.5">
-                            <span className="text-[9px] font-black text-pink-300 uppercase tracking-widest bg-[#C2185B]/30 border border-[#C2185B]/40 px-2 py-0.5 rounded-md w-max mb-1.5 shadow-sm">
-                              {reel.category}
-                            </span>
-                            <h4 className="text-white font-bold text-xs sm:text-sm line-clamp-1 drop-shadow-md">
-                              {reel.title}
-                            </h4>
-                            <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/10 text-xs font-bold">
-                              {/* Views on left */}
-                              <div className="flex items-center gap-1.5 text-neutral-300">
-                                <Eye size={17} className="text-cyan-400 shrink-0" />
-                                <span className="text-[11px] font-black tracking-wide">{reel.views_count ?? 0}</span>
-                              </div>
-                              {/* Likes on right */}
-                              <div className="flex items-center gap-1.5 text-pink-400">
-                                <Heart size={17} className="text-red-500 fill-red-500 shrink-0" />
-                                <span className="text-[11px] font-black tracking-wide text-white">{reel.likes_count ?? 0}</span>
-                              </div>
+                            <div className="space-y-4 sm:space-y-6">
+                              {likedPosts.map((post) => (
+                                <div key={post.id} className="bg-[#0a0a0f]/80 sm:border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] p-5 sm:p-8 backdrop-blur-md space-y-4 sm:space-y-5 shadow-lg">
+                                  {post.moodTag && (
+                                    <div className={`inline-block px-3 py-1 bg-[#C2185B]/10 ${isRtl ? "border-r-2 rounded-l-lg" : "border-l-2 rounded-r-lg"} border-[#C2185B] text-pink-300 text-[9px] sm:text-[10px] font-black uppercase tracking-widest shadow-sm`}>
+                                      {post.moodTag}
+                                    </div>
+                                  )}
+                                  {post.cleanTitle && <h3 className="text-lg sm:text-xl font-black text-white leading-tight">{post.cleanTitle}</h3>}
+                                  <p className="text-neutral-300 text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap">{post.content}</p>
+                                  {post.imageUrl && (
+                                    <div className="rounded-2xl border border-white/5 bg-[#050508] mt-3 flex items-center justify-center overflow-hidden max-h-[300px] sm:max-h-[500px]">
+                                      <img src={post.imageUrl} alt="Post media" className="w-full h-full object-contain rounded-2xl" />
+                                    </div>
+                                  )}
+                                  <div className="text-[10px] text-neutral-500 font-bold">{post.createdAt.split('T')[0]}</div>
+                                </div>
+                              ))}
                             </div>
-                          </div>
-                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
-                            <div className="w-10 h-10 rounded-full bg-[#C2185B] text-white flex items-center justify-center shadow-lg"><Play size={18} className="fill-current ml-0.5" /></div>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
+                          )
+                        ) : (
+                          likedReels.length === 0 ? (
+                            <EmptyState icon={<Heart size={40} />} title={t.feed?.noLikedReels || "No Liked Reels"} description="Reels you have liked are kept strictly private here." />
+                          ) : (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                              {likedReels.map((reel) => (
+                                <Link
+                                  key={reel.id}
+                                  href={`/${currentLocale}/feed/reels?id=${reel.id}`}
+                                  className="group relative bg-neutral-900 rounded-2xl overflow-hidden aspect-[9/16] border border-white/10 hover:border-[#C2185B] transition-all shadow-lg flex items-center justify-center"
+                                >
+                                  {reel.thumbnail_url ? (
+                                    <img src={reel.thumbnail_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                  ) : (
+                                    <video src={reel.video_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                  )}
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-3.5">
+                                    <span className="text-[9px] font-black text-pink-300 uppercase tracking-widest bg-[#C2185B]/30 border border-[#C2185B]/40 px-2 py-0.5 rounded-md w-max mb-1.5 shadow-sm">
+                                      {reel.category}
+                                    </span>
+                                    <h4 className="text-white font-bold text-xs sm:text-sm line-clamp-1 drop-shadow-md">
+                                      {reel.title}
+                                    </h4>
+                                  </div>
+                                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+                                    <div className="w-10 h-10 rounded-full bg-[#C2185B] text-white flex items-center justify-center shadow-lg"><Play size={18} className="fill-current ml-0.5" /></div>
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    )}
 
-              {/* TAB: LEARNING */}
-              {activeTab === 'learning' && (
+                    {/* TAB: SAVED (Strictly Private - Only owner can see) */}
+                    {isMyProfile && currentTab === 'saved' && (
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-2 p-1 bg-white/5 border border-white/10 rounded-2xl w-max">
+                          <button
+                            onClick={() => setSavedSubTab('posts')}
+                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                              savedSubTab === 'posts'
+                                ? "bg-amber-500 text-black shadow-md font-black"
+                                : "text-neutral-400 hover:text-white"
+                            }`}
+                          >
+                            {t.feed?.savedPosts || "Saved Posts"} ({savedPosts.length})
+                          </button>
+                          <button
+                            onClick={() => setSavedSubTab('reels')}
+                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                              savedSubTab === 'reels'
+                                ? "bg-amber-500 text-black shadow-md font-black"
+                                : "text-neutral-400 hover:text-white"
+                            }`}
+                          >
+                            {t.feed?.savedReels || "Saved Reels"} ({savedReels.length})
+                          </button>
+                        </div>
+
+                        {savedSubTab === 'posts' ? (
+                          savedPosts.length === 0 ? (
+                            <EmptyState icon={<Bookmark size={40} />} title={t.feed?.noSavedPosts || "No Saved Posts"} description="Posts you bookmark are kept strictly private here." />
+                          ) : (
+                            <div className="space-y-4 sm:space-y-6">
+                              {savedPosts.map((post) => (
+                                <div key={post.id} className="bg-[#0a0a0f]/80 sm:border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] p-5 sm:p-8 backdrop-blur-md space-y-4 sm:space-y-5 shadow-lg">
+                                  <div className="flex items-center justify-between">
+                                    <div className="text-[10px] text-neutral-500 font-bold">{post.createdAt.split('T')[0]}</div>
+                                    <div className="p-1.5 bg-amber-500/10 text-amber-400 rounded-lg border border-amber-500/20">
+                                      <Bookmark size={14} className="fill-current" />
+                                    </div>
+                                  </div>
+                                  {post.moodTag && (
+                                    <div className={`inline-block px-3 py-1 bg-[#C2185B]/10 ${isRtl ? "border-r-2 rounded-l-lg" : "border-l-2 rounded-r-lg"} border-[#C2185B] text-pink-300 text-[9px] sm:text-[10px] font-black uppercase tracking-widest shadow-sm`}>
+                                      {post.moodTag}
+                                    </div>
+                                  )}
+                                  {post.cleanTitle && <h3 className="text-lg sm:text-xl font-black text-white leading-tight">{post.cleanTitle}</h3>}
+                                  <p className="text-neutral-300 text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap">{post.content}</p>
+                                  {post.imageUrl && (
+                                    <div className="rounded-2xl border border-white/5 bg-[#050508] mt-3 flex items-center justify-center overflow-hidden max-h-[300px] sm:max-h-[500px]">
+                                      <img src={post.imageUrl} alt="Post media" className="w-full h-full object-contain rounded-2xl" />
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )
+                        ) : (
+                          savedReels.length === 0 ? (
+                            <EmptyState icon={<Bookmark size={40} />} title={t.feed?.noSavedReels || "No Saved Reels"} description="Reels you bookmark are kept strictly private here." />
+                          ) : (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                              {savedReels.map((reel) => (
+                                <Link
+                                  key={reel.id}
+                                  href={`/${currentLocale}/feed/reels?id=${reel.id}`}
+                                  className="group relative bg-neutral-900 rounded-2xl overflow-hidden aspect-[9/16] border border-white/10 hover:border-amber-500 transition-all shadow-lg flex items-center justify-center"
+                                >
+                                  {reel.thumbnail_url ? (
+                                    <img src={reel.thumbnail_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                  ) : (
+                                    <video src={reel.video_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                  )}
+                                  <div className="absolute top-2.5 right-2.5 z-10 p-1.5 rounded-full bg-black/60 backdrop-blur-md border border-amber-500/40 text-amber-400">
+                                    <Bookmark size={12} className="fill-current" />
+                                  </div>
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-3.5">
+                                    <span className="text-[9px] font-black text-amber-300 uppercase tracking-widest bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 rounded-md w-max mb-1.5 shadow-sm">
+                                      {reel.category}
+                                    </span>
+                                    <h4 className="text-white font-bold text-xs sm:text-sm line-clamp-1 drop-shadow-md">
+                                      {reel.title}
+                                    </h4>
+                                  </div>
+                                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+                                    <div className="w-10 h-10 rounded-full bg-amber-500 text-black flex items-center justify-center shadow-lg"><Play size={18} className="fill-current ml-0.5" /></div>
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    )}
+
+                    {/* TAB: LEARNING */}
+                    {currentTab === 'learning' && (
                 <div className="space-y-4">
                   {enrollments.length === 0 ? (
                     <EmptyState icon={<BookOpen size={40} />} title={t.feed.noCoursesYet} description="This user hasn't enrolled in any courses." />
@@ -711,7 +1021,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
               )}
 
               {/* TAB: ACHIEVEMENTS */}
-              {activeTab === 'achievements' && (
+              {currentTab === 'achievements' && (
                 <div className="space-y-6 sm:space-y-8">
                   <div className="bg-[#0a0a0f]/80 border border-white/10 p-5 sm:p-8 rounded-[2rem] backdrop-blur-md shadow-xl">
                     <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-widest mb-4 sm:mb-6 flex items-center gap-2 border-b border-white/5 pb-3 sm:pb-4"><Trophy size={16} className="text-yellow-500" /> {t.feed.earnedBadges}</h3>
@@ -759,7 +1069,10 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
               )}
 
             </div>
-          </div>
+          </>
+        );
+      })()}
+    </div>
         </div>
       </div>
 

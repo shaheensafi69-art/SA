@@ -22,7 +22,8 @@ import {
     Search,
     Smartphone,
     ExternalLink,
-    Loader2
+    Loader2,
+    Bookmark
 } from "lucide-react";
 import Link from "next/link";
 
@@ -41,6 +42,7 @@ interface ReelItem {
     authorName: string;
     authorAvatar: string;
     isLikedByMe: boolean;
+    isBookmarkedByMe?: boolean;
 }
 
 interface ReelComment {
@@ -66,7 +68,7 @@ interface FriendItem {
 function ReelsContent() {
     const [isLoading, setIsLoading] = useState(true);
     const [reels, setReels] = useState<ReelItem[]>([]);
-    const [activeTab, setActiveTab] = useState<'for_you' | 'friends'>('for_you');
+    const [activeTab, setActiveTab] = useState<'for_you' | 'following'>('for_you');
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [authModalAction, setAuthModalAction] = useState("interact with this reel");
@@ -139,8 +141,8 @@ function ReelsContent() {
         fetchReelsData(activeTab);
     }, [activeTab]);
 
-    // Fetch reels based on tab (For You / Friends)
-    const fetchReelsData = async (tab: 'for_you' | 'friends') => {
+    // Fetch reels based on tab (For You / Following)
+    const fetchReelsData = async (tab: 'for_you' | 'following') => {
         setIsLoading(true);
         try {
             let userId: string | null = null;
@@ -158,33 +160,32 @@ function ReelsContent() {
 
             let loadedReels: ReelItem[] = [];
 
-            if (tab === 'friends') {
+            if (tab === 'following') {
                 if (!userId) {
                     setReels([]);
                     setIsLoading(false);
                     return;
                 }
-                // 1. Get accepted friends
-                const { data: friendships } = await supabase
-                    .from("student_friends")
-                    .select("sender_id, receiver_id")
-                    .eq("status", "accepted")
-                    .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`);
+                // 1. Get followed user IDs from user_follows
+                const { data: followings } = await supabase
+                    .from("user_follows")
+                    .select("following_id")
+                    .eq("follower_id", userId);
 
-                const friendIds = (friendships || []).map(f => f.sender_id === userId ? f.receiver_id : f.sender_id);
+                const followingIds = (followings || []).map(f => f.following_id).filter(Boolean);
 
-                if (friendIds.length === 0) {
+                if (followingIds.length === 0) {
                     setReels([]);
                     setIsLoading(false);
                     return;
                 }
 
-                // 2. Fetch reels posted by friends
+                // 2. Fetch reels posted by followed users
                 const { data: reelsRes, error } = await supabase
                     .from("reels")
                     .select("*")
                     .eq("is_published", true)
-                    .in("user_id", friendIds)
+                    .in("user_id", followingIds)
                     .order("created_at", { ascending: false });
 
                 if (error) throw error;
@@ -240,7 +241,7 @@ function ReelsContent() {
         }
     };
 
-    // Helper: Batch load profiles & likes
+    // Helper: Batch load profiles & likes & bookmarks
     const processReelsList = async (rawReels: any[], userId: string | null): Promise<ReelItem[]> => {
         if (rawReels.length === 0) return [];
 
@@ -285,6 +286,24 @@ function ReelsContent() {
             } catch (_) { }
         }
 
+        // Batch 3: Bookmarks with timeout guard
+        let bookmarkedReelIds = new Set<string>();
+        if (userId && reelIds.length > 0) {
+            try {
+                const bmPromise = supabase
+                    .from("reel_bookmarks")
+                    .select("reel_id")
+                    .eq("user_id", userId)
+                    .in("reel_id", reelIds);
+                const timeoutPromise = new Promise<{ data: any[] }>((resolve) =>
+                    setTimeout(() => resolve({ data: [] }), 2000)
+                );
+                const res = await Promise.race([bmPromise, timeoutPromise]);
+                const myBookmarks = res?.data || [];
+                bookmarkedReelIds = new Set(myBookmarks.map(b => b.reel_id?.toString()));
+            } catch (_) { }
+        }
+
         return rawReels.map(item => {
             const rId = (item.id || '').toString();
             const uId = (item.user_id || '').toString();
@@ -305,6 +324,7 @@ function ReelsContent() {
                 authorName: prof.name,
                 authorAvatar: prof.avatar,
                 isLikedByMe: likedReelIds.has(rId),
+                isBookmarkedByMe: bookmarkedReelIds.has(rId),
             };
         });
     };
@@ -368,6 +388,48 @@ function ReelsContent() {
             }
         } catch (e) {
             console.error("Error toggling reel like:", e);
+        }
+    };
+
+    // Toggle Bookmark Handler
+    const toggleBookmark = async (reel: ReelItem) => {
+        if (!currentUserId) {
+            setAuthModalAction("bookmark this reel");
+            setShowAuthModal(true);
+            return;
+        }
+
+        const willBeBookmarked = !reel.isBookmarkedByMe;
+
+        // Optimistic UI Update
+        setReels(prev => prev.map(r => {
+            if (r.id === reel.id) {
+                return {
+                    ...r,
+                    isBookmarkedByMe: willBeBookmarked,
+                };
+            }
+            return r;
+        }));
+
+        showToast(willBeBookmarked ? (t.feed?.bookmarked || "Saved to Bookmarks") : (t.feed?.bookmark || "Removed from Bookmarks"));
+
+        try {
+            if (willBeBookmarked) {
+                const { error: insErr } = await supabase
+                    .from("reel_bookmarks")
+                    .insert({ reel_id: reel.id, user_id: currentUserId });
+                if (insErr) console.error("Error adding reel bookmark:", insErr);
+            } else {
+                const { error: delErr } = await supabase
+                    .from("reel_bookmarks")
+                    .delete()
+                    .eq("reel_id", reel.id)
+                    .eq("user_id", currentUserId);
+                if (delErr) console.error("Error removing reel bookmark:", delErr);
+            }
+        } catch (e) {
+            console.error("Error toggling reel bookmark:", e);
         }
     };
 
@@ -451,7 +513,7 @@ function ReelsContent() {
         }
     };
 
-    // Open Share Modal & fetch user's friends
+    // Open Share Modal & fetch user's followed members
     const handleOpenShare = async (reel: ReelItem) => {
         if (!currentUserId) {
             setAuthModalAction("share this reel with peers");
@@ -461,19 +523,18 @@ function ReelsContent() {
         setShareReel(reel);
         setIsLoadingFriends(true);
         try {
-            const { data: friendships } = await supabase
-                .from("student_friends")
-                .select("sender_id, receiver_id")
-                .eq("status", "accepted")
-                .or(`sender_id.eq.${currentUserId},receiver_id.eq.${currentUserId}`);
+            const { data: follows } = await supabase
+                .from("user_follows")
+                .select("following_id")
+                .eq("follower_id", currentUserId);
 
-            const friendIds = (friendships || []).map(f => f.sender_id === currentUserId ? f.receiver_id : f.sender_id);
+            const followIds = (follows || []).map(f => f.following_id).filter(Boolean);
 
-            if (friendIds.length > 0) {
+            if (followIds.length > 0) {
                 const { data: profiles } = await supabase
                     .from("profiles")
                     .select("id, first_name, last_name, avatar_url")
-                    .in("id", friendIds);
+                    .in("id", followIds);
 
                 const formatted: FriendItem[] = (profiles || []).map(p => ({
                     id: p.id,
@@ -486,7 +547,7 @@ function ReelsContent() {
                 setFriends([]);
             }
         } catch (e) {
-            console.error("Error fetching friends for share:", e);
+            console.error("Error fetching contacts for share:", e);
         } finally {
             setIsLoadingFriends(false);
         }
@@ -647,16 +708,16 @@ function ReelsContent() {
                                     : "text-neutral-400 hover:text-white"
                                     }`}
                             >
-                                <Compass size={12} /> For You
+                                <Compass size={12} /> {t.feed?.stream || "For You"}
                             </button>
                             <button
-                                onClick={() => setActiveTab('friends')}
-                                className={`px-3 py-1 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${activeTab === 'friends'
+                                onClick={() => setActiveTab('following')}
+                                className={`px-3 py-1 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${activeTab === 'following'
                                     ? "bg-[#C2185B] text-white shadow-[0_0_12px_rgba(194,24,91,0.5)] scale-102"
                                     : "text-neutral-400 hover:text-white"
                                     }`}
                             >
-                                <Users size={12} /> Friends
+                                <Users size={12} /> {t.feed?.following || "Following"}
                             </button>
                         </div>
 
@@ -704,30 +765,30 @@ function ReelsContent() {
                 {reels.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-6 bg-[#030305]">
                         <div className="w-16 h-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mb-3 text-[#C2185B] shadow-2xl">
-                            {activeTab === 'friends' ? <Users size={28} /> : <Sparkles size={28} />}
+                            {activeTab === 'following' ? <Users size={28} /> : <Sparkles size={28} />}
                         </div>
                         <h2 className="text-base sm:text-lg font-black text-white uppercase tracking-wider">
-                            {activeTab === 'friends' ? "No Friends Reels Yet" : "No Reels Found"}
+                            {activeTab === 'following' ? (t.profile?.noReels || "No Reels from Following") : (t.profile?.noReels || "No Reels Found")}
                         </h2>
                         <p className="text-xs text-neutral-400 font-medium max-w-sm mt-1.5 leading-relaxed">
-                            {activeTab === 'friends'
-                                ? "Connect with fellow academy members in Network to see their reels here!"
+                            {activeTab === 'following'
+                                ? (t.feed?.network ? `Follow members in ${t.feed.network} to see their reels here!` : "Follow academy members to see their reels here!")
                                 : "Be the first member to upload an engaging vertical reel!"
                             }
                         </p>
-                        {activeTab === 'friends' ? (
+                        {activeTab === 'following' ? (
                             <div className="flex items-center gap-3 mt-5">
                                 <button
                                     onClick={() => setActiveTab('for_you')}
                                     className="px-4 py-2.5 bg-[#C2185B] text-white text-xs font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-all shadow-[0_0_15px_rgba(194,24,91,0.4)]"
                                 >
-                                    Explore For You
+                                    {t.feed?.stream || "For You"}
                                 </button>
                                 <Link
                                     href={`/${currentLocale}/feed/network`}
                                     className="px-4 py-2.5 bg-white/5 border border-white/10 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all"
                                 >
-                                    Find Friends
+                                    {t.feed?.network || "Find Members"}
                                 </Link>
                             </div>
                         ) : (
@@ -735,7 +796,7 @@ function ReelsContent() {
                                 href={`/${currentLocale}/feed/create/reels`}
                                 className="mt-5 px-5 py-3 bg-gradient-to-r from-[#C2185B] to-yellow-500 text-black text-xs font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-all shadow-[0_0_20px_rgba(194,24,91,0.4)]"
                             >
-                                + Create Reel
+                                + {t.feed?.createReel || "Create Reel"}
                             </Link>
                         )}
                     </div>
@@ -874,16 +935,33 @@ function ReelsContent() {
                                             <span className="text-[10px] sm:text-[11px] font-black text-white mt-1 drop-shadow-lg">{reel.comments_count}</span>
                                         </button>
 
+                                        {/* Bookmark Button */}
+                                        <button
+                                            onClick={() => toggleBookmark(reel)}
+                                            className="flex flex-col items-center group/btn"
+                                            title={reel.isBookmarkedByMe ? (t.feed?.bookmarked || "Bookmarked") : (t.feed?.bookmark || "Bookmark")}
+                                        >
+                                            <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-xl border flex items-center justify-center transition-all shadow-lg ${reel.isBookmarkedByMe
+                                                ? "bg-amber-500 border-amber-400 text-black shadow-[0_0_20px_rgba(245,158,11,0.6)] scale-105"
+                                                : "bg-black/45 border-white/20 text-white hover:bg-black/70 hover:scale-105"
+                                            }`}>
+                                                <Bookmark size={20} fill={reel.isBookmarkedByMe ? "currentColor" : "none"} />
+                                            </div>
+                                            <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">
+                                                {reel.isBookmarkedByMe ? (t.feed?.bookmarked || "Saved") : (t.feed?.bookmark || "Save")}
+                                            </span>
+                                        </button>
+
                                         {/* Share Button */}
                                         <button
                                             onClick={() => handleOpenShare(reel)}
                                             className="flex flex-col items-center group/btn"
-                                            title={t.feed.shareReel}
+                                            title={t.feed?.shareReel || "Share"}
                                         >
                                             <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-[#C2185B] hover:border-[#C2185B] hover:scale-105 transition-all shadow-lg">
                                                 <Share2 size={18} />
                                             </div>
-                                            <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">{t.feed.share}</span>
+                                            <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">{t.feed?.share || "Share"}</span>
                                         </button>
 
                                         {/* Download Button (TikTok/Instagram Style) */}
@@ -891,7 +969,7 @@ function ReelsContent() {
                                             onClick={() => handleDownloadVideo(reel)}
                                             disabled={isDownloadingThis}
                                             className="flex flex-col items-center group/btn"
-                                            title={t.feed.downloadVideo}
+                                            title={t.feed?.downloadVideo || "Download"}
                                         >
                                             <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/45 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-black hover:border-yellow-500 hover:scale-105 transition-all shadow-lg disabled:opacity-50">
                                                 {isDownloadingThis ? (
@@ -900,7 +978,7 @@ function ReelsContent() {
                                                     <Download size={18} />
                                                 )}
                                             </div>
-                                            <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">{t.feed.save}</span>
+                                            <span className="text-[9px] sm:text-[10px] font-black text-white mt-1 uppercase tracking-wider drop-shadow-lg">{t.feed?.downloadVideo || "Download"}</span>
                                         </button>
 
                                     </div>
@@ -1038,20 +1116,20 @@ function ReelsContent() {
                             </div>
                         </div>
 
-                        {/* Send Directly to Friends */}
+                        {/* Send Directly in Chat */}
                         <div className="p-4 flex-1 flex flex-col min-h-0">
                             <div className="flex items-center justify-between mb-3">
                                 <h4 className="text-xs font-black uppercase tracking-widest text-neutral-400 flex items-center gap-1.5">
-                                    <Users size={14} className="text-[#C2185B]" /> Send to Friends
+                                    <Users size={14} className="text-[#C2185B]" /> {t.feed?.messages || "Send in Chat"}
                                 </h4>
-                                <span className="text-[10px] text-neutral-500 font-bold">{filteredFriends.length} Friends</span>
+                                <span className="text-[10px] text-neutral-500 font-bold">{filteredFriends.length}</span>
                             </div>
 
-                            {/* Search Friends */}
+                            {/* Search Contacts */}
                             <div className="relative mb-3">
                                 <input
                                     type="text"
-                                    placeholder={t.feed.searchFriends}
+                                    placeholder={t.feed?.searchFriends || "Search contacts..."}
                                     value={friendSearch}
                                     onChange={(e) => setFriendSearch(e.target.value)}
                                     className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3.5 py-2.5 pl-9 text-white text-xs placeholder-neutral-500 focus:outline-none focus:border-[#C2185B]"
@@ -1059,7 +1137,7 @@ function ReelsContent() {
                                 <Search className="absolute left-3 top-[10px] w-3.5 h-3.5 text-neutral-500" />
                             </div>
 
-                            {/* Friends List */}
+                            {/* Contacts List */}
                             <div className="flex-1 overflow-y-auto space-y-2 custom-scrollbar max-h-60">
                                 {isLoadingFriends ? (
                                     <div className="flex justify-center py-8">
@@ -1067,9 +1145,9 @@ function ReelsContent() {
                                     </div>
                                 ) : filteredFriends.length === 0 ? (
                                     <div className="text-center py-8 opacity-60">
-                                        <p className="text-neutral-400 text-xs font-bold">{t.feed.noFriendsFound}</p>
+                                        <p className="text-neutral-400 text-xs font-bold">{t.feed?.noFriendsFound || "No contacts found"}</p>
                                         <Link href={`/${currentLocale}/feed/network`} className="text-[10px] text-[#C2185B] font-bold mt-1 block hover:underline">
-                                            Find new friends in Network
+                                            {t.feed?.network || "Find members in Network"}
                                         </Link>
                                     </div>
                                 ) : (

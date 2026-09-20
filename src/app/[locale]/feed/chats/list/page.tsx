@@ -95,22 +95,21 @@ export default function ChatsListPage() {
 
             setChats(activeChats);
 
-            // ۳. دریافت دوستان برای شروع چت جدید
-            const { data: friendships } = await supabase
-                .from("student_friends")
-                .select("*")
-                .eq("status", "accepted")
-                .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`);
+            // 3. Fetch followed users for starting new conversation
+            const { data: followings } = await supabase
+                .from("user_follows")
+                .select("following_id")
+                .eq("follower_id", userId);
 
-            const friendIds = (friendships || []).map(f => f.sender_id === userId ? f.receiver_id : f.sender_id);
+            const followingIds = (followings || []).map(f => f.following_id);
 
-            if (friendIds.length > 0) {
-                const { data: friendProfiles } = await supabase
+            if (followingIds.length > 0) {
+                const { data: followingProfiles } = await supabase
                     .from("profiles")
                     .select("id, first_name, last_name, avatar_url, role")
-                    .in("id", friendIds);
+                    .in("id", followingIds);
 
-                const formattedFriends: ChatPartner[] = (friendProfiles || []).map(p => ({
+                const formattedFriends: ChatPartner[] = (followingProfiles || []).map(p => ({
                     id: p.id,
                     first_name: p.first_name || "User",
                     last_name: p.last_name || "",
@@ -173,7 +172,7 @@ export default function ChatsListPage() {
             {/* بخش شروع چت سریع با دوستان */}
             {friends.length > 0 && (
                 <div className="mb-8 relative z-10">
-                    <h3 className="text-xs font-black uppercase tracking-widest text-neutral-400 mb-4 px-2">{t.feed.connectedFriends}</h3>
+                    <h3 className="text-xs font-black uppercase tracking-widest text-neutral-400 mb-4 px-2">{t.feed?.following || "Following"}</h3>
                     <div className="flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
                         {friends.map((friend) => (
                             <Link

@@ -9,7 +9,7 @@ import Link from "next/link";
 import {
   ArrowLeft, Send, Image as ImageIcon, Check, CheckCheck,
   Sparkles, X, CornerUpLeft, Paperclip, Video, ExternalLink,
-  User, ShieldCheck, Loader2
+  User, ShieldCheck, Loader2, UserPlus, UserCheck, Clock
 } from "lucide-react";
 
 interface MessageItem {
@@ -52,6 +52,11 @@ function ChatScreenContent() {
   const [isUploading, setIsUploading] = useState(false);
   const [replyingTo, setReplyingTo] = useState<MessageItem | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
+
+  // Follow & Request approval states
+  const [iFollowPartner, setIFollowPartner] = useState(false);
+  const [partnerFollowsMe, setPartnerFollowsMe] = useState(false);
+  const [isActionPending, setIsActionPending] = useState(false);
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -104,6 +109,18 @@ function ChatScreenContent() {
       } else {
         setPartner(partnerRes);
       }
+
+      // 1.5 Fetch follow relationships between user and partner
+      const { data: followRows } = await supabase
+        .from("user_follows")
+        .select("follower_id, following_id")
+        .or(`and(follower_id.eq.${userId},following_id.eq.${partnerId}),and(follower_id.eq.${partnerId},following_id.eq.${userId})`);
+
+      const iFollow = followRows?.some(f => f.follower_id === userId && f.following_id === partnerId) || false;
+      const partnerFollows = followRows?.some(f => f.follower_id === partnerId && f.following_id === userId) || false;
+
+      setIFollowPartner(iFollow);
+      setPartnerFollowsMe(partnerFollows);
 
       // 2. Fetch existing direct messages between user and partner
       const { data: msgRes, error: msgErr } = await supabase
@@ -167,9 +184,79 @@ function ChatScreenContent() {
     }
   };
 
+  const isMutualFollow = iFollowPartner && partnerFollowsMe;
+  const mySentCount = messages.filter(m => m.sender_id === currentUserId).length;
+  const partnerSentCount = messages.filter(m => m.sender_id === partnerId).length;
+
+  // Pending incoming request: Partner sent at least 1 message, I haven't replied, and we aren't mutual
+  const isPendingIncomingRequest = !isMutualFollow && partnerSentCount >= 1 && mySentCount === 0;
+
+  // Locked out from sending: We aren't mutual, partner hasn't replied yet, and I have already sent >= 1 message
+  const isMessageLocked = !isMutualFollow && partnerSentCount === 0 && mySentCount >= 1;
+
+  const handleFollowPartner = async () => {
+    if (!currentUserId || !partnerId) return;
+    setIsActionPending(true);
+    try {
+      if (iFollowPartner) {
+        await supabase
+          .from("user_follows")
+          .delete()
+          .eq("follower_id", currentUserId)
+          .eq("following_id", partnerId);
+        setIFollowPartner(false);
+      } else {
+        await supabase
+          .from("user_follows")
+          .insert({ follower_id: currentUserId, following_id: partnerId });
+        setIFollowPartner(true);
+      }
+    } catch (e) {
+      console.error("Follow action failed:", e);
+    } finally {
+      setIsActionPending(false);
+    }
+  };
+
+  const handleAcceptRequest = async () => {
+    if (!currentUserId || !partnerId) return;
+    setIsActionPending(true);
+    try {
+      await supabase
+        .from("user_follows")
+        .insert({ follower_id: currentUserId, following_id: partnerId });
+      setIFollowPartner(true);
+    } catch (e) {
+      console.error("Accept request failed:", e);
+    } finally {
+      setIsActionPending(false);
+    }
+  };
+
+  const handleDeclineRequest = async () => {
+    if (!currentUserId || !partnerId) return;
+    setIsActionPending(true);
+    try {
+      await supabase
+        .from("direct_messages")
+        .delete()
+        .or(`and(sender_id.eq.${currentUserId},receiver_id.eq.${partnerId}),and(sender_id.eq.${partnerId},receiver_id.eq.${currentUserId})`);
+      router.push(`/${currentLocale}/feed/chats/list`);
+    } catch (e) {
+      console.error("Decline request failed:", e);
+    } finally {
+      setIsActionPending(false);
+    }
+  };
+
   const handleSendMessage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!newMessage.trim() || !currentUserId || !partnerId) return;
+
+    if (isMessageLocked) {
+      setSendError(t.feed?.singleMessageLimit || "You can only send 1 message until this user accepts your request or follows you back.");
+      return;
+    }
 
     const rawText = newMessage.trim();
     const formattedText = replyingTo
@@ -226,6 +313,11 @@ function ChatScreenContent() {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !currentUserId || !partnerId) return;
+
+    if (isMessageLocked) {
+      setSendError(t.feed?.singleMessageLimit || "You can only send 1 message until this user accepts your request or follows you back.");
+      return;
+    }
 
     setIsUploading(true);
     setSendError(null);
@@ -331,16 +423,79 @@ function ChatScreenContent() {
             </Link>
           </div>
 
-          {/* View Profile Link */}
-          <Link
-            href={`/${currentLocale}/feed/profile/${partnerId}`}
-            className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5 shrink-0"
-          >
-            <User size={14} className="text-[#C2185B]" />
-            <span className="hidden sm:inline">{t.feed.myProfile}</span>
-          </Link>
+          {/* Header Actions: Follow toggle & View Profile */}
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              disabled={isActionPending}
+              onClick={handleFollowPartner}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                iFollowPartner
+                  ? "bg-white/10 text-neutral-300 hover:bg-rose-500/20 hover:text-rose-400 border border-white/10"
+                  : partnerFollowsMe
+                    ? "bg-gradient-to-r from-indigo-600 to-[#C2185B] text-white shadow-md"
+                    : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/30"
+              }`}
+            >
+              {iFollowPartner ? (
+                <>
+                  <UserCheck size={13} />
+                  <span className="hidden sm:inline">{t.feed?.following || "Following"}</span>
+                </>
+              ) : partnerFollowsMe ? (
+                <>
+                  <UserPlus size={13} />
+                  <span>{t.feed?.followBack || "Follow Back"}</span>
+                </>
+              ) : (
+                <>
+                  <UserPlus size={13} />
+                  <span>{t.feed?.follow || "Follow"}</span>
+                </>
+              )}
+            </button>
+
+            <Link
+              href={`/${currentLocale}/feed/profile/${partnerId}`}
+              className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5 shrink-0"
+            >
+              <User size={14} className="text-[#C2185B]" />
+              <span className="hidden sm:inline">{t.feed?.myProfile || "Profile"}</span>
+            </Link>
+          </div>
         </div>
       </header>
+
+      {/* ================= INCOMING REQUEST APPROVAL BANNER ================= */}
+      {isPendingIncomingRequest && (
+        <div className="shrink-0 w-full bg-gradient-to-r from-indigo-950/90 via-[#180d20]/95 to-pink-950/90 border-b border-white/10 px-4 sm:px-6 py-3 backdrop-blur-xl z-20 shadow-lg">
+          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-neutral-200 text-xs sm:text-sm font-medium">
+              <Sparkles size={16} className="text-[#C2185B] shrink-0" />
+              <span>{t.feed?.requestPendingBanner || "Message request from this user. Accept to continue the conversation."}</span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                disabled={isActionPending}
+                onClick={handleAcceptRequest}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl shadow-lg transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <UserCheck size={14} />
+                <span>{t.feed?.acceptRequest || "Accept"}</span>
+              </button>
+              <button
+                type="button"
+                disabled={isActionPending}
+                onClick={handleDeclineRequest}
+                className="px-4 py-2 bg-white/10 hover:bg-red-500/20 text-neutral-300 hover:text-red-400 border border-white/10 hover:border-red-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer"
+              >
+                {t.feed?.declineRequest || "Decline"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Error alert toast */}
       {sendError && (
@@ -492,55 +647,83 @@ function ChatScreenContent() {
         </div>
       )}
 
-      {/* ================= BOTTOM INPUT BAR ================= */}
-      <form
-        onSubmit={handleSendMessage}
-        className="shrink-0 w-full bg-[#07070c]/95 border-t border-white/[0.08] px-4 sm:px-6 py-3 sm:py-3.5 backdrop-blur-2xl z-20 shadow-2xl"
-      >
-        <div className="max-w-4xl mx-auto flex items-center gap-2.5 sm:gap-3.5 w-full">
-          {/* Attachment Upload Button */}
-          <label
-            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:border-[#C2185B] transition-all cursor-pointer shrink-0 shadow-sm ${
-              isUploading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            title={t.feed.sendFileOrPhoto}
-          >
-            {isUploading ? (
-              <Loader2 size={20} className="text-[#C2185B] animate-spin" />
-            ) : (
-              <Paperclip size={20} />
+      {/* ================= BOTTOM INPUT BAR OR MESSAGE LIMIT BANNER ================= */}
+      {isMessageLocked ? (
+        <div className="shrink-0 w-full bg-[#07070c]/95 border-t border-amber-500/30 px-4 sm:px-6 py-4 backdrop-blur-2xl z-20 shadow-2xl">
+          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+            <div className="flex items-center gap-2.5 text-amber-400 text-xs sm:text-sm font-bold">
+              <Clock size={18} className="shrink-0" />
+              <span>{t.feed?.singleMessageLimit || "You can only send 1 message until this user accepts your request or follows you back."}</span>
+            </div>
+            {!iFollowPartner && (
+              <button
+                type="button"
+                disabled={isActionPending}
+                onClick={handleFollowPartner}
+                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-[#C2185B] text-white text-xs font-black rounded-xl hover:brightness-110 transition-all flex items-center gap-1.5 shrink-0 shadow-lg cursor-pointer"
+              >
+                <UserPlus size={14} />
+                <span>{partnerFollowsMe ? (t.feed?.followBack || "Follow Back") : (t.feed?.follow || "Follow")}</span>
+              </button>
             )}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*,video/*,application/pdf"
-              onChange={handleFileUpload}
-              disabled={isUploading}
-              className="hidden"
-            />
-          </label>
-
-          {/* Text Input */}
-          <input
-            type="text"
-            placeholder={isUploading ? "Uploading attachment..." : "Type a message..."}
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            disabled={isUploading}
-            className="flex-1 bg-neutral-900/90 border border-white/10 rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 text-white text-xs sm:text-sm placeholder-neutral-500 focus:outline-none focus:border-[#C2185B] shadow-inner transition-colors"
-          />
-
-          {/* Send Button */}
-          <button
-            type="submit"
-            disabled={isUploading || !newMessage.trim()}
-            className="w-11 h-11 sm:w-12 sm:h-12 bg-gradient-to-br from-[#C2185B] to-yellow-500 text-black font-bold rounded-2xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 transition-all shadow-[0_0_20px_rgba(194,24,91,0.4)] shrink-0 cursor-pointer"
-            title={t.feed.sendMessage}
-          >
-            <Send size={18} className="text-black font-black" />
-          </button>
+          </div>
         </div>
-      </form>
+      ) : (
+        <form
+          onSubmit={handleSendMessage}
+          className="shrink-0 w-full bg-[#07070c]/95 border-t border-white/[0.08] px-4 sm:px-6 py-3 sm:py-3.5 backdrop-blur-2xl z-20 shadow-2xl"
+        >
+          <div className="max-w-4xl mx-auto flex items-center gap-2.5 sm:gap-3.5 w-full">
+            {/* Attachment Upload Button */}
+            <label
+              className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:border-[#C2185B] transition-all cursor-pointer shrink-0 shadow-sm ${
+                isUploading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              title={t.feed.sendFileOrPhoto}
+            >
+              {isUploading ? (
+                <Loader2 size={20} className="text-[#C2185B] animate-spin" />
+              ) : (
+                <Paperclip size={20} />
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,video/*,application/pdf"
+                onChange={handleFileUpload}
+                disabled={isUploading}
+                className="hidden"
+              />
+            </label>
+
+            {/* Text Input */}
+            <input
+              type="text"
+              placeholder={
+                isUploading
+                  ? "Uploading attachment..."
+                  : (!isMutualFollow && mySentCount === 0)
+                    ? `${t.feed?.messageRequest || "Message Request"} (1 msg limit)...`
+                    : "Type a message..."
+              }
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              disabled={isUploading}
+              className="flex-1 bg-neutral-900/90 border border-white/10 rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 text-white text-xs sm:text-sm placeholder-neutral-500 focus:outline-none focus:border-[#C2185B] shadow-inner transition-colors"
+            />
+
+            {/* Send Button */}
+            <button
+              type="submit"
+              disabled={isUploading || !newMessage.trim()}
+              className="w-11 h-11 sm:w-12 sm:h-12 bg-gradient-to-br from-[#C2185B] to-yellow-500 text-black font-bold rounded-2xl flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 transition-all shadow-[0_0_20px_rgba(194,24,91,0.4)] shrink-0 cursor-pointer"
+              title={t.feed.sendMessage}
+            >
+              <Send size={18} className="text-black font-black" />
+            </button>
+          </div>
+        </form>
+      )}
 
     </div>
   );

@@ -7,7 +7,7 @@ import {  useRouter , usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   Search, Users, UserPlus, Clock,
-  UserCheck, Trophy, ChevronRight, ShieldCheck
+  UserCheck, Trophy, ChevronRight, ShieldCheck, UserMinus
 } from "lucide-react";
 
 interface NetworkUser {
@@ -17,7 +17,8 @@ interface NetworkUser {
   avatar_url: string;
   role: string;
   total_score: number;
-  friendshipStatus: 'none' | 'pending_sent' | 'pending_received' | 'friends';
+  isFollowing: boolean;
+  isFollowedBy: boolean;
 }
 
 export default function NetworkPage() {
@@ -49,7 +50,7 @@ export default function NetworkPage() {
       const userId = session.user.id;
       setCurrentUserId(userId);
 
-      // ۱. دریافت تمام کاربران به جز کاربر فعلی
+      // 1. Fetch all users except current user
       const { data: profiles, error: profilesError } = await supabase
         .from("profiles")
         .select("id, first_name, last_name, avatar_url, role, total_score")
@@ -58,29 +59,18 @@ export default function NetworkPage() {
 
       if (profilesError) throw profilesError;
 
-      // ۲. دریافت تمام روابط دوستی کاربر فعلی
-      const { data: relationships, error: relError } = await supabase
-        .from("student_friends")
-        .select("*")
-        .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`);
+      // 2. Fetch all follow relationships involving the current user
+      const { data: follows, error: followError } = await supabase
+        .from("user_follows")
+        .select("follower_id, following_id")
+        .or(`follower_id.eq.${userId},following_id.eq.${userId}`);
 
-      if (relError) throw relError;
+      if (followError) throw followError;
 
-      // ۳. ادغام اطلاعات
+      // 3. Merge follow status
       const networkData: NetworkUser[] = (profiles || []).map((p) => {
-        let status: 'none' | 'pending_sent' | 'pending_received' | 'friends' = 'none';
-
-        const rel = relationships?.find(r => r.sender_id === p.id || r.receiver_id === p.id);
-
-        if (rel) {
-          if (rel.status === 'accepted') {
-            status = 'friends';
-          } else if (rel.sender_id === userId) {
-            status = 'pending_sent';
-          } else if (rel.receiver_id === userId) {
-            status = 'pending_received';
-          }
-        }
+        const isFollowing = follows?.some(f => f.follower_id === userId && f.following_id === p.id) || false;
+        const isFollowedBy = follows?.some(f => f.follower_id === p.id && f.following_id === userId) || false;
 
         return {
           id: p.id,
@@ -89,7 +79,8 @@ export default function NetworkPage() {
           avatar_url: p.avatar_url || "",
           role: p.role || "student",
           total_score: p.total_score || 0,
-          friendshipStatus: status
+          isFollowing,
+          isFollowedBy
         };
       });
 
@@ -104,7 +95,6 @@ export default function NetworkPage() {
   };
 
   useEffect(() => {
-    // اعمال فیلتر و جستجو
     let result = users;
 
     if (activeFilter === "Students") {
@@ -124,55 +114,35 @@ export default function NetworkPage() {
     setFilteredUsers(result);
   }, [searchQuery, activeFilter, users]);
 
-  const handleConnectionAction = async (targetId: string, currentStatus: string) => {
+  const handleFollowAction = async (targetId: string, currentlyFollowing: boolean) => {
     if (!currentUserId) return;
     setActionLoadingId(targetId);
 
     try {
-      if (currentStatus === 'none') {
-        // ارسال درخواست
-        await supabase.from("student_friends").insert({
-          sender_id: currentUserId,
-          receiver_id: targetId,
-          status: 'pending'
-        });
-        updateUserStatusLocally(targetId, 'pending_sent');
+      if (currentlyFollowing) {
+        // Unfollow
+        await supabase
+          .from("user_follows")
+          .delete()
+          .eq("follower_id", currentUserId)
+          .eq("following_id", targetId);
 
-      } else if (currentStatus === 'pending_sent' || currentStatus === 'friends') {
-        // لغو درخواست یا حذف دوست
-        await supabase.from("student_friends").delete()
-          .or(`and(sender_id.eq.${currentUserId},receiver_id.eq.${targetId}),and(sender_id.eq.${targetId},receiver_id.eq.${currentUserId})`);
-        updateUserStatusLocally(targetId, 'none');
+        setUsers(prev => prev.map(u => u.id === targetId ? { ...u, isFollowing: false } : u));
+      } else {
+        // Follow
+        await supabase
+          .from("user_follows")
+          .insert({
+            follower_id: currentUserId,
+            following_id: targetId
+          });
 
-      } else if (currentStatus === 'pending_received') {
-        // قبول درخواست
-        await supabase.from("student_friends").update({ status: 'accepted' })
-          .eq('sender_id', targetId)
-          .eq('receiver_id', currentUserId);
-        updateUserStatusLocally(targetId, 'friends');
+        setUsers(prev => prev.map(u => u.id === targetId ? { ...u, isFollowing: true } : u));
       }
     } catch (error) {
-      console.error("Connection action failed:", error);
+      console.error("Follow action failed:", error);
     } finally {
       setActionLoadingId(null);
-    }
-  };
-
-  const updateUserStatusLocally = (targetId: string, newStatus: any) => {
-    setUsers(prev => prev.map(u => u.id === targetId ? { ...u, friendshipStatus: newStatus } : u));
-  };
-
-  const getActionBtnProps = (status: string) => {
-    switch (status) {
-      case 'friends':
-        return { text: "Connected", icon: <UserCheck size={16} />, style: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30" };
-      case 'pending_sent':
-        return { text: "Pending", icon: <Clock size={16} />, style: "bg-white/5 text-neutral-400 border border-white/10 hover:bg-white/10" };
-      case 'pending_received':
-        return { text: "Accept", icon: <UserPlus size={16} />, style: "bg-emerald-500 text-black border border-emerald-500 hover:bg-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]" };
-      case 'none':
-      default:
-        return { text: "Connect", icon: <UserPlus size={16} />, style: "bg-indigo-600 text-white border border-indigo-600 hover:bg-indigo-500 shadow-[0_0_15px_rgba(79,70,229,0.4)]" };
     }
   };
 
@@ -244,12 +214,11 @@ export default function NetworkPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-24">
             {filteredUsers.map((u) => {
               const isFaculty = u.role === 'teacher' || u.role === 'admin' || u.role === 'super_admin';
-              const btn = getActionBtnProps(u.friendshipStatus);
 
               return (
                 <div key={u.id} className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2rem] p-6 flex flex-col items-center text-center backdrop-blur-md shadow-[0_15px_30px_rgba(0,0,0,0.4)] hover:border-indigo-500/30 hover:-translate-y-1.5 transition-all duration-300 group">
 
-                  {/* Avatar با لینک به مسیر جدید فید */}
+                  {/* Avatar */}
                   <Link href={`/${currentLocale}/feed/profile/${u.id}`} className="relative mb-4 mt-2">
                     <div className="w-20 h-20 rounded-[1.5rem] bg-neutral-800 border-2 border-white/10 overflow-hidden flex items-center justify-center group-hover:border-indigo-500/50 transition-colors relative z-10">
                       {u.avatar_url ? (
@@ -265,7 +234,7 @@ export default function NetworkPage() {
                     )}
                   </Link>
 
-                  {/* Info با لینک به مسیر جدید فید */}
+                  {/* Info */}
                   <Link href={`/${currentLocale}/feed/profile/${u.id}`} className="block w-full">
                     <h3 className="text-lg font-black text-white truncate group-hover:text-indigo-300 transition-colors">
                       {u.first_name} {u.last_name}
@@ -275,32 +244,53 @@ export default function NetworkPage() {
                     </p>
                   </Link>
 
-                  {/* Stats (Score) */}
-                  <div className="mt-4 mb-6 flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-xl border border-white/5">
-                    <Trophy size={12} className="text-yellow-500" />
-                    <span className="text-xs font-bold text-neutral-300">{u.total_score} XP</span>
+                  {/* Stats (Score & Follows-you badge) */}
+                  <div className="mt-4 mb-6 flex flex-wrap items-center justify-center gap-2">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-xl border border-white/5">
+                      <Trophy size={12} className="text-yellow-500" />
+                      <span className="text-xs font-bold text-neutral-300">{u.total_score} XP</span>
+                    </div>
+                    {u.isFollowedBy && (
+                      <span className="text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                        {t.feed?.followers || "Follows You"}
+                      </span>
+                    )}
                   </div>
 
-                  {/* Action Button */}
+                  {/* Action Button: Follow / Following / Follow Back */}
                   <button
                     disabled={actionLoadingId === u.id}
-                    onClick={() => handleConnectionAction(u.id, u.friendshipStatus)}
-                    className={`w-full py-3.5 flex items-center justify-center gap-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${btn.style} ${actionLoadingId === u.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    title={u.friendshipStatus === 'friends' ? 'Click to Remove' : ''}
+                    onClick={() => handleFollowAction(u.id, u.isFollowing)}
+                    className={`w-full py-3.5 flex items-center justify-center gap-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
+                      u.isFollowing
+                        ? "bg-white/10 text-white border border-white/20 hover:bg-rose-600/20 hover:text-rose-400 hover:border-rose-500/40"
+                        : u.isFollowedBy
+                          ? "bg-gradient-to-r from-indigo-600 to-[#C2185B] text-white shadow-[0_0_20px_rgba(194,24,91,0.4)] hover:brightness-110"
+                          : "bg-indigo-600 text-white shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:bg-indigo-500"
+                    } ${actionLoadingId === u.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {actionLoadingId === u.id ? (
                       <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                    ) : u.isFollowing ? (
+                      <>
+                        <span className="group-hover:hidden flex items-center gap-2">
+                          <UserCheck size={16} />
+                          {t.feed?.following || "Following"}
+                        </span>
+                        <span className="hidden group-hover:flex items-center gap-2 text-rose-400">
+                          <UserMinus size={16} />
+                          {t.feed?.unfollow || "Unfollow"}
+                        </span>
+                      </>
+                    ) : u.isFollowedBy ? (
+                      <>
+                        <UserPlus size={16} />
+                        <span>{t.feed?.followBack || "Follow Back"}</span>
+                      </>
                     ) : (
                       <>
-                        {u.friendshipStatus === 'friends' ? <span className="group-hover:hidden flex items-center gap-2">{btn.icon} {t.feed.connectedFriends || "Connected"}</span> : ''}
-                        {u.friendshipStatus === 'friends' ? <span className="hidden group-hover:flex items-center gap-2"><UserMinus size={16} /> {t.feed.disconnect}</span> : ''}
-
-                        {u.friendshipStatus !== 'friends' && (
-                          <>
-                            {btn.icon}
-                            <span>{btn.text}</span>
-                          </>
-                        )}
+                        <UserPlus size={16} />
+                        <span>{t.feed?.follow || "Follow"}</span>
                       </>
                     )}
                   </button>
@@ -312,15 +302,5 @@ export default function NetworkPage() {
         )}
       </div>
     </div>
-  );
-}
-
-function UserMinus(props: any) {
-  return (
-    <svg {...props} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <line x1="22" y1="11" x2="16" y2="11" />
-    </svg>
   );
 }
