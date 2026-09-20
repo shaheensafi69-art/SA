@@ -1051,7 +1051,20 @@
     "academyUpdates": "Mises à jour et e-mails de l’Académie",
     "academyUpdatesDesc": "Recevez des alertes instantanées sur vos cours en direct et vos notes.",
     "marketingOffers": "Offres exclusives et promotions",
-    "marketingOffersDesc": "Soyez informé des nouveaux cours, remises et primes de parrainage."
+    "marketingOffersDesc": "Soyez informé des nouveaux cours, remises et primes de parrainage.",
+    "activityLog": "Activités des appareils",
+    "language": "Langue et préférences",
+    "password": "Mot de passe et sécurité",
+    "currentPassword": "Mot de passe actuel",
+    "enterCurrentPassword": "Entrez votre mot de passe actuel",
+    "activeDevices": "Appareils et sessions actifs",
+    "thisDevice": "Cet appareil (Actif maintenant)",
+    "lastActive": "Dernière activité",
+    "revokeDevice": "Déconnecter cet appareil",
+    "noDevicesFound": "Aucun appareil actif enregistré",
+    "passwordUpdatedSuccess": "Votre mot de passe a été mis à jour avec succès !",
+    "incorrectCurrentPassword": "Le mot de passe actuel est incorrect.",
+    "selectLanguage": "Choisir la langue du système"
   },
   "quizzes": {
     "title": "Centre d'Examens",

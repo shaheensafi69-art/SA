@@ -8,8 +8,11 @@ import Link from "next/link";
 import { 
   Loader2, ArrowLeft, Save, LogOut, User, Mail, FileText, Camera, 
   CheckCircle2, AlertCircle, ShieldCheck, Phone, MapPin, Calendar, 
-  Award, Wallet, Fingerprint 
+  Award, Wallet, Fingerprint, Shield, Globe, Smartphone 
 } from "lucide-react";
+import DeviceActivityTab from "@/components/settings/DeviceActivityTab";
+import PasswordSecurityTab from "@/components/settings/PasswordSecurityTab";
+import LanguagePreferencesTab from "@/components/settings/LanguagePreferencesTab";
 
 export default function AdminSettingsPage() {
   const pathname = usePathname() || "/en";
@@ -22,6 +25,7 @@ export default function AdminSettingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [activeTab, setActiveTab] = useState<"profile" | "security" | "language" | "activity">("profile");
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   
   const [profileData, setProfileData] = useState({
@@ -157,20 +161,51 @@ export default function AdminSettingsPage() {
           </button>
         </header>
 
+        {/* TABS NAVIGATION (Responsive: Mobile Pills, Desktop Bar) */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar w-full bg-[#0a0a0f]/60 p-2 rounded-2xl border border-white/5 backdrop-blur-xl">
+          {[
+            { id: "profile", label: t.common?.profile || t.settings?.personalInfo || "Profile Information", icon: User },
+            { id: "security", label: t.settings?.security || t.settings?.password || "Password & Security", icon: Shield },
+            { id: "language", label: t.settings?.language || "Language & Preferences", icon: Globe },
+            { id: "activity", label: t.settings?.activityLog || "Device Activities", icon: Smartphone },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`flex-1 min-w-[140px] sm:min-w-0 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2.5 ${
+                  isActive
+                    ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/20 scale-[1.01]"
+                    : "text-neutral-400 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                <Icon size={16} className={isActive ? "text-white" : "text-neutral-500"} />
+                <span className="truncate">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-4">
             <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
             <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.synchronizingCoreEngine}</p>
           </div>
         ) : (
-          <form onSubmit={handleSaveChanges} className="space-y-6 sm:space-y-8">
-            
+          <>
+            {/* Global Alert Messages */}
             {message && (
               <div className={`p-4 rounded-2xl flex items-center gap-3 text-sm font-bold border backdrop-blur-md animate-[fadeInDown_0.3s_ease-out] ${message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
                 {message.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
                 <p>{message.text}</p>
               </div>
             )}
+
+            {/* TAB 1: PROFILE */}
+            {activeTab === "profile" && (
+              <form onSubmit={handleSaveChanges} className="space-y-6 sm:space-y-8">
 
             {/* ================= SECTION 1: IDENTITY ================= */}
             <section className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-6 sm:p-10 backdrop-blur-3xl shadow-2xl">
@@ -385,7 +420,30 @@ export default function AdminSettingsPage() {
 
           </form>
         )}
-      </div>
-    </div>
+
+        {/* TAB 2: PASSWORD & SECURITY */}
+        {activeTab === "security" && (
+          <div className="max-w-3xl mx-auto">
+            <PasswordSecurityTab userEmail={profileData.email} t={t} isRtl={isRtl} />
+          </div>
+        )}
+
+        {/* TAB 3: LANGUAGE & PREFERENCES */}
+        {activeTab === "language" && (
+          <div className="max-w-4xl mx-auto">
+            <LanguagePreferencesTab userId={profileData.id} currentLocale={currentLocale} t={t} isRtl={isRtl} />
+          </div>
+        )}
+
+        {/* TAB 4: DEVICE ACTIVITY LOG */}
+        {activeTab === "activity" && (
+          <div className="max-w-4xl mx-auto">
+            <DeviceActivityTab userId={profileData.id} locale={currentLocale} t={t} isRtl={isRtl} />
+          </div>
+        )}
+      </>
+    )}
+  </div>
+</div>
   );
 }

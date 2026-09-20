@@ -1051,7 +1051,20 @@
     "academyUpdates": "د اکاډمۍ تازه معلومات او ایمیلونه",
     "academyUpdatesDesc": "د ژوندیو ټولګیو او دندې د نمرو په اړه سمدستي خبرتیاوې ترلاسه کړئ.",
     "marketingOffers": "ځانګړي وړاندیزونه او تخفیفونه",
-    "marketingOffersDesc": "د نویو کورسونو، تخفیفونو او د بلنې د پاداشونو په اړه خبر شئ."
+    "marketingOffersDesc": "د نویو کورسونو، تخفیفونو او د بلنې د پاداشونو په اړه خبر شئ.",
+    "activityLog": "د دستګاوو فعالیتونه",
+    "language": "ژبه او بڼه",
+    "password": "پټنوم او امنیت",
+    "currentPassword": "اوسنی پټنوم",
+    "enterCurrentPassword": "خپل اوسنی پټنوم داخل کړئ",
+    "activeDevices": "فعالې دستګاوې او ناستې",
+    "thisDevice": "دا دستګاه (همدا اوس فعاله)",
+    "lastActive": "وروستی فعالیت",
+    "revokeDevice": "له دې دستګاه وتل",
+    "noDevicesFound": "تر اوسه هیڅ دستګاه نه ده ثبت شوې",
+    "passwordUpdatedSuccess": "ستاسو پټنوم په بریالیتوب سره بدل شو!",
+    "incorrectCurrentPassword": "داخل شوی اوسنی پټنوم ناسم دی.",
+    "selectLanguage": "د سیسټم ژبه غوره کړئ"
   },
   "quizzes": {
     "title": "د ازموینو مرکز",

@@ -1051,7 +1051,20 @@
     "academyUpdates": "アカデミーの最新情報とメール",
     "academyUpdatesDesc": "ライブクラス、コースの進捗状況、課題の成績に関するアラートを即座に受け取ります。",
     "marketingOffers": "マーケティングと限定オファー",
-    "marketingOffersDesc": "新しいコース、割引、紹介プログラムのボーナスに関する通知を受け取ります。"
+    "marketingOffersDesc": "新しいコース、割引、紹介プログラムのボーナスに関する通知を受け取ります。",
+    "activityLog": "デバイスのアクティビティ",
+    "language": "言語と設定",
+    "password": "パスワードとセキュリティ",
+    "currentPassword": "現在のパスワード",
+    "enterCurrentPassword": "現在のパスワードを入力してください",
+    "activeDevices": "アクティブなデバイスとセッション",
+    "thisDevice": "このデバイス（現在アクティブ）",
+    "lastActive": "最後のアクティビティ",
+    "revokeDevice": "このデバイスからログアウト",
+    "noDevicesFound": "アクティブなデバイスはまだ記録されていません",
+    "passwordUpdatedSuccess": "パスワードが正常に更新されました！",
+    "incorrectCurrentPassword": "現在のパスワードが正しくありません。",
+    "selectLanguage": "表示言語を選択"
   },
   "quizzes": {
     "title": "試験センター",

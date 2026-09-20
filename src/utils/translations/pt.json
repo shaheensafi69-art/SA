@@ -1073,7 +1073,20 @@
     "bio": "Biografia",
     "newPassword": "Nova senha",
     "confirmPassword": "Confirme a nova senha",
-    "changePassword": "Atualizar senha"
+    "changePassword": "Atualizar senha",
+    "activityLog": "Atividades de dispositivos",
+    "language": "Idioma e preferências",
+    "password": "Senha e segurança",
+    "currentPassword": "Senha atual",
+    "enterCurrentPassword": "Digite sua senha atual",
+    "activeDevices": "Dispositivos e sessões ativas",
+    "thisDevice": "Este dispositivo (Ativo agora)",
+    "lastActive": "Última atividade",
+    "revokeDevice": "Desconectar dispositivo",
+    "noDevicesFound": "Nenhum dispositivo ativo registrado",
+    "passwordUpdatedSuccess": "Sua senha foi atualizada com sucesso!",
+    "incorrectCurrentPassword": "A senha atual está incorreta.",
+    "selectLanguage": "Selecionar idioma"
   },
   "announcements": {
     "title": "Anúncios oficiais",

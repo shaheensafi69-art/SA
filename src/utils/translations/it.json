@@ -1051,7 +1051,20 @@
     "academyUpdates": "Aggiornamenti ed e-mail dell'Accademia",
     "academyUpdatesDesc": "Ricevi avvisi istantanei sulle tue lezioni dal vivo, sui progressi del corso e sui voti dei compiti.",
     "marketingOffers": "Marketing e offerte esclusive",
-    "marketingOffersDesc": "Ricevi notifiche su nuovi corsi, sconti e bonus del programma di riferimento."
+    "marketingOffersDesc": "Ricevi notifiche su nuovi corsi, sconti e bonus del programma di riferimento.",
+    "activityLog": "Attività dei dispositivi",
+    "language": "Lingua e preferenze",
+    "password": "Password e sicurezza",
+    "currentPassword": "Password attuale",
+    "enterCurrentPassword": "Inserisci la tua password attuale",
+    "activeDevices": "Dispositivi e sessioni attive",
+    "thisDevice": "Questo dispositivo (Attivo ora)",
+    "lastActive": "Ultima attività",
+    "revokeDevice": "Disconnetti dispositivo",
+    "noDevicesFound": "Nessun dispositivo attivo registrato",
+    "passwordUpdatedSuccess": "La tua password è stata aggiornata con successo!",
+    "incorrectCurrentPassword": "La password attuale non è corretta.",
+    "selectLanguage": "Seleziona la lingua di visualizzazione"
   },
   "quizzes": {
     "noQuestionsDesc": "L'istruttore non ha ancora aggiunto alcuna domanda a questo esame.",

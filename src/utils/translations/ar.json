@@ -1051,7 +1051,20 @@
     "academyUpdates": "تحديثات الأكاديمية ورسائل البريد",
     "academyUpdatesDesc": "تلقي تنبيهات فورية حول الفصول المباشرة وتقدم الدورات ودرجات الواجبات.",
     "marketingOffers": "العروض الحصرية والخصومات",
-    "marketingOffersDesc": "احصل على إشعارات بالدورات الجديدة والخصومات ومكافآت الإحالة."
+    "marketingOffersDesc": "احصل على إشعارات بالدورات الجديدة والخصومات ومكافآت الإحالة.",
+    "activityLog": "نشاط الأجهزة",
+    "language": "اللغة والمظهر",
+    "password": "كلمة المرور والأمان",
+    "currentPassword": "كلمة المرور الحالية",
+    "enterCurrentPassword": "أدخل كلمة المرور الحالية",
+    "activeDevices": "الأجهزة والجلسات النشطة",
+    "thisDevice": "هذا الجهاز (نشط الآن)",
+    "lastActive": "آخر نشاط",
+    "revokeDevice": "تسجيل الخروج من الجهاز",
+    "noDevicesFound": "لم يتم تسجيل أي أجهزة نشطة بعد",
+    "passwordUpdatedSuccess": "تم تحديث كلمة المرور بنجاح!",
+    "incorrectCurrentPassword": "كلمة المرور الحالية غير صحيحة.",
+    "selectLanguage": "اختر لغة النظام"
   },
   "quizzes": {
     "title": "مركز الامتحانات",

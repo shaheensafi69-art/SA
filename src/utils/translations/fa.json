@@ -1051,7 +1051,20 @@
     "academyUpdates": "اطلاعیه‌های آکادمی و ایمیل‌ها",
     "academyUpdatesDesc": "هشدارهای فوری درباره کلاس‌های زنده، پیشرفت دوره‌ها و نمرات تکالیف دریافت کنید.",
     "marketingOffers": "پیشنهادات ویژه و تخفیف‌ها",
-    "marketingOffersDesc": "از دوره‌های جدید، کدهای تخفیف و پاداش‌های دعوت از دوستان باخبر شوید."
+    "marketingOffersDesc": "از دوره‌های جدید، کدهای تخفیف و پاداش‌های دعوت از دوستان باخبر شوید.",
+    "activityLog": "فعالیت دستگاه‌ها",
+    "language": "زبان و ظاهر",
+    "password": "رمز عبور و امنیت",
+    "currentPassword": "رمز عبور فعلی",
+    "enterCurrentPassword": "رمز عبور فعلی خود را وارد کنید",
+    "activeDevices": "دستگاه‌ها و نشست‌های فعال",
+    "thisDevice": "این دستگاه (فعال در حال حاضر)",
+    "lastActive": "آخرین فعالیت",
+    "revokeDevice": "خروج از این دستگاه",
+    "noDevicesFound": "هنوز هیچ دستگاهی ثبت نشده است",
+    "passwordUpdatedSuccess": "رمز عبور شما با موفقیت تغییر یافت!",
+    "incorrectCurrentPassword": "رمز عبور فعلی وارد شده نادرست است.",
+    "selectLanguage": "انتخاب زبان سامانه"
   },
   "quizzes": {
     "title": "مرکز امتحانات و آزمون‌ها",

@@ -1024,7 +1024,20 @@
     "bio": "Biografi",
     "newPassword": "Kata Sandi Baru",
     "confirmPassword": "Konfirmasi Kata Sandi Baru",
-    "changePassword": "Perbarui Kata Sandi"
+    "changePassword": "Perbarui Kata Sandi",
+    "activityLog": "Aktivitas Perangkat",
+    "language": "Bahasa dan Preferensi",
+    "password": "Kata Sandi & Keamanan",
+    "currentPassword": "Kata Sandi Saat Ini",
+    "enterCurrentPassword": "Masukkan kata sandi saat ini",
+    "activeDevices": "Perangkat & Sesi Aktif",
+    "thisDevice": "Perangkat Ini (Aktif Sekarang)",
+    "lastActive": "Aktivitas Terakhir",
+    "revokeDevice": "Keluar dari perangkat",
+    "noDevicesFound": "Belum ada perangkat aktif yang tercatat",
+    "passwordUpdatedSuccess": "Kata sandi Anda berhasil diperbarui!",
+    "incorrectCurrentPassword": "Kata sandi saat ini salah.",
+    "selectLanguage": "Pilih Bahasa Tampilan"
   },
   "announcements": {
     "title": "Pengumuman Resmi",

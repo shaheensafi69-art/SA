@@ -1053,7 +1053,20 @@
     "academyUpdates": "Academy Updates & Emails",
     "academyUpdatesDesc": "Receive instant alerts about your live classes, course progress, and assignment grades.",
     "marketingOffers": "Marketing & Exclusive Offers",
-    "marketingOffersDesc": "Get notified about new courses, discounts, and referral program bonuses."
+    "marketingOffersDesc": "Get notified about new courses, discounts, and referral program bonuses.",
+    "activityLog": "Device Activities",
+    "language": "Language",
+    "password": "Password & Security",
+    "currentPassword": "Current Password",
+    "enterCurrentPassword": "Enter your current password",
+    "activeDevices": "Active Devices & Sessions",
+    "thisDevice": "This Device (Active Now)",
+    "lastActive": "Last Active",
+    "revokeDevice": "Log out device",
+    "noDevicesFound": "No active devices recorded yet",
+    "passwordUpdatedSuccess": "Your password has been successfully updated!",
+    "incorrectCurrentPassword": "The current password you entered is incorrect.",
+    "selectLanguage": "Select Display Language"
   },
   "quizzes": {
     "title": "Examination Center",

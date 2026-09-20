@@ -1051,7 +1051,20 @@
     "academyUpdates": "اکیڈمی اپ ڈیٹس اور ای میلز",
     "academyUpdatesDesc": "لائیو کلاسز، کورس کی پیشرفت اور اسائنمنٹ کے نمبرز کے فوری الرٹس حاصل کریں۔",
     "marketingOffers": "مارکیٹنگ اور خصوصی پیشکشیں",
-    "marketingOffersDesc": "نئے کورسز، رعایتوں اور ریفرل بونسز کی اطلاعات حاصل کریں۔"
+    "marketingOffersDesc": "نئے کورسز، رعایتوں اور ریفرل بونسز کی اطلاعات حاصل کریں۔",
+    "activityLog": "ڈیوائس کی سرگرمیاں",
+    "language": "زبان اور ترتیبات",
+    "password": "پاس ورڈ اور سیکیورٹی",
+    "currentPassword": "موجودہ پاس ورڈ",
+    "enterCurrentPassword": "اپنا موجودہ پاس ورڈ درج کریں",
+    "activeDevices": "فعال آلات اور سیشنز",
+    "thisDevice": "یہ آلہ (ابھی فعال)",
+    "lastActive": "آخری سرگرمی",
+    "revokeDevice": "اس آلے سے لاگ آؤٹ کریں",
+    "noDevicesFound": "ابھی تک کوئی فعال آلہ ریکارڈ نہیں ہوا",
+    "passwordUpdatedSuccess": "آپ کا پاس ورڈ کامیابی سے اپ ڈیٹ ہو گیا!",
+    "incorrectCurrentPassword": "درج کردہ موجودہ پاس ورڈ غلط ہے۔",
+    "selectLanguage": "ڈسپلے کی زبان منتخب کریں"
   },
   "quizzes": {
     "title": "امتحانی مرکز",

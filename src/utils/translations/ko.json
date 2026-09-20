@@ -1033,7 +1033,20 @@
     "academyUpdates": "아카데미 업데이트 및 이메일",
     "academyUpdatesDesc": "실시간 수업, 과정 진행 상황, 과제 성적에 대한 즉각적인 알림을 받으세요.",
     "marketingOffers": "마케팅 및 독점 제안",
-    "marketingOffersDesc": "새로운 강좌, 할인, 추천 프로그램 보너스에 대한 알림을 받으세요."
+    "marketingOffersDesc": "새로운 강좌, 할인, 추천 프로그램 보너스에 대한 알림을 받으세요.",
+    "activityLog": "기기 활동 로그",
+    "language": "언어 및 설정",
+    "password": "비밀번호 및 보안",
+    "currentPassword": "현재 비밀번호",
+    "enterCurrentPassword": "현재 비밀번호를 입력하세요",
+    "activeDevices": "활성 기기 및 세션",
+    "thisDevice": "현재 기기 (지금 활성)",
+    "lastActive": "최근 활동",
+    "revokeDevice": "이 기기에서 로그아웃",
+    "noDevicesFound": "기록된 활성 기기가 없습니다",
+    "passwordUpdatedSuccess": "비밀번호가 성공적으로 변경되었습니다!",
+    "incorrectCurrentPassword": "현재 비밀번호가 일치하지 않습니다.",
+    "selectLanguage": "표시 언어 선택"
   },
   "quizzes": {
     "title": "시험센터",

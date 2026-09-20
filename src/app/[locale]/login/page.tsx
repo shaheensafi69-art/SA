@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, Eye, EyeOff, Sparkles } from "lucide-react";
+import { recordDeviceActivity } from "@/utils/deviceActivity";
 
 // کامپوننت تایپر متن برای ایجاد حس زنده بودن
 function TypewriterText({ text }: { text: string }) {
@@ -133,6 +134,9 @@ export default function LoginPage() {
             setIsLoading(false);
             return;
         }
+
+        // Record device activity without duplicating existing devices
+        await recordDeviceActivity(data.session.user.id);
 
         if (finalRole === "super_admin") {
             window.location.href = `/${locale}/admin`;

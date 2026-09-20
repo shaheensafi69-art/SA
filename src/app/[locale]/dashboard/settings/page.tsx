@@ -7,6 +7,9 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
 import { Trash2 } from "lucide-react";
+import DeviceActivityTab from "@/components/settings/DeviceActivityTab";
+import PasswordSecurityTab from "@/components/settings/PasswordSecurityTab";
+import LanguagePreferencesTab from "@/components/settings/LanguagePreferencesTab";
 
 type UserProfile = {
   first_name: string;
@@ -29,7 +32,8 @@ export default function SettingsPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<"profile" | "security" | "preferences">("profile");
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"profile" | "security" | "language" | "activity">("profile");
 
   // استیت‌های اطلاعات کاربر کاملاً منطبق بر دیتابیس
   const [profile, setProfile] = useState<UserProfile>({
@@ -45,12 +49,6 @@ export default function SettingsPage() {
     cover_image_url: "",
   });
 
-  // استیت‌های تغییر رمز عبور
-  const [passwords, setPasswords] = useState({
-    newPassword: "",
-    confirmPassword: "",
-  });
-
   const [notification, setNotification] = useState<{ type: "success" | "error", message: string } | null>(null);
 
   useEffect(() => {
@@ -63,6 +61,7 @@ export default function SettingsPage() {
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session?.user) return router.push(`/${currentLocale}/login`);
+    setCurrentUserId(session.user.id);
 
     const { data: profileData } = await supabase
       .from("profiles")
@@ -184,38 +183,6 @@ export default function SettingsPage() {
     }
   };
 
-  // ================= تابع تغییر رمز عبور =================
-  const handleUpdatePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (passwords.newPassword.length < 6) {
-      showNotification("error", "Password must be at least 6 characters.");
-      return;
-    }
-    if (passwords.newPassword !== passwords.confirmPassword) {
-      showNotification("error", "Passwords do not match.");
-      return;
-    }
-
-    setIsSaving(true);
-    const supabase = createClient();
-
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: passwords.newPassword
-      });
-
-      if (error) throw error;
-      showNotification("success", "Your password has been secured!");
-      setPasswords({ newPassword: "", confirmPassword: "" });
-    } catch (error: any) {
-      console.error("Password update error:", error);
-      showNotification("error", error.message || "Failed to update password.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   // نمایش موقت پیام (Toast)
   const showNotification = (type: "success" | "error", message: string) => {
     setNotification({ type, message });
@@ -249,40 +216,79 @@ export default function SettingsPage() {
       {/* ================= بدنه اصلی تعاملی دو ستونه ================= */}
       <div className="px-6 md:px-12 max-w-[1600px] mx-auto relative z-10 flex flex-col md:flex-row gap-8 items-start">
 
-        {/* ================= سایدبار تنظیمات (تب‌های عمودی) ================= */}
+        {/* ================= سایدبار تنظیمات (تب‌های عمودی و تب‌های موبایل) ================= */}
         <div className="w-full md:w-80 shrink-0">
-          {/* ساختار کاملاً عمودی (flex-col) برای تمام دستگاه‌ها */}
-          <div className="flex flex-col bg-neutral-900/40 backdrop-blur-2xl p-3 rounded-[2.5rem] border border-white/5 shadow-2xl space-y-2 md:sticky md:top-32 animate-[fadeIn_0.3s_ease-out]">
-            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] px-4 pt-4 pb-2">{t.settings.menu}</p>
+          {/* تب‌های ریسپانسیو مخصوص موبایل */}
+          <div className="flex md:hidden items-center gap-2 overflow-x-auto pb-2 custom-scrollbar w-full mb-6">
+            {[
+              { id: "profile", label: t.settings?.personalInfo || "Profile", icon: "👤" },
+              { id: "security", label: t.settings?.password || "Password", icon: "🔒" },
+              { id: "language", label: t.settings?.language || "Language", icon: "🌐" },
+              { id: "activity", label: t.settings?.activityLog || "Devices", icon: "📱" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-4 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider whitespace-nowrap transition-all flex items-center gap-2 shrink-0 ${
+                  activeTab === tab.id
+                    ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-md shadow-amber-500/20 scale-[1.02]"
+                    : "bg-neutral-900/60 text-neutral-400 hover:text-white border border-white/5"
+                }`}
+              >
+                <span>{tab.icon}</span>
+                <span>{tab.label}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* تب‌های عمودی دسکتاپ */}
+          <div className="hidden md:flex flex-col bg-neutral-900/40 backdrop-blur-2xl p-3 rounded-[2.5rem] border border-white/5 shadow-2xl space-y-2 md:sticky md:top-32 animate-[fadeIn_0.3s_ease-out]">
+            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em] px-4 pt-4 pb-2">
+              {t.settings?.menu || "Settings Menu"}
+            </p>
 
             <button
               onClick={() => setActiveTab("profile")}
-              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${activeTab === "profile"
-                ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-[0_10px_25px_rgba(245,158,11,0.25)] scale-[1.02]"
-                : "text-neutral-400 hover:bg-white/5 hover:text-white"
-                }`}
+              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
+                activeTab === "profile"
+                  ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-[0_10px_25px_rgba(245,158,11,0.25)] scale-[1.02]"
+                  : "text-neutral-400 hover:bg-white/5 hover:text-white"
+              }`}
             >
-              <span className="text-xl">👤</span> {t.settings.personalInfo}
+              <span className="text-xl">👤</span> {t.settings?.personalInfo || "Profile Information"}
             </button>
 
             <button
               onClick={() => setActiveTab("security")}
-              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${activeTab === "security"
-                ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-[0_10px_25px_rgba(245,158,11,0.25)] scale-[1.02]"
-                : "text-neutral-400 hover:bg-white/5 hover:text-white"
-                }`}
+              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
+                activeTab === "security"
+                  ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-[0_10px_25px_rgba(245,158,11,0.25)] scale-[1.02]"
+                  : "text-neutral-400 hover:bg-white/5 hover:text-white"
+              }`}
             >
-              <span className="text-xl">🔒</span> Security
+              <span className="text-xl">🔒</span> {t.settings?.password || "Password & Security"}
             </button>
 
             <button
-              onClick={() => setActiveTab("preferences")}
-              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${activeTab === "preferences"
-                ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-[0_10px_25px_rgba(245,158,11,0.25)] scale-[1.02]"
-                : "text-neutral-400 hover:bg-white/5 hover:text-white"
-                }`}
+              onClick={() => setActiveTab("language")}
+              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
+                activeTab === "language"
+                  ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-[0_10px_25px_rgba(245,158,11,0.25)] scale-[1.02]"
+                  : "text-neutral-400 hover:bg-white/5 hover:text-white"
+              }`}
             >
-              <span className="text-xl">⚙️</span> Preferences
+              <span className="text-xl">🌐</span> {t.settings?.language || "Language & Preferences"}
+            </button>
+
+            <button
+              onClick={() => setActiveTab("activity")}
+              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
+                activeTab === "activity"
+                  ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-black shadow-[0_10px_25px_rgba(245,158,11,0.25)] scale-[1.02]"
+                  : "text-neutral-400 hover:bg-white/5 hover:text-white"
+              }`}
+            >
+              <span className="text-xl">📱</span> {t.settings?.activityLog || "Device Activities"}
             </button>
           </div>
         </div>
@@ -416,89 +422,35 @@ export default function SettingsPage() {
                 </div>
               )}
 
-              {/* ================= تب امنیت (تغییر رمز) ================= */}
+              {/* ================= تب امنیت و رمز عبور ================= */}
               {activeTab === "security" && (
-                <div className="animate-[fadeIn_0.3s_ease-out] relative z-10">
-                  <h2 className="text-2xl font-black text-white mb-2">{t.settings.vaultSecurity}</h2>
-                  <p className="text-neutral-500 text-sm mb-8 font-medium border-b border-white/5 pb-6">{t.settings.vaultSecurityDesc}</p>
+                <div className="animate-[fadeIn_0.3s_ease-out] relative z-10 space-y-10">
+                  <PasswordSecurityTab userEmail={profile.email} t={t} isRtl={isRtl} />
 
-                  <form onSubmit={handleUpdatePassword} className="space-y-6 max-w-md">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.settings.newSecurePassword}</label>
-                      <input
-                        required type="password" minLength={6}
-                        value={passwords.newPassword}
-                        onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
-                        placeholder="••••••••"
-                        className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-lg tracking-widest focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">{t.settings.confirmPassword}</label>
-                      <input
-                        required type="password" minLength={6}
-                        value={passwords.confirmPassword}
-                        onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
-                        placeholder="••••••••"
-                        className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white text-lg tracking-widest focus:outline-none focus:border-amber-500/50 focus:bg-black/60 transition-all shadow-inner"
-                      />
-                    </div>
-
-                    <div className="pt-6">
-                      <button
-                        type="submit"
-                        disabled={isSaving || !passwords.newPassword}
-                        className="w-full py-4 bg-white/5 text-white border border-white/10 font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-white/10 hover:border-white/20 transition-all disabled:opacity-50"
-                      >
-                        {isSaving ? "Updating..." : t.settings.changePassword}
-                      </button>
-                    </div>
-                  </form>
-
-                  <div className="pt-8 mt-8 border-t border-red-500/20 max-w-md">
-                    <h3 className="text-sm font-black text-red-400 uppercase tracking-wider mb-2">{t.settings.dangerZone}</h3>
-                    <p className="text-xs text-neutral-400 mb-4">{t.settings.dangerZoneDesc}</p>
+                  <div className="pt-8 border-t border-red-500/20 max-w-xl">
+                    <h3 className="text-sm font-black text-red-400 uppercase tracking-wider mb-2">{t.settings?.dangerZone || "Danger Zone"}</h3>
+                    <p className="text-xs text-neutral-400 mb-4">{t.settings?.dangerZoneDesc || "Permanently delete your account and all associated course records."}</p>
                     <Link
                       href={`/${currentLocale}/delete-account`}
                       className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-black uppercase tracking-widest transition-all hover:scale-105"
                     >
-                      <Trash2 size={14} /> {t.settings.deleteAccount}
+                      <Trash2 size={14} /> {t.settings?.deleteAccount || "Delete Account"}
                     </Link>
                   </div>
                 </div>
               )}
 
-              {/* ================= تب Preferences (تنظیمات اعلانات) ================= */}
-              {activeTab === "preferences" && (
+              {/* ================= تب زبان و تنظیمات اعلانات ================= */}
+              {activeTab === "language" && (
                 <div className="animate-[fadeIn_0.3s_ease-out] relative z-10">
-                  <h2 className="text-2xl font-black text-white mb-2">{t.settings.notificationCenter}</h2>
-                  <p className="text-neutral-500 text-sm mb-8 font-medium border-b border-white/5 pb-6">{t.settings.notificationCenterDesc}</p>
+                  <LanguagePreferencesTab userId={currentUserId || ""} currentLocale={currentLocale} t={t} isRtl={isRtl} />
+                </div>
+              )}
 
-                  <div className="space-y-4">
-                    {/* Toggle 1 */}
-                    <div className="flex items-center justify-between p-6 bg-black/40 border border-white/5 rounded-[1.5rem] hover:border-white/10 transition-colors">
-                      <div className="pr-4">
-                        <h4 className="text-white font-bold mb-1">{t.settings.academyUpdates}</h4>
-                        <p className="text-[11px] text-neutral-500 font-bold leading-relaxed">{t.settings.academyUpdatesDesc}</p>
-                      </div>
-                      <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                        <input type="checkbox" className="sr-only peer" defaultChecked />
-                        <div className="w-12 h-6 bg-neutral-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-amber-400 peer-checked:to-amber-600 shadow-inner"></div>
-                      </label>
-                    </div>
-
-                    {/* Toggle 2 */}
-                    <div className="flex items-center justify-between p-6 bg-black/40 border border-white/5 rounded-[1.5rem] hover:border-white/10 transition-colors">
-                      <div className="pr-4">
-                        <h4 className="text-white font-bold mb-1">{t.settings.marketingOffers}</h4>
-                        <p className="text-[11px] text-neutral-500 font-bold leading-relaxed">{t.settings.marketingOffersDesc}</p>
-                      </div>
-                      <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                        <input type="checkbox" className="sr-only peer" />
-                        <div className="w-12 h-6 bg-neutral-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-amber-400 peer-checked:to-amber-600 shadow-inner"></div>
-                      </label>
-                    </div>
-                  </div>
+              {/* ================= تب لاگ فعالیت دستگاه‌ها ================= */}
+              {activeTab === "activity" && (
+                <div className="animate-[fadeIn_0.3s_ease-out] relative z-10">
+                  <DeviceActivityTab userId={currentUserId || ""} locale={currentLocale} t={t} isRtl={isRtl} />
                 </div>
               )}
 

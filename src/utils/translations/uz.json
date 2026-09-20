@@ -1051,7 +1051,20 @@
     "academyUpdates": "Akademiya yangilanishlari va elektron pochta xabarlari",
     "academyUpdatesDesc": "Jonli darslaringiz, kursning borishi va topshiriq baholari haqida tezkor ogohlantirishlarni oling.",
     "marketingOffers": "Marketing va eksklyuziv takliflar",
-    "marketingOffersDesc": "Yangi kurslar, chegirmalar va tavsiyanoma dasturi bonuslari haqida xabar oling."
+    "marketingOffersDesc": "Yangi kurslar, chegirmalar va tavsiyanoma dasturi bonuslari haqida xabar oling.",
+    "activityLog": "Qurilmalar faoliyati",
+    "language": "Til va sozlamalar",
+    "password": "Parol va xavfsizlik",
+    "currentPassword": "Joriy parol",
+    "enterCurrentPassword": "Joriy parolingizni kiriting",
+    "activeDevices": "Faol qurilmalar va sessiyalar",
+    "thisDevice": "Ushbu qurilma (Hozir faol)",
+    "lastActive": "Oxirgi faollik",
+    "revokeDevice": "Qurilmadan chiqish",
+    "noDevicesFound": "Hali faol qurilmalar qayd etilmagan",
+    "passwordUpdatedSuccess": "Parolingiz muvaffaqiyatli yangilandi!",
+    "incorrectCurrentPassword": "Joriy parol noto'g'ri kiritildi.",
+    "selectLanguage": "Tizim tilini tanlang"
   },
   "quizzes": {
     "title": "Imtihon markazi",

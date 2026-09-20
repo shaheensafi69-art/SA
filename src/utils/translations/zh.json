@@ -1033,7 +1033,20 @@
     "academyUpdates": "学院更新和电子邮件",
     "academyUpdatesDesc": "接收有关您的实时课程、课程进度和作业成绩的即时提醒。",
     "marketingOffers": "营销和独家优惠",
-    "marketingOffersDesc": "获取有关新课程、折扣和推荐计划奖金的通知。"
+    "marketingOffersDesc": "获取有关新课程、折扣和推荐计划奖金的通知。",
+    "activityLog": "设备活动日志",
+    "language": "语言与偏好",
+    "password": "密码与安全",
+    "currentPassword": "当前密码",
+    "enterCurrentPassword": "输入您当前的密码",
+    "activeDevices": "活跃设备与会话",
+    "thisDevice": "当前设备（正在活跃）",
+    "lastActive": "最后活跃时间",
+    "revokeDevice": "退出此设备",
+    "noDevicesFound": "暂无活跃设备记录",
+    "passwordUpdatedSuccess": "您的密码已成功更新！",
+    "incorrectCurrentPassword": "当前密码不正确。",
+    "selectLanguage": "选择系统语言"
   },
   "achievements": {
     "title": "我的成就",

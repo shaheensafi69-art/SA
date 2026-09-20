@@ -1051,7 +1051,20 @@
     "academyUpdates": "Akademi Güncellemeleri ve E-postalar",
     "academyUpdatesDesc": "Canlı dersleriniz, kurs ilerlemeniz ve ödev notlarınız hakkında anlık bildirimler alın.",
     "marketingOffers": "Pazarlama ve Özel Fırsatlar",
-    "marketingOffersDesc": "Yeni kurslar, indirimler ve referans bonusları hakkında bilgi alın."
+    "marketingOffersDesc": "Yeni kurslar, indirimler ve referans bonusları hakkında bilgi alın.",
+    "activityLog": "Cihaz Aktiviteleri",
+    "language": "Dil ve Tercihler",
+    "password": "Şifre ve Güvenlik",
+    "currentPassword": "Mevcut Şifre",
+    "enterCurrentPassword": "Mevcut şifrenizi girin",
+    "activeDevices": "Aktif Cihazlar ve Oturumlar",
+    "thisDevice": "Bu Cihaz (Şu Anda Aktif)",
+    "lastActive": "Son Aktivite",
+    "revokeDevice": "Cihazdan çıkış yap",
+    "noDevicesFound": "Kayıtlı aktif cihaz bulunamadı",
+    "passwordUpdatedSuccess": "Şifreniz başarıyla güncellendi!",
+    "incorrectCurrentPassword": "Mevcut şifre yanlış.",
+    "selectLanguage": "Görünüm Dilini Seçin"
   },
   "quizzes": {
     "title": "Sınav Merkezi",

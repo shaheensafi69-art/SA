@@ -1051,7 +1051,20 @@
     "academyUpdates": "Akademie-Updates & E-Mails",
     "academyUpdatesDesc": "Erhalte sofortige Benachrichtigungen zu Live-Kursen und Aufgabenbewertungen.",
     "marketingOffers": "Marketing & Exklusive Angebote",
-    "marketingOffersDesc": "Erfahre von neuen Kursen, Rabatten und Empfehlungsboni."
+    "marketingOffersDesc": "Erfahre von neuen Kursen, Rabatten und Empfehlungsboni.",
+    "activityLog": "Geräteaktivitäten",
+    "language": "Sprache & Einstellungen",
+    "password": "Passwort & Sicherheit",
+    "currentPassword": "Aktuelles Passwort",
+    "enterCurrentPassword": "Geben Sie Ihr aktuelles Passwort ein",
+    "activeDevices": "Aktive Geräte & Sitzungen",
+    "thisDevice": "Dieses Gerät (Jetzt aktiv)",
+    "lastActive": "Zuletzt aktiv",
+    "revokeDevice": "Von Gerät abmelden",
+    "noDevicesFound": "Noch keine aktiven Geräte erfasst",
+    "passwordUpdatedSuccess": "Ihr Passwort wurde erfolgreich aktualisiert!",
+    "incorrectCurrentPassword": "Das aktuelle Passwort ist falsch.",
+    "selectLanguage": "Anzeigesprache wählen"
   },
   "quizzes": {
     "title": "Prüfungszentrum",

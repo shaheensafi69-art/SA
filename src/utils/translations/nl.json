@@ -1051,7 +1051,20 @@
     "academyUpdates": "Academie-updates en e-mails",
     "academyUpdatesDesc": "Ontvang direct meldingen over uw live lessen, cursusvoortgang en opdrachtcijfers.",
     "marketingOffers": "Marketing en exclusieve aanbiedingen",
-    "marketingOffersDesc": "Ontvang meldingen over nieuwe cursussen, kortingen en bonussen voor verwijzingsprogramma's."
+    "marketingOffersDesc": "Ontvang meldingen over nieuwe cursussen, kortingen en bonussen voor verwijzingsprogramma's.",
+    "activityLog": "Apparaatactiviteiten",
+    "language": "Taal en voorkeuren",
+    "password": "Wachtwoord en beveiliging",
+    "currentPassword": "Huidig wachtwoord",
+    "enterCurrentPassword": "Voer uw huidige wachtwoord in",
+    "activeDevices": "Actieve apparaten en sessies",
+    "thisDevice": "Dit apparaat (Nu actief)",
+    "lastActive": "Laatst actief",
+    "revokeDevice": "Uitloggen op apparaat",
+    "noDevicesFound": "Nog geen actieve apparaten geregistreerd",
+    "passwordUpdatedSuccess": "Uw wachtwoord is succesvol bijgewerkt!",
+    "incorrectCurrentPassword": "Het huidige wachtwoord is onjuist.",
+    "selectLanguage": "Weergavetaal selecteren"
   },
   "quizzes": {
     "title": "Examencentrum",
