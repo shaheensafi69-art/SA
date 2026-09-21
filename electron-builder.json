@@ -1,0 +1,52 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "com.safiacademy.app",
+  "productName": "Safi Academy",
+  "copyright": "Copyright © 2026 Safi Academy",
+  "directories": {
+    "output": "dist-electron"
+  },
+  "npmRebuild": false,
+  "nodeGypRebuild": false,
+  "files": [
+    "electron/**/*",
+    "public/icon-512x512.png",
+    "!node_modules/**/*"
+  ],
+  "mac": {
+    "category": "public.app-category.education",
+    "target": [
+      "pkg"
+    ],
+    "icon": "public/icon-512x512.png",
+    "identity": null,
+    "hardenedRuntime": false,
+    "gatekeeperAssess": false,
+    "artifactName": "${productName} Installer-${version}.${ext}",
+    "extendInfo": {
+      "NSCameraUsageDescription": "Safi Academy needs access to your camera for online classes and video conferencing.",
+      "NSMicrophoneUsageDescription": "Safi Academy needs access to your microphone for online classes and voice calls."
+    }
+  },
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "icon": "public/icon-512x512.png",
+    "artifactName": "${productName} Setup ${version}.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Safi Academy",
+    "runAfterFinish": true
+  }
+}

@@ -1,31 +1,11 @@
-import fs from "fs";
-import path from "path";
+import { getAppDownloadsFromR2 } from "@/lib/r2";
 import GetAppClient from "./GetAppClient";
 
-export default function GetAppPage() {
-  // ۱. مسیر پوشه اپلیکیشن‌ها
-  const appDir = path.join(process.cwd(), "public", "app");
-  let apkFiles: string[] = [];
+// Revalidate every 60s from Cloudflare R2 bucket so new uploads appear automatically
+export const revalidate = 60;
 
-  try {
-    // ۲. بررسی وجود پوشه و خواندن فایل‌ها
-    if (fs.existsSync(appDir)) {
-      const files = fs.readdirSync(appDir);
-      // فیلتر کردن فقط فایل‌های با پسوند apk
-      apkFiles = files.filter((f) => f.endsWith(".apk"));
-      
-      // ۳. مرتب‌سازی نزولی (نسخه‌های جدیدتر بالاتر قرار می‌گیرند)
-      apkFiles.sort((a, b) => 
-        b.localeCompare(a, undefined, { numeric: true, sensitivity: "base" })
-      );
-    }
-  } catch (error) {
-    console.error("Error reading apk directory:", error);
-  }
+export default async function GetAppPage() {
+  const downloads = await getAppDownloadsFromR2();
 
-  // جداسازی جدیدترین نسخه و نسخه‌های قدیمی‌تر
-  const latestApk = apkFiles.length > 0 ? apkFiles[0] : null;
-  const olderApks = apkFiles.length > 1 ? apkFiles.slice(1) : [];
-
-  return <GetAppClient latestApk={latestApk} olderApks={olderApks} />;
+  return <GetAppClient downloads={downloads} />;
 }
