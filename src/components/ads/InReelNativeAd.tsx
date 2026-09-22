@@ -36,9 +36,10 @@ export default function InReelNativeAd({ adIndex = 0, onShare, currentLocale = "
       <div className="w-full max-w-[540px] xl:max-w-[620px] px-4 flex-1 flex flex-col items-center justify-center relative z-10 my-auto">
         <div className="w-full bg-[#0d0e17]/90 border border-yellow-500/20 rounded-[2rem] p-4 sm:p-6 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] flex flex-col items-center justify-center min-h-[300px]">
           <GoogleAdSenseAd
+            key={`inreel-${currentLocale}-${adIndex}`}
             client="ca-pub-6551903544426492"
-            slot="2638580043"
-            layout="in-article"
+            slot="6514651420"
+            layoutKey="-ac+c5-5i-c8+17e"
             format="fluid"
             className="w-full flex items-center justify-center"
           />
@@ -67,11 +68,10 @@ export default function InReelNativeAd({ adIndex = 0, onShare, currentLocale = "
           title={isLiked ? "Unlike" : "Like"}
         >
           <div
-            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-xl border flex items-center justify-center transition-all shadow-lg ${
-              isLiked
-                ? "bg-yellow-500 border-yellow-500 text-black shadow-[0_0_20px_rgba(234,179,8,0.7)] scale-105"
-                : "bg-black/45 border-white/20 text-white hover:bg-black/70 hover:scale-105"
-            }`}
+            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-xl border flex items-center justify-center transition-all shadow-lg ${isLiked
+              ? "bg-yellow-500 border-yellow-500 text-black shadow-[0_0_20px_rgba(234,179,8,0.7)] scale-105"
+              : "bg-black/45 border-white/20 text-white hover:bg-black/70 hover:scale-105"
+              }`}
           >
             <Heart size={20} fill={isLiked ? "currentColor" : "none"} />
           </div>

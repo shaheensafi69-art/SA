@@ -14,13 +14,16 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // فعال‌سازی حالت مستقل برای بسته‌بندی تنها فایل‌های ضروری و کاهش چشمگیر حجم اپ
+  output: "standalone",
+
   // غیرفعال کردن بهینه‌سازی فونت برای جلوگیری از ارورهای AbortError در اینترنت‌های محدود
   optimizeFonts: false,
-  
+
   eslint: {
     ignoreDuringBuilds: true,
   },
-  
+
   typescript: {
     ignoreBuildErrors: true,
   },

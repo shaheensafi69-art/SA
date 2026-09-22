@@ -1,10 +1,11 @@
 "use client";
 import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import {  useRouter , usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import InFeedNativeAd from "@/components/ads/InFeedNativeAd";
 import {
   Search, Users, UserPlus, Clock,
   UserCheck, Trophy, ChevronRight, ShieldCheck, UserMinus
@@ -212,90 +213,96 @@ export default function NetworkPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-24">
-            {filteredUsers.map((u) => {
+            {filteredUsers.map((u, index) => {
               const isFaculty = u.role === 'teacher' || u.role === 'admin' || u.role === 'super_admin';
 
               return (
-                <div key={u.id} className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2rem] p-6 flex flex-col items-center text-center backdrop-blur-md shadow-[0_15px_30px_rgba(0,0,0,0.4)] hover:border-indigo-500/30 hover:-translate-y-1.5 transition-all duration-300 group">
+                <React.Fragment key={u.id}>
+                  {((index > 0 && index % 6 === 0) || (filteredUsers.length <= 4 && index === 2)) && (
+                    <div className="col-span-full">
+                      <InFeedNativeAd adIndex={Math.floor(index / 6)} currentLocale={currentLocale} />
+                    </div>
+                  )}
+                  <div className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2rem] p-6 flex flex-col items-center text-center backdrop-blur-md shadow-[0_15px_30px_rgba(0,0,0,0.4)] hover:border-indigo-500/30 hover:-translate-y-1.5 transition-all duration-300 group">
 
-                  {/* Avatar */}
-                  <Link href={`/${currentLocale}/feed/profile/${u.id}`} className="relative mb-4 mt-2">
-                    <div className="w-20 h-20 rounded-[1.5rem] bg-neutral-800 border-2 border-white/10 overflow-hidden flex items-center justify-center group-hover:border-indigo-500/50 transition-colors relative z-10">
-                      {u.avatar_url ? (
-                        <img src={u.avatar_url} alt={u.first_name} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-2xl font-black text-neutral-500 group-hover:text-indigo-400 transition-colors">{u.first_name.charAt(0)}</span>
+                    {/* Avatar */}
+                    <Link href={`/${currentLocale}/feed/profile/${u.id}`} className="relative mb-4 mt-2">
+                      <div className="w-20 h-20 rounded-[1.5rem] bg-neutral-800 border-2 border-white/10 overflow-hidden flex items-center justify-center group-hover:border-indigo-500/50 transition-colors relative z-10">
+                        {u.avatar_url ? (
+                          <img src={u.avatar_url} alt={u.first_name} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-2xl font-black text-neutral-500 group-hover:text-indigo-400 transition-colors">{u.first_name.charAt(0)}</span>
+                        )}
+                      </div>
+                      {isFaculty && (
+                        <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center border-[3px] border-[#0a0a0f] z-20 shadow-lg">
+                          <ShieldCheck size={14} className="text-white" />
+                        </div>
+                      )}
+                    </Link>
+
+                    {/* Info */}
+                    <Link href={`/${currentLocale}/feed/profile/${u.id}`} className="block w-full">
+                      <h3 className="text-lg font-black text-white truncate group-hover:text-indigo-300 transition-colors">
+                        {u.first_name} {u.last_name}
+                      </h3>
+                      <p className={`text-[10px] font-black uppercase tracking-widest mt-1 ${isFaculty ? 'text-blue-400' : 'text-neutral-500'}`}>
+                        {u.role}
+                      </p>
+                    </Link>
+
+                    {/* Stats (Score & Follows-you badge) */}
+                    <div className="mt-4 mb-6 flex flex-wrap items-center justify-center gap-2">
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-xl border border-white/5">
+                        <Trophy size={12} className="text-yellow-500" />
+                        <span className="text-xs font-bold text-neutral-300">{u.total_score} XP</span>
+                      </div>
+                      {u.isFollowedBy && (
+                        <span className="text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                          {t.feed?.followers || "Follows You"}
+                        </span>
                       )}
                     </div>
-                    {isFaculty && (
-                      <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center border-[3px] border-[#0a0a0f] z-20 shadow-lg">
-                        <ShieldCheck size={14} className="text-white" />
-                      </div>
-                    )}
-                  </Link>
 
-                  {/* Info */}
-                  <Link href={`/${currentLocale}/feed/profile/${u.id}`} className="block w-full">
-                    <h3 className="text-lg font-black text-white truncate group-hover:text-indigo-300 transition-colors">
-                      {u.first_name} {u.last_name}
-                    </h3>
-                    <p className={`text-[10px] font-black uppercase tracking-widest mt-1 ${isFaculty ? 'text-blue-400' : 'text-neutral-500'}`}>
-                      {u.role}
-                    </p>
-                  </Link>
-
-                  {/* Stats (Score & Follows-you badge) */}
-                  <div className="mt-4 mb-6 flex flex-wrap items-center justify-center gap-2">
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-xl border border-white/5">
-                      <Trophy size={12} className="text-yellow-500" />
-                      <span className="text-xs font-bold text-neutral-300">{u.total_score} XP</span>
-                    </div>
-                    {u.isFollowedBy && (
-                      <span className="text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
-                        {t.feed?.followers || "Follows You"}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Action Button: Follow / Following / Follow Back */}
-                  <button
-                    disabled={actionLoadingId === u.id}
-                    onClick={() => handleFollowAction(u.id, u.isFollowing)}
-                    className={`w-full py-3.5 flex items-center justify-center gap-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
-                      u.isFollowing
+                    {/* Action Button: Follow / Following / Follow Back */}
+                    <button
+                      disabled={actionLoadingId === u.id}
+                      onClick={() => handleFollowAction(u.id, u.isFollowing)}
+                      className={`w-full py-3.5 flex items-center justify-center gap-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${u.isFollowing
                         ? "bg-white/10 text-white border border-white/20 hover:bg-rose-600/20 hover:text-rose-400 hover:border-rose-500/40"
                         : u.isFollowedBy
                           ? "bg-gradient-to-r from-indigo-600 to-[#C2185B] text-white shadow-[0_0_20px_rgba(194,24,91,0.4)] hover:brightness-110"
                           : "bg-indigo-600 text-white shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:bg-indigo-500"
-                    } ${actionLoadingId === u.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    {actionLoadingId === u.id ? (
-                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                    ) : u.isFollowing ? (
-                      <>
-                        <span className="group-hover:hidden flex items-center gap-2">
-                          <UserCheck size={16} />
-                          {t.feed?.following || "Following"}
-                        </span>
-                        <span className="hidden group-hover:flex items-center gap-2 text-rose-400">
-                          <UserMinus size={16} />
-                          {t.feed?.unfollow || "Unfollow"}
-                        </span>
-                      </>
-                    ) : u.isFollowedBy ? (
-                      <>
-                        <UserPlus size={16} />
-                        <span>{t.feed?.followBack || "Follow Back"}</span>
-                      </>
-                    ) : (
-                      <>
-                        <UserPlus size={16} />
-                        <span>{t.feed?.follow || "Follow"}</span>
-                      </>
-                    )}
-                  </button>
+                        } ${actionLoadingId === u.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {actionLoadingId === u.id ? (
+                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                      ) : u.isFollowing ? (
+                        <>
+                          <span className="group-hover:hidden flex items-center gap-2">
+                            <UserCheck size={16} />
+                            {t.feed?.following || "Following"}
+                          </span>
+                          <span className="hidden group-hover:flex items-center gap-2 text-rose-400">
+                            <UserMinus size={16} />
+                            {t.feed?.unfollow || "Unfollow"}
+                          </span>
+                        </>
+                      ) : u.isFollowedBy ? (
+                        <>
+                          <UserPlus size={16} />
+                          <span>{t.feed?.followBack || "Follow Back"}</span>
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus size={16} />
+                          <span>{t.feed?.follow || "Follow"}</span>
+                        </>
+                      )}
+                    </button>
 
-                </div>
+                  </div>
+                </React.Fragment>
               );
             })}
           </div>

@@ -6,7 +6,9 @@ interface GoogleAdSenseAdProps {
   client?: string;
   slot?: string;
   layout?: string;
+  layoutKey?: string;
   format?: string;
+  responsive?: boolean | string;
   className?: string;
   style?: React.CSSProperties;
   onAdLoaded?: () => void;
@@ -14,9 +16,11 @@ interface GoogleAdSenseAdProps {
 
 export default function GoogleAdSenseAd({
   client = "ca-pub-6551903544426492",
-  slot = "2638580043",
-  layout = "in-article",
+  slot = "6514651420",
+  layout,
+  layoutKey,
   format = "fluid",
+  responsive,
   className = "",
   style = { display: "block", textAlign: "center" },
   onAdLoaded,
@@ -87,10 +91,12 @@ export default function GoogleAdSenseAd({
         ref={adRef}
         className="adsbygoogle"
         style={style}
-        data-ad-layout={layout}
-        data-ad-format={format}
+        {...(layoutKey ? { "data-ad-layout-key": layoutKey } : {})}
+        {...(layout ? { "data-ad-layout": layout } : {})}
+        {...(format ? { "data-ad-format": format } : {})}
         data-ad-client={client}
         data-ad-slot={slot}
+        {...(responsive !== undefined ? { "data-full-width-responsive": String(responsive) } : {})}
       />
     </div>
   );

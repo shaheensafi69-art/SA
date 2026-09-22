@@ -1,0 +1,80 @@
+# robots.txt for Safi Academy (https://www.safiacademy.org)
+# Comprehensive crawler guidelines for Googlebot, Mediapartners-Google (AdSense), and major web crawlers.
+
+# 1. Mediapartners-Google (Dedicated Google AdSense Contextual Crawler)
+User-agent: Mediapartners-Google
+Allow: /
+Disallow: /*/admin/
+Disallow: /*/dashboard/settings
+Disallow: /*/teacher/settings
+Disallow: /api/
+
+# 2. Googlebot (Main Google Search Engine Crawler)
+User-agent: Googlebot
+Allow: /
+Allow: /*/feed
+Allow: /*/feed/reels
+Allow: /*/feed/network
+Allow: /*/blog
+Allow: /*/scholarships
+Allow: /*/donate
+Allow: /*/instructor-application
+Allow: /*/store
+Allow: /*/business-formation
+Allow: /*/hosting
+Allow: /*/development-services
+Allow: /*/bank-account-service
+Allow: /*/partners
+Allow: /*/about
+Allow: /*/contact
+Allow: /*/terms
+Allow: /*/privacy-policy
+Disallow: /*/dashboard/
+Disallow: /*/teacher/
+Disallow: /*/admin/
+Disallow: /*/api/
+Disallow: /api/
+Disallow: /*/support/chat
+Disallow: /*/feed/chats
+Disallow: /*/feed/create
+
+# 3. Googlebot-Image
+User-agent: Googlebot-Image
+Allow: /
+Allow: /company/
+Allow: /flags/
+Allow: /team/
+Allow: /par/
+
+# 4. Default for all other compliant web crawlers
+User-agent: *
+Allow: /
+Allow: /*/feed
+Allow: /*/feed/reels
+Allow: /*/feed/network
+Allow: /*/blog
+Allow: /*/scholarships
+Allow: /*/donate
+Allow: /*/instructor-application
+Allow: /*/store
+Allow: /*/business-formation
+Allow: /*/hosting
+Allow: /*/development-services
+Allow: /*/bank-account-service
+Allow: /*/partners
+Allow: /*/about
+Allow: /*/contact
+Allow: /*/terms
+Allow: /*/privacy-policy
+Disallow: /*/dashboard/
+Disallow: /*/teacher/
+Disallow: /*/admin/
+Disallow: /*/api/
+Disallow: /api/
+Disallow: /*/support/chat
+Disallow: /*/feed/chats
+Disallow: /*/feed/create
+
+# Host & Sitemap locations
+Host: https://www.safiacademy.org
+Sitemap: https://www.safiacademy.org/sitemap.xml

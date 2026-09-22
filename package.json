@@ -10,7 +10,7 @@
     "lint": "eslint",
     "electron:dev": "electron .",
     "electron:build:mac": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac",
-    "electron:build:win": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win",
+    "electron:build:win": "npm run build && CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win",
     "electron:build:all": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder -mw"
   },
   "dependencies": {
@@ -52,5 +52,36 @@
     "eslint-config-next": "^14.2.15",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "build": {
+    "appId": "com.safiacademy.app",
+    "productName": "Safi Academy",
+    "compression": "maximum",
+    "asar": true,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/**/*",
+      ".next/standalone/**/*",
+      ".next/static/**/*",
+      "public/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "runAfterFinish": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Safi Academy",
+      "differentialPackage": false
+    }
   }
 }

@@ -17,6 +17,8 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/_next') ||
     pathname.startsWith('/auth/callback') ||
     pathname.includes('.') ||
+    pathname === '/robots.txt' ||
+    pathname === '/sitemap.xml' ||
     pathname === '/app-ads.txt' ||
     pathname === '/ads.txt'
   ) {
