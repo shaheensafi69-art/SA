@@ -226,7 +226,7 @@ export default function SahelSalemExecutiveDossier() {
               </p>
               
               <p>
-                Currently pursuing a <strong className="text-white font-bold underline decoration-emerald-400 underline-offset-4">Bachelor of Business Administration (BBA) at the University of the People (UoPeople, USA)</strong>, Sahel synthesizes American management frameworks with deep empirical knowledge of emerging market capital flows, European banking compliance, and cross-border settlement channels.
+                Currently pursuing a <strong className="text-white font-bold underline decoration-emerald-400 underline-offset-4">Bachelor of Business Administration (BBA)</strong>, Sahel synthesizes modern enterprise management frameworks with deep empirical knowledge of emerging market capital flows, European banking compliance, and cross-border settlement channels.
               </p>
 
               {/* Callout Quote Box */}
@@ -297,10 +297,10 @@ export default function SahelSalemExecutiveDossier() {
               <div className="space-y-10 border-l-2 border-emerald-500/20 pl-8 ml-3">
                 <div className="relative">
                   <div className="absolute -left-[41px] top-1.5 w-4 h-4 bg-emerald-400 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.7)]" />
-                  <h4 className="text-xl font-black text-white">University of the People (UoPeople, USA)</h4>
-                  <p className="text-emerald-400 text-xs font-bold uppercase tracking-widest mt-1 mb-2">Bachelor of Business Administration (BBA Candidate)</p>
+                  <h4 className="text-xl font-black text-white">BBA Student (Bachelor of Business Administration)</h4>
+                  <p className="text-emerald-400 text-xs font-bold uppercase tracking-widest mt-1 mb-2">Business Administration & Management Candidate</p>
                   <p className="text-neutral-400 text-sm leading-relaxed">
-                    Undergraduate program grounded in multinational enterprise management, micro-organizational behavior, financial accounting, and international market entry strategy.
+                    Higher education program focused on multinational enterprise administration, micro-organizational behavior, financial accounting, strategic leadership, and international commercial expansion.
                   </p>
                 </div>
 
