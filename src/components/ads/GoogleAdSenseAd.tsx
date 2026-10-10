@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 interface GoogleAdSenseAdProps {
   client?: string;
@@ -15,88 +15,50 @@ interface GoogleAdSenseAdProps {
 }
 
 export default function GoogleAdSenseAd({
-  client = "ca-pub-6551903544426492",
-  slot = "6514651420",
-  layout,
-  layoutKey,
-  format = "fluid",
-  responsive,
   className = "",
-  style = { display: "block", textAlign: "center" },
+  style,
   onAdLoaded,
 }: GoogleAdSenseAdProps) {
-  const adRef = useRef<HTMLModElement>(null);
-  const isPushedRef = useRef(false);
-  const [hasAdFilled, setHasAdFilled] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Ensure Google AdSense script is present in document head
-    if (typeof window !== "undefined") {
-      const existingScript = document.querySelector('script[src*="pagead2.googlesyndication.com"]');
-      if (!existingScript) {
-        const script = document.createElement("script");
-        script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
-        script.async = true;
-        script.crossOrigin = "anonymous";
-        document.head.appendChild(script);
-      }
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Load Adsterra native banner script
+    const existingScript = container.querySelector("script[src*='bicea.org']");
+    if (existingScript) {
+      existingScript.remove();
     }
 
-    // Push ad unit once when element is ready
-    const pushTimer = setTimeout(() => {
-      try {
-        if (typeof window !== "undefined" && adRef.current) {
-          const status = adRef.current.getAttribute("data-adsbygoogle-status");
-          if (!status && !isPushedRef.current) {
-            ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-            isPushedRef.current = true;
-          }
-        }
-      } catch (err) {
-        console.warn("AdSense push notice:", err);
-      }
-    }, 200);
-
-    // Observe when Google AdSense injects the ad iframe
-    let observer: MutationObserver | null = null;
-    if (adRef.current) {
-      observer = new MutationObserver(() => {
-        if (adRef.current) {
-          const iframe = adRef.current.querySelector("iframe");
-          const adStatus = adRef.current.getAttribute("data-ad-status");
-          if (iframe && adStatus === "filled") {
-            setHasAdFilled(true);
-            onAdLoaded?.();
-          }
-        }
-      });
-
-      observer.observe(adRef.current, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ["data-ad-status", "data-adsbygoogle-status"],
-      });
+    try {
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.async = true;
+      script.setAttribute("data-cfasync", "false");
+      script.src = "https://bicea.org/21/ffb70d5f14558619a60ad9f6dbaf30fb";
+      container.appendChild(script);
+      onAdLoaded?.();
+    } catch (e) {
+      console.warn("Notice loading ad unit:", e);
     }
 
     return () => {
-      clearTimeout(pushTimer);
-      if (observer) observer.disconnect();
+      try {
+        const sc = container?.querySelector("script[src*='bicea.org']");
+        if (sc && container.contains(sc)) {
+          container.removeChild(sc);
+        }
+      } catch (e) {}
     };
-  }, [client, slot, onAdLoaded]);
+  }, [onAdLoaded]);
 
   return (
-    <div className={`google-adsense-wrapper w-full overflow-hidden ${className}`}>
-      <ins
-        ref={adRef}
-        className="adsbygoogle"
-        style={style}
-        {...(layoutKey ? { "data-ad-layout-key": layoutKey } : {})}
-        {...(layout ? { "data-ad-layout": layout } : {})}
-        {...(format ? { "data-ad-format": format } : {})}
-        data-ad-client={client}
-        data-ad-slot={slot}
-        {...(responsive !== undefined ? { "data-full-width-responsive": String(responsive) } : {})}
+    <div className={`adsterra-native-wrapper w-full overflow-hidden ${className}`} style={style}>
+      <div
+        ref={containerRef}
+        id="container-ffb70d5f14558619a60ad9f6dbaf30fb"
+        className="w-full min-h-[90px] flex items-center justify-center overflow-hidden"
       />
     </div>
   );

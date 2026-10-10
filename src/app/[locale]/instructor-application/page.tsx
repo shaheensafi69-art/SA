@@ -35,6 +35,7 @@ import {
   Film
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
+import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 export default function InstructorApplicationPage() {
   const pathname = usePathname() || "/en";
@@ -1142,6 +1143,13 @@ export default function InstructorApplicationPage() {
             ))}
           </div>
         </div>
+
+        {/* Native Ad Placement */}
+        <AdsterraNativeBanner
+          category="Higher Education, Faculty Careers & Online Teaching"
+          keywords="teaching, online instructor, academic faculty, course creation, education jobs"
+          badgeLabel="Faculty Partner"
+        />
 
         {/* Instructor FAQ Section */}
         <div className="max-w-3xl mx-auto mb-20">

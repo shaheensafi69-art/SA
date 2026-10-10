@@ -1,7 +1,6 @@
 import "../globals.css";
 import ConditionalLayout from "@/components/ConditionalLayout";
 import type { Metadata } from "next";
-import Script from "next/script";
 
 export function generateStaticParams() {
   return [
@@ -62,29 +61,23 @@ export async function generateMetadata({
   };
 }
 
-export default function DynamicLocaleLayout({
+export default async function DynamicLocaleLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }> | { locale: string };
 }) {
-  const locale = params?.locale || "en";
+  const resolvedParams = await Promise.resolve(params);
+  const locale = resolvedParams?.locale || "en";
   const isRtl = ["fa", "ps", "ar", "ur"].includes(locale);
 
   return (
     <div
       dir={isRtl ? "rtl" : "ltr"}
       data-locale={locale}
-      className={`w-full h-full ${isRtl ? "font-vazirmatn" : "font-sans"}`}
+      className={`w-full h-full ${isRtl ? "font-vazirmatn" : "font-sans"} text-start`}
     >
-      <Script
-        id="google-adsense-script"
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6551903544426492"
-        crossOrigin="anonymous"
-        strategy="afterInteractive"
-      />
       <ConditionalLayout>
         {children}
       </ConditionalLayout>

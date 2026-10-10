@@ -584,7 +584,7 @@ function ChatScreenContent() {
                     )}
 
                     {/* Message Text */}
-                    <p className="text-xs sm:text-sm font-medium leading-relaxed whitespace-pre-wrap break-words">
+                    <p dir="auto" className="text-xs sm:text-sm font-medium leading-relaxed whitespace-pre-wrap break-words text-start">
                       {msg.message_text}
                     </p>
 
@@ -709,7 +709,8 @@ function ChatScreenContent() {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               disabled={isUploading}
-              className="flex-1 bg-neutral-900/90 border border-white/10 rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 text-white text-xs sm:text-sm placeholder-neutral-500 focus:outline-none focus:border-[#C2185B] shadow-inner transition-colors"
+              dir="auto"
+              className="flex-1 bg-neutral-900/90 border border-white/10 rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 text-white text-xs sm:text-sm placeholder-neutral-500 focus:outline-none focus:border-[#C2185B] shadow-inner transition-colors text-start"
             />
 
             {/* Send Button */}

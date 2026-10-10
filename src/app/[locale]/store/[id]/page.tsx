@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
-import ProductDetailClient from '../../../../components/ProductDetailClient'; // مطمئن شوید مسیر درست است
+import ProductDetailClient from '../../../../components/ProductDetailClient';
+import AdsterraNativeBanner from '@/components/ads/AdsterraNativeBanner';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -34,9 +35,16 @@ export default async function ProductDetailPage({
                 <div className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none"></div>
             </div>
 
-            <div className="w-full max-w-6xl relative z-10">
+            <div className="w-full max-w-6xl relative z-10 space-y-8">
                 {/* پاس دادن اطلاعات به کلاینت کامپوننت */}
                 <ProductDetailClient product={product} currentLocale={params.locale || 'en'} />
+
+                {/* Native Ad Placement */}
+                <AdsterraNativeBanner
+                    category="Digital Subscriptions, Dev Licenses & Software Tools"
+                    keywords="software licenses, accounts, vpn, telegram, digital goods"
+                    badgeLabel="Partner Recommendations"
+                />
             </div>
 
         </main>

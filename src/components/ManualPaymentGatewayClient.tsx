@@ -28,6 +28,7 @@ import {
   Maximize2
 } from "lucide-react";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -760,6 +761,16 @@ export default function ManualPaymentGatewayClient({
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Contextual Adsterra Native Ad - Non-intrusive Checkout Sponsor */}
+        <div className="mt-8 pt-4">
+          <AdsterraNativeBanner
+            title={isRtl ? "خدمات مالی و ابزارهای پیشنهادی" : "Recommended Financial & Tech Services"}
+            niche="Fintech, International Banking, Payment Gateways & Secure eCommerce"
+            keywords="online payment, payment gateway, checkout security, crypto, international banking, afghanistan fintech"
+            className="border-neutral-800/80 bg-neutral-900/40"
+          />
         </div>
       </div>
 

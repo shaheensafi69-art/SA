@@ -8,6 +8,7 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { Calendar, User, ArrowLeft, Clock, Tag, Share2, X } from "lucide-react";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
+import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 // تعریف تایپ مقاله
 type BlogPost = {
@@ -195,6 +196,13 @@ export default function BlogPostDetailPage() {
           {/* Render Markdown Content */}
           <MarkdownRenderer content={post.content} />
         </motion.article>
+
+        {/* ================= NATIVE AD BANNER ================= */}
+        <AdsterraNativeBanner
+          category="Technology, AI Systems & Software Engineering"
+          keywords="programming, software development, coding tutorials, tech insights"
+          badgeLabel="Article Sponsor"
+        />
 
         {/* ================= AUTHOR BIO & ECOSYSTEM CTA ================= */}
         <div className="mt-12 rounded-[2rem] bg-gradient-to-r from-yellow-500/10 via-amber-500/5 to-transparent border border-yellow-500/20 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">

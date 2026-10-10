@@ -12,6 +12,7 @@ import {
   Share2, X as XIcon, Sparkles 
 } from "lucide-react";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
+import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 // آپدیت تایپ برای پشتیبانی از آرایه‌های جدید
 type Scholarship = {
@@ -242,6 +243,13 @@ export default function EnglishScholarshipDetailPage() {
                 <p className="text-neutral-500 text-sm italic">{t.publicPages.noDocumentsListed || "No specific documents listed."}</p>
               )}
             </div>
+
+            {/* Native Ad Placement */}
+            <AdsterraNativeBanner
+              category="International Scholarships, University Admissions & Academic Grants"
+              keywords="scholarships, fully funded, masters, bachelor, phd grant, foreign university"
+              badgeLabel="Academic Sponsor"
+            />
 
           </div>
 

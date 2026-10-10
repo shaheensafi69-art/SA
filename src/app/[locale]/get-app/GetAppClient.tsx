@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import type { AppDownloadsData } from "@/lib/r2";
 import { getAppTranslation } from "./getAppTranslations";
+import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 interface GetAppClientProps {
   downloads: AppDownloadsData;
@@ -496,6 +497,13 @@ export default function GetAppClient({ downloads }: GetAppClientProps) {
             ))}
           </div>
         </div>
+
+        {/* ================= NATIVE AD BANNER ================= */}
+        <AdsterraNativeBanner
+          category="Mobile Apps, Operating Systems & Productivity Software"
+          keywords="android app, windows software, mac os app, ios mobile, digital learning"
+          badgeLabel="Software Sponsor"
+        />
 
         {/* ================= SECURITY & CDN FOOTER BANNER ================= */}
         <div className="w-full p-6 rounded-3xl bg-gradient-to-r from-white/[0.02] to-white/[0.04] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">

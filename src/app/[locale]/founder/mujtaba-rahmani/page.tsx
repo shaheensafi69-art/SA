@@ -170,7 +170,7 @@ export default function MujtabaRahmaniExecutiveDossier() {
             >
               <div className="px-5 py-3 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white font-black tracking-widest text-xs uppercase shadow-[0_10px_35px_rgba(37,99,235,0.4)] flex items-center gap-2">
                 <Lock size={15} />
-                <span>{t.publicPages.cooCiso}</span>
+                <span>{isRtl ? "مدیر عملیات (COO)" : "Chief Operating Officer (COO)"}</span>
               </div>
             </motion.div>
           </motion.div>
@@ -178,7 +178,7 @@ export default function MujtabaRahmaniExecutiveDossier() {
           {/* Title & Coordinates */}
           <div className="text-center mt-12 px-6 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/25 text-blue-400 text-xs font-black uppercase tracking-[0.25em] mb-4 shadow-inner">
-              <Sparkles size={13} /> Corporate Executive • SafiPay & Safi Academy
+              <Sparkles size={13} /> {isRtl ? "هیئت مدیره اجرایی • اکوسیستم جهانی صافی" : "Executive Board • Safi Global Ecosystem"}
             </div>
 
             <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight text-white mb-3">
@@ -186,7 +186,9 @@ export default function MujtabaRahmaniExecutiveDossier() {
             </h1>
 
             <p className="text-neutral-300 font-semibold tracking-wide text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-              Chief Operating Officer (COO), Chief Information Security Officer (CISO) & Financial Markets Strategist.
+              {isRtl
+                ? "مدیر ارشد عملیات (COO) و استراتژیست بازارهای مالی در اکوسیستم جهانی صافی."
+                : "Chief Operating Officer (COO) & Financial Markets Strategist across the Safi Global Ecosystem."}
             </p>
 
             {/* Social Channels Cluster */}

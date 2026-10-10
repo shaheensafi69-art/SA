@@ -29,6 +29,7 @@ import {
   Flame,
   Info
 } from "lucide-react";
+import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 // ============================================================================
 // STRIPE CONFIGURATION & PUBLIC KEY (PRESERVED)
@@ -687,6 +688,15 @@ export default function EnglishDonatePage() {
             })}
           </div>
         </div>
+
+        {/* ================================================================== */}
+        {/* NATIVE AD BANNER (SPONSOR SPOTLIGHT) */}
+        {/* ================================================================== */}
+        <AdsterraNativeBanner
+          category="Philanthropic Education & Global Humanitarian Initiatives"
+          keywords="charity, student scholarships, education access, female empowerment, global donations"
+          badgeLabel="Sponsor Spotlight"
+        />
 
         {/* ================================================================== */}
         {/* FINAL HEARTWARMING CALL TO ACTION */}

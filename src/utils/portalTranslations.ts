@@ -56,8 +56,10 @@ export const getPortalTranslation = (locale?: string) => {
   }
   const loc = (activeLocale && activeLocale in portalTranslations ? activeLocale : "en") as PortalLocale;
   const translation = portalTranslations[loc] || portalTranslations.en;
+  const isRtl = isRtlPortal(loc);
   return {
     ...translation,
-    isRtl: isRtlPortal(activeLocale || "en"),
+    isRtl,
+    dir: isRtl ? ("rtl" as const) : ("ltr" as const),
   };
 };

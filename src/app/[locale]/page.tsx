@@ -390,14 +390,6 @@ export default function LocalizedHome() {
       bio: dict.leadership.shaheenBio
     },
     { 
-      name: "Mujtaba Rahmani", 
-      role: dict.leadership.mujtabaRole, 
-      title: dict.leadership.mujtabaTitle, 
-      image: "/team/mujtaba.jpeg",
-      link: `/${currentLocale}/founder/mujtaba-rahmani`,
-      bio: dict.leadership.mujtabaBio
-    },
-    { 
       name: "Sahel Salem", 
       role: dict.leadership.sahelRole, 
       title: dict.leadership.sahelTitle, 
@@ -412,6 +404,22 @@ export default function LocalizedHome() {
       image: "/team/shirin.jpeg",
       link: `/${currentLocale}/founder/shirin-gol-ahmadi`,
       bio: dict.leadership.shirinBio
+    },
+    { 
+      name: "Mujtaba Rahmani", 
+      role: dict.leadership.mujtabaRole, 
+      title: dict.leadership.mujtabaTitle, 
+      image: "/team/mujtaba.jpeg",
+      link: `/${currentLocale}/founder/mujtaba-rahmani`,
+      bio: dict.leadership.mujtabaBio
+    },
+    { 
+      name: "Mobin Hassani", 
+      role: (dict.leadership as any).mobinRole || "Lead Developer", 
+      title: (dict.leadership as any).mobinTitle || "Lead Software Engineer & Cloud Systems Architect", 
+      image: "/team/mobin.jpeg",
+      link: `/${currentLocale}/founder/mobin-hassani`,
+      bio: (dict.leadership as any).mobinBio || "Directing software engineering squads, high-concurrency cloud architecture, and end-to-end fintech security."
     }
   ];
 
@@ -1444,8 +1452,8 @@ export default function LocalizedHome() {
                                    </div>
                                 </div>
                                 <span className="bg-pink-100 text-[#d81b60] text-[9px] font-black px-2 py-1 rounded-lg mb-2 inline-block">🚀 Excited</span>
-                                <h4 className="text-[15px] font-black mb-1">{post.title}</h4>
-                                <p className="text-[12px] text-neutral-600 mb-3">{post.content}</p>
+                                <h4 dir="auto" className="text-[15px] font-black mb-1 text-start">{post.title}</h4>
+                                <p dir="auto" className="text-[12px] text-neutral-600 mb-3 text-start">{post.content}</p>
                                 <div className="w-full h-56 bg-neutral-100 rounded-2xl overflow-hidden relative">
                                    <img src={post.image_url || '/hero.png'} className="w-full h-full object-cover" alt="Post" />
                                 </div>

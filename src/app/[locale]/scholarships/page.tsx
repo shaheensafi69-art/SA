@@ -13,6 +13,7 @@ import {
   ArrowUpRight, HeartHandshake, DollarSign, Laptop, Star
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
+import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 type Scholarship = {
   id: string;
@@ -979,6 +980,13 @@ export default function EnglishScholarshipsPage() {
             ))}
           </div>
         </section>
+
+        {/* ================= NATIVE AD BANNER (SCHOLARSHIPS SPONSOR) ================= */}
+        <AdsterraNativeBanner
+          category="International Scholarships, University Admissions & Academic Grants"
+          keywords="scholarships, study abroad, masters degree, fully funded, university application, daad, chevening, erasmus"
+          badgeLabel="Academic Sponsor"
+        />
 
         {/* ================= GRAND CALL TO ACTION ================= */}
         <section className="py-20 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto">

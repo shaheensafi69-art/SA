@@ -21,6 +21,7 @@ import {
   Laptop
 } from "lucide-react";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 type AccountType = "Personal" | "Business";
 
@@ -663,6 +664,15 @@ export default function BankAccountServicePage() {
             </form>
           </div>
         </section>
+
+        {/* ======================================================== */}
+        {/* NATIVE AD BANNER (FINTECH SPONSOR) */}
+        {/* ======================================================== */}
+        <AdsterraNativeBanner
+          category="International Banking, Fintech & Multi-Currency Accounts"
+          keywords="wise, payoneer, iban, foreign bank account, mastercard, visa card, international wire"
+          badgeLabel="Fintech Partner"
+        />
 
         {/* ======================================================== */}
         {/* FAQS SECTION */}

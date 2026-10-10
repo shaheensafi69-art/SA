@@ -73,7 +73,7 @@ export default function ShaheenSafiExecutiveDossier() {
   };
 
   const copyEmail = () => {
-    navigator.clipboard.writeText("ssafi9241@hotmail.com");
+    navigator.clipboard.writeText("shaheen@safipay.net");
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);
   };
@@ -169,7 +169,7 @@ export default function ShaheenSafiExecutiveDossier() {
             >
               <div className="px-5 py-3 rounded-2xl bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-black font-black tracking-widest text-xs uppercase shadow-[0_10px_35px_rgba(234,179,8,0.4)] flex items-center gap-2">
                 <Building2 size={15} />
-                <span>{t.publicPages.founderGroupCeo}</span>
+                <span>{isRtl ? "دایرکتور و بنیان‌گذار" : "Director & Founder"}</span>
               </div>
             </motion.div>
           </motion.div>
@@ -185,7 +185,9 @@ export default function ShaheenSafiExecutiveDossier() {
             </h1>
 
             <p className="text-neutral-300 font-semibold tracking-wide text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-              Founder, Group Chief Executive Officer & Lead Fintech Systems Architect of the Safi Global Ecosystem.
+              {isRtl
+                ? "دایرکتور، بنیان‌گذار اکوسیستم جهانی صافی و معمار ارشد سیستم‌های فین‌تک."
+                : "Director, Founder & Lead Fintech Systems Architect of the Safi Global Ecosystem."}
             </p>
 
             {/* Social Channels Cluster */}
@@ -194,7 +196,7 @@ export default function ShaheenSafiExecutiveDossier() {
                 <Link 
                   key={idx} 
                   href={social.href} 
-                  target="_blank"
+                  target="_blank" 
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/[0.03] border border-white/10 text-neutral-300 ${social.color} transition-all duration-300 shadow-xl hover:-translate-y-1 backdrop-blur-xl text-xs font-bold`}
                   title={social.name}
                 >
@@ -215,7 +217,7 @@ export default function ShaheenSafiExecutiveDossier() {
                 title="Click to copy email address"
               >
                 <Mail size={15} className="text-yellow-400"/>
-                <span>ssafi9241@hotmail.com</span>
+                <span>shaheen@safipay.net</span>
                 {copiedEmail ? <Check size={14} className="text-emerald-400" /> : <Copy size={13} className="text-neutral-500" />}
               </button>
             </div>

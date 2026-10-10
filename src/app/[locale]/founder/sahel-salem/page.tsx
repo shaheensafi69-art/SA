@@ -60,7 +60,7 @@ export default function SahelSalemExecutiveDossier() {
   };
 
   const copyEmail = () => {
-    navigator.clipboard.writeText("sahel@safipay.net");
+    navigator.clipboard.writeText("sahelsalem@safipay.net");
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);
   };
@@ -154,7 +154,7 @@ export default function SahelSalemExecutiveDossier() {
             >
               <div className="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-black font-black tracking-widest text-xs uppercase shadow-[0_10px_35px_rgba(16,185,129,0.4)] flex items-center gap-2">
                 <Globe size={15} />
-                <span>{t.publicPages.globalDirector}</span>
+                <span>{isRtl ? "مدیرعامل (CEO) و ارتباطات اروپا" : "CEO & European Relations"}</span>
               </div>
             </motion.div>
           </motion.div>
@@ -162,7 +162,7 @@ export default function SahelSalemExecutiveDossier() {
           {/* Title & Coordinates */}
           <div className="text-center mt-12 px-6 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-black uppercase tracking-[0.25em] mb-4 shadow-inner">
-              <Sparkles size={13} /> Corporate Executive • SafiPay International
+              <Sparkles size={13} /> {isRtl ? "هیئت مدیره اجرایی • اکوسیستم جهانی صافی" : "Executive Board • Safi Global Ecosystem"}
             </div>
 
             <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight text-white mb-3">
@@ -170,7 +170,9 @@ export default function SahelSalemExecutiveDossier() {
             </h1>
 
             <p className="text-neutral-300 font-semibold tracking-wide text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-              Director of International Expansion, European Financial Infrastructure & Diaspora Banking Integration.
+              {isRtl
+                ? "مدیرعامل (CEO)، مسئول ارشد ارتباطات اروپا و توسعه زیرساخت‌های بین‌المللی در اکوسیستم صافی."
+                : "Chief Executive Officer (CEO) & European Relations Lead across the Safi Ecosystem."}
             </p>
 
             {/* Social Channels Cluster */}
@@ -203,7 +205,7 @@ export default function SahelSalemExecutiveDossier() {
                 title="Click to copy email address"
               >
                 <Mail size={15} className="text-emerald-400"/>
-                <span>sahel@safipay.net</span>
+                <span>sahelsalem@safipay.net</span>
                 {copiedEmail ? <Check size={14} className="text-emerald-400" /> : <Copy size={13} className="text-neutral-500" />}
               </button>
             </div>

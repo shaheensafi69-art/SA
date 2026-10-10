@@ -713,8 +713,8 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                                 {post.moodTag}
                               </div>
 
-                              {post.cleanTitle && <h3 className="text-lg sm:text-xl font-black text-white leading-tight">{post.cleanTitle}</h3>}
-                              <p className="text-neutral-300 text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap">{post.content}</p>
+                              {post.cleanTitle && <h3 dir="auto" className="text-lg sm:text-xl font-black text-white leading-tight text-start">{post.cleanTitle}</h3>}
+                              <p dir="auto" className="text-neutral-300 text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap text-start">{post.content}</p>
 
                               {post.imageUrl && (
                                 <div className="rounded-2xl border border-white/5 bg-[#050508] mt-3 flex items-center justify-center overflow-hidden max-h-[300px] sm:max-h-[500px]">
@@ -844,8 +844,8 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                                       {post.moodTag}
                                     </div>
                                   )}
-                                  {post.cleanTitle && <h3 className="text-lg sm:text-xl font-black text-white leading-tight">{post.cleanTitle}</h3>}
-                                  <p className="text-neutral-300 text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap">{post.content}</p>
+                                  {post.cleanTitle && <h3 dir="auto" className="text-lg sm:text-xl font-black text-white leading-tight text-start">{post.cleanTitle}</h3>}
+                                  <p dir="auto" className="text-neutral-300 text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap text-start">{post.content}</p>
                                   {post.imageUrl && (
                                     <div className="rounded-2xl border border-white/5 bg-[#050508] mt-3 flex items-center justify-center overflow-hidden max-h-[300px] sm:max-h-[500px]">
                                       <img src={post.imageUrl} alt="Post media" className="w-full h-full object-contain rounded-2xl" />
@@ -935,8 +935,8 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
                                       {post.moodTag}
                                     </div>
                                   )}
-                                  {post.cleanTitle && <h3 className="text-lg sm:text-xl font-black text-white leading-tight">{post.cleanTitle}</h3>}
-                                  <p className="text-neutral-300 text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap">{post.content}</p>
+                                  {post.cleanTitle && <h3 dir="auto" className="text-lg sm:text-xl font-black text-white leading-tight text-start">{post.cleanTitle}</h3>}
+                                  <p dir="auto" className="text-neutral-300 text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap text-start">{post.content}</p>
                                   {post.imageUrl && (
                                     <div className="rounded-2xl border border-white/5 bg-[#050508] mt-3 flex items-center justify-center overflow-hidden max-h-[300px] sm:max-h-[500px]">
                                       <img src={post.imageUrl} alt="Post media" className="w-full h-full object-contain rounded-2xl" />

@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Zap, ShieldCheck, Sparkles } from 'lucide-react';
 import StorefrontClient from '@/components/StorefrontClient';
 import { getPortalTranslation } from '@/utils/portalTranslations';
+import AdsterraNativeBanner from '@/components/ads/AdsterraNativeBanner';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -76,6 +77,13 @@ export default async function PremiumStorePage({
 
         {/* Interactive Search and Product Grid Component */}
         <StorefrontClient products={products || []} currentLocale={currentLocale} />
+
+        {/* Native Ad Placement */}
+        <AdsterraNativeBanner
+          category="Digital Products, Software Subscriptions & Developer Accounts"
+          keywords="software licenses, chatgpt plus, canva pro, vpn, telegram premium, cloud tools"
+          badgeLabel="Store Partner"
+        />
       </div>
     </main>
   );

@@ -40,6 +40,7 @@ import {
   Sliders,
   CheckCheck
 } from "lucide-react";
+import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 // ============================================================================
 // OFFICIAL PARTNER & REFERRAL CONFIGURATION
@@ -997,6 +998,15 @@ export default function HostingerAffiliatePage() {
             })}
           </div>
         </div>
+
+        {/* ================================================================== */}
+        {/* NATIVE AD BANNER (CLOUD HOSTING SPONSOR) */}
+        {/* ================================================================== */}
+        <AdsterraNativeBanner
+          category="Web Hosting, Cloud VPS & Domain Infrastructure"
+          keywords="hostinger, cloud vps, web hosting, dedicated servers, domain names, ssl certificate, cpanel"
+          badgeLabel="Cloud Infrastructure Partner"
+        />
 
         {/* ================================================================== */}
         {/* 8. Grand Finale CTA Banner & Money-Back Guarantee */}

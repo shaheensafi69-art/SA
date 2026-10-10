@@ -54,7 +54,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
   };
 
   const copyEmail = () => {
-    navigator.clipboard.writeText("shirin@safipay.net");
+    navigator.clipboard.writeText("shirinahmadi@safipay.net");
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);
   };
@@ -62,7 +62,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
   // Executive Social Links
   const mySocials = [
     { name: "LinkedIn", icon: <LinkedinIcon size={18} />, href: "https://www.linkedin.com/in/shirin-gol-ahmadi-842b40344?utm_source=share_via&utm_content=profile&utm_medium=member_android", color: "hover:text-[#0A66C2] hover:border-[#0A66C2]/40" },
-    { name: "Official Email", icon: <Mail size={18} />, href: "mailto:shirin@safipay.net", color: "hover:text-rose-400 hover:border-rose-400/40" },
+    { name: "Official Email", icon: <Mail size={18} />, href: "mailto:shirinahmadi@safipay.net", color: "hover:text-rose-400 hover:border-rose-400/40" },
   ];
 
   return (
@@ -139,15 +139,13 @@ export default function ShirinGolAhmadiExecutiveDossier() {
                   <p className="text-xs font-bold text-white">Autonomous Agents</p>
                 </div>
               </div>
-            </motion.div>
-
-            <motion.div 
+            </motion.div>            <motion.div 
               style={{ x: moveY, y: moveX, translateZ: 150 }} 
               className="absolute -right-6 sm:-right-12 top-12 z-20"
             >
               <div className="px-5 py-3 rounded-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white font-black tracking-widest text-xs uppercase shadow-[0_10px_35px_rgba(244,63,94,0.4)] flex items-center gap-2">
                 <Briefcase size={15} />
-                <span>{t.publicPages.companyManager}</span>
+                <span>{isRtl ? "جنرال منیجر تمام ایکوسیستم سافی" : "General Manager of All Safi Ecosystem"}</span>
               </div>
             </motion.div>
           </motion.div>
@@ -155,7 +153,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
           {/* Title & Coordinates */}
           <div className="text-center mt-12 px-6 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-black uppercase tracking-[0.25em] mb-4 shadow-inner">
-              <Sparkles size={13} /> Corporate Executive • SafiPay & Safi International Capital
+              <Sparkles size={13} /> {isRtl ? "هیئت مدیره اجرایی • اکوسیستم جهانی صافی" : "Executive Board • Safi Global Ecosystem"}
             </div>
 
             <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight text-white mb-3">
@@ -163,7 +161,9 @@ export default function ShirinGolAhmadiExecutiveDossier() {
             </h1>
 
             <p className="text-neutral-300 font-semibold tracking-wide text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-              Company General Manager, Applied Artificial Intelligence Lead & Multi-Disciplinary Digital Strategist.
+              {isRtl
+                ? "جنرال منیجر تمام ایکوسیستم سافی، هدایت‌کننده یکپارچه‌سازی سیستم‌های هوش مصنوعی و استراتژی‌های بین‌المللی."
+                : "General Manager of All Safi Ecosystem, Applied AI Systems Director & Multi-Disciplinary Digital Strategist."}
             </p>
 
             {/* Social Channels Cluster */}
@@ -172,7 +172,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
                 <Link 
                   key={idx} 
                   href={social.href} 
-                  target="_blank"
+                  target="_blank" 
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/[0.03] border border-white/10 text-neutral-300 ${social.color} transition-all duration-300 shadow-xl hover:-translate-y-1 backdrop-blur-xl text-xs font-bold`}
                   title={social.name}
                 >
@@ -196,7 +196,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
                 title="Click to copy email address"
               >
                 <Mail size={15} className="text-rose-400"/>
-                <span>shirin@safipay.net</span>
+                <span>shirinahmadi@safipay.net</span>
                 {copiedEmail ? <Check size={14} className="text-emerald-400" /> : <Copy size={13} className="text-neutral-500" />}
               </button>
             </div>

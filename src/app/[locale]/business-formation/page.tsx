@@ -26,6 +26,7 @@ import {
   Award,
   Users
 } from "lucide-react";
+import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 // ============================================================================
 // AFFILIATE / REFERRAL CONFIGURATION
@@ -467,6 +468,13 @@ export default function BusinessFormationPage() {
             ))}
           </div>
         </div>
+
+        {/* Native Ad Placement */}
+        <AdsterraNativeBanner
+          category="US LLC, UK LTD & International Business Formation"
+          keywords="company registration, us llc, uk ltd, ein tax number, registered agent, corporate banking"
+          badgeLabel="Corporate Sponsor"
+        />
 
         {/* Compliant CTA Section */}
         <motion.div

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Sparkles, X, ShieldCheck } from "lucide-react";
 import { getPortalTranslation } from "@/utils/portalTranslations";
-import GoogleAdSenseAd from "./GoogleAdSenseAd";
+import AdsterraNativeBanner from "./AdsterraNativeBanner";
 
 interface InFeedNativeAdProps {
   adIndex?: number;
@@ -12,26 +12,26 @@ interface InFeedNativeAdProps {
 
 const getVerifiedPartnerLabel = (locale: string) => {
   const map: Record<string, string> = {
-    fa: "همکار رسمی گوگل ادسنس",
-    ps: "د ګوګل اډسینس رسمي ملګری",
-    ar: "شريك معتمد من Google AdSense",
-    ur: "گوگل ایڈسینس کا تصدیق شدہ پارٹنر",
-    ru: "Проверенный партнер Google AdSense",
-    tr: "Doğrulanmış Google AdSense İş Ortağı",
-    de: "Verifizierter Google AdSense-Partner",
-    fr: "Partenaire vérifié Google AdSense",
-    es: "Socio verificado de Google AdSense",
-    zh: "Google AdSense 认证合作伙伴",
-    hi: "सत्यापित Google AdSense भागीदार",
-    it: "Partner verificato Google AdSense",
-    pt: "Parceiro verificado do Google AdSense",
-    ja: "Google AdSense 認定パートナー",
-    ko: "Google AdSense 인증 파트너",
-    nl: "Geverifieerde Google AdSense-partner",
-    uz: "Google AdSense tasdiqlangan hamkori",
-    id: "Mitra Terverifikasi Google AdSense",
+    fa: "همکار رسمی شبکه تبلیغات",
+    ps: "د تبلیغاتي شبکې رسمي ملګری",
+    ar: "شريك معتمد في شبكة الإعلانات",
+    ur: "تصدیق شدہ اشتہاری نیٹ ورک پارٹنر",
+    ru: "Проверенный партнер рекламной сети",
+    tr: "Doğrulanmış Reklam Ağı İş Ortağı",
+    de: "Verifizierter Werbepartner",
+    fr: "Partenaire publicitaire vérifié",
+    es: "Socio publicitario verificado",
+    zh: "认证广告网络合作伙伴",
+    hi: "सत्यापित विज्ञापन नेटवर्क भागीदार",
+    it: "Partner di rete pubblicitaria verificato",
+    pt: "Parceiro verificado da rede de anúncios",
+    ja: "認定広告ネットワークパートナー",
+    ko: "인증된 광고 네트워크 파트너",
+    nl: "Geverifieerde advertentienetwerkpartner",
+    uz: "Tasdiqlangan reklama tarmog'i hamkori",
+    id: "Mitra Jaringan Iklan Terverifikasi",
   };
-  return map[locale] || "Verified AdSense Partner";
+  return map[locale] || "Verified Partner Network";
 };
 
 const getHideAdLabel = (locale: string) => {
@@ -83,7 +83,7 @@ export default function InFeedNativeAd({ adIndex = 0, currentLocale = "en" }: In
           <div>
             <div className="flex items-center gap-1.5">
               <span className="text-white font-black text-xs sm:text-[15px] tracking-wide">
-                {t.publicPages?.sponsorBadge || "Google Ads Network"}
+                {t.publicPages?.sponsorBadge || "Partner Recommendations"}
               </span>
               <ShieldCheck size={15} className="text-yellow-400" />
             </div>
@@ -104,15 +104,12 @@ export default function InFeedNativeAd({ adIndex = 0, currentLocale = "en" }: In
         </button>
       </div>
 
-      {/* Official Google AdSense In-feed Fluid Unit */}
-      <div className="w-full overflow-hidden rounded-2xl bg-white/[0.01] border border-white/5 p-2 min-h-[120px] flex items-center justify-center">
-        <GoogleAdSenseAd
+      {/* Native Banner Unit */}
+      <div className="w-full overflow-hidden rounded-2xl bg-white/[0.01] border border-white/5 p-2 min-h-[100px] flex items-center justify-center">
+        <AdsterraNativeBanner
           key={`infeed-${currentLocale}-${adIndex}`}
-          client="ca-pub-6551903544426492"
-          slot="6514651420"
-          layoutKey="-ac+c5-5i-c8+17e"
-          format="fluid"
-          style={{ display: "block" }}
+          minimal={true}
+          category="Student Community & Academic Feed"
         />
       </div>
 
@@ -125,7 +122,7 @@ export default function InFeedNativeAd({ adIndex = 0, currentLocale = "en" }: In
           <span>{getVerifiedPartnerLabel(currentLocale)}</span>
         </div>
         <span className="text-[10px] text-neutral-500 font-mono">
-          ca-pub-6551903544426492
+          Native Banner 4:1
         </span>
       </div>
     </div>

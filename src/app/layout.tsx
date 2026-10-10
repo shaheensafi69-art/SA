@@ -23,9 +23,6 @@ export const metadata: Metadata = {
   icons: {
     apple: "/icon.png",
   },
-  other: {
-    "google-adsense-account": "ca-pub-6551903544426492",
-  },
 };
 
 export default function RootLayout({
@@ -36,7 +33,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <head>
-        <meta name="google-adsense-account" content="ca-pub-6551903544426492" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -54,11 +50,11 @@ export default function RootLayout({
         }} />
       </head>
       <body className="min-h-full flex flex-col bg-neutral-950 text-white relative">
-        {/* Google AdSense */}
+        {/* Adsterra Native Advertising Network */}
         <Script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6551903544426492"
-          crossOrigin="anonymous"
+          data-cfasync="false"
+          src="https://bicea.org/21/ffb70d5f14558619a60ad9f6dbaf30fb"
           strategy="afterInteractive"
         />
 

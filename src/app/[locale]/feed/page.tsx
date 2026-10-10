@@ -473,8 +473,14 @@ export default function StudentFeedPage() {
                     {post.moodTag}
                   </div>
 
-                  {post.cleanTitle && <h3 className="text-lg sm:text-2xl font-black text-white leading-tight">{post.cleanTitle}</h3>}
-                  <p className="text-neutral-300 text-[15px] leading-relaxed whitespace-pre-wrap">{post.content}</p>
+                  {post.cleanTitle && (
+                    <h3 dir="auto" className="text-lg sm:text-2xl font-black text-white leading-tight text-start">
+                      {post.cleanTitle}
+                    </h3>
+                  )}
+                  <p dir="auto" className="text-neutral-300 text-[15px] leading-relaxed whitespace-pre-wrap text-start">
+                    {post.content}
+                  </p>
 
                   {post.imageUrl && (
                     <div className="rounded-2xl border border-white/5 bg-[#050508] mt-4 flex items-center justify-center overflow-hidden">
@@ -654,9 +660,9 @@ function CommentsModal({ postId, currentUserId, currentLocale, onClose }: { post
               {avatarUrl ? <img src={avatarUrl} className="w-full h-full object-cover" alt="" /> : <span className="text-[#C2185B] text-xs font-black">{authorName.charAt(0)}</span>}
             </div>
             <div className="flex-1">
-              <div className="bg-neutral-800/80 border border-white/5 p-3.5 rounded-[1.2rem] rounded-tl-sm inline-block min-w-[200px] max-w-full shadow-md">
+              <div className={`bg-neutral-800/80 border border-white/5 p-3.5 rounded-[1.2rem] ${isRtl ? "rounded-tr-sm text-right" : "rounded-tl-sm text-left"} inline-block min-w-[200px] max-w-full shadow-md`}>
                 <p className="text-white font-black text-xs mb-1">{authorName}</p>
-                <p className="text-neutral-300 text-[13px] leading-relaxed">{c.comment_text}</p>
+                <p dir="auto" className="text-neutral-300 text-[13px] leading-relaxed whitespace-pre-wrap">{c.comment_text}</p>
               </div>
               <div className="flex items-center gap-4 mt-1.5 ml-2">
                 <span className="text-[9px] text-neutral-500 font-bold">{c.created_at.split('T')[0]}</span>
@@ -710,11 +716,12 @@ function CommentsModal({ postId, currentUserId, currentLocale, onClose }: { post
           )}
           <div className="flex items-end gap-3 pb-2 sm:pb-0">
             <textarea
+              dir="auto"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder={t.feed.writeYourThought}
               rows={1}
-              className="flex-1 bg-neutral-900 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm focus:outline-none focus:border-[#C2185B] focus:ring-1 focus:ring-[#C2185B] resize-none min-h-[55px] max-h-[120px] transition-all"
+              className="flex-1 bg-neutral-900 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm focus:outline-none focus:border-[#C2185B] focus:ring-1 focus:ring-[#C2185B] resize-none min-h-[55px] max-h-[120px] transition-all text-start"
             />
             <button
               onClick={handleSend}

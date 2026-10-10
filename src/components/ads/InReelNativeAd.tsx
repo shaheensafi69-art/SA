@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Sparkles, Heart, Share2, ShieldCheck } from "lucide-react";
-import GoogleAdSenseAd from "./GoogleAdSenseAd";
+import AdsterraNativeBanner from "./AdsterraNativeBanner";
 import { getPortalTranslation } from "@/utils/portalTranslations";
 
 interface InReelNativeAdProps {
@@ -28,20 +28,17 @@ export default function InReelNativeAd({ adIndex = 0, onShare, currentLocale = "
       <div className={`absolute top-16 ${isRtl ? 'right-4' : 'left-4'} z-20 flex items-center gap-2`}>
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/70 backdrop-blur-xl border border-yellow-500/30 text-[10px] font-black uppercase tracking-widest text-yellow-400 shadow-xl">
           <Sparkles size={11} className="text-yellow-400" />
-          {t.publicPages.sponsorBadge || "Sponsored"} • Google AdSense
+          {t.publicPages.sponsorBadge || "Sponsored"} • Verified Partner
         </span>
       </div>
 
-      {/* Official Google AdSense In-article / Fluid Unit - Sized to Reel Screen */}
+      {/* Adsterra Native Banner Unit - Sized to Reel Screen */}
       <div className="w-full max-w-[540px] xl:max-w-[620px] px-4 flex-1 flex flex-col items-center justify-center relative z-10 my-auto">
-        <div className="w-full bg-[#0d0e17]/90 border border-yellow-500/20 rounded-[2rem] p-4 sm:p-6 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] flex flex-col items-center justify-center min-h-[300px]">
-          <GoogleAdSenseAd
+        <div className="w-full bg-[#0d0e17]/90 border border-yellow-500/20 rounded-[2rem] p-4 sm:p-6 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] flex flex-col items-center justify-center min-h-[220px]">
+          <AdsterraNativeBanner
             key={`inreel-${currentLocale}-${adIndex}`}
-            client="ca-pub-6551903544426492"
-            slot="6514651420"
-            layoutKey="-ac+c5-5i-c8+17e"
-            format="fluid"
-            className="w-full flex items-center justify-center"
+            minimal={true}
+            category="Video Reels & Global Entertainment"
           />
         </div>
       </div>
@@ -51,7 +48,7 @@ export default function InReelNativeAd({ adIndex = 0, onShare, currentLocale = "
         <div className="flex items-center gap-1.5">
           <ShieldCheck size={14} className="text-yellow-400" />
           <span className="text-white font-black text-xs sm:text-sm tracking-wide drop-shadow-md">
-            {t.publicPages.sponsorBadge || "Google Ads Network"}
+            {t.publicPages.sponsorBadge || "Partner Recommendations"}
           </span>
         </div>
         <p className="text-neutral-400 text-[11px] font-medium drop-shadow-md">

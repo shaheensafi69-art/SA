@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sparkles, ShieldCheck, ExternalLink, X, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Sparkles, ShieldCheck, X, ArrowRight } from "lucide-react";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import AdsterraNativeBanner from "./AdsterraNativeBanner";
 
 interface GoogleAdStoryProps {
   currentLocale?: string;
@@ -13,23 +14,12 @@ interface GoogleAdStoryProps {
 
 export default function GoogleAdStory({
   currentLocale = "en",
-  slotId,
   onClose,
   onNext,
 }: GoogleAdStoryProps) {
   const t = getPortalTranslation(currentLocale);
   const isRtl = t.isRtl;
   const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    try {
-      if (typeof window !== "undefined") {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-      }
-    } catch (e) {
-      // Graceful error handle
-    }
-  }, []);
 
   // 7 second auto-advance timer for story ad
   useEffect(() => {
@@ -100,13 +90,9 @@ export default function GoogleAdStory({
       {/* Center: Ad Content */}
       <div className="relative z-20 flex-1 flex flex-col items-center justify-center my-auto py-6">
         <div className="w-full bg-[#0d0d14]/90 border border-white/10 rounded-3xl p-5 shadow-2xl backdrop-blur-xl text-center space-y-4">
-          <ins
-            className="adsbygoogle"
-            style={{ display: "block", width: "100%", minHeight: "200px" }}
-            data-ad-client="ca-pub-6551903544426492"
-            data-ad-slot={slotId || "auto"}
-            data-ad-format="auto"
-            data-full-width-responsive="true"
+          <AdsterraNativeBanner
+            minimal={true}
+            category="Stories & Mobile Social Feeds"
           />
 
           <div className="pt-2">
@@ -130,7 +116,7 @@ export default function GoogleAdStory({
       <div className="relative z-30 flex items-center justify-between w-full pt-3 border-t border-white/10">
         <div className="flex items-center gap-1.5 text-[11px] text-neutral-400">
           <ShieldCheck size={14} className="text-emerald-400" />
-          <span>Google AdSense</span>
+          <span>Verified Partner Network</span>
         </div>
 
         <button

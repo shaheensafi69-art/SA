@@ -37,6 +37,7 @@ import {
   Sparkles,
   FileCode2
 } from "lucide-react";
+import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 export default function DevelopmentServicesPage() {
   const pathname = usePathname() || "/en";
@@ -828,6 +829,15 @@ export default function DevelopmentServicesPage() {
             </form>
           </div>
         </motion.div>
+
+        {/* ================================================================== */}
+        {/* NATIVE AD BANNER (TECH & DEV SPONSOR) */}
+        {/* ================================================================== */}
+        <AdsterraNativeBanner
+          category="Software Architecture, Cloud Dev & Enterprise APIs"
+          keywords="software engineering, web development, cloud apps, full stack, react, next.js"
+          badgeLabel="Engineering Partner"
+        />
 
         {/* ================================================================== */}
         {/* 7. FREQUENTLY ASKED QUESTIONS */}

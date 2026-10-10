@@ -200,23 +200,15 @@ type TeacherInfo = {
 const teamMembers = [
   {
     name: "Shaheen Safi",
-    role: "FOUNDER & CHIEF EXECUTIVE OFFICER",
+    role: "FOUNDER & DIRECTOR",
     slug: "shaheen-safi",
     image: "/team/shaheen.jpeg",
     borderClass: "border-yellow-500/30 hover:border-yellow-500",
     textClass: "text-yellow-500",
   },
   {
-    name: "Mujtaba Rahmani",
-    role: "CHIEF OPERATING OFFICER & CISO",
-    slug: "mujtaba-rahmani",
-    image: "/team/mujtaba.jpeg",
-    borderClass: "border-blue-500/30 hover:border-blue-500",
-    textClass: "text-blue-500",
-  },
-  {
     name: "Sahel Salem",
-    role: "CO FOUNDER & LEADER ECOSYSTEM PARTNERSHIPS",
+    role: "CHIEF EXECUTIVE OFFICER (CEO) & EUROPEAN RELATIONS",
     slug: "sahel-salem",
     image: "/team/sahel.jpeg",
     borderClass: "border-emerald-500/30 hover:border-emerald-500",
@@ -224,11 +216,27 @@ const teamMembers = [
   },
   {
     name: "Shirin Gol Ahmadi",
-    role: "CHIEF CREATIVE OFFICER & AI LEAD",
+    role: "GENERAL MANAGER OF ALL SAFI ECOSYSTEM",
     slug: "shirin-gol-ahmadi",
     image: "/team/shirin.jpeg",
     borderClass: "border-rose-500/30 hover:border-rose-500",
     textClass: "text-rose-500",
+  },
+  {
+    name: "Mujtaba Rahmani",
+    role: "CHIEF OPERATING OFFICER (COO)",
+    slug: "mujtaba-rahmani",
+    image: "/team/mujtaba.jpeg",
+    borderClass: "border-blue-500/30 hover:border-blue-500",
+    textClass: "text-blue-500",
+  },
+  {
+    name: "Mobin Hassani",
+    role: "LEAD DEVELOPER & HEAD OF SOFTWARE ENGINEERING",
+    slug: "mobin-hassani",
+    image: "/team/mobin.jpeg",
+    borderClass: "border-cyan-500/30 hover:border-cyan-500",
+    textClass: "text-cyan-400",
   }
 ];
 
@@ -629,7 +637,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
           {teamMembers.map((member) => (
             <Interactive3DCard
               key={member.slug}

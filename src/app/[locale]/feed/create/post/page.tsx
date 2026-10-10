@@ -163,10 +163,11 @@ export default function CreatePostPage() {
             </div>
             <input
               type="text"
+              dir="auto"
               placeholder={t.feed.titlePlaceholder}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-[#030305]/60 border border-white/10 rounded-[1.5rem] px-6 py-5 text-white placeholder-neutral-600 font-bold focus:outline-none focus:border-[#C2185B] focus:ring-1 focus:ring-[#C2185B] transition-all shadow-inner text-lg"
+              className="w-full bg-[#030305]/60 border border-white/10 rounded-[1.5rem] px-6 py-5 text-white placeholder-neutral-600 font-bold focus:outline-none focus:border-[#C2185B] focus:ring-1 focus:ring-[#C2185B] transition-all shadow-inner text-lg text-start"
               required
             />
           </div>
@@ -178,11 +179,12 @@ export default function CreatePostPage() {
               <label className="text-xs font-bold uppercase tracking-widest">{t.feed.contentBody}</label>
             </div>
             <textarea
+              dir="auto"
               placeholder={t.feed.contentPlaceholder}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={8}
-              className="w-full bg-[#030305]/60 border border-white/10 rounded-[1.5rem] px-6 py-5 text-white placeholder-neutral-600 focus:outline-none focus:border-[#C2185B] focus:ring-1 focus:ring-[#C2185B] transition-all shadow-inner resize-none text-sm leading-relaxed"
+              className="w-full bg-[#030305]/60 border border-white/10 rounded-[1.5rem] px-6 py-5 text-white placeholder-neutral-600 focus:outline-none focus:border-[#C2185B] focus:ring-1 focus:ring-[#C2185B] transition-all shadow-inner resize-none text-sm leading-relaxed text-start"
               required
             />
           </div>
