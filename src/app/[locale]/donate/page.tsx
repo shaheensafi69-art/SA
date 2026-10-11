@@ -1,6 +1,8 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
-import { usePathname } from "next/navigation";
+import { getDonateTranslation } from "@/utils/donateTranslations";
+import { CircularFlag } from "@/components/CircularFlag";
+import { usePathname, useParams } from "next/navigation";
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -53,13 +55,13 @@ const PAYPAL_CLIENT_ID =
   "BAAZRuOcLp_I3CeOAmQ-4D_2LsCqgNu86CYrsml4AP__PLDBITjyx4MrjbmtyRYHAifkBzPxDvWtt_Ebe8";
 
 // ============================================================================
-// DIRECT BANK TRANSFER ACCOUNTS (MANUAL SEPA & UK)
+// DIRECT BANK TRANSFER ACCOUNTS (MANUAL SEPA, UK & US)
 // ============================================================================
 interface BankAccount {
   id: string;
   currency: string;
   currencySymbol: string;
-  flag: string;
+  countryCode: "US" | "MT" | "GB" | "LU";
   title: string;
   subtitle: string;
   beneficiary: string;
@@ -78,7 +80,7 @@ const BANK_ACCOUNTS: BankAccount[] = [
     id: "usd_wirex_shirin",
     currency: "USD",
     currencySymbol: "$",
-    flag: "🇺🇸",
+    countryCode: "US",
     title: "US Dollar (ACH / Routing) - Shirin Gol Ahmadi",
     subtitle: "Direct US Domestic Bank Transfer / Wirex",
     beneficiary: "Shirin Gol Ahmadi",
@@ -91,7 +93,7 @@ const BANK_ACCOUNTS: BankAccount[] = [
     id: "eur_malta_shirin",
     currency: "EUR",
     currencySymbol: "€",
-    flag: "🇪🇺",
+    countryCode: "MT",
     title: "Euro SEPA (Malta) - Shirin Gol Ahmadi",
     subtitle: "European Single Euro Payments Area (SEPA)",
     beneficiary: "Shirin Gol Ahmadi",
@@ -104,7 +106,7 @@ const BANK_ACCOUNTS: BankAccount[] = [
     id: "gbp_uk",
     currency: "GBP",
     currencySymbol: "£",
-    flag: "🇬🇧",
+    countryCode: "GB",
     title: "British Pound (UK Faster Payments)",
     subtitle: "Direct UK Domestic Transfer / BACS",
     beneficiary: "SHAHEEN SAFI",
@@ -117,7 +119,7 @@ const BANK_ACCOUNTS: BankAccount[] = [
     id: "eur_malta_shaheen",
     currency: "EUR",
     currencySymbol: "€",
-    flag: "🇪🇺",
+    countryCode: "MT",
     title: "Euro SEPA (Malta) - Shaheen Safi",
     subtitle: "European Single Euro Payments Area (SEPA)",
     beneficiary: "Shaheen Safi",
@@ -130,7 +132,7 @@ const BANK_ACCOUNTS: BankAccount[] = [
     id: "eur_lux_shaheen",
     currency: "EUR",
     currencySymbol: "€",
-    flag: "🇱🇺",
+    countryCode: "LU",
     title: "Euro SEPA (Luxembourg) - Shaheen Safi",
     subtitle: "SEPA Cross-Border Transfer",
     beneficiary: "SHAHEEN SAFI",
@@ -141,57 +143,13 @@ const BANK_ACCOUNTS: BankAccount[] = [
   },
 ];
 
-// Impact-linked donation tiers
-const PRESET_AMOUNTS = [
-  {
-    amount: 15,
-    label: "$15",
-    tier: "Digital Lifeline",
-    impact: "Provides 1 month of encrypted high-speed internet & secure VPN access for an underground student.",
-    badge: "Essential"
-  },
-  {
-    amount: 35,
-    label: "$35",
-    tier: "Learning Toolkit",
-    impact: "Covers cloud coding sandbox environments, course materials, and offline lesson downloads.",
-    badge: "Student Kit"
-  },
-  {
-    amount: 75,
-    label: "$75",
-    tier: "Full Course + Mentorship",
-    impact: "Funds 1 complete technical course with weekly 1-on-1 office hours from senior software engineers.",
-    badge: "Most Popular"
-  },
-  {
-    amount: 150,
-    label: "$150",
-    tier: "Semester Scholarship",
-    impact: "Full 6-month comprehensive scholarship (Coding, UI/UX, or English) with verifiable graduation diploma.",
-    badge: "High Impact"
-  },
-  {
-    amount: 350,
-    label: "$350",
-    tier: "Hardware & Solar Kit",
-    impact: "Sponsors a refurbished programming laptop plus a high-capacity power bank for frequent electrical blackouts.",
-    badge: "Lifesaver"
-  },
-  {
-    amount: 500,
-    label: "$500",
-    tier: "Classroom Guardian",
-    impact: "Sponsors an entire virtual cohort of 5 courageous students with equipment, connectivity, and mentorship.",
-    badge: "Champion"
-  }
-];
-
-export default function EnglishDonatePage() {
+export default function DonatePage() {
   const pathname = usePathname() || "/en";
-  const currentLocale = pathname.split("/")[1] || "en";
+  const params = useParams();
+  const currentLocale = (params?.locale as string) || pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
+  const dt = getDonateTranslation(currentLocale);
+  const isRtl = dt.isRtl;
 
   
   const [amount, setAmount] = useState<number | "">(75);
@@ -285,8 +243,8 @@ export default function EnglishDonatePage() {
 
   const progressPercentage = Math.min((campaign.raised / campaign.goal) * 100, 100);
 
-  // Determine current active impact text
-  const currentPreset = PRESET_AMOUNTS.find((p) => p.amount === amount);
+  // Determine current active impact text from localized tiers
+  const currentPreset = dt.tiers.find((p) => p.amount === amount) || dt.tiers[2];
 
   const initStripeCheckout = async () => {
     if (!amount || amount < 5) return alert("Minimum donation is $5");
@@ -313,103 +271,34 @@ export default function EnglishDonatePage() {
   };
 
   // --------------------------------------------------------------------------
-  // Impact Testimonials & Verified Stories
+  // Impact Testimonials & Verified Stories (19 Languages)
   // --------------------------------------------------------------------------
-  const studentStories = [
-    {
-      name: "Fatima R.",
-      location: "Kabul, Afghanistan",
-      track: "Full-Stack Web Development Graduate",
-      quote:
-        "When the university gates were slammed shut in my face, I cried for weeks. My world ended that day. Safi Academy gave me an encrypted laptop, paid for my 4G internet data, and taught me React and Node.js in secret. Today, I work on remote freelance contracts from my room and feed my family of six. They barred our classrooms, but they could not bar our minds.",
-      avatar: "F"
-    },
-    {
-      name: "Maryam K.",
-      location: "Herat, Afghanistan",
-      track: "Python & Data Science Scholar",
-      quote:
-        "In our city, teenage girls are not even allowed into public libraries. Studying here is an act of defiance. Every evening, when the house is quiet, I open my lessons on my smartphone through Safi Academy's offline proxy. I am building an automated database for local healthcare clinics. Your donation is not charity; it is our weapon against darkness.",
-      avatar: "M"
-    },
-    {
-      name: "Zahra S.",
-      location: "Mazar-i-Sharif, Afghanistan",
-      track: "UI/UX & Digital Product Design",
-      quote:
-        "The hardest part of being an Afghan girl today is the world forgetting that you exist. Safi Academy reminded me that my intellect has value. I completed my design portfolio, received mentorship from engineers in Germany and Canada, and won my first international design grant. Thank you to everyone who donates. You give us our dignity back.",
-      avatar: "Z"
-    }
-  ];
+  const studentStories = dt.stories;
 
   // --------------------------------------------------------------------------
-  // Financial Transparency Breakdown
+  // Financial Transparency Breakdown (19 Languages)
   // --------------------------------------------------------------------------
-  const fundAllocations = [
-    {
-      percent: "45%",
-      title: "Direct Student Scholarships & Diplomas",
-      desc: "Comprehensive course access, live mentor office hours, accredited digital certificates, and career placement coaching.",
-      icon: GraduationCap,
-      color: "from-amber-500 to-yellow-400"
-    },
-    {
-      percent: "25%",
-      title: "Encrypted High-Speed Internet & Data Packs",
-      desc: "Subsidizing monthly mobile 4G and satellite internet data packs for female students living under strict restrictions.",
-      icon: Wifi,
-      color: "from-yellow-400 to-amber-600"
-    },
-    {
-      percent: "18%",
-      title: "Anti-Censorship Digital Infrastructure",
-      desc: "Cloud servers, lightweight low-bandwidth video streaming, offline lesson packs, and secure encrypted communication tunnels.",
-      icon: Globe,
-      color: "from-amber-600 to-orange-500"
-    },
-    {
-      percent: "12%",
-      title: "Hardware & Emergency Solar Battery Grants",
-      desc: "Refurbished coding laptops and high-capacity portable power banks to overcome chronic electrical power cuts.",
-      icon: Laptop,
-      color: "from-orange-500 to-amber-500"
-    }
+  const fundAllocationsIcons = [
+    { icon: GraduationCap, color: "from-amber-500 to-yellow-400" },
+    { icon: Wifi, color: "from-yellow-400 to-amber-600" },
+    { icon: Globe, color: "from-amber-600 to-orange-500" },
+    { icon: Laptop, color: "from-orange-500 to-amber-500" }
   ];
+  const fundAllocations = dt.allocations.map((item, idx) => ({
+    ...item,
+    icon: fundAllocationsIcons[idx]?.icon || GraduationCap,
+    color: fundAllocationsIcons[idx]?.color || "from-amber-500 to-yellow-400"
+  }));
 
   // --------------------------------------------------------------------------
-  // Frequently Asked Questions
+  // Frequently Asked Questions (19 Languages)
   // --------------------------------------------------------------------------
-  const faqs = [
-    {
-      q: "How is my donation processed and is it safe?",
-      a: "Every transaction is encrypted using bank-grade 256-bit TLS encryption powered by Stripe, an industry-leading PCI Service Provider Level 1 certified payment processor. Safi Academy never stores your credit or debit card numbers."
-    },
-    {
-      q: "How do you protect the safety of female students in Afghanistan?",
-      a: "Safety is our absolute paramount priority. We utilize zero-knowledge principles: student real names, exact physical locations, and IP addresses are completely masked and encrypted. Lessons can be downloaded asynchronously and studied offline, eliminating live video surveillance risks."
-    },
-    {
-      q: "Can I donate from outside the United States in my local currency?",
-      a: "Yes! Stripe automatically supports cards from over 135 countries. Whether you hold British Pounds (GBP), Euros (EUR), Canadian Dollars (CAD), Australian Dollars (AUD), or any other currency, your bank will seamlessly convert the amount to USD at the standard market exchange rate."
-    },
-    {
-      q: "Can I make an anonymous donation?",
-      a: "Yes. You can leave the tribute note blank or write 'Anonymous Supporter'. We respect your privacy and will never share your personal information or contact details with third parties."
-    },
-    {
-      q: "How are scholarship recipients selected?",
-      a: "Students undergo a rigorous, compassionate application process administered by our educational advisory board. Priority is granted to girls and women currently barred from secondary schools or universities, orphans, and those demonstrating dedication to learning technology despite extreme adversity."
-    },
-    {
-      q: "Will I receive a receipt for my contribution?",
-      a: "Yes. Immediately upon completing checkout through our secure Stripe portal, an official digital receipt with a unique transaction reference ID is generated on-screen and dispatched to your email address."
-    }
-  ];
+  const faqs = dt.faqs;
 
   return (
     <div
+      dir={isRtl ? "rtl" : "ltr"}
       className="min-h-screen bg-[#040408] text-white font-sans selection:bg-amber-500/30 overflow-hidden relative"
-      
     >
       {/* Dynamic Background Ambient Glow */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
@@ -420,13 +309,13 @@ export default function EnglishDonatePage() {
       </div>
 
       {/* Floating Home Link */}
-      <div className="fixed top-28 left-4 md:left-12 z-50">
+      <div className="fixed top-28 left-4 md:left-12 rtl:left-auto rtl:right-4 rtl:md:right-12 z-50">
         <Link
           href={`/${currentLocale}`}
           className="flex items-center gap-2 px-4 py-2.5 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full text-xs font-black uppercase text-neutral-300 hover:text-white hover:bg-white/10 transition-all shadow-xl group"
         >
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-          <span>{t.common.home}</span>
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 rtl:rotate-180 rtl:group-hover:translate-x-1 transition-transform" />
+          <span>{dt.home}</span>
         </Link>
       </div>
 
@@ -437,28 +326,21 @@ export default function EnglishDonatePage() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-red-500/10 border border-red-500/25 text-red-400 text-xs font-black uppercase tracking-widest mb-8 shadow-[0_0_25px_rgba(239,68,68,0.2)] animate-[fadeInDown_0.6s_ease-out]">
             <Heart size={15} className="fill-red-500/80 animate-pulse text-red-500" />
-            <span>{t.publicPages.emergencyEducationalAid}</span>
+            <span>{dt.heroBadge}</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight mb-8 leading-[1.08]">
-            They Locked the School Gates. <br className="hidden md:block" />
+            {dt.heroTitle1} <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 drop-shadow-sm">
-              We Open the Universe.
+              {dt.heroTitle2}
             </span>
           </h1>
 
           <div className="max-w-3xl mx-auto space-y-5 text-neutral-300 text-base sm:text-lg leading-relaxed font-normal">
-            <p>
-              In Afghanistan today, over <strong className="text-white font-semibold">1,000+ days</strong> have passed since teenage girls were banned from secondary schools. Universities are sealed. Dreams of becoming software architects, doctors, and civic leaders have been forcefully silenced.
-            </p>
-            <p>
-              <strong className="text-white font-semibold">Safi Academy</strong> operates as an encrypted, underground digital sanctuary. We provide 100% free technical scholarships, high-speed mobile internet subsidies, and verifiable credentials to thousands of courageous women studying in secret from their homes.
-            </p>
-            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-200 text-sm font-medium text-left flex items-start gap-3">
+            <p>{dt.heroDesc1}</p>
+            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-200 text-sm font-medium text-left rtl:text-right flex items-start gap-3">
               <Sparkles className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-              <span>
-                <strong>Your donation is an act of human defiance.</strong> You are not merely sending funds; you are purchasing internet data packs, placing laptops into eager hands, and proving to every Afghan girl that she has not been abandoned.
-              </span>
+              <span>{dt.heroDesc2}</span>
             </div>
           </div>
         </div>
@@ -474,17 +356,17 @@ export default function EnglishDonatePage() {
               <div className="flex items-center gap-2 mb-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest">
-                  {t.publicPages.liveScholarshipCampaign}
+                  {dt.liveGoalLabel}
                 </p>
               </div>
               <p className="text-3xl sm:text-4xl md:text-5xl font-black text-white flex items-baseline gap-2">
                 ${campaign.raised.toLocaleString()}
-                <span className="text-xs text-neutral-400 font-normal">{t.publicPages.usdRaised}</span>
+                <span className="text-xs text-neutral-400 font-normal">{dt.raisedOf}</span>
               </p>
             </div>
-            <div className="sm:text-right">
+            <div className="sm:text-right rtl:sm:text-left">
               <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-1">
-                {t.publicPages.targetStudentGoal}
+                {dt.goal}
               </p>
               <p className="text-2xl font-black text-neutral-300">
                 ${campaign.goal.toLocaleString()}
@@ -509,11 +391,11 @@ export default function EnglishDonatePage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2 border-t border-white/10 text-center">
             <div className="p-2">
               <div className="text-lg sm:text-xl font-black text-white">1,240+</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{t.publicPages.girlsEnrolled}</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{t.publicPages.girlsEnrolled || "Girls Enrolled"}</div>
             </div>
             <div className="p-2">
               <div className="text-lg sm:text-xl font-black text-white">100%</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{t.publicPages.freeScholarships}</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{t.publicPages.freeScholarships || "Free Scholarships"}</div>
             </div>
             <div className="p-2">
               <div className="text-lg sm:text-xl font-black text-white">48+</div>
@@ -521,7 +403,7 @@ export default function EnglishDonatePage() {
             </div>
             <div className="p-2">
               <div className="text-lg sm:text-xl font-black text-white">256-bit</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{t.publicPages.encryptedTech || "Encrypted"}</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{dt.fundedBadge}</div>
             </div>
           </div>
         </div>
@@ -538,15 +420,15 @@ export default function EnglishDonatePage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/10 mb-8">
               <div>
                 <span className="text-[11px] font-bold text-amber-400 uppercase tracking-widest block mb-1">
-                  100% Secure & Direct Student Aid
+                  {dt.boxSubtitle}
                 </span>
                 <h3 className="text-2xl font-black text-white flex items-center gap-3">
                   <ShieldCheck className="text-emerald-400 w-7 h-7" />
-                  <span>Choose Your Level of Impact</span>
+                  <span>{dt.boxTitle}</span>
                 </h3>
               </div>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
-                <Lock size={13} /> Bank-Grade TLS 1.3
+                <Lock size={13} /> TLS 1.3 256-Bit
               </div>
             </div>
 
@@ -567,7 +449,7 @@ export default function EnglishDonatePage() {
                 }`}
               >
                 <CreditCard size={18} className={paymentMethod === "card" ? "text-amber-400" : ""} />
-                <span>Card & Apple Pay</span>
+                <span>{dt.tabCard}</span>
               </button>
 
               <button
@@ -583,7 +465,7 @@ export default function EnglishDonatePage() {
                 }`}
               >
                 <Wallet size={18} className={paymentMethod === "paypal" ? "text-[#0070ba]" : ""} />
-                <span>PayPal (Automatic)</span>
+                <span>{dt.tabPaypal}</span>
               </button>
 
               <button
@@ -599,7 +481,7 @@ export default function EnglishDonatePage() {
                 }`}
               >
                 <Landmark size={18} className={paymentMethod === "bank" ? "text-emerald-400" : ""} />
-                <span>Bank Transfer (Manual)</span>
+                <span>{dt.tabBank}</span>
               </button>
             </div>
 
@@ -612,14 +494,14 @@ export default function EnglishDonatePage() {
                   <>
                     {/* Preset Amount Grid with Impact Badges */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 mb-6">
-                      {PRESET_AMOUNTS.map((preset) => {
+                      {dt.tiers.map((preset) => {
                         const isSelected = amount === preset.amount;
                         return (
                           <button
                             key={preset.amount}
                             type="button"
                             onClick={() => setAmount(preset.amount)}
-                            className={`p-4 rounded-2xl text-left transition-all border relative flex flex-col justify-between ${
+                            className={`p-4 rounded-2xl text-left rtl:text-right transition-all border relative flex flex-col justify-between ${
                               isSelected
                                 ? "bg-gradient-to-br from-amber-500/20 to-yellow-500/10 border-amber-500 text-white shadow-[0_0_25px_rgba(245,158,11,0.25)] scale-[1.02]"
                                 : "bg-white/[0.03] text-neutral-300 border-white/10 hover:border-amber-500/40 hover:bg-white/[0.06]"
@@ -651,7 +533,7 @@ export default function EnglishDonatePage() {
                       <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3">
                         <Heart className="w-5 h-5 text-amber-400 shrink-0 mt-0.5 fill-amber-500/40" />
                         <div className="text-xs sm:text-sm text-neutral-200">
-                          <strong className="text-amber-300 mr-1">Your ${amount} Gift:</strong>
+                          <strong className="text-amber-300 mr-1.5 ml-1.5">{amount ? `$${amount}` : ""}:</strong>
                           {currentPreset.impact}
                         </div>
                       </div>
@@ -659,36 +541,36 @@ export default function EnglishDonatePage() {
 
                     {/* Custom Amount Input */}
                     <div className="relative mb-6">
-                      <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-neutral-500">
+                      <span className="absolute left-6 rtl:left-auto rtl:right-6 top-1/2 -translate-y-1/2 text-2xl font-black text-neutral-500">
                         $
                       </span>
                       <input
                         type="number"
                         min={5}
-                        placeholder="Enter custom amount in USD (e.g. 100)"
+                        placeholder={dt.customAmount}
                         value={amount}
                         onChange={(e) => {
                           const val = e.target.value;
                           setAmount(val === "" ? "" : Number(val));
                         }}
-                        className="w-full bg-white/[0.03] border border-white/15 rounded-2xl py-4 pl-12 pr-6 text-xl font-black text-white outline-none focus:border-amber-500 transition-colors shadow-inner"
+                        className="w-full bg-white/[0.03] border border-white/15 rounded-2xl py-4 pl-12 pr-6 rtl:pl-6 rtl:pr-12 text-xl font-black text-white outline-none focus:border-amber-500 transition-colors shadow-inner"
                       />
-                      <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-bold text-neutral-400">
+                      <span className="absolute right-6 rtl:right-auto rtl:left-6 top-1/2 -translate-y-1/2 text-xs font-bold text-neutral-400">
                         USD
                       </span>
                     </div>
 
                     {/* Message of Hope & Tribute */}
                     <div className="relative mb-8">
-                      <div className="absolute left-5 top-4 text-neutral-400">
+                      <div className="absolute left-5 rtl:left-auto rtl:right-5 top-4 text-neutral-400">
                         <MessageSquareQuote size={19} />
                       </div>
                       <textarea
-                        placeholder="Write a heartfelt message or note of courage for the students... (Optional - sent directly to our students)"
+                        placeholder={dt.dedicationPlaceholder}
                         value={note}
                         onChange={(e) => setNote(e.target.value)}
                         rows={3}
-                        className="w-full bg-white/[0.03] border border-white/15 rounded-2xl py-4 pl-13 pr-5 text-sm font-medium text-white outline-none focus:border-amber-500 transition-colors resize-none placeholder:text-neutral-500"
+                        className="w-full bg-white/[0.03] border border-white/15 rounded-2xl py-4 pl-13 pr-5 rtl:pl-5 rtl:pr-13 text-sm font-medium text-white outline-none focus:border-amber-500 transition-colors resize-none placeholder:text-neutral-500"
                       />
                     </div>
 
@@ -700,11 +582,11 @@ export default function EnglishDonatePage() {
                       className="w-full py-5 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-black font-black uppercase tracking-widest text-sm sm:text-base flex items-center justify-center gap-3 shadow-[0_10px_35px_rgba(245,158,11,0.35)] hover:shadow-[0_15px_45px_rgba(245,158,11,0.5)] transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:scale-[1.01] active:scale-[0.99]"
                     >
                       {isProcessing ? (
-                        <span>Connecting to Bank-Grade Gateway...</span>
+                        <span>{dt.processingBtn}</span>
                       ) : (
                         <>
-                          <span>Proceed with Card & Apple Pay ({amount ? `$${amount}` : "$0"} USD)</span>
-                          <ArrowRight size={20} />
+                          <span>{dt.donateNowBtn} ({amount ? `$${amount}` : "$0"} USD)</span>
+                          <ArrowRight size={20} className="rtl:rotate-180" />
                         </>
                       )}
                     </button>
@@ -739,14 +621,14 @@ export default function EnglishDonatePage() {
               <div className="space-y-6">
                 {/* Preset Amount Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 mb-4">
-                  {PRESET_AMOUNTS.map((preset) => {
+                  {dt.tiers.map((preset) => {
                     const isSelected = amount === preset.amount;
                     return (
                       <button
                         key={preset.amount}
                         type="button"
                         onClick={() => setAmount(preset.amount)}
-                        className={`p-3.5 rounded-2xl text-left transition-all border relative flex flex-col justify-between ${
+                        className={`p-3.5 rounded-2xl text-left rtl:text-right transition-all border relative flex flex-col justify-between ${
                           isSelected
                             ? "bg-[#0070ba]/20 border-[#0070ba] text-white shadow-[0_0_20px_rgba(0,112,186,0.25)] scale-[1.02]"
                             : "bg-white/[0.03] text-neutral-300 border-white/10 hover:border-[#0070ba]/40 hover:bg-white/[0.06]"
@@ -762,36 +644,36 @@ export default function EnglishDonatePage() {
 
                 {/* Custom Amount Input */}
                 <div className="relative">
-                  <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-neutral-500">
+                  <span className="absolute left-6 rtl:left-auto rtl:right-6 top-1/2 -translate-y-1/2 text-2xl font-black text-neutral-500">
                     $
                   </span>
                   <input
                     type="number"
                     min={1}
-                    placeholder="Enter donation amount in USD"
+                    placeholder={dt.customAmount}
                     value={amount}
                     onChange={(e) => {
                       const val = e.target.value;
                       setAmount(val === "" ? "" : Number(val));
                     }}
-                    className="w-full bg-white/[0.03] border border-white/15 rounded-2xl py-4 pl-12 pr-6 text-xl font-black text-white outline-none focus:border-[#0070ba] transition-colors shadow-inner"
+                    className="w-full bg-white/[0.03] border border-white/15 rounded-2xl py-4 pl-12 pr-6 rtl:pl-6 rtl:pr-12 text-xl font-black text-white outline-none focus:border-[#0070ba] transition-colors shadow-inner"
                   />
-                  <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-bold text-neutral-400">
+                  <span className="absolute right-6 rtl:right-auto rtl:left-6 top-1/2 -translate-y-1/2 text-xs font-bold text-neutral-400">
                     USD
                   </span>
                 </div>
 
                 {/* Message of Hope */}
                 <div className="relative">
-                  <div className="absolute left-5 top-4 text-neutral-400">
+                  <div className="absolute left-5 rtl:left-auto rtl:right-5 top-4 text-neutral-400">
                     <MessageSquareQuote size={19} />
                   </div>
                   <textarea
-                    placeholder="Message of hope or contributor note (Optional)..."
+                    placeholder={dt.dedicationPlaceholder}
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                     rows={2}
-                    className="w-full bg-white/[0.03] border border-white/15 rounded-2xl py-3 pl-13 pr-5 text-sm font-medium text-white outline-none focus:border-[#0070ba] transition-colors resize-none placeholder:text-neutral-500"
+                    className="w-full bg-white/[0.03] border border-white/15 rounded-2xl py-3 pl-13 pr-5 rtl:pl-5 rtl:pr-13 text-sm font-medium text-white outline-none focus:border-[#0070ba] transition-colors resize-none placeholder:text-neutral-500"
                   />
                 </div>
 
@@ -800,9 +682,11 @@ export default function EnglishDonatePage() {
                   <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
                     <div className="flex items-center gap-2 text-xs font-bold text-neutral-300">
                       <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span>Instant Live PayPal Gateway</span>
+                      <span>{dt.paypalTitle}</span>
                     </div>
-                    <span className="text-xs text-neutral-400">Amount: <strong>${amount || 0} USD</strong></span>
+                    <span className="text-xs text-neutral-400">
+                      <strong>${amount || 0} USD</strong>
+                    </span>
                   </div>
 
                   <div className="min-h-[140px] flex items-center justify-center">
@@ -858,7 +742,7 @@ export default function EnglishDonatePage() {
                           }}
                           onError={(err) => {
                             console.error("PayPal Error:", err);
-                            alert("PayPal error occurred. If PayPal is restricted in your region, please use Card or Direct Bank Transfer.");
+                            alert(dt.paypalError);
                           }}
                         />
                       </div>
@@ -877,9 +761,11 @@ export default function EnglishDonatePage() {
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <label className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                      Select Bank Account / واحد پولی حساب:
+                      {dt.bankSelectLabel}
                     </label>
-                    <span className="text-[11px] text-neutral-400">5 Verified Accounts</span>
+                    <span className="text-[11px] text-neutral-400">
+                      {BANK_ACCOUNTS.length} {dt.bankVerifiedBadge}
+                    </span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5">
@@ -893,14 +779,14 @@ export default function EnglishDonatePage() {
                             setSelectedBankIdx(idx);
                             setBankForm((prev) => ({ ...prev, currency: acc.currency }));
                           }}
-                          className={`p-3.5 rounded-2xl text-left border transition-all ${
+                          className={`p-3.5 rounded-2xl text-left rtl:text-right border transition-all ${
                             isSelected
                               ? "bg-emerald-500/15 border-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.25)] scale-[1.02]"
                               : "bg-white/[0.03] border-white/10 text-neutral-400 hover:text-white hover:border-white/20"
                           }`}
                         >
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-xl">{acc.flag}</span>
+                          <div className="flex items-center justify-between mb-2">
+                            <CircularFlag code={acc.countryCode} className="w-6 h-6 shadow-sm" />
                             <span className="text-xs font-extrabold font-mono text-emerald-400">{acc.currency}</span>
                           </div>
                           <div className="text-xs font-bold text-white truncate">{acc.beneficiary}</div>
@@ -915,15 +801,15 @@ export default function EnglishDonatePage() {
                 {(() => {
                   const acc = BANK_ACCOUNTS[selectedBankIdx];
                   const allDetailsText = [
-                    `Beneficiary: ${acc.beneficiary}`,
-                    acc.iban ? `IBAN: ${acc.iban}` : null,
-                    acc.bic ? `BIC/SWIFT: ${acc.bic}` : null,
-                    acc.routingNumber ? `Routing Number: ${acc.routingNumber}` : null,
-                    acc.sortCode ? `Sort Code: ${acc.sortCode}` : null,
-                    acc.accountNumber ? `Account Number: ${acc.accountNumber}` : null,
-                    acc.bankName ? `Bank Name: ${acc.bankName}` : null,
-                    acc.bankAddress ? `Bank Address: ${acc.bankAddress}` : null,
-                    acc.note ? `Notice: ${acc.note}` : null,
+                    `${dt.beneficiaryLabel}: ${acc.beneficiary}`,
+                    acc.iban ? `${dt.ibanLabel}: ${acc.iban}` : null,
+                    acc.bic ? `${dt.bicLabel}: ${acc.bic}` : null,
+                    acc.routingNumber ? `${dt.routingLabel}: ${acc.routingNumber}` : null,
+                    acc.sortCode ? `${dt.sortCodeLabel}: ${acc.sortCode}` : null,
+                    acc.accountNumber ? `${dt.accountNumberLabel}: ${acc.accountNumber}` : null,
+                    acc.bankName ? `${dt.bankNameLabel}: ${acc.bankName}` : null,
+                    acc.bankAddress ? `${dt.bankAddressLabel}: ${acc.bankAddress}` : null,
+                    acc.note ? `${dt.noticeLabel}: ${acc.note}` : null,
                   ]
                     .filter(Boolean)
                     .join("\n");
@@ -932,8 +818,8 @@ export default function EnglishDonatePage() {
                     <div className="bg-gradient-to-br from-neutral-900/90 to-[#0c0a15] border border-emerald-500/30 rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/10 mb-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-2xl">
-                            {acc.flag}
+                          <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+                            <CircularFlag code={acc.countryCode} className="w-9 h-9 shadow-md" />
                           </div>
                           <div>
                             <h4 className="text-base sm:text-lg font-black text-white">{acc.title}</h4>
@@ -949,12 +835,12 @@ export default function EnglishDonatePage() {
                           {copiedKey === `all_${acc.id}` ? (
                             <>
                               <Check size={14} className="text-emerald-400" />
-                              <span>All Copied!</span>
+                              <span>{dt.allCopiedText}</span>
                             </>
                           ) : (
                             <>
                               <Copy size={14} />
-                              <span>Copy All Info</span>
+                              <span>{dt.copyAllBtn}</span>
                             </>
                           )}
                         </button>
@@ -966,7 +852,7 @@ export default function EnglishDonatePage() {
                         <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
                           <div>
                             <span className="text-[10px] text-neutral-500 uppercase font-bold block mb-0.5">
-                              Beneficiary / نام دارنده حساب
+                              {dt.beneficiaryLabel}
                             </span>
                             <span className="font-bold text-white text-sm select-all">{acc.beneficiary}</span>
                           </div>
@@ -983,9 +869,9 @@ export default function EnglishDonatePage() {
                         {/* IBAN (If applicable) */}
                         {acc.iban && (
                           <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
-                            <div className="min-w-0 pr-2">
+                            <div className="min-w-0 pr-2 rtl:pr-0 rtl:pl-2">
                               <span className="text-[10px] text-neutral-500 uppercase font-bold block mb-0.5">
-                                IBAN (International Bank Account)
+                                {dt.ibanLabel}
                               </span>
                               <span className="font-mono font-bold text-amber-300 text-xs sm:text-sm break-all select-all">
                                 {acc.iban}
@@ -1007,7 +893,7 @@ export default function EnglishDonatePage() {
                           <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
                             <div>
                               <span className="text-[10px] text-neutral-500 uppercase font-bold block mb-0.5">
-                                BIC / SWIFT Code
+                                {dt.bicLabel}
                               </span>
                               <span className="font-mono font-bold text-white text-sm select-all">{acc.bic}</span>
                             </div>
@@ -1027,7 +913,7 @@ export default function EnglishDonatePage() {
                           <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
                             <div>
                               <span className="text-[10px] text-neutral-500 uppercase font-bold block mb-0.5">
-                                Routing Number (US Domestic / Wire)
+                                {dt.routingLabel}
                               </span>
                               <span className="font-mono font-bold text-amber-300 text-sm select-all">{acc.routingNumber}</span>
                             </div>
@@ -1047,7 +933,7 @@ export default function EnglishDonatePage() {
                           <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
                             <div>
                               <span className="text-[10px] text-neutral-500 uppercase font-bold block mb-0.5">
-                                Sort Code (UK Domestic)
+                                {dt.sortCodeLabel}
                               </span>
                               <span className="font-mono font-bold text-amber-300 text-sm select-all">{acc.sortCode}</span>
                             </div>
@@ -1067,7 +953,7 @@ export default function EnglishDonatePage() {
                           <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
                             <div>
                               <span className="text-[10px] text-neutral-500 uppercase font-bold block mb-0.5">
-                                Account Number / شماره حساب
+                                {dt.accountNumberLabel}
                               </span>
                               <span className="font-mono font-bold text-white text-sm select-all">{acc.accountNumber}</span>
                             </div>
@@ -1087,7 +973,7 @@ export default function EnglishDonatePage() {
                           <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
                             <div>
                               <span className="text-[10px] text-neutral-500 uppercase font-bold block mb-0.5">
-                                Bank Name / نام بانک
+                                {dt.bankNameLabel}
                               </span>
                               <span className="font-bold text-white text-xs select-all">{acc.bankName}</span>
                             </div>
@@ -1107,7 +993,7 @@ export default function EnglishDonatePage() {
                           <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between md:col-span-2">
                             <div>
                               <span className="text-[10px] text-neutral-500 uppercase font-bold block mb-0.5">
-                                Bank Address / آدرس بانک
+                                {dt.bankAddressLabel}
                               </span>
                               <span className="text-neutral-300 text-xs select-all">{acc.bankAddress}</span>
                             </div>
@@ -1127,7 +1013,7 @@ export default function EnglishDonatePage() {
                           <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between md:col-span-2">
                             <div>
                               <span className="text-[10px] text-amber-400 uppercase font-bold block mb-0.5">
-                                Notice / توجه مهم
+                                {dt.noticeLabel}
                               </span>
                               <span className="text-amber-200 text-xs font-semibold select-all">{acc.note}</span>
                             </div>
@@ -1143,11 +1029,11 @@ export default function EnglishDonatePage() {
                   <div className="flex items-center gap-2 mb-2">
                     <Send className="w-5 h-5 text-emerald-400" />
                     <h4 className="text-base sm:text-lg font-bold text-white">
-                      Confirm Transfer Receipt / اعلان واریز به حساب
+                      {dt.receiptHeader}
                     </h4>
                   </div>
                   <p className="text-xs text-neutral-400 mb-6">
-                    After completing the transfer in your bank app, submit this quick form so our team can immediately credit your donation and confirm receipt.
+                    {dt.receiptSub}
                   </p>
 
                   {bankSuccessRef ? (
@@ -1157,12 +1043,12 @@ export default function EnglishDonatePage() {
                       className="p-6 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-center"
                     >
                       <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto mb-3" />
-                      <h5 className="text-lg font-bold text-white mb-2">Receipt Submitted Successfully!</h5>
+                      <h5 className="text-lg font-bold text-white mb-2">{dt.successReceiptTitle}</h5>
                       <p className="text-xs text-neutral-300 mb-4">
-                        Thank you for your generous gift. Your transfer confirmation has been dispatched to our financial team.
+                        {dt.successReceiptDesc}
                       </p>
                       <div className="inline-block px-4 py-2 rounded-xl bg-black/40 border border-emerald-500/40 text-emerald-300 font-mono text-xs">
-                        Reference ID: <strong>{bankSuccessRef}</strong>
+                        {dt.trackingRefLabel}: <strong>{bankSuccessRef}</strong>
                       </div>
                     </motion.div>
                   ) : (
@@ -1170,7 +1056,7 @@ export default function EnglishDonatePage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="text-[11px] font-bold text-neutral-400 uppercase mb-1 block">
-                            Your Full Name *
+                            {dt.donorNameLabel}
                           </label>
                           <input
                             type="text"
@@ -1184,7 +1070,7 @@ export default function EnglishDonatePage() {
 
                         <div>
                           <label className="text-[11px] font-bold text-neutral-400 uppercase mb-1 block">
-                            Your Email Address *
+                            {dt.donorEmailLabel}
                           </label>
                           <input
                             type="email"
@@ -1198,7 +1084,7 @@ export default function EnglishDonatePage() {
 
                         <div>
                           <label className="text-[11px] font-bold text-neutral-400 uppercase mb-1 block">
-                            Transferred Amount *
+                            {dt.transferAmountLabel}
                           </label>
                           <div className="flex gap-2">
                             <input
@@ -1223,7 +1109,7 @@ export default function EnglishDonatePage() {
 
                         <div>
                           <label className="text-[11px] font-bold text-neutral-400 uppercase mb-1 block">
-                            Transaction Reference / TxID
+                            {dt.txIdLabel}
                           </label>
                           <input
                             type="text"
@@ -1237,11 +1123,11 @@ export default function EnglishDonatePage() {
 
                       <div>
                         <label className="text-[11px] font-bold text-neutral-400 uppercase mb-1 block">
-                          Notes / Student Dedication
+                          {dt.notesLabel}
                         </label>
                         <textarea
                           rows={2}
-                          placeholder="Optional message of encouragement for our scholars..."
+                          placeholder={dt.dedicationPlaceholder}
                           value={bankForm.notes}
                           onChange={(e) => setBankForm({ ...bankForm, notes: e.target.value })}
                           className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-emerald-500 transition-colors resize-none"
@@ -1254,10 +1140,10 @@ export default function EnglishDonatePage() {
                         className="w-full py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-extrabold uppercase tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-[0_5px_25px_rgba(16,185,129,0.3)] disabled:opacity-50"
                       >
                         {isSubmittingBank ? (
-                          <span>Dispatching Receipt...</span>
+                          <span>{dt.submittingReceiptBtn}</span>
                         ) : (
                           <>
-                            <span>Submit Transfer Notification</span>
+                            <span>{dt.submitReceiptBtn}</span>
                             <Send size={16} />
                           </>
                         )}
@@ -1291,7 +1177,7 @@ export default function EnglishDonatePage() {
                 </div>
               </div>
               <span className="font-semibold text-neutral-400 flex items-center gap-1.5">
-                <ShieldCheck size={14} className="text-emerald-400" /> Multi-Gateway Protected • 256-Bit SSL
+                <ShieldCheck size={14} className="text-emerald-400" /> {dt.encryptedNotice}
               </span>
             </div>
           </motion.div>
@@ -1303,13 +1189,13 @@ export default function EnglishDonatePage() {
         <div className="mb-32">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-3">
-              Voices from Behind Closed Doors
+              {dt.storiesBadge}
             </div>
             <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-              Real Lives Changed by Your Courage
+              {dt.storiesTitle}
             </h2>
             <p className="mt-4 text-neutral-300 text-sm md:text-base leading-relaxed">
-              Read authentic testimonies from female students who refused to surrender their intellect and are now programming their way to financial freedom.
+              {dt.storiesSub}
             </p>
             <div className="w-20 h-1 bg-amber-500 mx-auto mt-6 rounded-full"></div>
           </div>
@@ -1342,7 +1228,7 @@ export default function EnglishDonatePage() {
 
                 <div className="pt-4 border-t border-white/5 flex items-center gap-2 text-[11px] text-emerald-400 font-semibold">
                   <CheckCircle2 size={13} />
-                  <span>Verified Scholarship Recipient</span>
+                  <span>{dt.isRtl ? "بورسیه تحصیلی تأیید شده" : "Verified Scholarship Recipient"}</span>
                 </div>
               </motion.div>
             ))}
@@ -1355,13 +1241,13 @@ export default function EnglishDonatePage() {
         <div className="bg-gradient-to-br from-[#0e0c18] via-[#090812] to-[#040408] border border-amber-500/25 rounded-[3rem] p-8 md:p-14 shadow-2xl relative overflow-hidden mb-32">
           <div className="text-center max-w-3xl mx-auto mb-16 relative z-10">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-3">
-              100% Financial Accountability
+              {dt.transparencyBadge}
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4 tracking-tight">
-              Where Every Dollar of Your Gift Goes
+              {dt.transparencyTitle}
             </h2>
             <p className="text-sm md:text-base text-neutral-300 leading-relaxed">
-              We operate with ruthless efficiency and zero administrative bloat. Your funds go straight to students, internet data packs, and hardware inside Afghanistan.
+              {dt.transparencySub}
             </p>
           </div>
 
@@ -1397,10 +1283,10 @@ export default function EnglishDonatePage() {
         <div className="max-w-4xl mx-auto mb-32">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-3">
-              Donor Information
+              {dt.faqBadge}
             </div>
             <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-              Frequently Asked Questions
+              {dt.faqTitle}
             </h2>
           </div>
 
@@ -1415,7 +1301,7 @@ export default function EnglishDonatePage() {
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full text-left p-6 flex items-center justify-between gap-4"
+                    className="w-full text-left rtl:text-right p-6 flex items-center justify-between gap-4"
                   >
                     <h3 className="text-base md:text-lg font-bold text-white flex items-start gap-3">
                       <span className="text-amber-400 font-mono">Q.</span>
@@ -1437,7 +1323,7 @@ export default function EnglishDonatePage() {
                         transition={{ duration: 0.3 }}
                         className="px-6 pb-6 pt-0 border-t border-white/5"
                       >
-                        <p className="text-xs md:text-sm text-neutral-300 leading-relaxed pl-7 pt-4">
+                        <p className="text-xs md:text-sm text-neutral-300 leading-relaxed pl-7 rtl:pl-0 rtl:pr-7 pt-4">
                           {faq.a}
                         </p>
                       </motion.div>
@@ -1473,11 +1359,11 @@ export default function EnglishDonatePage() {
           </div>
 
           <h2 className="text-3xl md:text-5xl font-black text-white mb-6 max-w-3xl leading-tight">
-            Be the Reason an Afghan Girl Writes Her Future Tomorrow.
+            {dt.bottomCtaTitle}
           </h2>
 
           <p className="text-neutral-300 text-sm md:text-base max-w-2xl mb-10 leading-relaxed">
-            History will remember who stood in silence and who chose to light a candle in the darkness. Join thousands of compassionate donors from around the world.
+            {dt.bottomCtaDesc}
           </p>
 
           <button
@@ -1487,22 +1373,22 @@ export default function EnglishDonatePage() {
             }}
             className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-black font-black text-base uppercase tracking-wider rounded-2xl transition-all shadow-[0_10px_40px_rgba(245,158,11,0.4)] hover:shadow-[0_15px_50px_rgba(245,158,11,0.6)] hover:scale-105"
           >
-            <span>{t.publicPages.makeDonationNow}</span>
-            <ArrowRight size={18} />
+            <span>{dt.bottomCtaBtn}</span>
+            <ArrowRight size={18} className="rtl:rotate-180" />
           </button>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-neutral-400">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              100% Tax & Financial Integrity
+              {dt.trustBadge1Title}
             </span>
             <span className="flex items-center gap-1.5">
               <Lock className="w-4 h-4 text-emerald-400" />
-              Instant Email Tax Receipt
+              {dt.trustBadge2Title}
             </span>
             <span className="flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-amber-400" />
-              Zero Platform Commission
+              {dt.trustBadge3Title}
             </span>
           </div>
         </motion.div>
