@@ -55,7 +55,51 @@ const PAYPAL_CLIENT_ID =
 // ============================================================================
 // DIRECT BANK TRANSFER ACCOUNTS (MANUAL SEPA & UK)
 // ============================================================================
-const BANK_ACCOUNTS = [
+interface BankAccount {
+  id: string;
+  currency: string;
+  currencySymbol: string;
+  flag: string;
+  title: string;
+  subtitle: string;
+  beneficiary: string;
+  iban?: string;
+  bic?: string;
+  routingNumber?: string;
+  sortCode?: string;
+  accountNumber?: string;
+  bankName?: string;
+  bankAddress?: string;
+  note?: string;
+}
+
+const BANK_ACCOUNTS: BankAccount[] = [
+  {
+    id: "usd_wirex_shirin",
+    currency: "USD",
+    currencySymbol: "$",
+    flag: "🇺🇸",
+    title: "US Dollar (ACH / Routing) - Shirin Gol Ahmadi",
+    subtitle: "Direct US Domestic Bank Transfer / Wirex",
+    beneficiary: "Shirin Gol Ahmadi",
+    accountNumber: "214222579029",
+    routingNumber: "101019644",
+    bankName: "Wirex USA",
+    note: "Minimum deposit is $1 (حداقل واریز ۱ دلار است، مقادیر کمتر پذیرفته نمی‌شوند)",
+  },
+  {
+    id: "eur_malta_shirin",
+    currency: "EUR",
+    currencySymbol: "€",
+    flag: "🇪🇺",
+    title: "Euro SEPA (Malta) - Shirin Gol Ahmadi",
+    subtitle: "European Single Euro Payments Area (SEPA)",
+    beneficiary: "Shirin Gol Ahmadi",
+    iban: "MT92CFTE28004000000000006678211",
+    bic: "CFTEMTM1",
+    bankName: "BANKING CIRCLE (MALTA)",
+    bankAddress: "Malta",
+  },
   {
     id: "gbp_uk",
     currency: "GBP",
@@ -94,19 +138,6 @@ const BANK_ACCOUNTS = [
     bic: "BCIRLULL",
     bankName: "BANKING CIRCLE S.A.",
     bankAddress: "2 BOULEVARD DE LA FOIRE, LUXEMBOURG",
-  },
-  {
-    id: "eur_malta_shirin",
-    currency: "EUR",
-    currencySymbol: "€",
-    flag: "🇪🇺",
-    title: "Euro SEPA (Malta) - Shirin Gol Ahmadi",
-    subtitle: "European Single Euro Payments Area (SEPA)",
-    beneficiary: "Shirin Gol Ahmadi",
-    iban: "MT92CFTE28004000000000006678211",
-    bic: "CFTEMTM1",
-    bankName: "BANKING CIRCLE (MALTA)",
-    bankAddress: "Malta",
   },
 ];
 
@@ -848,10 +879,10 @@ export default function EnglishDonatePage() {
                     <label className="text-xs font-bold uppercase tracking-wider text-amber-400">
                       Select Bank Account / واحد پولی حساب:
                     </label>
-                    <span className="text-[11px] text-neutral-400">4 Verified Accounts</span>
+                    <span className="text-[11px] text-neutral-400">5 Verified Accounts</span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5">
                     {BANK_ACCOUNTS.map((acc, idx) => {
                       const isSelected = selectedBankIdx === idx;
                       return (
@@ -887,10 +918,12 @@ export default function EnglishDonatePage() {
                     `Beneficiary: ${acc.beneficiary}`,
                     acc.iban ? `IBAN: ${acc.iban}` : null,
                     acc.bic ? `BIC/SWIFT: ${acc.bic}` : null,
+                    acc.routingNumber ? `Routing Number: ${acc.routingNumber}` : null,
                     acc.sortCode ? `Sort Code: ${acc.sortCode}` : null,
                     acc.accountNumber ? `Account Number: ${acc.accountNumber}` : null,
                     acc.bankName ? `Bank Name: ${acc.bankName}` : null,
                     acc.bankAddress ? `Bank Address: ${acc.bankAddress}` : null,
+                    acc.note ? `Notice: ${acc.note}` : null,
                   ]
                     .filter(Boolean)
                     .join("\n");
@@ -989,6 +1022,26 @@ export default function EnglishDonatePage() {
                           </div>
                         )}
 
+                        {/* Routing Number (US Domestic / Wire) */}
+                        {acc.routingNumber && (
+                          <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
+                            <div>
+                              <span className="text-[10px] text-neutral-500 uppercase font-bold block mb-0.5">
+                                Routing Number (US Domestic / Wire)
+                              </span>
+                              <span className="font-mono font-bold text-amber-300 text-sm select-all">{acc.routingNumber}</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => copyToClipboard(acc.routingNumber!, `routing_${acc.id}`)}
+                              className="p-2 rounded-lg bg-white/5 hover:bg-white/15 text-neutral-400 hover:text-white transition-colors"
+                              title="Copy Routing Number"
+                            >
+                              {copiedKey === `routing_${acc.id}` ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                            </button>
+                          </div>
+                        )}
+
                         {/* Sort Code (UK) */}
                         {acc.sortCode && (
                           <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
@@ -1009,12 +1062,12 @@ export default function EnglishDonatePage() {
                           </div>
                         )}
 
-                        {/* Account Number (UK) */}
+                        {/* Account Number (UK / US) */}
                         {acc.accountNumber && (
                           <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
                             <div>
                               <span className="text-[10px] text-neutral-500 uppercase font-bold block mb-0.5">
-                                Account Number
+                                Account Number / شماره حساب
                               </span>
                               <span className="font-mono font-bold text-white text-sm select-all">{acc.accountNumber}</span>
                             </div>
@@ -1066,6 +1119,18 @@ export default function EnglishDonatePage() {
                             >
                               {copiedKey === `baddr_${acc.id}` ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
                             </button>
+                          </div>
+                        )}
+
+                        {/* Notice / Note (if any) */}
+                        {acc.note && (
+                          <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between md:col-span-2">
+                            <div>
+                              <span className="text-[10px] text-amber-400 uppercase font-bold block mb-0.5">
+                                Notice / توجه مهم
+                              </span>
+                              <span className="text-amber-200 text-xs font-semibold select-all">{acc.note}</span>
+                            </div>
                           </div>
                         )}
                       </div>
