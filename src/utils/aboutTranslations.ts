@@ -3,6 +3,30 @@
 // ============================================================================
 
 export interface AboutTranslation {
+  heroLine1: string;
+  heroLine2: string;
+  heroDesc: string;
+  fullCertIncluded: string;
+  institutionalStandard: string;
+  leadershipBadge: string;
+  executiveBoardTitle: string;
+  executiveBoardDesc: string;
+  readFullBio: string;
+  executiveBoardBadge: string;
+  eliteFaculty: string;
+  facultyTitle: string;
+  facultyDesc: string;
+  explorePlatform: string;
+  corporateGovTitle: string;
+  corporateGovP1: string;
+  corporateGovP2: string;
+  corporateGovQuote: string;
+  corporateGovAuthor: string;
+  faqSubtitle: string;
+  footerCtaDesc: string;
+  enrollAsStudent: string;
+  applyAsInstructor: string;
+
   manifestoBadge: string;
   manifestoTitle: string;
   manifestoHighlight: string;
@@ -27,6 +51,30 @@ export interface AboutTranslation {
 }
 
 const en: AboutTranslation = {
+  heroLine1: "Architecting The Future of ",
+  heroLine2: "Global Education.",
+  heroDesc: "Safi Academy is the premier international institution within the Safi Ecosystem. Headquartered in London, we bridge the gap between real-world industry mastery and modern educational technology, empowering tens of thousands of global students to achieve financial, technological, and intellectual independence.",
+  fullCertIncluded: "Full Certification Included",
+  institutionalStandard: "Institutional Standard",
+  leadershipBadge: "Leadership & Governance",
+  executiveBoardTitle: "The Executive Board",
+  executiveBoardDesc: "The Visionaries, Engineers, and Strategists Guiding The Safi Ecosystem",
+  readFullBio: "Read Full Bio",
+  executiveBoardBadge: "Executive Board",
+  eliteFaculty: "Elite Faculty",
+  facultyTitle: "Instructors & Department Leads",
+  facultyDesc: "Learn directly from senior software architects, professional institutional traders, and industry leaders.",
+  explorePlatform: "Explore Platform",
+  corporateGovTitle: "Corporate Governance & UK Registry",
+  corporateGovP1: "Safi Academy is the educational flagship of Safi International Capital LTD, a premier corporate financial entity officially registered in the United Kingdom under Company Number 17063286.",
+  corporateGovP2: "Our global corporate headquarters is situated in the prestigious commercial heart of London at 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ. Our filings and corporate structure are fully verifiable with the UK Registrar of Companies (Companies House Tracker ID: 114-030414).",
+  corporateGovQuote: "\"We do not merely adapt to the future; we architect it.\"",
+  corporateGovAuthor: "— The Safi Executive Board",
+  faqSubtitle: "Everything you need to know about Safi Academy, our standards, certifications, and operations.",
+  footerCtaDesc: "Join thousands of ambitious students worldwide who are acquiring elite skills, earning verifiable certifications, and thriving in the Safi Ecosystem.",
+  enrollAsStudent: "Enroll as a Student",
+  applyAsInstructor: "Apply as Instructor",
+
   manifestoBadge: "The Safi Academy Manifesto",
   manifestoTitle: "Why We Built Safi Academy:",
   manifestoHighlight: "Skills Over Theory. Execution Over Speculation.",
@@ -79,6 +127,30 @@ const en: AboutTranslation = {
 };
 
 const fa: AboutTranslation = {
+  heroLine1: "معماری آینده‌ی ",
+  heroLine2: "آموزش و تخصص جهانی.",
+  heroDesc: "آکادمی صافی نهاد بین‌المللی پیشرو در اکوسیستم صافی است. با دفتر مرکزی در لندن، ما فاصله میان تخصص واقعی بازار و فناوری‌های نوین آموزشی را پیوند می‌دهیم تا ده‌ها هزار دانشجو در سراسر جهان به استقلال مالی و فناوری دست یابند.",
+  fullCertIncluded: "شامل گواهی‌نامه رسمی",
+  institutionalStandard: "استاندارد سازمانی",
+  leadershipBadge: "رهبری و حاکمیت سازمانی",
+  executiveBoardTitle: "هیئت مدیره اجرایی",
+  executiveBoardDesc: "رهبران، مهندسان و استراتژیست‌های راهبر اکوسیستم صافی",
+  readFullBio: "مشاهده بیوگرافی کامل",
+  executiveBoardBadge: "هیئت مدیره",
+  eliteFaculty: "اساتید برجسته و هیئت علمی",
+  facultyTitle: "اساتید ارشد و مدیران دپارتمان‌ها",
+  facultyDesc: "یادگیری مستقیم از معماران ارشد نرم‌افزار، تریدرهای نهادی بین‌المللی و کارآفرینان پیشرو بازار.",
+  explorePlatform: "مشاهده پلتفرم",
+  corporateGovTitle: "حاکمیت شرکتی و ثبت رسمی در بریتانیا",
+  corporateGovP1: "آکادمی صافی پرچمدار آموزشی هلدینگ بین‌المللی Safi International Capital LTD می‌باشد که رسماً در بریتانیا تحت شماره ۱۷۰۶۳۲۸۶ به ثبت رسیده است.",
+  corporateGovP2: "دفتر مرکزی ما در قلب تجاری لندن در آدرس 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ واقع شده است. اطلاعات ثبتی ما نزد اداره ثبت شرکت‌های بریتانیا (Companies House شناسه پیگیری: 114-030414) کاملاً قابل استعلام است.",
+  corporateGovQuote: "«ما صرفاً با آینده سازگار نمی‌شویم؛ ما آن را مهندسی می‌کنیم.»",
+  corporateGovAuthor: "— هیئت مدیره اجرایی صافی",
+  faqSubtitle: "همه چیزهایی که باید درباره آکادمی صافی، استانداردها، گواهی‌نامه‌ها و اعتبارسنجی بین‌المللی بدانید.",
+  footerCtaDesc: "به هزاران دانشجوی مشتاق در سراسر جهان بپیوندید که در حال کسب مهارت‌های تراز اول، دریافت مدارک بین‌المللی و رشد در اکوسیستم صافی هستند.",
+  enrollAsStudent: "ثبت‌نام و عضویت در آکادمی",
+  applyAsInstructor: "درخواست تدریس به عنوان استاد",
+
   manifestoBadge: "مانیفست و منشور بنیادین آکادمی صافی",
   manifestoTitle: "چرا آکادمی صافی را ساختیم:",
   manifestoHighlight: "مهارت به جای تئوری. اجرای واقعی به جای حدس و گمان.",
@@ -131,6 +203,30 @@ const fa: AboutTranslation = {
 };
 
 const ps: AboutTranslation = {
+  heroLine1: "د راتلونکي بنسټیزه رغونه: ",
+  heroLine2: "نړیواله زده کړه او مسلکي تخصص.",
+  heroDesc: "صافي اکاډمي د صافي نړیوال ایکوسیستم مخکښ تحصیلي بنسټ دی. په لندن کې د مرکزي دفتر سره، موږ د بازار د حقیقي مهارتونو او نوې ښوونیزې ټیکنالوژۍ ترمنځ واټن له منځه وړو ترڅو په زرګونو محصلین مالي او تخنیکي خپلواکۍ ته ورسیږي.",
+  fullCertIncluded: "رسمي تصدیق پاڼه شامله ده",
+  institutionalStandard: "سازماني او مسلکي معیار",
+  leadershipBadge: "مشرتابه او سازماني اداره",
+  executiveBoardTitle: "اجرایوي مدیره هیئت",
+  executiveBoardDesc: "د صافي ایکوسیستم مشران، انجنیران او ستراتیژستان",
+  readFullBio: "بشپړ ژوندلیک وګورئ",
+  executiveBoardBadge: "مدیره هیئت",
+  eliteFaculty: "وتلي او پیاوړي استادان",
+  facultyTitle: "ارشد استادان او د څانګو مشران",
+  facultyDesc: "د سافټویر له پیاوړو انجنیرانو، مسلکي سوداګرو او د مارکیټ له مشرانو څخه مستقیمه زده کړه.",
+  explorePlatform: "پلاتفورم وګورئ",
+  corporateGovTitle: "شرکتي حکومتولي او په انګلستان کې رسمي ثبت",
+  corporateGovP1: "صافي اکاډمي د Safi International Capital LTD نړیوال هولډنګ تحصیلي بیرغ دی چې په رسمي ډول په انګلستان کې د ۱۷۰۶۳۲۸۶ نمبر لاندې ثبت شوی دی.",
+  corporateGovP2: "زموږ مرکزي دفتر د لندن په سوداګریز زړه 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ کې موقعیت لري. زموږ معلومات د انګلستان د شرکتونو ادارې (Companies House د تعقیب کوډ: 114-030414) سره په پوره ډول قانوني او روښانه دي.",
+  corporateGovQuote: "«موږ یوازې د راتلونکي سره ځان نه برابروو؛ موږ راتلونکی په خپله جوړوو.»",
+  corporateGovAuthor: "— د صافي اجرایوي مدیره هیئت",
+  faqSubtitle: "هر هغه څه چې تاسو ورته د صافي اکاډمۍ د معیارونو، سندونو او کړنو په اړه اړتیا لرئ.",
+  footerCtaDesc: "په ټوله نړۍ کې له زرګونو پیاوړو محصلینو سره یوځای شئ چې مسلکي مهارتونه ترلاسه کوي او نړیوال سندونه اخلي.",
+  enrollAsStudent: "په اکاډمۍ کې نوم لیکنه",
+  applyAsInstructor: "د استادۍ غوښتنه وسپارئ",
+
   ...fa,
   manifestoBadge: "د صافي اکاډمۍ بنسټیز منشور او پیژندنه",
   manifestoTitle: "ولې موږ صافي اکاډمي جوړه کړه:",
@@ -152,6 +248,30 @@ const ps: AboutTranslation = {
 };
 
 const ar: AboutTranslation = {
+  heroLine1: "هندسة مستقبل ",
+  heroLine2: "التعليم والخبرة العالمية.",
+  heroDesc: "أكاديمية صافي هي المؤسسة الدولية الرائدة ضمن منظومة صافي العالمية. بمقرها الرئيسي في لندن، نربط بين التميز العملي في السوق والتقنيات التعليمية الحديثة لتمكين عشرات الآلاف من الطلاب حول العالم من تحقيق الاستقلال المالي والتكنولوجي.",
+  fullCertIncluded: "شهادة معتمدة مشمولة",
+  institutionalStandard: "معيار مؤسسي معتمد",
+  leadershipBadge: "القيادة والحوكمة",
+  executiveBoardTitle: "مجلس الإدارة التنفيذي",
+  executiveBoardDesc: "القادة والمهندسون والاستراتيجيون الموجهون لمنظومة صافي العالمية",
+  readFullBio: "قراءة السيرة الذاتية الكاملة",
+  executiveBoardBadge: "مجلس الإدارة",
+  eliteFaculty: "نخبة أعضاء هيئة التدريس",
+  facultyTitle: "المدربون ورؤساء الأقسام",
+  facultyDesc: "تعلم مباشرة من كبار مهندسي البرمجيات والمتداولين المؤسسيين وقادة الصناعة في العالم.",
+  explorePlatform: "استكشف المنصة",
+  corporateGovTitle: "الحوكمة المؤسسية والسجل الرسمي في المملكة المتحدة",
+  corporateGovP1: "أكاديمية صافي هي الذراع التعليمي الرائد لشركة Safi International Capital LTD المسجلة رسمياً في المملكة المتحدة تحت رقم الشركة 17063286.",
+  corporateGovP2: "يقع مقرنا العالمي في قلب لندن التجاري في 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ. ملفاتنا موثقة لدى Companies House برقم تتبع 114-030414.",
+  corporateGovQuote: "«نحن لا نتكيف مع المستقبل فحسب؛ بل نحن من يهندسه.»",
+  corporateGovAuthor: "— مجلس الإدارة التنفيذي لمنظومة صافي",
+  faqSubtitle: "كل ما تحتاج لمعرفته حول أكاديمية صافي ومعاييرنا والشهادات والعمليات التشغيلية.",
+  footerCtaDesc: "انضم إلى آلاف الطلاب الطموحين حول العالم الذين يكتسبون مهارات متقدمة ويحصلون على شهادات معتمدة في منظومة صافي.",
+  enrollAsStudent: "التسجيل كطالب في الأكاديمية",
+  applyAsInstructor: "التقديم كمحاضر في الأكاديمية",
+
   ...en,
   manifestoBadge: "ميثاق ومنهاج أكاديمية صافي",
   manifestoTitle: "لماذا أسسنا أكاديمية صافي:",
@@ -173,6 +293,30 @@ const ar: AboutTranslation = {
 };
 
 const ur: AboutTranslation = {
+  heroLine1: "مستقبل کی تعمیر: ",
+  heroLine2: "عالمی تعلیم اور مہارت۔",
+  heroDesc: "صافی اکیڈمی صافی ایکو سسٹم کے اندر ایک صف اول کا بین الاقوامی ادارہ ہے۔ لندن میں اپنے ہیڈ کوارٹر کے ساتھ، ہم مارکیٹ کی عملی مہارت اور جدید تعلیمی ٹیکنالوجی کے درمیان فاصلوں کو ختم کرتے ہیں تاکہ دنیا بھر کے طلباء مالی اور تکنیکی خود مختاری حاصل کر سکیں۔",
+  fullCertIncluded: "باقاعدہ سند شامل ہے",
+  institutionalStandard: "ادارہ جاتی معیار",
+  leadershipBadge: "قیادت اور گورننس",
+  executiveBoardTitle: "ایگزیکٹو بورڈ",
+  executiveBoardDesc: "صافی ایکو سسٹم کی رہنمائی کرنے والے رہنما، انجینئرز اور ماہرین حکمت عملی",
+  readFullBio: "مکمل سوانح عمری پڑھیں",
+  executiveBoardBadge: "ایگزیکٹو بورڈ",
+  eliteFaculty: "ممتاز فیکلٹی ممبران",
+  facultyTitle: "اساتذہ اور شعبہ جات کے سربراہان",
+  facultyDesc: "سینئر سافٹ ویئر آرکیٹیکٹس، پیشہ ور ادارہ جاتی ٹریڈرز، اور صنعتی رہنماؤں سے براہ راست سیکھیں۔",
+  explorePlatform: "پلیٹ فارم دیکھیں",
+  corporateGovTitle: "کارپوریٹ گورننس اور برطانیہ میں باضابطہ رجسٹریشن",
+  corporateGovP1: "صافی اکیڈمی Safi International Capital LTD کا تعلیمی پرچم بردار ادارہ ہے، جو برطانیہ میں کمپنی نمبر 17063286 کے تحت باضابطہ طور پر رجسٹرڈ ہے۔",
+  corporateGovP2: "ہمارا ہیڈ کوارٹر لندن کے تجارتی مرکز 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ میں واقع ہے۔ ہماری رجسٹریشن برطانوی کمپنیز ہاؤس (ٹریکر ID: 114-030414) پر مکمل طور پر تصدیق شدہ ہے۔",
+  corporateGovQuote: "«ہم صرف مستقبل کے مطابق خود کو نہیں ڈھالتے، بلکہ ہم مستقبل کی تعمیر کرتے ہیں۔»",
+  corporateGovAuthor: "— صافی ایگزیکٹو بورڈ",
+  faqSubtitle: "صافی اکیڈمی، ہمارے معیارات، اسناد اور سرگرمیوں کے بارے میں وہ سب کچھ جو آپ جاننا چاہتے ہیں۔",
+  footerCtaDesc: "دنیا بھر کے ہزاروں پرعزم طلباء میں شامل ہوں جو اعلیٰ مہارتیں حاصل کر رہے ہیں اور باضابطہ اسناد کما رہے ہیں۔",
+  enrollAsStudent: "بطور طالب علم داخلہ لیں",
+  applyAsInstructor: "بطور استاد درخواست دیں",
+
   ...fa,
   manifestoBadge: "صافی اکیڈمی کا بنیادی منشور",
   manifestoTitle: "ہم نے صافی اکیڈمی کیوں بنائی:",
@@ -188,6 +332,30 @@ const ur: AboutTranslation = {
 };
 
 const de: AboutTranslation = {
+  heroLine1: "Die Zukunft gestalten: ",
+  heroLine2: "Globale Bildung & Expertise.",
+  heroDesc: "Die Safi Academy ist die führende internationale Institution im Safi-Ökosystem. Mit Hauptsitz in London schlagen wir die Brücke zwischen praktischer Marktkompetenz und modernen Bildungstechnologien, um Zehntausenden Studenten zu finanzieller und technologischer Unabhängigkeit zu verhelfen.",
+  fullCertIncluded: "Offizielles Zertifikat inklusive",
+  institutionalStandard: "Institutioneller Standard",
+  leadershipBadge: "Führung & Governance",
+  executiveBoardTitle: "Der Vorstand",
+  executiveBoardDesc: "Die Visionäre, Ingenieure und Strategen des Safi-Ökosystems",
+  readFullBio: "Vollständige Biografie",
+  executiveBoardBadge: "Vorstand",
+  eliteFaculty: "Elite-Dozententeam",
+  facultyTitle: "Dozenten & Fachbereichsleiter",
+  facultyDesc: "Lernen Sie direkt von führenden Software-Architekten, institutionellen Tradern und Branchenführern.",
+  explorePlatform: "Plattform erkunden",
+  corporateGovTitle: "Unternehmensführung & UK-Unternehmensregister",
+  corporateGovP1: "Die Safi Academy ist das Bildungsflaggschiff der Safi International Capital LTD, die im Vereinigten Königreich unter der Firmennummer 17063286 offiziell eingetragen ist.",
+  corporateGovP2: "Unser weltweiter Hauptsitz befindet sich im Geschäftszentrum von London: 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ. Unsere Unternehmensdaten sind im Companies House (Tracker-ID: 114-030414) einsehbar.",
+  corporateGovQuote: "„Wir passen uns nicht nur der Zukunft an; wir gestalten sie.“",
+  corporateGovAuthor: "— Der Safi-Vorstand",
+  faqSubtitle: "Alles, was Sie über die Safi Academy, unsere Standards, Zertifikate und Abläufe wissen müssen.",
+  footerCtaDesc: "Schließen Sie sich Tausenden von ambitionierten Studenten an, die erstklassige Fähigkeiten erwerben und verifizierbare Zertifikate erlangen.",
+  enrollAsStudent: "Als Student einschreiben",
+  applyAsInstructor: "Als Dozent bewerben",
+
   ...en,
   manifestoBadge: "Das Manifest der Safi Academy",
   manifestoTitle: "Warum wir die Safi Academy gegründet haben:",
@@ -203,6 +371,30 @@ const de: AboutTranslation = {
 };
 
 const fr: AboutTranslation = {
+  heroLine1: "Bâtir l'avenir de ",
+  heroLine2: "l'éducation mondiale.",
+  heroDesc: "Safi Academy est l'institution internationale phare de l'écosystème Safi. Basée à Londres, elle comble le fossé entre la maîtrise pratique du marché et les technologies éducatives modernes, permettant à des dizaines de milliers d'étudiants d'accéder à l'indépendance financière et technologique.",
+  fullCertIncluded: "Certification officielle incluse",
+  institutionalStandard: "Norme institutionnelle",
+  leadershipBadge: "Leadership & Gouvernance",
+  executiveBoardTitle: "Le Conseil d'Administration",
+  executiveBoardDesc: "Les visionnaires, ingénieurs et stratèges qui guident l'écosystème Safi",
+  readFullBio: "Lire la biographie complète",
+  executiveBoardBadge: "Conseil Exécutif",
+  eliteFaculty: "Corps Professoral d'Élite",
+  facultyTitle: "Instructeurs & Responsables de Département",
+  facultyDesc: "Apprenez directement auprès d'architectes logiciels seniors, de traders institutionnels et de leaders de l'industrie.",
+  explorePlatform: "Explorer la plateforme",
+  corporateGovTitle: "Gouvernance d'Entreprise et Registre du Royaume-Uni",
+  corporateGovP1: "Safi Academy est le fleuron éducatif de Safi International Capital LTD, une entité enregistrée au Royaume-Uni sous le numéro 17063286.",
+  corporateGovP2: "Notre siège social est situé à Londres, au 71-75 Shelton Street, Covent Garden, WC2H 9JQ. Nos registres sont consultables auprès de Companies House (ID : 114-030414).",
+  corporateGovQuote: "« Nous ne nous adaptons pas seulement à l'avenir ; nous le bâtissons. »",
+  corporateGovAuthor: "— Le Conseil d'Administration de Safi",
+  faqSubtitle: "Tout ce que vous devez savoir sur Safi Academy, nos normes, certifications et opérations.",
+  footerCtaDesc: "Rejoignez des milliers d'étudiants ambitieux dans le monde qui acquièrent des compétences d'élite et des certifications vérifiables.",
+  enrollAsStudent: "S'inscrire comme étudiant",
+  applyAsInstructor: "Postuler comme instructeur",
+
   ...en,
   manifestoBadge: "Le Manifeste de la Safi Academy",
   manifestoTitle: "Pourquoi nous avons créé Safi Academy :",
@@ -218,6 +410,30 @@ const fr: AboutTranslation = {
 };
 
 const es: AboutTranslation = {
+  heroLine1: "Construyendo el futuro de ",
+  heroLine2: "la educación global.",
+  heroDesc: "Safi Academy es la institución internacional insignia del Ecosistema Safi. Con sede en Londres, unimos el dominio práctico del mercado con tecnología educativa de vanguardia para empoderar a decenas de miles de estudiantes hacia la independencia financiera y tecnológica.",
+  fullCertIncluded: "Certificación oficial incluida",
+  institutionalStandard: "Estándar Institucional",
+  leadershipBadge: "Liderazgo y Gobernanza",
+  executiveBoardTitle: "La Junta Directiva",
+  executiveBoardDesc: "Los visionarios, ingenieros y estrategas que guían el Ecosistema Safi",
+  readFullBio: "Ver biografía completa",
+  executiveBoardBadge: "Junta Directiva",
+  eliteFaculty: "Profesorado de Élite",
+  facultyTitle: "Instructores y Jefes de Departamento",
+  facultyDesc: "Aprende directamente de arquitectos de software senior, operadores institucionales y líderes del sector.",
+  explorePlatform: "Explorar plataforma",
+  corporateGovTitle: "Gobernanza Corporativa y Registro en el Reino Unido",
+  corporateGovP1: "Safi Academy es el buque insignia educativo de Safi International Capital LTD, una entidad financiera registrada oficialmente en el Reino Unido con el número 17063286.",
+  corporateGovP2: "Nuestra sede mundial está ubicada en el corazón de Londres en 71-75 Shelton Street, Covent Garden, WC2H 9JQ. Nuestros registros son verificables en Companies House (ID: 114-030414).",
+  corporateGovQuote: "«No nos adaptamos meramente al futuro; lo arquitectamos.»",
+  corporateGovAuthor: "— La Junta Directiva de Safi",
+  faqSubtitle: "Todo lo que necesitas saber sobre Safi Academy, nuestros estándares, certificaciones y operaciones.",
+  footerCtaDesc: "Únete a miles de estudiantes ambiciosos en todo el mundo que están adquiriendo habilidades de élite y obteniendo certificaciones verificables.",
+  enrollAsStudent: "Inscribirse como Estudiante",
+  applyAsInstructor: "Postularse como Instructor",
+
   ...en,
   manifestoBadge: "El Manifiesto de Safi Academy",
   manifestoTitle: "Por qué fundamos Safi Academy:",
@@ -233,6 +449,30 @@ const es: AboutTranslation = {
 };
 
 const ru: AboutTranslation = {
+  heroLine1: "Создавая будущее ",
+  heroLine2: "глобального образования.",
+  heroDesc: "Safi Academy — ведущее международное учебное заведение в экосистеме Safi. Со штаб-квартирой в Лондоне мы объединяем реальный практический опыт и передовые образовательные технологии, помогая десяткам тысяч студентов по всему миру достигать финансовой и технологической независимости.",
+  fullCertIncluded: "Официальный сертификат включен",
+  institutionalStandard: "Корпоративный стандарт",
+  leadershipBadge: "Руководство и управление",
+  executiveBoardTitle: "Исполнительный совет",
+  executiveBoardDesc: "Лидеры, инженеры и стратеги, руководящие экосистемой Safi",
+  readFullBio: "Читать полную биографию",
+  executiveBoardBadge: "Совет директоров",
+  eliteFaculty: "Элитный преподавательский состав",
+  facultyTitle: "Преподаватели и руководители факультетов",
+  facultyDesc: "Обучайтесь напрямую у ведущих архитекторов ПО, профессиональных трейдеров и лидеров индустрии.",
+  explorePlatform: "Перейти на платформу",
+  corporateGovTitle: "Корпоративное управление и реестр Великобритании",
+  corporateGovP1: "Safi Academy является образовательным флагманом холдинга Safi International Capital LTD, официально зарегистрированного в Соединенном Королевстве под номером компании 17063286.",
+  corporateGovP2: "Наша штаб-квартира расположена в престижном деловом районе Лондона по адресу: 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ. Все документы верифицируемы в Регистрационной палате Великобритании (Companies House ID: 114-030414).",
+  corporateGovQuote: "«Мы не просто адаптируемся к будущему; мы создаем его архитектуру.»",
+  corporateGovAuthor: "— Исполнительный совет Safi",
+  faqSubtitle: "Все, что вам нужно знать о Safi Academy, наших стандартах, сертификации и деятельности.",
+  footerCtaDesc: "Присоединяйтесь к тысячам амбициозных студентов по всему миру, осваивающим элитные навыки и получающим международные сертификаты.",
+  enrollAsStudent: "Поступить в академию",
+  applyAsInstructor: "Стать преподавателем",
+
   ...en,
   manifestoBadge: "Манифест Safi Academy",
   manifestoTitle: "Почему мы создали Safi Academy:",
@@ -248,6 +488,30 @@ const ru: AboutTranslation = {
 };
 
 const tr: AboutTranslation = {
+  heroLine1: "Geleceği İnşa Ediyoruz: ",
+  heroLine2: "Küresel Eğitim ve Uzmanlık.",
+  heroDesc: "Safi Akademi, Safi Ekosisteminin önde gelen uluslararası eğitim kurumudur. Londra merkezli olarak, gerçek sektör uzmanlığı ile modern eğitim teknolojileri arasındaki köprüyü kuruyor, dünya çapında on binlerce öğrencinin finansal ve teknolojik bağımsızlığa ulaşmasını sağlıyoruz.",
+  fullCertIncluded: "Resmi Sertifika Dahil",
+  institutionalStandard: "Kurumsal Standart",
+  leadershipBadge: "Liderlik ve Yönetişim",
+  executiveBoardTitle: "İcra Kurulu",
+  executiveBoardDesc: "Safi Ekosistemine Yön Veren Vizyonerler, Mühendisler ve Stratejistler",
+  readFullBio: "Biyografiyi İncele",
+  executiveBoardBadge: "İcra Kurulu",
+  eliteFaculty: "Seçkin Eğitmen Kadrosu",
+  facultyTitle: "Eğitmenler ve Bölüm Başkanları",
+  facultyDesc: "Kıdemli yazılım mimarlarından, profesyonel kurumsal yatırımcılardan ve sektör liderlerinden doğrudan öğrenin.",
+  explorePlatform: "Platformu İncele",
+  corporateGovTitle: "Kurumsal Yönetişim ve Birleşik Krallık Sicili",
+  corporateGovP1: "Safi Akademi, Birleşik Krallık'ta 17063286 şirket numarasıyla resmi olarak kayıtlı Safi International Capital LTD'nin amiral gemisi eğitim kurumudur.",
+  corporateGovP2: "Küresel genel merkezimiz, Londra'nın prestijli ticaret merkezinde 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ adresinde yer almaktadır. Şirket kayıtlarımız Companies House (Takip No: 114-030414) üzerinden doğrulanabilir.",
+  corporateGovQuote: "\"Geleceğe yalnızca uyum sağlamıyoruz; onu bizzat inşa ediyoruz.\"",
+  corporateGovAuthor: "— Safi İcra Kurulu",
+  faqSubtitle: "Safi Akademi, standartlarımız, sertifikalarımız ve operasyonlarımız hakkında bilmeniz gereken her şey.",
+  footerCtaDesc: "Üst düzey beceriler edinen, doğrulanabilir sertifikalar kazanan ve Safi Ekosisteminde yükselen binlerce öğrenciye katılın.",
+  enrollAsStudent: "Öğrenci Olarak Kaydol",
+  applyAsInstructor: "Eğitmen Olarak Başvur",
+
   ...en,
   manifestoBadge: "Safi Akademi Manifestosu",
   manifestoTitle: "Safi Akademi'yi Neden Kurduk:",
@@ -263,6 +527,30 @@ const tr: AboutTranslation = {
 };
 
 const zh: AboutTranslation = {
+  heroLine1: "重塑全球数字未来：",
+  heroLine2: "全球精英教育与专业实战技能。",
+  heroDesc: "萨菲学院是萨菲全球数字生态系统旗下的旗舰国际教育与科技实训机构。总部设立于英国伦敦，我们致力于将顶级工业界实战真知与前沿数字教学基建融为一体，赋能全球数万名青年学者实现卓越的技术实力与财务独立。",
+  fullCertIncluded: "包含官方数字防伪认证证书",
+  institutionalStandard: "国际企业级质量认证标准",
+  leadershipBadge: "高管团队与企业治理",
+  executiveBoardTitle: "最高执行董事会",
+  executiveBoardDesc: "统领萨菲全球数字生态版图的前瞻领袖、系统架构师与跨国战略决策团队",
+  readFullBio: "查阅完整履历与生平",
+  executiveBoardBadge: "董事会核心成员",
+  eliteFaculty: "全球顶级师资阵容",
+  facultyTitle: "核心导师与教研系主任",
+  facultyDesc: "直接师从资深软件系统架构师、华尔街与伦敦机构级交易员及行业独角兽领航者。",
+  explorePlatform: "访问与体验平台",
+  corporateGovTitle: "跨国企业法律治理与英国皇家商业注册登记",
+  corporateGovP1: "萨菲学院系英国跨国金融母公司Safi International Capital LTD全资控股的旗舰教育实体，依法于英国公司注册署注册，官方注册公司编号：17063286。",
+  corporateGovP2: "我们的全球总部设立于英国伦敦科文特花园核心商业区：71-75 Shelton Street, Covent Garden, London, WC2H 9JQ。所有公司法定文件均可在英国公司署（Companies House 追踪凭证号：114-030414）查证核实。",
+  corporateGovQuote: "“我们绝不仅是顺应未来的潮流，我们是未来数字秩序的架构者。”",
+  corporateGovAuthor: "— 萨菲全球最高执行董事会",
+  faqSubtitle: "关于萨菲学院的学术标准、课程交付、防伪认证与全流程保障的一切常见疑问。",
+  footerCtaDesc: "立即加入全球数万名胸怀远大的青年学者行列，掌握世界级前沿硬核实战技能，斩获国际防伪权威认证。",
+  enrollAsStudent: "立即注册并成为学员",
+  applyAsInstructor: "申请成为特聘导师",
+
   ...en,
   manifestoBadge: "萨菲学院核心宣言",
   manifestoTitle: "我们创立萨菲学院的初衷：",
@@ -278,6 +566,30 @@ const zh: AboutTranslation = {
 };
 
 const hi: AboutTranslation = {
+  heroLine1: "भविष्य का निर्माण: ",
+  heroLine2: "वैश्विक शिक्षा और विशेषज्ञता।",
+  heroDesc: "सफ़ी अकादमी सफ़ी इकोसिस्टम के भीतर प्रमुख अंतरराष्ट्रीय संस्थान है। लंदन में मुख्यालय के साथ, हम वास्तविक उद्योग विशेषज्ञता और आधुनिक शैक्षिक प्रौद्योगिकी के बीच की खाई को पाटते हैं, जिससे दुनिया भर के हजारों छात्र वित्तीय और तकनीकी स्वतंत्रता प्राप्त कर सकें।",
+  fullCertIncluded: "आधिकारिक प्रमाणन शामिल",
+  institutionalStandard: "संस्थागत मानक",
+  leadershipBadge: "नेतृत्व और शासन",
+  executiveBoardTitle: "कार्यकारी बोर्ड",
+  executiveBoardDesc: "सफ़ी इकोसिस्टम का मार्गदर्शन करने वाले दूरदर्शी, इंजीनियर और रणनीतिकार",
+  readFullBio: "पूरी जीवनी पढ़ें",
+  executiveBoardBadge: "कार्यकारी बोर्ड",
+  eliteFaculty: "प्रतिष्ठित संकाय",
+  facultyTitle: "प्रशिक्षक और विभाग प्रमुख",
+  facultyDesc: "वरिष्ठ सॉफ्टवेयर आर्किटेक्ट, पेशेवर संस्थागत व्यापारियों और उद्योग के नेताओं से सीधे सीखें।",
+  explorePlatform: "प्लेटफ़ॉर्म देखें",
+  corporateGovTitle: "कॉर्पोरेट प्रशासन और यूके आधिकारिक रजिस्ट्री",
+  corporateGovP1: "सफ़ी अकादमी सफ़ी इंटरनेशनल कैपिटल लिमिटेड का प्रमुख शैक्षणिक संस्थान है, जो यूनाइटेड किंगडम में कंपनी नंबर 17063286 के तहत पंजीकृत है।",
+  corporateGovP2: "हमारा मुख्यालय लंदन के व्यापारिक केंद्र 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ में स्थित है। हमारा रिकॉर्ड यूके कंपनीज़ हाउस (ट्रैकर आईडी: 114-030414) पर सत्यापित है।",
+  corporateGovQuote: "«हम केवल भविष्य के अनुकूल नहीं होते; हम इसका निर्माण करते हैं।»",
+  corporateGovAuthor: "— सफ़ी कार्यकारी बोर्ड",
+  faqSubtitle: "सफ़ी अकादमी, हमारे मानकों, प्रमाणपत्रों और संचालन के बारे में वह सब कुछ जो आपको जानना चाहिए।",
+  footerCtaDesc: "दुनिया भर के हजारों महत्वाकांक्षी छात्रों से जुड़ें जो शीर्ष कौशल प्राप्त कर रहे हैं और सत्यापित प्रमाण पत्र अर्जित कर रहे हैं।",
+  enrollAsStudent: "छात्र के रूप में नामांकन करें",
+  applyAsInstructor: "प्रशिक्षक के रूप में आवेदन करें",
+
   ...en,
   manifestoBadge: "साफ़ी अकादमी का घोषणापत्र",
   manifestoTitle: "हमने साफ़ी अकादमी क्यों बनाई:",
@@ -293,6 +605,30 @@ const hi: AboutTranslation = {
 };
 
 const it: AboutTranslation = {
+  heroLine1: "Progettare il futuro di ",
+  heroLine2: "l'istruzione globale.",
+  heroDesc: "Safi Academy è la principale istituzione internazionale all'interno dell'ecosistema Safi. Con sede a Londra, uniamo la maestria pratica sul mercato con le moderne tecnologie educative, consentendo a decine di migliaia di studenti di raggiungere l'indipendenza finanziaria e tecnologica.",
+  fullCertIncluded: "Certificazione ufficiale inclusa",
+  institutionalStandard: "Standard Istituzionale",
+  leadershipBadge: "Leadership e Governance",
+  executiveBoardTitle: "Il Consiglio Direttivo",
+  executiveBoardDesc: "I visionari, ingegneri e strateghi che guidano l'ecosistema Safi",
+  readFullBio: "Leggi biografia completa",
+  executiveBoardBadge: "Consiglio Direttivo",
+  eliteFaculty: "Corpo Docenti d'Élite",
+  facultyTitle: "Docenti e Responsabili di Dipartimento",
+  facultyDesc: "Impara direttamente da senior software architect, trader istituzionali professionisti e leader del settore.",
+  explorePlatform: "Esplora piattaforma",
+  corporateGovTitle: "Governance Aziendale e Registro del Regno Unito",
+  corporateGovP1: "Safi Academy è il fiore all'occhiello educativo di Safi International Capital LTD, entità registrata nel Regno Unito con il numero di società 17063286.",
+  corporateGovP2: "La nostra sede globale si trova nel cuore di Londra al 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ. La registrazione è verificabile presso Companies House (ID: 114-030414).",
+  corporateGovQuote: "«Non ci limitiamo ad adattarci al futuro; lo progettiamo.»",
+  corporateGovAuthor: "— Il Consiglio Direttivo Safi",
+  faqSubtitle: "Tutto quello che c'è da sapere su Safi Academy, i nostri standard, certificazioni e operazioni.",
+  footerCtaDesc: "Unisciti a migliaia di studenti ambiziosi in tutto il mondo che acquisiscono competenze d'élite e ottengono certificazioni verificabili.",
+  enrollAsStudent: "Iscriviti come Studente",
+  applyAsInstructor: "Candidati come Docente",
+
   ...en,
   manifestoBadge: "Il Manifesto di Safi Academy",
   manifestoTitle: "Perché abbiamo fondato Safi Academy:",
@@ -308,6 +644,30 @@ const it: AboutTranslation = {
 };
 
 const pt: AboutTranslation = {
+  heroLine1: "Construindo o futuro da ",
+  heroLine2: "educação global.",
+  heroDesc: "A Safi Academy é a principal instituição internacional dentro do Ecossistema Safi. Com sede em Londres, unimos o domínio prático do mercado com tecnologias educacionais de ponta para capacitar dezenas de milhares de estudantes rumo à independência financeira e tecnológica.",
+  fullCertIncluded: "Certificação oficial incluída",
+  institutionalStandard: "Padrão Institucional",
+  leadershipBadge: "Liderança e Governança",
+  executiveBoardTitle: "O Conselho de Administração",
+  executiveBoardDesc: "Os visionários, engenheiros e estrategistas que guiam o Ecossistema Safi",
+  readFullBio: "Ver biografia completa",
+  executiveBoardBadge: "Diretoria Executiva",
+  eliteFaculty: "Corpo Docente de Elite",
+  facultyTitle: "Instrutores e Chefes de Departamento",
+  facultyDesc: "Aprenda diretamente com arquitetos de software seniores, traders institucionais e líderes da indústria.",
+  explorePlatform: "Explorar plataforma",
+  corporateGovTitle: "Governança Corporativa e Registo no Reino Unido",
+  corporateGovP1: "A Safi Academy é a principal instituição educacional da Safi International Capital LTD, registada no Reino Unido sob o número de empresa 17063286.",
+  corporateGovP2: "A nossa sede global está localizada em Londres em 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ. Registos verificáveis na Companies House (ID: 114-030414).",
+  corporateGovQuote: "«Não nos limitamos a adaptar-nos ao futuro; nós projetamo-lo.»",
+  corporateGovAuthor: "— O Conselho de Administração da Safi",
+  faqSubtitle: "Tudo o que precisa de saber sobre a Safi Academy, os nossos padrões, certificações e operações.",
+  footerCtaDesc: "Junte-se a milhares de estudantes ambiciosos em todo o mundo que estão a adquirir competências de elite e a obter certificações verificáveis.",
+  enrollAsStudent: "Inscrever-se como Estudante",
+  applyAsInstructor: "Candidatar-se como Instrutor",
+
   ...en,
   manifestoBadge: "O Manifesto da Safi Academy",
   manifestoTitle: "Por que fundamos a Safi Academy:",
@@ -323,6 +683,30 @@ const pt: AboutTranslation = {
 };
 
 const ja: AboutTranslation = {
+  heroLine1: "未来を創造する：",
+  heroLine2: "グローバル教育と高度な専門性。",
+  heroDesc: "サフィ・アカデミーは、サフィ・エコシステムの旗艦となる国際高等教育機関です。英国ロンドンに本部を置き、業界の第一線で培われた実戦的スキルと最新のエドテックを融合させ、世界中の何万人もの受講生が確固たる経済的・技術的自立を確立できるよう支援しています。",
+  fullCertIncluded: "公式修了証明書の発行を含む",
+  institutionalStandard: "国際企業基準・品質規格",
+  leadershipBadge: "エグゼクティブ・ガバナンス",
+  executiveBoardTitle: "最高経営執行評议会",
+  executiveBoardDesc: "サフィ・グローバルエコシステムを率いる先見的リーダー、アーキテクト、国際戦略陣",
+  readFullBio: "詳細プロフィールを閲覧",
+  executiveBoardBadge: "取締役会",
+  eliteFaculty: "精鋭講師陣・アカデミック評議会",
+  facultyTitle: "主任講師・学術部門統括責任者",
+  facultyDesc: "シニアソフトウェアアーキテクト、国際機関投資家トレーダー、業界をリードする起業家から直接学ぶ。",
+  explorePlatform: "プラットフォームを閲覧",
+  corporateGovTitle: "企業統治（コーポレート・ガバナンス）および英国登記情報",
+  corporateGovP1: "サフィ・アカデミーは、英国において会社登録番号17063286として正式認可・登記された持株会社Safi International Capital LTDの旗艦教育機関です。",
+  corporateGovP2: "グローバル本社所在地：英国ロンドン、コヴェント・ガーデン Shelton Street 71-75（WC2H 9JQ）。英国企業登録局（Companies House 追跡番号: 114-030414）において正式照会が可能です。",
+  corporateGovQuote: "「私たちは未来に適応するだけではありません。自らの手で未来を設計し、創造します。」",
+  corporateGovAuthor: "— サフィ最高経営執行評议会",
+  faqSubtitle: "サフィ・アカデミーのカリキュラム、国際認証規格、運用方針に関するよくあるご質問。",
+  footerCtaDesc: "最先端のスキルを身につけ、国際的証明書を取得してサフィ・エコシステムで飛躍する受講生の輪に加わりましょう。",
+  enrollAsStudent: "受講生として今すぐ登録",
+  applyAsInstructor: "特任講師として応募する",
+
   ...en,
   manifestoBadge: "サフィ・アカデミー設立宣言",
   manifestoTitle: "サフィ・アカデミー設立の理念：",
@@ -338,6 +722,30 @@ const ja: AboutTranslation = {
 };
 
 const ko: AboutTranslation = {
+  heroLine1: "미래를 설계하다: ",
+  heroLine2: "글로벌 교육 및 실무 전문성.",
+  heroDesc: "사피 아카데미는 사피 글로벌 생태계의 플래그십 국제 교육 기관입니다. 영국 런던에 본부를 두고 실전 산업 전문성과 현대적 교육 기술을 결합하여, 전 세계 수만 명의 인재들이 재정적·기술적 자립을 달성할 수 있도록 지원합니다.",
+  fullCertIncluded: "공식 인증 수료증 포함",
+  institutionalStandard: "글로벌 기관 표준 규격",
+  leadershipBadge: "최고경영진 리더십 및 거버넌스",
+  executiveBoardTitle: "최고 집행 이사회",
+  executiveBoardDesc: "사피 글로벌 생태계를 이끄는 비저너리, 소프트웨어 아키텍트 및 전략가들",
+  readFullBio: "상세 프로필 보기",
+  executiveBoardBadge: "이사회 구성원",
+  eliteFaculty: "엘리트 교수진 및 학부장",
+  facultyTitle: "전임 교수진 및 학과 총괄",
+  facultyDesc: "수석 소프트웨어 아키텍트, 글로벌 기관 트레이더, 업계 최고 리더들로부터 직접 배우는 실전 지식.",
+  explorePlatform: "플랫폼 둘러보기",
+  corporateGovTitle: "기업 거버넌스 및 영국 상무부 공식 등록 현황",
+  corporateGovP1: "사피 아카데미는 영국 상무부에 정식 등록된(법인 번호: 17063286) 지주회사 Safi International Capital LTD의 공식 대표 교육 기관입니다.",
+  corporateGovP2: "글로벌 본사는 런던 코번트 가든의 중심지인 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ에 위치하고 있습니다. 영국 상무부(Companies House 추적 ID: 114-030414)에서 공식 조회가 가능합니다.",
+  corporateGovQuote: "\"우리는 미래에 단순히 순응하지 않습니다. 우리가 직접 미래를 설계하고 건축합니다.\"",
+  corporateGovAuthor: "— 사피 최고 집행 이사회",
+  faqSubtitle: "사피 아카데미의 교육 표준, 인증 수료증 및 글로벌 운영 방식에 대한 모든 안내.",
+  footerCtaDesc: "전 세계 수만 명의 야심 찬 인재들과 함께 최상위 실무 기술을 습득하고 검증 가능한 국제 인증을 획득하세요.",
+  enrollAsStudent: "수강생으로 등록하기",
+  applyAsInstructor: "교수진으로 지원하기",
+
   ...en,
   manifestoBadge: "사피 아카데미 선언문",
   manifestoTitle: "사피 아카데미를 설립한 이유:",
@@ -353,6 +761,30 @@ const ko: AboutTranslation = {
 };
 
 const nl: AboutTranslation = {
+  heroLine1: "De toekomst vormgeven: ",
+  heroLine2: "mondiaal onderwijs en expertise.",
+  heroDesc: "Safi Academy is het toonaangevende internationale instituut binnen het Safi-ecosysteem. Met het hoofdkantoor in Londen overbruggen we de kloof tussen praktische marktexpertise en moderne educatieve technologieën, waardoor tienduizenden studenten wereldwijd financiële en technologische onafhankelijkheid bereiken.",
+  fullCertIncluded: "Inclusief officieel certificaat",
+  institutionalStandard: "Institutionele Standaard",
+  leadershipBadge: "Leiderschap & Bestuur",
+  executiveBoardTitle: "De Raad van Bestuur",
+  executiveBoardDesc: "De visionairs, ingenieurs en strategen die het Safi-ecosysteem leiden",
+  readFullBio: "Lees volledige biografie",
+  executiveBoardBadge: "Bestuursraad",
+  eliteFaculty: "Elite Faculteit",
+  facultyTitle: "Instructeurs & Afdelingshoofden",
+  facultyDesc: "Leer rechtstreeks van senior software-architecten, professionele institutionele handelaren en leiders uit de industrie.",
+  explorePlatform: "Verken platform",
+  corporateGovTitle: "Corporate Governance & Brits Handelsregister",
+  corporateGovP1: "Safi Academy is het educatieve vlaggenschip van Safi International Capital LTD, officieel geregistreerd in het Verenigd Koninkrijk onder bedrijfsnummer 17063286.",
+  corporateGovP2: "Ons wereldwijde hoofdkantoor is gevestigd in Londen: 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ. Volledig verifieerbaar bij Companies House (Tracker-ID: 114-030414).",
+  corporateGovQuote: "„We passen ons niet simpelweg aan de toekomst aan; we ontwerpen haar.”",
+  corporateGovAuthor: "— De Safi Raad van Bestuur",
+  faqSubtitle: "Alles wat u moet weten over Safi Academy, onze normen, certificeringen en bedrijfsvoering.",
+  footerCtaDesc: "Sluit je aan bij duizenden ambitieuze studenten wereldwijd die elitevaardigheden verwerven en verifieerbare certificaten behalen.",
+  enrollAsStudent: "Inschrijven als student",
+  applyAsInstructor: "Aanmelden als instructeur",
+
   ...en,
   manifestoBadge: "Het Manifest van Safi Academy",
   manifestoTitle: "Waarom we Safi Academy hebben opgericht:",
@@ -368,6 +800,30 @@ const nl: AboutTranslation = {
 };
 
 const uz: AboutTranslation = {
+  heroLine1: "Kelajakni barpo etish: ",
+  heroLine2: "Global ta'lim va kasbiy mahorat.",
+  heroDesc: "Safi Academy — Safi ekotizimidagi yetakchi xalqaro ta'lim muassasasidir. Londondagi bosh qarorgohi orqali biz real bozor tajribasi va zamonaviy ta'lim texnologiyalari o'rtasidagi ko'prikni o'rnatib, o'n minglab talabalarga moliyaviy va texnologik mustaqillikka erishish imkonini beramiz.",
+  fullCertIncluded: "Rasmiy sertifikat kiritilgan",
+  institutionalStandard: "Korporativ standart",
+  leadershipBadge: "Yetakchilik va korporativ boshqaruv",
+  executiveBoardTitle: "Ijroiya kengashi",
+  executiveBoardDesc: "Safi ekotizimini boshqarayotgan yetakchilar, muhandislar va strateglar",
+  readFullBio: "To'liq biografiyani o'qish",
+  executiveBoardBadge: "Boshqaruv kengashi",
+  eliteFaculty: "Elita o'qituvchilar tarkibi",
+  facultyTitle: "O'qituvchilar va kafedra mudirlari",
+  facultyDesc: "Katta dasturiy ta'minot arxitektorlari, professional treyderlar va soha yetakchilaridan bevosita ta'lim oling.",
+  explorePlatform: "Platformani ko'rish",
+  corporateGovTitle: "Korporativ boshqaruv va Buyuk Britaniya rasmiy reestri",
+  corporateGovP1: "Safi Academy — Buyuk Britaniyada 17063286 kompaniya raqami ostida rasman ro'yxatdan o'tgan Safi International Capital LTD xoldingining yetakchi ta'lim muassasasidir.",
+  corporateGovP2: "Bizning xalqaro bosh qarorgohimiz London markazidagi 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ manzilida joylashgan. Barcha hujjatlar Companies House (ID: 114-030414) orqali tasdiqlangan.",
+  corporateGovQuote: "«Biz shunchaki kelajakka moslashmaymiz; biz uni o'z qo'limiz bilan quramiz.»",
+  corporateGovAuthor: "— Safi Ijroiya Kengashi",
+  faqSubtitle: "Safi Academy, standartlarimiz, sertifikatlarimiz va faoliyatimiz haqida bilishingiz kerak bo'lgan barcha ma'lumotlar.",
+  footerCtaDesc: "Yuqori malakali ko'nikmalarni egallayotgan va xalqaro sertifikatlarga ega bo'layotgan minglab talabalarga qo'shiling.",
+  enrollAsStudent: "Talaba sifatida ro'yxatdan o'tish",
+  applyAsInstructor: "O'qituvchi sifatida ariza topshirish",
+
   ...fa,
   manifestoBadge: "Safi Academy bosh manifesti",
   manifestoTitle: "Nega Safi Akademiyasini yaratdik:",
@@ -383,6 +839,30 @@ const uz: AboutTranslation = {
 };
 
 const id: AboutTranslation = {
+  heroLine1: "Merancang Masa Depan ",
+  heroLine2: "Pendidikan Global.",
+  heroDesc: "Safi Academy adalah institusi internasional terkemuka di dalam Ekosistem Safi. Berkantor pusat di London, kami menjembatani penguasaan industri nyata dengan teknologi pendidikan modern, memberdayakan puluhan ribu siswa di seluruh dunia untuk mencapai kemandirian finansial dan teknologi.",
+  fullCertIncluded: "Sertifikasi Resmi Termasuk",
+  institutionalStandard: "Standar Institusional",
+  leadershipBadge: "Kepemimpinan & Tata Kelola",
+  executiveBoardTitle: "Dewan Eksekutif",
+  executiveBoardDesc: "Para Visioner, Insinyur, dan Ahli Strategi yang Memandu Ekosistem Safi",
+  readFullBio: "Baca Profil Lengkap",
+  executiveBoardBadge: "Dewan Eksekutif",
+  eliteFaculty: "Fakultas Elit",
+  facultyTitle: "Instruktur & Kepala Departemen",
+  facultyDesc: "Belajar langsung dari arsitek perangkat lunak senior, trader institusional profesional, dan pemimpin industri.",
+  explorePlatform: "Jelajahi Platform",
+  corporateGovTitle: "Tata Kelola Perusahaan & Registri Resmi Inggris Raya",
+  corporateGovP1: "Safi Academy adalah institusi pendidikan unggulan dari Safi International Capital LTD, entitas korporat yang terdaftar resmi di Inggris Raya dengan Nomor Perusahaan 17063286.",
+  corporateGovP2: "Kantor pusat global kami berlokasi di 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ. Pendaftaran kami dapat diverifikasi sepenuhnya di Companies House Inggris (ID Pelacak: 114-030414).",
+  corporateGovQuote: "«Kami tidak hanya beradaptasi dengan masa depan; kami merancangnya.»",
+  corporateGovAuthor: "— Dewan Eksekutif Safi",
+  faqSubtitle: "Semua hal yang perlu Anda ketahui tentang Safi Academy, standar, sertifikasi, dan operasional kami.",
+  footerCtaDesc: "Bergabunglah dengan ribuan siswa ambisius di seluruh dunia yang memperoleh keahlian elit dan sertifikasi terverifikasi.",
+  enrollAsStudent: "Daftar sebagai Siswa",
+  applyAsInstructor: "Lamar sebagai Instruktur",
+
   ...en,
   manifestoBadge: "Manifesto Safi Academy",
   manifestoTitle: "Mengapa Kami Membangun Safi Academy:",

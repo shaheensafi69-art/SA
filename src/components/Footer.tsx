@@ -26,6 +26,7 @@ import {
   Lock
 } from "lucide-react";
 import { getDictionary, isRtlLocale } from "@/dictionaries";
+import { getBrandTranslation } from "@/utils/brandTranslations";
 
 
 // ۱. لیست شرکای استراتژیک بین‌المللی با لوگوهای محلی مطمئن
@@ -70,6 +71,7 @@ export default function Footer() {
   const tc = dict.common;
   const tfac = dict.faculties;
   const isRTL = isRtlLocale(currentLocale);
+  const bt = getBrandTranslation(currentLocale);
 
   // Route exclusions
   const hideFooterRoutes = ["/dashboard", "/login", "/register", "/admin", "/teacher"];
@@ -192,7 +194,7 @@ export default function Footer() {
                 <div className="relative rounded-3xl overflow-hidden border border-white/15 bg-neutral-900 shadow-2xl">
                   <img
                     src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop"
-                    alt="Safi Academy global scholar community"
+                    alt={`${bt.brandName} global scholar community`}
                     className="w-full h-64 object-cover filter saturate-110 group-hover/img:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#07070d] via-transparent to-transparent opacity-90" />
@@ -252,7 +254,7 @@ export default function Footer() {
             <div className="absolute inset-0 bg-yellow-500/25 blur-[50px] rounded-full group-hover:bg-yellow-500/40 group-hover:blur-[70px] transition-all duration-700 pointer-events-none" />
             <img
               src="/logo-without-b.png"
-              alt="Safi Academy Crest"
+              alt={`${bt.brandName} Crest`}
               className="relative z-10 w-28 h-28 md:w-36 md:h-36 object-contain drop-shadow-[0_0_35px_rgba(234,179,8,0.5)] transform group-hover:scale-110 group-hover:-translate-y-2 transition-transform duration-700"
             />
           </div>
@@ -260,7 +262,7 @@ export default function Footer() {
           {/* Academy Name + AFGHANISTAN FLAG BADGE */}
           <div className="flex items-center justify-center gap-3 flex-wrap mb-4">
             <span className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-2xl">
-              Safi <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500">Academy</span>
+              {bt.brandPrefix} <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500">{bt.brandHighlight}</span>
             </span>
 
             <div 
@@ -312,7 +314,7 @@ export default function Footer() {
               rel="noopener noreferrer" 
               className="text-neutral-400 hover:text-yellow-400 hover:translate-x-1.5 transition-all text-sm font-medium flex items-center justify-between group"
             >
-              <span>SafiPay Banking</span>
+              <span>{bt.ecosystem.safipay}</span>
               <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-yellow-400" />
             </a>
             <a 
@@ -321,7 +323,7 @@ export default function Footer() {
               rel="noopener noreferrer" 
               className="text-neutral-400 hover:text-yellow-400 hover:translate-x-1.5 transition-all text-sm font-medium flex items-center justify-between group"
             >
-              <span>Safi TopUp Global</span>
+              <span>{bt.ecosystem.safitopup}</span>
               <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-yellow-400" />
             </a>
             <a 
@@ -330,18 +332,18 @@ export default function Footer() {
               rel="noopener noreferrer" 
               className="text-neutral-400 hover:text-yellow-400 hover:translate-x-1.5 transition-all text-sm font-medium flex items-center justify-between group"
             >
-              <span>SafiPro Apparel</span>
+              <span>{bt.ecosystem.safipro}</span>
               <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-yellow-400" />
             </a>
             <div className="text-neutral-400 hover:text-yellow-400 hover:translate-x-1.5 transition-all text-sm font-medium flex items-center justify-between cursor-default">
-              <span>Safi Capital LTD</span>
-              <span className="text-[9px] uppercase tracking-wider font-mono text-neutral-500 bg-white/5 px-1.5 py-0.5 rounded">{tf.holding || "Holding"}</span>
+              <span>{bt.ecosystem.saficapital}</span>
+              <span className="text-[9px] uppercase tracking-wider font-mono text-neutral-500 bg-white/5 px-1.5 py-0.5 rounded">{bt.ecosystem.holdingBadge || tf.holding || "Holding"}</span>
             </div>
             <Link 
               href={`/${currentLocale}/about`} 
               className="text-neutral-400 hover:text-yellow-400 hover:translate-x-1.5 transition-all text-sm font-medium"
             >
-              Safi AI Autonomous Labs
+              {bt.ecosystem.safiai}
             </Link>
           </div>
 
@@ -567,7 +569,7 @@ export default function Footer() {
         {/* ================= SECTION 6: COPYRIGHT, LEGAL & SYSTEM TELEMETRY ================= */}
         <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-6 text-neutral-400 text-xs font-medium">
           <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
-            <p>© {currentYear} Safi Academy. {tf.holdingCompany}. {tc.rightsReserved}</p>
+            <p>© {currentYear} {bt.brandName}. {tf.holdingCompany}. {tc.rightsReserved}</p>
             <span className="hidden sm:inline text-neutral-600">•</span>
             <span className="text-neutral-500">{tf.companiesHouse}</span>
           </div>

@@ -212,24 +212,24 @@ export default function ContactPage() {
         {/* Global Key Metrics Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 max-w-4xl mx-auto text-left">
           <div className="p-5 rounded-2xl bg-neutral-900/50 border border-white/5 backdrop-blur-xl">
-            <div className="text-2xl sm:text-3xl font-black text-yellow-400 font-mono mb-1">{isRtl ? "کمتر از ۴ ساعت" : "< 4 Hours"}</div>
+            <div className="text-2xl sm:text-3xl font-black text-yellow-400 font-mono mb-1">{ct.statSlaNumber}</div>
             <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{t.publicPages.averageResponseSla}</div>
-            <div className="text-[11px] text-neutral-500 mt-1">{isRtl ? "پاسخگویی سریع اولویت‌دار" : "Priority dispatch triage"}</div>
+            <div className="text-[11px] text-neutral-500 mt-1">{ct.statSlaLabel}</div>
           </div>
           <div className="p-5 rounded-2xl bg-neutral-900/50 border border-white/5 backdrop-blur-xl">
-            <div className="text-2xl sm:text-3xl font-black text-white font-mono mb-1">{isRtl ? "۱۰۰٪ امن" : "100% Secure"}</div>
-            <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{isRtl ? "حریم خصوصی کامل" : "End-to-End Privacy"}</div>
-            <div className="text-[11px] text-neutral-500 mt-1">{isRtl ? "مطابق با استانداردهای GDPR و DPA بریتانیا" : "GDPR & UK DPA compliant"}</div>
+            <div className="text-2xl sm:text-3xl font-black text-white font-mono mb-1">{ct.statSecureNumber}</div>
+            <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{ct.statSecureLabel}</div>
+            <div className="text-[11px] text-neutral-500 mt-1">{ct.statSecureSub}</div>
           </div>
           <div className="p-5 rounded-2xl bg-neutral-900/50 border border-white/5 backdrop-blur-xl">
-            <div className="text-2xl sm:text-3xl font-black text-amber-400 font-mono mb-1">{isRtl ? "لندن، بریتانیا" : "London, UK"}</div>
+            <div className="text-2xl sm:text-3xl font-black text-amber-400 font-mono mb-1">{ct.statHqNumber}</div>
             <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{t.publicPages.corporateHeadquarters}</div>
-            <div className="text-[11px] text-neutral-500 mt-1">{isRtl ? "شماره ثبت رسمی: 17063286" : "Reg No: 17063286"}</div>
+            <div className="text-[11px] text-neutral-500 mt-1">{ct.statHqSub}</div>
           </div>
           <div className="p-5 rounded-2xl bg-neutral-900/50 border border-white/5 backdrop-blur-xl">
-            <div className="text-2xl sm:text-3xl font-black text-white font-mono mb-1">{isRtl ? "۵ دپارتمان" : "5 Desks"}</div>
-            <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{isRtl ? "ارتباط تخصصی" : "Specialized Routing"}</div>
-            <div className="text-[11px] text-neutral-500 mt-1">{isRtl ? "مشاوران مستقیم هر حوزه" : "Direct domain advisors"}</div>
+            <div className="text-2xl sm:text-3xl font-black text-white font-mono mb-1">{ct.statDesksNumber}</div>
+            <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{ct.statDesksLabel}</div>
+            <div className="text-[11px] text-neutral-500 mt-1">{ct.statDesksSub}</div>
           </div>
         </div>
 
@@ -454,17 +454,17 @@ export default function ContactPage() {
             </div>
             
             <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-              {isRtl ? "ارسال پیام رسمی و محرمانه" : "Transmit an Official Dispatch"}
+              {ct.dispatchCardTitle}
             </h2>
             <p className="text-neutral-400 mt-2 text-sm leading-relaxed">
-              {isRtl ? "مشخصات خود را تکمیل نمایید. پیام شما مستقیماً به ترمینال مرکزی با قابلیت رهگیری لحظه‌ای ارسال می‌گردد." : "Complete the parameters below. Your submission is instantly routed to our central executive terminal with real-time tracking."}
+              {ct.dispatchCardSub}
             </p>
           </div>
 
           {/* Preset Subject Chips */}
           <div className="relative z-10 mb-8 space-y-2">
             <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 font-bold block">
-              {isRtl ? "مسیریابی سریع دپارتمان‌ها (کلیک جهت انتخاب خودکار):" : "Quick Routing Presets (Click to Auto-fill Subject):"}
+              {ct.quickRoutingLabel}
             </label>
             <div className="flex flex-wrap gap-2">
               {subjectPresets.map((preset, idx) => (
@@ -497,7 +497,7 @@ export default function ContactPage() {
                   required 
                   type="text" 
                   name="name" 
-                  placeholder={isRtl ? "مثال: احمد رضایی" : "e.g. Alexander Wright"}
+                  placeholder={ct.namePlaceholder}
                   className="w-full bg-black/60 border border-white/15 rounded-2xl px-5 py-4 text-white placeholder-neutral-500 text-sm font-medium focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400/50 shadow-inner transition-all"
                 />
               </div>
@@ -522,7 +522,7 @@ export default function ContactPage() {
                 <span>{ct.subjectLabel} <span className="text-yellow-500">*</span></span>
                 {selectedSubject && (
                   <span className="text-[10px] text-yellow-400 font-mono font-normal">
-                    {isRtl ? "پیش‌فرض انتخاب شد" : "Preset Selected"}
+                    {ct.presetSelected}
                   </span>
                 )}
               </label>
@@ -532,7 +532,7 @@ export default function ContactPage() {
                 name="subject" 
                 value={selectedSubject}
                 onChange={(e) => setSelectedSubject(e.target.value)}
-                placeholder={isRtl ? "مثال: درخواست بورسیه، استعلام پروژه سازمانی..." : "e.g. Scholarship Application Tier-1, Web3 Platform Scoping..."}
+                placeholder={ct.subjectPlaceholder}
                 className="w-full bg-black/60 border border-white/15 rounded-2xl px-5 py-4 text-white placeholder-neutral-500 text-sm font-medium focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400/50 shadow-inner transition-all"
               />
             </div>
@@ -552,7 +552,7 @@ export default function ContactPage() {
                 name="message" 
                 rows={6} 
                 onChange={(e) => setMessageLength(e.target.value.length)}
-                placeholder={isRtl ? "جزئیات درخواست، مدارک یا پیشنهادات خود را کامل بنویسید..." : "Detail your inquiry, proposed scope, or background credentials with specific goals..."}
+                placeholder={ct.messagePlaceholder}
                 className="w-full bg-black/60 border border-white/15 rounded-2xl px-5 py-4 text-white placeholder-neutral-500 text-sm font-normal focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400/50 shadow-inner transition-all resize-y min-h-[140px]"
               ></textarea>
             </div>
@@ -643,13 +643,13 @@ export default function ContactPage() {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-mono font-bold uppercase mb-4">
             <Sparkles size={14} />
-            {isRtl ? "مسیریابی دقیق دپارتمان‌ها" : "Precision Department Routing"}
+            {ct.routingSectionBadge}
           </div>
           <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-            {isRtl ? "نحوه بررسی و دسته‌بندی پیام شما" : "How Your Dispatch is Triaged"}
+            {ct.routingSectionTitle}
           </h2>
           <p className="text-neutral-400 mt-4 text-base leading-relaxed">
-            {isRtl ? "ما از صف‌های تیکت عمومی استفاده نمی‌کنیم. هر پیام ورودی مستقیماً توسط مدیر ارشد دپارتمان مربوطه بررسی می‌شود." : "We don't use generic, unmonitored ticket queues. Every incoming inquiry is classified and handed to the respective senior department lead."}
+            {ct.routingSectionSub}
           </p>
         </div>
 
@@ -702,13 +702,13 @@ export default function ContactPage() {
       <div className="mb-28 relative z-10 bg-[#080813]/90 rounded-[2.5rem] border border-white/10 p-8 sm:p-12 lg:p-16 backdrop-blur-2xl shadow-2xl">
         <div className="max-w-3xl mb-12">
           <span className="text-xs font-mono font-bold text-yellow-400 uppercase tracking-widest block mb-2">
-            {isRtl ? "تعهد سازمانی و شفافیت" : "Institutional Accountability"}
+            {ct.slaSectionBadge}
           </span>
           <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-            {isRtl ? "ماتریس سطح تعهد خدمات (SLA)" : "Service Level Agreement (SLA) Matrix"}
+            {ct.slaSectionTitle}
           </h2>
           <p className="text-neutral-400 mt-2 text-sm sm:text-base leading-relaxed">
-            {isRtl ? "ما استانداردهای دقیقی برای زمان پاسخگویی داریم تا هیچ درخواستی بی‌پاسخ نماند. در زیر زمان‌بندی پاسخگویی در هر کانال آمده است." : "We maintain strict response benchmarks so you are never left waiting. Below are our contractual and operational response targets across every channel."}
+            {ct.slaSectionSub}
           </p>
         </div>
 
@@ -751,13 +751,13 @@ export default function ContactPage() {
       <div className="mb-28 relative z-10 max-w-4xl mx-auto">
         <div className="text-center mb-14">
           <span className="text-xs font-mono font-bold text-yellow-400 uppercase tracking-widest block mb-2">
-            {isRtl ? "شفاف‌سازی سوالات" : "Inquiry Clarifications"}
+            {ct.faqSectionBadge}
           </span>
           <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-            {isRtl ? "پاسخ به سوالات متداول" : "Frequently Asked Questions"}
+            {ct.faqSectionTitle}
           </h2>
           <p className="text-neutral-400 mt-3 text-sm sm:text-base">
-            {isRtl ? "دستورالعمل‌های ضروری در خصوص جلسات، استعلام سازمانی و پروتکل‌های ارتباطی." : "Essential guidelines regarding meeting schedules, corporate verification, and dispatch protocols."}
+            {ct.faqSectionSub}
           </p>
         </div>
 
@@ -808,13 +808,13 @@ export default function ContactPage() {
         <div className="relative z-10 max-w-3xl mx-auto space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-mono font-bold uppercase">
             <Zap size={14} />
-            {isRtl ? "پورتال‌های مستقیم و خودکار" : "Alternative Self-Serve Portals"}
+            {ct.selfServeBadge}
           </div>
           <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-            {isRtl ? "دسترسی مستقیم و فوری بدون انتظار" : "Prefer Immediate Self-Service?"}
+            {ct.selfServeTitle}
           </h2>
           <p className="text-neutral-300 text-sm sm:text-base leading-relaxed">
-            {isRtl ? "اگر به دنبال ثبت‌نام در دوره‌ها، درخواست بورسیه یا مشاهده نمونه کارها هستید، نیازی به انتظار برای پاسخ ندارید:" : "You don't have to wait for a dispatch reply if you are seeking course details, full-ride scholarships, or agency portfolios. Explore our live self-serve directories right now:"}
+            {ct.selfServeSub}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
@@ -823,28 +823,28 @@ export default function ContactPage() {
               className="px-6 py-3.5 rounded-xl bg-yellow-500 text-black font-black text-xs uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-lg flex items-center gap-2"
             >
               <GraduationCap size={16} />
-              {isRtl ? "مشاهده تمام دوره‌ها" : "Explore All Courses"}
+              {ct.selfServeCourses}
             </Link>
             <Link
               href={`/${currentLocale}/scholarships`}
               className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-wider transition-all border border-white/10 flex items-center gap-2"
             >
               <FileText size={16} />
-              {isRtl ? "درخواست بورسیه تحصیلی" : "Apply for Scholarships"}
+              {ct.selfServeScholarships}
             </Link>
             <Link
               href={`/${currentLocale}/development-services`}
               className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-wider transition-all border border-white/10 flex items-center gap-2"
             >
               <Laptop size={16} />
-              {isRtl ? "خدمات مهندسی نرم‌افزار" : "Software Services"}
+              {ct.selfServeServices}
             </Link>
             <Link
               href={`/${currentLocale}/partners`}
               className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-wider transition-all border border-white/10 flex items-center gap-2"
             >
               <HeartHandshake size={16} />
-              {isRtl ? "شرکای بین‌المللی" : "Institutional Partners"}
+              {ct.selfServePartners}
             </Link>
           </div>
         </div>

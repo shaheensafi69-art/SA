@@ -33,6 +33,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
+import { getFounderLocaleData } from "@/utils/founderTranslations";
+
 // Custom Social SVG Components
 const GithubIcon = ({ size = 18 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -53,7 +55,8 @@ export default function MobinHassaniExecutiveDossier() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
+  const { dict: fDict, isRtl } = getFounderLocaleData(currentLocale);
+  const mb = fDict.mobinHassani;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -91,6 +94,7 @@ export default function MobinHassaniExecutiveDossier() {
 
   return (
     <div
+      dir={isRtl ? "rtl" : "ltr"}
       className="min-h-screen bg-[#020202] text-white font-sans overflow-x-hidden selection:bg-cyan-500 selection:text-black"
       onMouseMove={handleMouseMove}
     >
@@ -116,11 +120,11 @@ export default function MobinHassaniExecutiveDossier() {
             href={`/${currentLocale}/about`}
             className="flex items-center gap-2 text-neutral-300 hover:text-cyan-400 transition-all font-bold text-xs uppercase tracking-widest bg-white/[0.04] border border-white/10 px-5 py-2.5 rounded-full hover:bg-white/[0.08] hover:border-cyan-500/30 backdrop-blur-xl shadow-lg"
           >
-            <ArrowLeft size={16} /> {isRtl ? "بازگشت به اعضای هیئت مدیره" : "Back to Executive Board"}
+            <ArrowLeft size={16} className={isRtl ? "rotate-180" : ""} /> {mb.backLink}
           </Link>
           <div className="hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono">
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span>ACTIVE CORE ARCHITECT</span>
+            <span>{mb.badgeActive || "ACTIVE CORE ARCHITECT"}</span>
           </div>
         </header>
 
@@ -135,7 +139,7 @@ export default function MobinHassaniExecutiveDossier() {
               <div className="relative h-full w-full rounded-[4rem] overflow-hidden border-2 border-cyan-500/40 p-2 bg-[#050505] shadow-[0_0_60px_rgba(6,182,212,0.25)]">
                 <Image
                   src="/team/mobin.jpeg"
-                  alt="Mobin Hassani"
+                  alt={`${mb.name} - ${mb.role}`}
                   fill
                   className="object-cover rounded-[3.5rem]"
                   priority
@@ -146,24 +150,24 @@ export default function MobinHassaniExecutiveDossier() {
             {/* Floating 3D Chips */}
             <motion.div
               style={{ x: moveX, y: moveY, translateZ: 130 }}
-              className="absolute -left-6 sm:-left-12 bottom-10 z-20"
+              className={`absolute ${isRtl ? '-right-6 sm:-right-12' : '-left-6 sm:-left-12'} bottom-10 z-20`}
             >
               <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#0a0a12]/90 border border-cyan-500/30 backdrop-blur-2xl shadow-2xl">
                 <Terminal size={20} className="text-cyan-400" />
-                <div className="text-left">
-                  <p className="text-[10px] uppercase font-black tracking-wider text-cyan-400">Core Engineering</p>
-                  <p className="text-xs font-bold text-white">Full-Stack Cloud Systems</p>
+                <div className={isRtl ? "text-right" : "text-left"}>
+                  <p className="text-[10px] uppercase font-black tracking-wider text-cyan-400">{mb.badgeCore}</p>
+                  <p className="text-xs font-bold text-white">{mb.badgeCloud}</p>
                 </div>
               </div>
             </motion.div>
 
             <motion.div
               style={{ x: moveY, y: moveX, translateZ: 150 }}
-              className="absolute -right-6 sm:-right-12 top-12 z-20"
+              className={`absolute ${isRtl ? '-left-6 sm:-left-12' : '-right-6 sm:-right-12'} top-12 z-20`}
             >
               <div className="px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-600 text-black font-black tracking-widest text-xs uppercase shadow-[0_10px_35px_rgba(6,182,212,0.4)] flex items-center gap-2">
                 <Flame size={15} />
-                <span>{isRtl ? "لیدر بخش توسعه‌دهندگان" : "Lead Developer"}</span>
+                <span>{mb.badgeLead}</span>
               </div>
             </motion.div>
           </motion.div>
@@ -171,17 +175,15 @@ export default function MobinHassaniExecutiveDossier() {
           {/* Title & Coordinates */}
           <div className="text-center mt-12 px-6 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/25 text-cyan-400 text-xs font-black uppercase tracking-[0.25em] mb-4 shadow-inner">
-              <Sparkles size={13} /> {isRtl ? "تیم رهبری فنی • اکوسیستم نرم‌افزاری صافی" : "Technical Executive • Safi Global Ecosystem"}
+              <Sparkles size={13} /> {mb.office}
             </div>
 
             <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight text-white mb-3">
-              Mobin <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500">Hassani</span>
+              {mb.firstName} <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500">{mb.lastName}</span>
             </h1>
 
             <p className="text-neutral-300 font-semibold tracking-wide text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-              {isRtl
-                ? "لیدر بخش توسعه‌دهندگان و مهندسی نرم‌افزار، معمار سیستم‌های ابری و سرپرست تیم دولوپرهای اکوسیستم صافی."
-                : "Lead Software Engineer, Cloud Systems Architect & Head of the Developer Division across the Safi Ecosystem."}
+              {mb.bio}
             </p>
 
             {/* Social Channels */}
@@ -203,19 +205,20 @@ export default function MobinHassaniExecutiveDossier() {
             {/* Direct Coordinates Strip */}
             <div className="flex justify-center flex-wrap gap-4 sm:gap-8 mt-8 text-neutral-400 text-xs sm:text-sm font-semibold">
               <span className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/5">
-                <MapPin size={15} className="text-cyan-400" /> International Remote & Tech Core
+                <MapPin size={15} className="text-cyan-400" /> {mb.coordinates}
               </span>
               <span className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/5">
-                <User size={15} className="text-cyan-400" /> {isRtl ? "لیدر تیم توسعه‌دهندگان" : "Lead Software Architect"}
+                <User size={15} className="text-cyan-400" /> {mb.role}
               </span>
               <button
                 onClick={copyEmail}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/5 hover:border-cyan-500/40 text-neutral-300 hover:text-white transition-all cursor-pointer"
-                title="Click to copy email address"
+                title={mb.clickCopy}
               >
                 <Mail size={15} className="text-cyan-400" />
                 <span>mobin@safipay.net</span>
                 {copiedEmail ? <Check size={14} className="text-emerald-400" /> : <Copy size={13} className="text-neutral-500" />}
+                {copiedEmail && <span className="text-emerald-400 text-xs ml-1">{mb.copied}</span>}
               </button>
             </div>
           </div>
@@ -229,35 +232,17 @@ export default function MobinHassaniExecutiveDossier() {
             <div className="flex items-center gap-3 mb-8">
               <span className="w-3 h-8 rounded-full bg-gradient-to-b from-cyan-400 to-blue-600" />
               <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-                {isRtl ? "بیانیه و چشم‌انداز لیدر تیم فنی" : "Lead Developer Manifesto & Architecture"}
+                {mb.manifestoTitle}
               </h2>
             </div>
 
-            {isRtl ? (
-              <div className="space-y-6 text-neutral-300 text-base sm:text-lg leading-relaxed text-justify font-normal">
-                <p>
-                  من <strong className="text-white font-bold">مبین حسنی (Mobin Hassani)</strong> هستم؛ مهندس ارشد نرم‌افزار، معمار سیستم‌های ابری توزیع‌شده و لیدر بخش توسعه‌دهندگان (Lead Developer) در اکوسیستم صافی. رسالت من خلق، مهندسی و هدایت زیرساخت‌های نرم‌افزاری مدرنی است که میلیون‌ها تراکنش و تعاملات آموزشی و مالی را با حداکثر سرعت، پایداری و امنیت در مقیاس جهانی مدیریت می‌کنند.
-                </p>
-                <p>
-                  به‌عنوان لیدر تیم توسعه‌دهندگان، نظارت مستقیم بر کل چرخه حیات نرم‌افزارهای اکوسیستم، از معماری فرانت‌اند و بک‌اند، پیاده‌سازی APIهای اختصاصی مالی، سیستم‌های احراز هویت چندلایه تا استقرار سرویس‌های ابری با استانداردهای سخت‌گیرانه بین‌المللی را بر عهده دارم.
-                </p>
-                <div className="bg-cyan-500/10 p-6 sm:p-8 rounded-[2.5rem] italic border-r-8 border-cyan-400 text-cyan-100">
-                  «معماری دقیق نرم‌افزار، کدهای بهینه‌سازی‌شده و امنیت غیرقابل نفوذ، شالوده اصلی اعتماد در فناوری‌های نوین است. ما پلتفرم‌های اکوسیستم صافی را با استانداردهایی مهندسی می‌کنیم که در هر کجای دنیا بدون وقفه و با حداکثر توان کار کند.»
-                </div>
+            <div className="space-y-6 text-neutral-300 text-base sm:text-lg leading-relaxed text-justify font-normal">
+              <p>{mb.manifestoP1}</p>
+              <p>{mb.manifestoP2}</p>
+              <div className={`bg-cyan-500/10 p-6 sm:p-8 rounded-[2.5rem] italic ${isRtl ? 'border-r-8' : 'border-l-8'} border-cyan-400 text-cyan-100`}>
+                {mb.manifestoQuote}
               </div>
-            ) : (
-              <div className="space-y-6 text-neutral-300 text-base sm:text-lg leading-relaxed text-justify font-normal">
-                <p>
-                  I am <strong className="text-white font-bold">Mobin Hassani</strong>, Lead Developer and Head of Software Architecture across the Safi Ecosystem. My mission is to design, engineer, and lead the resilient technical foundations that power our financial applications, global student portals, and distributed microservices with near-zero latency and bank-grade security.
-                </p>
-                <p>
-                  Leading the development ecosystem, I oversee full software lifecycle governance—from reactive frontend experiences and high-throughput backend APIs to cloud orchestration, CI/CD automated deployment pipelines, and proactive vulnerability mitigation.
-                </p>
-                <div className="bg-cyan-500/10 p-6 sm:p-8 rounded-[2.5rem] italic border-l-8 border-cyan-400 text-cyan-100">
-                  “Immaculate software architecture, high-concurrency optimization, and uncompromising security form the core foundation of modern digital trust. We build Safi platforms to perform seamlessly across the globe.”
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         </section>
 
@@ -265,22 +250,20 @@ export default function MobinHassaniExecutiveDossier() {
         <section className="py-20 bg-cyan-500/[0.02]">
           <div className="container mx-auto max-w-6xl px-6">
             <h2 className="text-center text-3xl sm:text-4xl font-black mb-16 italic tracking-tight">
-              {isRtl ? "تخصص‌های کلیدی و پشته فنی" : "Core Technical Stack & Engineering Capabilities"}
+              {mb.mobinSkillsTitle}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="p-8 bg-[#070b14] border border-white/5 rounded-[3rem] hover:border-cyan-400/40 transition-all group">
                 <Code2 className="text-cyan-400 mb-6 group-hover:scale-110 transition-transform" size={40} />
-                <h3 className="text-xl font-bold mb-3">{isRtl ? "معماری نرم‌افزار" : "Software Architecture"}</h3>
+                <h3 className="text-xl font-bold mb-3">{mb.mobinS1Title}</h3>
                 <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
-                  {isRtl
-                    ? "طراحی سیستم‌های توزیع‌شده، میکروسرویس‌ها، مقیاس‌پذیری بالا، الگوهای طراحی پیشرفته و بهینه‌سازی عملکرد."
-                    : "Distributed system design, high concurrency, clean architecture patterns, and enterprise performance tuning."}
+                  {mb.mobinS1Desc}
                 </p>
               </div>
 
               <div className="p-8 bg-[#070b14] border border-white/5 rounded-[3rem] hover:border-cyan-400/40 transition-all group">
                 <Terminal className="text-cyan-400 mb-6 group-hover:scale-110 transition-transform" size={40} />
-                <h3 className="text-xl font-bold mb-3">{isRtl ? "توسعه فول‌استک مدرن" : "Modern Full-Stack"}</h3>
+                <h3 className="text-xl font-bold mb-3">{mb.mobinS2Title}</h3>
                 <p className="text-gray-400 text-xs sm:text-sm leading-relaxed font-mono" dir="ltr">
                   TypeScript, Next.js, React, Node.js, Python, TailwindCSS, State Engines, GraphQL
                 </p>
@@ -288,7 +271,7 @@ export default function MobinHassaniExecutiveDossier() {
 
               <div className="p-8 bg-[#070b14] border border-white/5 rounded-[3rem] hover:border-cyan-400/40 transition-all group">
                 <Server className="text-cyan-400 mb-6 group-hover:scale-110 transition-transform" size={40} />
-                <h3 className="text-xl font-bold mb-3">{isRtl ? "زیرساخت ابری و دواپس" : "Cloud & DevOps"}</h3>
+                <h3 className="text-xl font-bold mb-3">{mb.mobinS3Title}</h3>
                 <p className="text-gray-400 text-xs sm:text-sm leading-relaxed font-mono" dir="ltr">
                   Docker, Kubernetes, CI/CD Pipelines, AWS, GCP, Redis, Nginx, High Availability
                 </p>
@@ -296,11 +279,9 @@ export default function MobinHassaniExecutiveDossier() {
 
               <div className="p-8 bg-[#070b14] border border-white/5 rounded-[3rem] hover:border-cyan-400/40 transition-all group">
                 <ShieldCheck className="text-cyan-400 mb-6 group-hover:scale-110 transition-transform" size={40} />
-                <h3 className="text-xl font-bold mb-3">{isRtl ? "امنیت فین‌تک و داده‌ها" : "Fintech Security"}</h3>
+                <h3 className="text-xl font-bold mb-3">{mb.mobinS4Title}</h3>
                 <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
-                  {isRtl
-                    ? "رمزنگاری داده‌ها، استانداردهای بانکی، تست نفوذ، امنیت تراکنش‌ها، PostgreSQL و ذخیره‌سازی ایزوله."
-                    : "End-to-end data encryption, ISO & PCI compliance, penetration audits, and isolated transactions."}
+                  {mb.mobinS4Desc}
                 </p>
               </div>
             </div>
@@ -312,30 +293,26 @@ export default function MobinHassaniExecutiveDossier() {
           <div className="container mx-auto max-w-6xl px-6 grid md:grid-cols-2 gap-12">
             <div className="space-y-8">
               <h2 className="text-3xl font-black flex items-center gap-4 italic">
-                <Workflow className="text-cyan-400" /> {isRtl ? "مسئولیت‌ها و تجارب" : "Responsibilities & Experience"}
+                <Workflow className="text-cyan-400" /> {mb.mobinExpTitle}
               </h2>
-              <div className="space-y-8 border-l md:border-l-0 md:border-r border-white/10 pl-6 md:pl-0 md:pr-6">
+              <div className={`space-y-8 border-l ${isRtl ? 'md:border-l-0 md:border-r pl-6 md:pl-0 md:pr-6' : 'pl-6'} border-white/10`}>
                 <div>
                   <h4 className="text-xl font-bold text-white">
-                    {isRtl ? "لیدر بخش توسعه‌دهندگان (Lead Developer)" : "Lead Software Engineer & Ecosystem Developer Head"}
+                    {mb.role}
                   </h4>
                   <p className="text-cyan-400 text-xs font-mono mb-2">Safi Global Ecosystem (2025 - Present)</p>
                   <p className="text-gray-400 text-sm leading-relaxed">
-                    {isRtl
-                      ? "هدایت تیم مهندسی نرم‌افزار، تدوین معماری فنی، بررسی و بازبینی کدها (Code Review)، تضمین عملکرد بهینه هسته مالی و هماهنگی کامل بین تیم‌های توسعه."
-                      : "Directing software engineering squads, authoring core architectural blueprints, conducting strict code reviews, and maintaining 99.99% system availability."}
+                    {mb.manifestoP2}
                   </p>
                 </div>
 
                 <div>
                   <h4 className="text-xl font-bold text-white">
-                    {isRtl ? "معمار ارشد سیستم و مهندس فول‌استک" : "Senior Systems Architect"}
+                    {mb.badgeCore}
                   </h4>
                   <p className="text-cyan-400 text-xs font-mono mb-2">International High-Load Web Projects</p>
                   <p className="text-gray-400 text-sm leading-relaxed">
-                    {isRtl
-                      ? "طراحی زیرساخت‌های بدون وقفه، بهینه‌سازی دیتابیس‌های پرتراکنش و پیاده‌سازی پلتفرم‌های تعاملی نسل وب با تکنولوژی‌های مدرن."
-                      : "Architecting zero-downtime platforms, high-throughput database tuning, and high-performance interactive web portals."}
+                    {mb.mobinS1Desc}
                   </p>
                 </div>
               </div>
@@ -343,26 +320,22 @@ export default function MobinHassaniExecutiveDossier() {
 
             <div className="space-y-8">
               <h2 className="text-3xl font-black flex items-center gap-4 italic">
-                <MonitorDot className="text-cyan-400" /> {isRtl ? "چشم‌انداز فنی در اکوسیستم صافی" : "Technical Vision for Safi Ecosystem"}
+                <MonitorDot className="text-cyan-400" /> {mb.mobinVisionTitle}
               </h2>
-              <div className="space-y-8 border-l md:border-l-0 md:border-r border-white/10 pl-6 md:pl-0 md:pr-6">
+              <div className={`space-y-8 border-l ${isRtl ? 'md:border-l-0 md:border-r pl-6 md:pl-0 md:pr-6' : 'pl-6'} border-white/10`}>
                 <div>
-                  <h4 className="text-xl font-bold text-white">{isRtl ? "پلتفرم دیجیتال فوق‌سریع" : "Ultra-Fast Digital Processing"}</h4>
+                  <h4 className="text-xl font-bold text-white">{mb.badgeCloud}</h4>
                   <p className="text-cyan-400 text-xs font-mono mb-2">Real-Time Event Architecture</p>
                   <p className="text-gray-400 text-sm leading-relaxed">
-                    {isRtl
-                      ? "پیاده‌سازی سازوکارهای لودینگ آنی، تسویه فوری و مدیریت رویدادهای مالی بر بستر شبکه جهانی."
-                      : "Immediate state synchronization, instant settlement hooks, and sub-millisecond API response caching."}
+                    {mb.mobinS1Desc}
                   </p>
                 </div>
 
                 <div>
-                  <h4 className="text-xl font-bold text-white">{isRtl ? "امنیت و استانداردهای جهانی" : "Global Security Standards"}</h4>
+                  <h4 className="text-xl font-bold text-white">{mb.mobinS4Title}</h4>
                   <p className="text-cyan-400 text-xs font-mono mb-2">Enterprise Automated E2E Testing</p>
                   <p className="text-gray-400 text-sm leading-relaxed">
-                    {isRtl
-                      ? "پایش مستمر کدهای پروژه، ممانعت از آسیب‌پذیری‌های امنیتی و پیاده‌سازی تست‌های خودکار E2E."
-                      : "Continuous code audits, automated dependency sanitization, and regression test suites."}
+                    {mb.mobinS4Desc}
                   </p>
                 </div>
               </div>
@@ -373,7 +346,7 @@ export default function MobinHassaniExecutiveDossier() {
         {/* Adsterra Sponsor Banner */}
         <section className="container mx-auto max-w-4xl px-6 py-8">
           <AdsterraNativeBanner
-            title={isRtl ? "ابزارها و سرویس‌های پیشنهادی توسعه نرم‌افزار و ابر" : "Recommended Cloud, DevOps & Engineering Tools"}
+            title={mb.mobinSkillsTitle}
             niche="Software Engineering, Cloud Computing, Web Development, DevOps & Fintech Tools"
             keywords="software development, web hosting, nextjs, cloud server, devops, coding bootcamp, tech jobs"
             className="border-cyan-500/20 bg-neutral-900/60"
@@ -390,9 +363,7 @@ export default function MobinHassaniExecutiveDossier() {
             ))}
           </div>
           <p className="opacity-40 text-xs tracking-widest uppercase">
-            {isRtl
-              ? "مبین حسنی • لیدر بخش توسعه‌دهندگان اکوسیستم صافی • ۲۰۲۶"
-              : "Mobin Hassani • Lead Developer • Safi Global Ecosystem • 2026"}
+            {mb.name} • {mb.role} • Safi International Capital LTD 2026
           </p>
         </footer>
       </div>

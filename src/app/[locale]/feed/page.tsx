@@ -759,13 +759,60 @@ function StoryViewerModal({ userId, currentLocale = "en", onClose }: { userId: s
     const now = new Date();
     const date = new Date(dateString);
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    if (diffInSeconds < 60) return `${Math.max(0, diffInSeconds)}s`;
-    const diffInMinutes = Math.floor(diffInSeconds / 60);
-    if (diffInMinutes < 60) return `${diffInMinutes}m`;
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `${diffInHours}h`;
-    const diffInDays = Math.floor(diffInHours / 24);
-    return `${diffInDays}d`;
+
+    let count: number;
+    let unit: 's' | 'm' | 'h' | 'd';
+
+    if (diffInSeconds < 60) {
+      count = Math.max(0, diffInSeconds);
+      unit = 's';
+    } else {
+      const diffInMinutes = Math.floor(diffInSeconds / 60);
+      if (diffInMinutes < 60) {
+        count = diffInMinutes;
+        unit = 'm';
+      } else {
+        const diffInHours = Math.floor(diffInMinutes / 60);
+        if (diffInHours < 24) {
+          count = diffInHours;
+          unit = 'h';
+        } else {
+          count = Math.floor(diffInHours / 24);
+          unit = 'd';
+        }
+      }
+    }
+
+    const unitsMap: Record<string, { s: string; m: string; h: string; d: string }> = {
+      en: { s: "s", m: "m", h: "h", d: "d" },
+      fa: { s: "ثانیه", m: "دقیقه", h: "ساعت", d: "روز" },
+      ps: { s: "ثانیه", m: "دقیقه", h: "ساعت", d: "ورځ" },
+      ar: { s: "ث", m: "د", h: "س", d: "ي" },
+      ur: { s: "سیکنڈ", m: "منٹ", h: "گھنٹہ", d: "دن" },
+      ru: { s: "с", m: "мин", h: "ч", d: "д" },
+      tr: { s: "sn", m: "dk", h: "sa", d: "g" },
+      de: { s: "s", m: "m", h: "Std", d: "T" },
+      fr: { s: "s", m: "min", h: "h", d: "j" },
+      es: { s: "s", m: "min", h: "h", d: "d" },
+      zh: { s: "秒前", m: "分钟前", h: "小时前", d: "天前" },
+      hi: { s: "सेकंड", m: "मिनट", h: "घंटे", d: "दिन" },
+      it: { s: "s", m: "min", h: "h", d: "g" },
+      pt: { s: "s", m: "min", h: "h", d: "d" },
+      ja: { s: "秒前", m: "分前", h: "時間前", d: "日前" },
+      ko: { s: "초 전", m: "분 전", h: "시간 전", d: "일 전" },
+      nl: { s: "s", m: "m", h: "u", d: "d" },
+      uz: { s: "soniya", m: "daq", h: "soat", d: "kun" },
+      id: { s: "dtk", m: "mnt", h: "jam", d: "hr" },
+    };
+
+    const u = unitsMap[currentLocale] || unitsMap.en;
+    if (['zh', 'ja', 'ko'].includes(currentLocale)) {
+      return `${count}${u[unit]}`;
+    }
+    if (['fa', 'ps', 'ur'].includes(currentLocale)) {
+      return `${count} ${u[unit]} پیش`;
+    }
+    return `${count}${u[unit]}`;
   };
 
   useEffect(() => {
@@ -797,7 +844,7 @@ function StoryViewerModal({ userId, currentLocale = "en", onClose }: { userId: s
 
         if (storiesError) throw storiesError;
         if (!storiesData || storiesData.length === 0) {
-          setError("No active stories found.");
+          setError(t.stories?.noActiveStories || "No active stories found.");
         } else {
           setStories(storiesData);
         }

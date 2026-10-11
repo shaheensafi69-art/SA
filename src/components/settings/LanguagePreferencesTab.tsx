@@ -6,25 +6,25 @@ import { createClient } from "@/utils/supabase/client";
 import { Globe, Check, Bell, BellRing, Sparkles } from "lucide-react";
 
 export const ACADEMY_LANGUAGES = [
-  { code: "en", name: "English", nativeName: "English", flag: "🇬🇧" },
-  { code: "fa", name: "Persian (Dari)", nativeName: "فارسی / دری", flag: "🇦🇫" },
-  { code: "ps", name: "Pashto", nativeName: "پښتو", flag: "🇦🇫" },
-  { code: "ar", name: "Arabic", nativeName: "العربية", flag: "🇸🇦" },
-  { code: "ur", name: "Urdu", nativeName: "اردو", flag: "🇵🇰" },
-  { code: "ru", name: "Russian", nativeName: "Русский", flag: "🇷🇺" },
-  { code: "tr", name: "Turkish", nativeName: "Türkçe", flag: "🇹🇷" },
-  { code: "de", name: "German", nativeName: "Deutsch", flag: "🇩🇪" },
-  { code: "fr", name: "French", nativeName: "Français", flag: "🇫🇷" },
-  { code: "es", name: "Spanish", nativeName: "Español", flag: "🇪🇸" },
-  { code: "zh", name: "Chinese", nativeName: "中文", flag: "🇨🇳" },
-  { code: "hi", name: "Hindi", nativeName: "हिन्दी", flag: "🇮🇳" },
-  { code: "it", name: "Italian", nativeName: "Italiano", flag: "🇮🇹" },
-  { code: "pt", name: "Portuguese", nativeName: "Português", flag: "🇵🇹" },
-  { code: "ja", name: "Japanese", nativeName: "日本語", flag: "🇯🇵" },
-  { code: "ko", name: "Korean", nativeName: "한국어", flag: "🇰🇷" },
-  { code: "nl", name: "Dutch", nativeName: "Nederlands", flag: "🇳🇱" },
-  { code: "uz", name: "Uzbek", nativeName: "Oʻzbekcha", flag: "🇺🇿" },
-  { code: "id", name: "Indonesian", nativeName: "Bahasa Indonesia", flag: "🇮🇩" },
+  { code: "en", name: "English", nativeName: "English", flagUrl: "/flags/gb.svg" },
+  { code: "fa", name: "Persian (Dari)", nativeName: "فارسی / دری", flagUrl: "/flags/af.svg" },
+  { code: "ps", name: "Pashto", nativeName: "پښتو", flagUrl: "/flags/af.svg" },
+  { code: "ar", name: "Arabic", nativeName: "العربية", flagUrl: "/flags/sa.svg" },
+  { code: "ur", name: "Urdu", nativeName: "اردو", flagUrl: "/flags/pk.svg" },
+  { code: "ru", name: "Russian", nativeName: "Русский", flagUrl: "/flags/ru.svg" },
+  { code: "tr", name: "Turkish", nativeName: "Türkçe", flagUrl: "/flags/tr.svg" },
+  { code: "de", name: "German", nativeName: "Deutsch", flagUrl: "/flags/de.svg" },
+  { code: "fr", name: "French", nativeName: "Français", flagUrl: "/flags/fr.svg" },
+  { code: "es", name: "Spanish", nativeName: "Español", flagUrl: "/flags/es.svg" },
+  { code: "zh", name: "Chinese", nativeName: "中文", flagUrl: "/flags/cn.svg" },
+  { code: "hi", name: "Hindi", nativeName: "हिन्दी", flagUrl: "/flags/in.svg" },
+  { code: "it", name: "Italian", nativeName: "Italiano", flagUrl: "/flags/it.svg" },
+  { code: "pt", name: "Portuguese", nativeName: "Português", flagUrl: "/flags/pt.svg" },
+  { code: "ja", name: "Japanese", nativeName: "日本語", flagUrl: "/flags/jp.svg" },
+  { code: "ko", name: "Korean", nativeName: "한국어", flagUrl: "/flags/kr.svg" },
+  { code: "nl", name: "Dutch", nativeName: "Nederlands", flagUrl: "/flags/nl.svg" },
+  { code: "uz", name: "Uzbek", nativeName: "Oʻzbekcha", flagUrl: "/flags/uz.svg" },
+  { code: "id", name: "Indonesian", nativeName: "Bahasa Indonesia", flagUrl: "/flags/id.svg" },
 ];
 
 interface LanguagePreferencesTabProps {
@@ -117,7 +117,9 @@ export default function LanguagePreferencesTab({ userId, currentLocale, t, isRtl
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-2xl shrink-0 drop-shadow-sm">{lang.flag}</span>
+                  <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 border border-white/20 shadow-sm flex items-center justify-center bg-black/40">
+                    <img src={lang.flagUrl} alt={lang.nativeName} className="w-full h-full object-cover" />
+                  </div>
                   <div className="min-w-0">
                     <p className={`text-xs font-black truncate ${isCurrent ? "text-amber-300" : "text-white"}`}>
                       {lang.nativeName}

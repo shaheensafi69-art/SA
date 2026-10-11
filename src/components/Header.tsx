@@ -10,6 +10,7 @@ import {
   Sparkles, BookOpen, GraduationCap, Building2, HandHeart, X, Briefcase,
   BookMarked, Landmark, Server, Code2, Rss, ShoppingCart
 } from "lucide-react";
+import { getBrandTranslation } from "@/utils/brandTranslations";
 
 // لیست ۱۹ زبان رسمی آکادمی صافی با پرچم‌های وکتور دایره‌ای و گرادینت‌های اختصاصی
 const languages = [
@@ -235,6 +236,7 @@ export default function Header() {
   const currentLocale = pathname.split("/")[1] || "en";
   const activeLang = languages.find((l) => l.code === currentLocale) || languages[0];
   const t = translations[currentLocale] || translations["en"];
+  const bt = getBrandTranslation(currentLocale);
 
   const isRTL = useMemo(() => ["fa", "ps", "ar", "ur"].includes(currentLocale), [currentLocale]);
 
@@ -376,10 +378,10 @@ export default function Header() {
         <Link href={`/${activeLang.code}`} className="flex items-center gap-2 group shrink-0 relative z-20">
           <div className="relative flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
             <div className="absolute inset-0 bg-yellow-500/20 blur-[100px] rounded-full"></div>
-            <img src="/logo-without-b.png" alt="Safi Academy Logo" className="relative z-10 w-11 h-11 lg:w-14 lg:h-14 object-contain drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]" />
+            <img src="/logo-without-b.png" alt={`${bt.brandName} Logo`} className="relative z-10 w-11 h-11 lg:w-14 lg:h-14 object-contain drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]" />
           </div>
           <span className="text-lg lg:text-2xl font-black text-white tracking-tight hidden sm:block">
-            Safi <span className="text-yellow-500">Academy</span>
+            {bt.brandPrefix} <span className="text-yellow-500">{bt.brandHighlight}</span>
           </span>
         </Link>
 

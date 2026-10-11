@@ -16,6 +16,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { getFounderLocaleData } from "@/utils/founderTranslations";
+
 // Custom Social SVG Components
 const TikTokIcon = ({ size = 18 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -49,7 +51,8 @@ export default function MujtabaRahmaniExecutiveDossier() {
   const pathname = usePathname() || '/en';
   const currentLocale = pathname.split('/')[1] || 'en';
   const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
+  const { dict: fDict, isRtl } = getFounderLocaleData(currentLocale);
+  const mj = fDict.mujtabaRahmani;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -90,8 +93,8 @@ export default function MujtabaRahmaniExecutiveDossier() {
 
   return (
     <div 
+      dir={isRtl ? "rtl" : "ltr"}
       className="min-h-screen bg-[#030307] text-white font-sans overflow-x-hidden selection:bg-blue-600 selection:text-white" 
-       
       onMouseMove={handleMouseMove}
     >
       {/* ================= BACKGROUND COSMIC SYSTEM ================= */}
@@ -119,13 +122,13 @@ export default function MujtabaRahmaniExecutiveDossier() {
             href={`/${currentLocale}/about`} 
             className="flex items-center gap-2 text-neutral-300 hover:text-blue-400 transition-all font-bold text-xs uppercase tracking-widest bg-white/[0.04] border border-white/10 px-5 py-2.5 rounded-full hover:bg-white/[0.08] hover:border-blue-500/30 backdrop-blur-xl shadow-lg"
           >
-            <ArrowLeft size={16} /> Back to Executive Board
+            <ArrowLeft size={16} className={isRtl ? "rotate-180" : ""} /> {mj.backLink}
           </Link>
 
           <div className="hidden sm:flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping" />
             <span className="text-[11px] font-black uppercase tracking-widest text-neutral-400">
-              Operations & Cyber Governance • Kabul
+              {mj.office}
             </span>
           </div>
         </header>
@@ -141,7 +144,7 @@ export default function MujtabaRahmaniExecutiveDossier() {
               <div className="relative h-full w-full rounded-[3rem] overflow-hidden bg-[#07070d]">
                 <Image 
                   src="/team/mujtaba.jpeg" 
-                  alt="Sayed Mujtaba Rahmani - {t.publicPages.cooCiso}" 
+                  alt={`${mj.name} - ${mj.role}`} 
                   fill 
                   className="object-cover object-top" 
                   priority 
@@ -153,24 +156,24 @@ export default function MujtabaRahmaniExecutiveDossier() {
             {/* 3D Holographic Badges */}
             <motion.div 
               style={{ x: moveX, y: moveY, translateZ: 130 }} 
-              className="absolute -left-6 sm:-left-12 bottom-10 z-20"
+              className={`absolute ${isRtl ? '-right-6 sm:-right-12' : '-left-6 sm:-left-12'} bottom-10 z-20`}
             >
               <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#0a0a12]/90 border border-blue-500/30 backdrop-blur-2xl shadow-2xl">
                 <TrendingUp size={20} className="text-blue-400" />
-                <div className="text-left">
-                  <p className="text-[10px] uppercase font-black tracking-wider text-blue-400">{t.publicPages.forexSpecialist}</p>
-                  <p className="text-xs font-bold text-white">Macro Order Flow</p>
+                <div className={isRtl ? "text-right" : "text-left"}>
+                  <p className="text-[10px] uppercase font-black tracking-wider text-blue-400">{mj.badgeOps}</p>
+                  <p className="text-xs font-bold text-white">{mj.badgeExecution || "Execution Lead"}</p>
                 </div>
               </div>
             </motion.div>
 
             <motion.div 
               style={{ x: moveY, y: moveX, translateZ: 150 }} 
-              className="absolute -right-6 sm:-right-12 top-12 z-20"
+              className={`absolute ${isRtl ? '-left-6 sm:-left-12' : '-right-6 sm:-right-12'} top-12 z-20`}
             >
               <div className="px-5 py-3 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white font-black tracking-widest text-xs uppercase shadow-[0_10px_35px_rgba(37,99,235,0.4)] flex items-center gap-2">
                 <Lock size={15} />
-                <span>{isRtl ? "مدیر عملیات (COO)" : "Chief Operating Officer (COO)"}</span>
+                <span>{mj.badgeCOO}</span>
               </div>
             </motion.div>
           </motion.div>
@@ -178,17 +181,15 @@ export default function MujtabaRahmaniExecutiveDossier() {
           {/* Title & Coordinates */}
           <div className="text-center mt-12 px-6 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/25 text-blue-400 text-xs font-black uppercase tracking-[0.25em] mb-4 shadow-inner">
-              <Sparkles size={13} /> {isRtl ? "هیئت مدیره اجرایی • اکوسیستم جهانی صافی" : "Executive Board • Safi Global Ecosystem"}
+              <Sparkles size={13} /> {mj.office}
             </div>
 
             <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight text-white mb-3">
-              Mujtaba <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-blue-600">Rahmani</span>
+              {mj.firstName} <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-blue-600">{mj.lastName}</span>
             </h1>
 
             <p className="text-neutral-300 font-semibold tracking-wide text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-              {isRtl
-                ? "مدیر ارشد عملیات (COO) و استراتژیست بازارهای مالی در اکوسیستم جهانی صافی."
-                : "Chief Operating Officer (COO) & Financial Markets Strategist across the Safi Global Ecosystem."}
+              {mj.bio}
             </p>
 
             {/* Social Channels Cluster */}
@@ -197,7 +198,7 @@ export default function MujtabaRahmaniExecutiveDossier() {
                 <Link 
                   key={idx} 
                   href={social.href} 
-                  target="_blank"
+                  target="_blank" 
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/[0.03] border border-white/10 text-neutral-300 ${social.color} transition-all duration-300 shadow-xl hover:-translate-y-1 backdrop-blur-xl text-xs font-bold`}
                   title={social.name}
                 >
@@ -210,19 +211,20 @@ export default function MujtabaRahmaniExecutiveDossier() {
             {/* Direct Coordinates Strip */}
             <div className="flex justify-center flex-wrap gap-4 sm:gap-8 mt-8 text-neutral-400 text-xs sm:text-sm font-semibold">
               <span className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/5">
-                <MapPin size={15} className="text-blue-400"/> Kabul, Afghanistan
+                <MapPin size={15} className="text-blue-400"/> {mj.coordinates}
               </span>
               <span className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/5">
-                <User size={15} className="text-blue-400"/> Born: July 28, 2006
+                <User size={15} className="text-blue-400"/> {mj.role}
               </span>
               <button 
                 onClick={copyEmail}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/5 hover:border-blue-500/40 text-neutral-300 hover:text-white transition-all cursor-pointer"
-                title="Click to copy email address"
+                title={mj.clickCopy}
               >
                 <Mail size={15} className="text-blue-400"/>
                 <span>mujtaba@safipay.net</span>
                 {copiedEmail ? <Check size={14} className="text-emerald-400" /> : <Copy size={13} className="text-neutral-500" />}
+                {copiedEmail && <span className="text-emerald-400 text-xs ml-1">{mj.copied}</span>}
               </button>
             </div>
           </div>
@@ -235,33 +237,27 @@ export default function MujtabaRahmaniExecutiveDossier() {
             
             <div className="flex items-center gap-3 mb-8">
               <span className="w-3 h-8 rounded-full bg-gradient-to-b from-blue-400 to-indigo-600" />
-              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">{t.publicPages.coFounderMission}</h2>
+              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">{mj.manifestoTitle}</h2>
             </div>
 
             <div className="space-y-6 text-neutral-300 text-base sm:text-lg leading-relaxed text-justify font-normal">
               <p>
-                My name is <strong className="text-white font-bold">Sayed Mujtaba Rahmani</strong>. In a world where digital boundaries are dissolving and economic sovereignty is governed by code, my life mission is to engineer systems that grant Afghan students and global professionals unfettered access to world-class financial instruments and technical education.
+                {mj.manifestoP1}
               </p>
               
               <p>
-                Holding a specialized academic foundation in <strong className="text-white font-bold underline decoration-blue-500 underline-offset-4">Economics and Online Business from the University of the People (UoPeople, USA)</strong>, I have dedicated myself to bridging traditional macroeconomic models with modern decentralized fintech architecture.
+                {mj.manifestoP2}
               </p>
 
               {/* Callout Quote Box */}
-              <div className="my-8 bg-gradient-to-r from-blue-600/15 via-indigo-600/5 to-transparent p-8 rounded-3xl border-l-4 border-blue-500 text-blue-100 shadow-inner">
+              <div className={`my-8 bg-gradient-to-r from-blue-600/15 via-indigo-600/5 to-transparent p-8 rounded-3xl ${isRtl ? 'border-r-4' : 'border-l-4'} border-blue-500 text-blue-100 shadow-inner`}>
                 <p className="italic text-base sm:text-xl font-medium leading-relaxed">
-                  "True resilience in financial engineering is forged through discipline. Just as in mixed martial arts, where split-second decisions dictate survival, managing high-stakes capital and securing banking infrastructure demands absolute mental clarity, zero complacency, and unyielding tactical execution."
+                  {mj.manifestoQuote}
                 </p>
                 <div className="mt-4 flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-blue-400">
-                  <span>— Sayed Mujtaba Rahmani</span>
-                  <span>•</span>
-                  <span>Chief Operating Officer & CISO</span>
+                  <span>{mj.manifestoAuthor}</span>
                 </div>
               </div>
-
-              <p>
-                Beyond strategic operations and corporate management, I remain an active full-time participant in the global currency markets. Analyzing institutional order books, Smart Money Concepts (SMC), and market structure since 2021 has provided the tactical intuition required to steer SafiPay's risk management protocols and ensure ironclad cybersecurity across our ecosystem.
-              </p>
             </div>
           </div>
         </section>
@@ -469,7 +465,7 @@ export default function MujtabaRahmaniExecutiveDossier() {
             ))}
           </div>
           <p className="text-neutral-500 text-[11px] font-black tracking-[0.25em] uppercase">
-            Sayed Mujtaba Rahmani • Executive Portfolio • Safi International Capital LTD 2026
+            {mj.name} • {mj.role} • Safi International Capital LTD 2026
           </p>
         </footer>
 

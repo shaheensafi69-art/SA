@@ -1,5 +1,6 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getFounderLocaleData } from "@/utils/founderTranslations";
 
 import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
@@ -29,7 +30,8 @@ export default function ShirinGolAhmadiExecutiveDossier() {
   const pathname = usePathname() || '/en';
   const currentLocale = pathname.split('/')[1] || 'en';
   const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
+  const { dict: fDict, isRtl } = getFounderLocaleData(currentLocale);
+  const shr = fDict.shirinGolAhmadi;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -67,8 +69,8 @@ export default function ShirinGolAhmadiExecutiveDossier() {
 
   return (
     <div 
+      dir={isRtl ? "rtl" : "ltr"}
       className="min-h-screen bg-[#030307] text-white font-sans overflow-x-hidden selection:bg-rose-500 selection:text-white" 
-       
       onMouseMove={handleMouseMove}
     >
       {/* ================= BACKGROUND COSMIC SYSTEM ================= */}
@@ -96,13 +98,13 @@ export default function ShirinGolAhmadiExecutiveDossier() {
             href={`/${currentLocale}/about`} 
             className="flex items-center gap-2 text-neutral-300 hover:text-rose-400 transition-all font-bold text-xs uppercase tracking-widest bg-white/[0.04] border border-white/10 px-5 py-2.5 rounded-full hover:bg-white/[0.08] hover:border-rose-500/30 backdrop-blur-xl shadow-lg"
           >
-            <ArrowLeft size={16} /> Back to Executive Board
+            <ArrowLeft size={16} className={isRtl ? "rotate-180" : ""} /> {shr.backLink}
           </Link>
 
           <div className="hidden sm:flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping" />
             <span className="text-[11px] font-black uppercase tracking-widest text-neutral-400">
-              General Operations & {t.publicPages.aiSystems} • Islamabad
+              {shr.office}
             </span>
           </div>
         </header>
@@ -118,7 +120,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
               <div className="relative h-full w-full rounded-[3rem] overflow-hidden bg-[#07070d]">
                 <Image 
                   src="/team/shirin.jpeg" 
-                  alt="Shirin Gol Ahmadi - {t.publicPages.companyManager}" 
+                  alt={`${shr.name} - ${shr.role}`} 
                   fill 
                   className="object-cover object-top" 
                   priority 
@@ -130,22 +132,24 @@ export default function ShirinGolAhmadiExecutiveDossier() {
             {/* 3D Holographic Badges */}
             <motion.div 
               style={{ x: moveX, y: moveY, translateZ: 130 }} 
-              className="absolute -left-6 sm:-left-12 bottom-10 z-20"
+              className={`absolute ${isRtl ? '-right-6 sm:-right-12' : '-left-6 sm:-left-12'} bottom-10 z-20`}
             >
               <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#0a0a12]/90 border border-rose-500/30 backdrop-blur-2xl shadow-2xl">
                 <Cpu size={20} className="text-rose-400" />
-                <div className="text-left">
-                  <p className="text-[10px] uppercase font-black tracking-wider text-rose-400">{t.publicPages.aiSystems}</p>
-                  <p className="text-xs font-bold text-white">Autonomous Agents</p>
+                <div className={isRtl ? "text-right" : "text-left"}>
+                  <p className="text-[10px] uppercase font-black tracking-wider text-rose-400">{shr.badgeAI}</p>
+                  <p className="text-xs font-bold text-white">{shr.badgeAgents}</p>
                 </div>
               </div>
-            </motion.div>            <motion.div 
+            </motion.div>
+
+            <motion.div 
               style={{ x: moveY, y: moveX, translateZ: 150 }} 
-              className="absolute -right-6 sm:-right-12 top-12 z-20"
+              className={`absolute ${isRtl ? '-left-6 sm:-left-12' : '-right-6 sm:-right-12'} top-12 z-20`}
             >
               <div className="px-5 py-3 rounded-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white font-black tracking-widest text-xs uppercase shadow-[0_10px_35px_rgba(244,63,94,0.4)] flex items-center gap-2">
                 <Briefcase size={15} />
-                <span>{isRtl ? "جنرال منیجر تمام ایکوسیستم سافی" : "General Manager of All Safi Ecosystem"}</span>
+                <span>{shr.badgeManager}</span>
               </div>
             </motion.div>
           </motion.div>
@@ -153,17 +157,15 @@ export default function ShirinGolAhmadiExecutiveDossier() {
           {/* Title & Coordinates */}
           <div className="text-center mt-12 px-6 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-black uppercase tracking-[0.25em] mb-4 shadow-inner">
-              <Sparkles size={13} /> {isRtl ? "هیئت مدیره اجرایی • اکوسیستم جهانی صافی" : "Executive Board • Safi Global Ecosystem"}
+              <Sparkles size={13} /> {shr.boardText}
             </div>
 
             <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight text-white mb-3">
-              Shirin <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-pink-300 to-rose-600">Gol Ahmadi</span>
+              {shr.firstName} <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-pink-300 to-rose-600">{shr.lastName}</span>
             </h1>
 
             <p className="text-neutral-300 font-semibold tracking-wide text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-              {isRtl
-                ? "جنرال منیجر تمام ایکوسیستم سافی، هدایت‌کننده یکپارچه‌سازی سیستم‌های هوش مصنوعی و استراتژی‌های بین‌المللی."
-                : "General Manager of All Safi Ecosystem, Applied AI Systems Director & Multi-Disciplinary Digital Strategist."}
+              {shr.bio}
             </p>
 
             {/* Social Channels Cluster */}
@@ -185,19 +187,20 @@ export default function ShirinGolAhmadiExecutiveDossier() {
             {/* Direct Coordinates Strip */}
             <div className="flex justify-center flex-wrap gap-4 sm:gap-8 mt-8 text-neutral-400 text-xs sm:text-sm font-semibold">
               <span className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/5">
-                <MapPin size={15} className="text-rose-400"/> Islamabad, Pakistan & Global
+                <MapPin size={15} className="text-rose-400"/> {shr.coordinates}
               </span>
               <span className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/5">
-                <User size={15} className="text-rose-400"/> Born: December 16, 2004
+                <User size={15} className="text-rose-400"/> {shr.born}
               </span>
               <button 
                 onClick={copyEmail}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/5 hover:border-rose-500/40 text-neutral-300 hover:text-white transition-all cursor-pointer"
-                title="Click to copy email address"
+                title={shr.clickCopy}
               >
                 <Mail size={15} className="text-rose-400"/>
                 <span>shirinahmadi@safipay.net</span>
                 {copiedEmail ? <Check size={14} className="text-emerald-400" /> : <Copy size={13} className="text-neutral-500" />}
+                {copiedEmail && <span className="text-emerald-400 text-xs ml-1">{shr.copied}</span>}
               </button>
             </div>
           </div>
@@ -210,33 +213,24 @@ export default function ShirinGolAhmadiExecutiveDossier() {
             
             <div className="flex items-center gap-3 mb-8">
               <span className="w-3 h-8 rounded-full bg-gradient-to-b from-rose-400 to-pink-600" />
-              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">{t.publicPages.executiveLeadership}</h2>
+              <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">{shr.manifestoTitle}</h2>
             </div>
 
             <div className="space-y-6 text-neutral-300 text-base sm:text-lg leading-relaxed text-justify font-normal">
-              <p>
-                I am <strong className="text-white font-bold">Shirin Gol Ahmadi</strong>, {t.publicPages.companyManager} at SafiPay and Director of Applied Artificial Intelligence Systems across the Safi Global Ecosystem. Born on December 16, 2004, my career is defined by fusing economic theory with full-stack engineering, high-aesthetic UI/UX design, and autonomous AI automation.
-              </p>
-              
-              <p>
-                Graduated with a Bachelor of Science in Economics from the prestigious <strong className="text-white font-bold underline decoration-rose-400 underline-offset-4">National University of Sciences & Technology (NUST)</strong> in Islamabad, Pakistan, I approach corporate leadership through an analytical, macro-financial lens. I orchestrate cross-functional teams, align engineering sprints with market demand, and establish seamless communication between developers, financial analysts, and corporate clients.
-              </p>
+              <p>{shr.manifestoP1}</p>
+              <p>{shr.manifestoP2}</p>
 
               {/* Callout Quote Box */}
-              <div className="my-8 bg-gradient-to-r from-rose-600/15 via-pink-600/5 to-transparent p-8 rounded-3xl border-l-4 border-rose-400 text-rose-100 shadow-inner">
+              <div className={`my-8 bg-gradient-to-r from-rose-600/15 via-pink-600/5 to-transparent p-8 rounded-3xl ${isRtl ? 'border-r-4' : 'border-l-4'} border-rose-400 text-rose-100 shadow-inner`}>
                 <p className="italic text-base sm:text-xl font-medium leading-relaxed">
-                  "At SafiPay and Safi Academy, our mission transcends traditional operations. We are actively deploying artificial intelligence not merely as a novelty, but as a core multiplier that accelerates student mastery, streamlines payment compliance, and opens international markets to previously underserved communities."
+                  {shr.manifestoQuote}
                 </p>
                 <div className="mt-4 flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-rose-400">
-                  <span>— Shirin Gol Ahmadi</span>
-                  <span>•</span>
-                  <span>{t.publicPages.companyManager} & AI Specialist</span>
+                  <span>{shr.manifestoAuthor}</span>
                 </div>
               </div>
 
-              <p>
-                Beyond corporate administration, I am an active Full-Stack Developer and Graphic Designer. Having architected complete web platforms with Next.js, TypeScript, and Python, I maintain intimate knowledge of the codebases our teams ship, ensuring that every interface under the Safi banner achieves an uncompromising standard of elegance, performance, and accessibility.
-              </p>
+              <p>{shr.manifestoP3}</p>
             </div>
           </div>
         </section>
@@ -245,40 +239,40 @@ export default function ShirinGolAhmadiExecutiveDossier() {
         <section className="py-20 bg-rose-500/[0.02] border-y border-white/10">
           <div className="container mx-auto max-w-6xl px-6">
             <div className="text-center mb-16">
-              <span className="text-xs font-black uppercase tracking-[0.25em] text-rose-400 mb-2 block">Multidisciplinary Mastery</span>
-              <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">Executive Competencies</h2>
+              <span className="text-xs font-black uppercase tracking-[0.25em] text-rose-400 mb-2 block">{shr.shirinCompetenciesBadge}</span>
+              <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">{shr.shirinCompetenciesTitle}</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="p-8 rounded-[2.5rem] bg-[#07070d] border border-white/10 hover:border-rose-500/40 hover:-translate-y-2 transition-all duration-300 shadow-xl">
                 <Briefcase className="text-rose-400 mb-6" size={38} />
-                <h3 className="text-xl font-black text-white mb-2">Operations & Strategy</h3>
+                <h3 className="text-xl font-black text-white mb-2">{shr.shirinC1Title}</h3>
                 <p className="text-neutral-400 text-xs font-semibold leading-relaxed">
-                  Organizational leadership, Agile workflow coordination, cross-departmental operations, resource allocation.
+                  {shr.shirinC1Desc}
                 </p>
               </div>
 
               <div className="p-8 rounded-[2.5rem] bg-[#07070d] border border-white/10 hover:border-rose-500/40 hover:-translate-y-2 transition-all duration-300 shadow-xl">
                 <Code2 className="text-rose-400 mb-6" size={38} />
-                <h3 className="text-xl font-black text-white mb-2">Full-Stack Dev</h3>
+                <h3 className="text-xl font-black text-white mb-2">{shr.shirinC2Title}</h3>
                 <p className="text-neutral-400 text-xs font-semibold leading-relaxed">
-                  React.js, Next.js, Node.js, TypeScript, Python, Tailwind CSS, PostgreSQL, REST APIs, Microservices.
+                  {shr.shirinC2Desc}
                 </p>
               </div>
 
               <div className="p-8 rounded-[2.5rem] bg-[#07070d] border border-white/10 hover:border-rose-500/40 hover:-translate-y-2 transition-all duration-300 shadow-xl">
                 <Cpu className="text-rose-400 mb-6" size={38} />
-                <h3 className="text-xl font-black text-white mb-2">Applied {t.publicPages.aiSystems}</h3>
+                <h3 className="text-xl font-black text-white mb-2">{shr.shirinC3Title}</h3>
                 <p className="text-neutral-400 text-xs font-semibold leading-relaxed">
-                  Advanced Prompt Engineering, LLM Integration, Autonomous AI Tutoring (Safi AI), Workflow Orchestration.
+                  {shr.shirinC3Desc}
                 </p>
               </div>
 
               <div className="p-8 rounded-[2.5rem] bg-[#07070d] border border-white/10 hover:border-rose-500/40 hover:-translate-y-2 transition-all duration-300 shadow-xl">
                 <PenTool className="text-rose-400 mb-6" size={38} />
-                <h3 className="text-xl font-black text-white mb-2">Design & Brand</h3>
+                <h3 className="text-xl font-black text-white mb-2">{shr.shirinC4Title}</h3>
                 <p className="text-neutral-400 text-xs font-semibold leading-relaxed">
-                  Figma UI/UX, Design Systems, Adobe Photoshop & Illustrator, Visual Identity Architecture, Responsive Layouts.
+                  {shr.shirinC4Desc}
                 </p>
               </div>
             </div>
@@ -292,7 +286,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
             {/* Professional Experience */}
             <div className="space-y-10">
               <h2 className="text-2xl sm:text-3xl font-black flex items-center gap-3 text-white">
-                <Briefcase className="text-rose-400" /> Executive History
+                <Briefcase className="text-rose-400" /> {shr.shirinHistoryTitle}
               </h2>
 
               <div className="space-y-10 border-l-2 border-rose-500/20 pl-8 ml-3">
@@ -328,7 +322,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
             {/* Academic Track & Languages */}
             <div className="space-y-10">
               <h2 className="text-2xl sm:text-3xl font-black flex items-center gap-3 text-white">
-                <GraduationCap className="text-rose-400" /> Academic Pedigree
+                <GraduationCap className="text-rose-400" /> {shr.shirinPedigreeTitle}
               </h2>
 
               <div className="space-y-10 border-l-2 border-rose-500/20 pl-8 ml-3">
@@ -354,7 +348,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
               {/* Language Matrix */}
               <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/10 mt-8">
                 <h3 className="text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2 text-neutral-300">
-                  <Languages size={16} className="text-rose-400"/> Multilingual Proficiency
+                  <Languages size={16} className="text-rose-400"/> {shr.shirinMultilingualTitle}
                 </h3>
                 <div className="flex flex-wrap gap-2.5">
                   {[
@@ -380,7 +374,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
           <div className="bg-gradient-to-br from-rose-600/10 via-white/[0.02] to-transparent p-10 sm:p-14 md:p-16 rounded-[3.5rem] border border-rose-500/25 shadow-[0_20px_60px_rgba(0,0,0,0.9)] relative overflow-hidden">
             <div className="absolute top-0 right-0 w-80 h-80 bg-rose-600/15 rounded-full blur-[100px] pointer-events-none" />
             <Lightbulb className="text-rose-400 mx-auto mb-6 relative z-10" size={56} />
-            <h2 className="text-3xl sm:text-4xl font-black mb-6 relative z-10 text-white tracking-tight">Executive Distinctions</h2>
+            <h2 className="text-3xl sm:text-4xl font-black mb-6 relative z-10 text-white tracking-tight">{shr.shirinDistinctionsTitle}</h2>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left max-w-2xl mx-auto relative z-10">
               <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 flex items-start gap-3">
@@ -433,7 +427,7 @@ export default function ShirinGolAhmadiExecutiveDossier() {
             ))}
           </div>
           <p className="text-neutral-500 text-[11px] font-black tracking-[0.25em] uppercase">
-            Shirin Gol Ahmadi • Executive Portfolio • Safi International Capital LTD 2026
+            {shr.name} • {shr.role} • Safi International Capital LTD 2026
           </p>
         </footer>
 

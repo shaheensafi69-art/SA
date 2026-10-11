@@ -1,0 +1,319 @@
+{
+  "common": {
+    "backLink": "Kembali ke Dewan Eksekutif",
+    "clickCopy": "Klik untuk menyalin alamat email",
+    "copied": "Tersalin!",
+    "directContact": "Kontak Eksekutif Langsung",
+    "contactDesc": "Untuk kemitraan perusahaan strategis, investasi institusional, atau pidato internasional:"
+  },
+  "shaheenSafi": {
+    "name": "Shaheen Safi",
+    "firstName": "Shaheen",
+    "lastName": "Safi",
+    "role": "Direktur & Pendiri",
+    "office": "Kantor Eksekutif • London / Kabul",
+    "coordinates": "London, Inggris & Kabul, Afganistan",
+    "badgeLead": "Arsitek Utama",
+    "badgeFintech": "FinTech Full-Stack",
+    "badgeFounder": "Direktur & Pendiri",
+    "reg": "Safi International Capital LTD • UK Reg: 17063286",
+    "bio": "Direktur, Pendiri & Kepala Arsitek Sistem Fintech dari Ekosistem Global Safi.",
+    "manifestoTitle": "Direktif Arsitektur & Manifes Eksekutif",
+    "manifestoQuote": "«Kami mendirikan Safi Academy dan SafiPay bukan hanya untuk berpartisipasi dalam ekonomi digital—kami mendirikannya untuk membangun jembatan pendidikan dan keuangan kokoh yang menghubungkan langsung dengan pasar Eropa dan Amerika.»",
+    "manifestoAuthor": "— Shaheen Safi • London, Inggris Raya",
+    "backLink": "Kembali ke Dewan Eksekutif",
+    "clickCopy": "Klik untuk menyalin alamat email",
+    "copied": "Tersalin!",
+    "directContact": "Kontak Eksekutif Langsung",
+    "contactDesc": "Untuk kemitraan perusahaan strategis, investasi institusional, atau pidato internasional:",
+    "portfolioBadge": "Portofolio Korporat",
+    "portfolioTitle": "Perusahaan Global Safi",
+    "techBadge": "Rekayasa Sistem",
+    "techTitle": "Stack Teknis Inti",
+    "milestonesBadge": "Tonggak Eksekutif",
+    "pedigreeBadge": "Kualifikasi Akademik",
+    "languagesBadge": "Kemampuan Bahasa",
+    "manifestoP1": "Jejak profesional saya berawal di lingkungan pasar keuangan internasional yang dinamis dan berisiko tinggi. Beroperasi sebagai trader penuh waktu di pasar valuta asing sejak 2016 hingga akhir 2024, saya memahami secara mendalam arus likuiditas global, dinamika buku pesanan, dan manajemen risiko institusional.",
+    "manifestoP2": "Pada Desember 2024, setelah meraih Sertifikasi Analisis Teknikal Internasional dari IFTA, saya menyadari bahwa kedaulatan finansial sejati tidak dicapai melalui trading semata—melainkan membutuhkan perancangan infrastruktur digital dan perangkat lunak pemrosesan transaksi global.",
+    "manifestoP3": "Memegang gelar Sarjana Ilmu Komputer dari Istanbul Technical University (ITU), saya memadukan rekayasa komputasi yang ketat dengan visi korporat. Sebagai Pendiri dan CEO Safi International Capital LTD, saya memimpin arsitektur SafiPay, Safi TopUp, SafiPro, dan Safi Academy.",
+    "pillars": [
+      {
+        "title": "SafiPay Digital Banking",
+        "desc": "Infrastruktur keuangan multi-mata uang generasi berikutnya yang memungkinkan penerbitan kartu Visa fisik dan virtual instan di 150+ negara.",
+        "linkText": "Jelajahi Protokol SafiPay"
+      },
+      {
+        "title": "Safi TopUp Global",
+        "desc": "Jaringan penyelesaian digital instan yang terhubung ke 700+ operator telekomunikasi di seluruh dunia.",
+        "linkText": "Jelajahi Jaringan Safi TopUp"
+      },
+      {
+        "title": "Safi Academy",
+        "desc": "Akademi pendidikan unggulan berbadan hukum Inggris (#17063286), menawarkan sertifikasi terverifikasi dalam E-Commerce, AI, dan beasiswa penuh 100%.",
+        "linkText": "Lihat Fakultas Akademik"
+      },
+      {
+        "title": "SafiPro Apparel",
+        "desc": "Streetwear premium untuk pengembang yang dirancang dengan katun organik bersertifikat dan estetika cyberpunk minimalis.",
+        "linkText": "Jelajahi SafiPro Apparel"
+      }
+    ],
+    "techStack": [
+      {
+        "title": "Frontend & Seluler",
+        "desc": "Next.js 14/15 App Router, React.js, TypeScript, Flutter, Dart, Tailwind CSS, Framer Motion."
+      },
+      {
+        "title": "Backend & Data",
+        "desc": "PostgreSQL, Supabase Enterprise, Node.js, Python, Redis Caching, Microservices, REST & GraphQL."
+      },
+      {
+        "title": "Keamanan Jaringan",
+        "desc": "Cisco IOS, Routing & Switching, Hardware Firewalls, Encrypted VPN Tunnels, SSL/TLS, ISO 27001."
+      },
+      {
+        "title": "Pasar Keuangan",
+        "desc": "Smart Money Concepts (SMC), Order Flow, IFTA Technical Analysis, Algorithmic Risk Execution."
+      }
+    ],
+    "milestones": [
+      {
+        "title": "Pendiri & CEO Grup",
+        "org": "Safi International Capital LTD (2025 - Present)",
+        "desc": "Terdaftar di Inggris dan Wales dengan No. Perusahaan 17063286. Memimpin tata kelola holding dan penerapan platform fintech di seluruh dunia."
+      },
+      {
+        "title": "Trader Forex Institusional Penuh Waktu",
+        "org": "Global Currency Markets (2016 - 2024)",
+        "desc": "Lebih dari 8 tahun mengelola likuiditas frekuensi tinggi dan eksekusi lintas mata uang. Beralih ke pembangunan infrastruktur fintech pada akhir 2024."
+      },
+      {
+        "title": "Spesialis Utama TI & Sistem",
+        "org": "Afghanistan Football Federation (2019 - 2024)",
+        "desc": "Merancang topologi jaringan perusahaan, infrastruktur server berkecepatan tinggi, siaran langsung, dan basis data identitas digital."
+      }
+    ],
+    "pedigree": [
+      {
+        "school": "Istanbul Technical University (ITU)",
+        "degree": "Sarjana Ilmu Komputer (2019 - 2023)",
+        "desc": "Spesialisasi dalam Arsitektur Sistem Terdistribusi, Kompleksitas Komputasi, dan Keamanan Kriptografi di universitas teknik terkemuka."
+      },
+      {
+        "school": "Sertifikasi Profesional IFTA",
+        "degree": "Federasi Analis Teknikal Internasional (Des 2024)",
+        "desc": "Kredensial internasional terakreditasi dalam pemodelan pasar kuantitatif, analisis risiko, dan analitik makro-finansial."
+      }
+    ],
+    "languages": [
+      {
+        "lang": "Bahasa Inggris",
+        "level": "Fasih Profesional"
+      },
+      {
+        "lang": "Persia / Dari",
+        "level": "Penutur Asli"
+      },
+      {
+        "lang": "Pashto",
+        "level": "Penutur Asli"
+      },
+      {
+        "lang": "Turki",
+        "level": "Percakapan Akademis"
+      }
+    ],
+    "accreditationsTitle": "Akreditasi Institusional",
+    "accreditations": [
+      {
+        "title": "Sertifikasi Global IFTA",
+        "desc": "Analisis Teknikal & Rekayasa Pasar Keuangan"
+      },
+      {
+        "title": "Registri Perusahaan Inggris (Companies House)",
+        "desc": "Nomor Registrasi 17063286 (London, Inggris)"
+      },
+      {
+        "title": "Lulusan Ilmu Komputer ITU",
+        "desc": "Alumni Istanbul Technical University"
+      },
+      {
+        "title": "20+ Seminar Korporat",
+        "desc": "Pidato Utama tentang E-Commerce & FinTech"
+      }
+    ]
+  },
+  "shirinGolAhmadi": {
+    "name": "Shirin Gol Ahmadi",
+    "firstName": "Shirin",
+    "lastName": "Gol Ahmadi",
+    "role": "Manajer Umum Seluruh Ekosistem Safi",
+    "office": "Operasi Umum & Sistem AI • Islamabad",
+    "coordinates": "Islamabad, Pakistan & Global",
+    "born": "Lahir: 16 Desember 2004",
+    "badgeAI": "Sistem AI Terapan",
+    "badgeAgents": "Agen Otonom",
+    "badgeManager": "Manajer Umum Seluruh Ekosistem Safi",
+    "boardText": "Dewan Eksekutif • Ekosistem Global Safi",
+    "bio": "Manajer Umum Seluruh Ekosistem Safi, Direktur Sistem AI Terapan & Ahli Strategi Digital Multidisiplin.",
+    "manifestoTitle": "Kepemimpinan Eksekutif & Direktif AI Terapan",
+    "manifestoQuote": "«Di SafiPay dan Safi Academy, misi kami melampaui operasi tradisional. Kami menerapkan kecerdasan buatan sebagai pengganda inti yang mempercepat penguasaan siswa dan membuka pasar internasional.»",
+    "manifestoAuthor": "— Shirin Gol Ahmadi • Manajer Umum & Spesialis AI",
+    "backLink": "Kembali ke Dewan Eksekutif",
+    "clickCopy": "Klik untuk menyalin alamat email",
+    "copied": "Tersalin!",
+    "directContact": "Kontak Eksekutif Langsung",
+    "contactDesc": "Untuk kemitraan perusahaan strategis, investasi institusional, atau pidato internasional:",
+    "portfolioBadge": "Portofolio Korporat",
+    "portfolioTitle": "Perusahaan Global Safi",
+    "techBadge": "Rekayasa Sistem",
+    "techTitle": "Stack Teknis Inti",
+    "milestonesBadge": "Tonggak Eksekutif",
+    "pedigreeBadge": "Kualifikasi Akademik",
+    "languagesBadge": "Kemampuan Bahasa",
+    "manifestoP1": "Saya adalah Shirin Gol Ahmadi, General Manager Seluruh Ekosistem Safi di SafiPay dan Direktur Sistem Kecerdasan Buatan Terapan. Lahir pada 16 Desember 2004, karier saya menggabungkan teori ekonomi, rekayasa full-stack, desain antarmuka, dan otomatisasi AI otonom.",
+    "manifestoP2": "Lulus dengan gelar Sarjana Ekonomi dari NUST yang bergengsi di Islamabad, saya memimpin korporat dengan pendekatan analitis dan makro-finansial, menyelaraskan rekayasa dengan permintaan pasar.",
+    "manifestoP3": "Di luar administrasi korporat, saya adalah pengembang Full-Stack aktif dan desainer grafis. Merancang platform web dengan Next.js, TypeScript, dan Python, saya memastikan setiap antarmuka Safi mencapai standar keanggunan dan kinerja tanpa kompromi.",
+    "shirinCompetenciesBadge": "Keahlian Multidisiplin",
+    "shirinCompetenciesTitle": "Kompetensi Eksekutif Utama",
+    "shirinC1Title": "Operasi & Strategi",
+    "shirinC1Desc": "Kepemimpinan organisasi, koordinasi alur kerja Agile, operasi lintas departemen, dan alokasi sumber daya.",
+    "shirinC2Title": "Pengembangan Full-Stack",
+    "shirinC2Desc": "React.js, Next.js, Node.js, TypeScript, Python, Tailwind CSS, PostgreSQL, REST API, Layanan Mikro.",
+    "shirinC3Title": "Sistem AI Terapan",
+    "shirinC3Desc": "Rekayasa Prompt Tingkat Lanjut, Integrasi LLM, Bimbingan AI Otonom (Safi AI), Orkestrasi Alur Kerja.",
+    "shirinC4Title": "Desain & Merek",
+    "shirinC4Desc": "Figma UI/UX, Sistem Desain, Adobe Photoshop & Illustrator, Arsitektur Identitas Visual, Tata Letak Responsif.",
+    "shirinHistoryTitle": "Riwayat Eksekutif",
+    "shirinPedigreeTitle": "Latar Belakang Akademis",
+    "shirinMultilingualTitle": "Kemahiran Multibahasa",
+    "shirinDistinctionsTitle": "Penghargaan Eksekutif"
+  },
+  "mobinHassani": {
+    "name": "Mobin Hassani",
+    "firstName": "Mobin",
+    "lastName": "Hassani",
+    "role": "Pengembang Utama & Kepala Rekayasa Perangkat Lunak",
+    "office": "Eksekutif Teknis • Ekosistem Global Safi",
+    "coordinates": "Remote Internasional & Inti Teknis",
+    "badgeCore": "Rekayasa Inti",
+    "badgeCloud": "Sistem Cloud Full-Stack",
+    "badgeLead": "Pengembang Utama",
+    "badgeActive": "ACTIVE CORE ARCHITECT",
+    "bio": "Insinyur Perangkat Lunak Utama, Arsitek Sistem Cloud & Kepala Divisi Pengembang di Seluruh Ekosistem Safi.",
+    "manifestoTitle": "Manifes & Arsitektur Pengembang Utama",
+    "manifestoQuote": "«Arsitektur perangkat lunak yang sempurna, pengoptimalan konkurensi tinggi, dan keamanan tanpa kompromi membentuk fondasi utama kepercayaan digital modern. Kami membangun platform Safi untuk berkinerja mulus di seluruh dunia.»",
+    "manifestoAuthor": "— Mobin Hassani • Pengembang Utama",
+    "backLink": "Kembali ke Dewan Eksekutif",
+    "clickCopy": "Klik untuk menyalin alamat email",
+    "copied": "Tersalin!",
+    "directContact": "Kontak Eksekutif Langsung",
+    "contactDesc": "Untuk kemitraan perusahaan strategis, investasi institusional, atau pidato internasional:",
+    "portfolioBadge": "Portofolio Korporat",
+    "portfolioTitle": "Perusahaan Global Safi",
+    "techBadge": "Rekayasa Sistem",
+    "techTitle": "Stack Teknis Inti",
+    "milestonesBadge": "Tonggak Eksekutif",
+    "pedigreeBadge": "Kualifikasi Akademik",
+    "languagesBadge": "Kemampuan Bahasa",
+    "manifestoP1": "Saya adalah Mobin Hassani, Pengembang Utama dan Kepala Arsitektur Perangkat Lunak di Ekosistem Safi. Misi saya adalah merancang dan memimpin fondasi teknis tangguh yang mendukung aplikasi keuangan dan portal kami dengan keamanan tingkat bank.",
+    "manifestoP2": "Memimpin tim pengembangan, saya mengawasi seluruh siklus hidup perangkat lunak: mulai dari antarmuka reaktif, API throughput tinggi, hingga orkestrasi cloud dan pipeline CI/CD.",
+    "mobinSkillsTitle": "Stack Teknis Inti & Kemampuan Rekayasa",
+    "mobinS1Title": "Arsitektur Perangkat Lunak",
+    "mobinS1Desc": "Desain sistem terdistribusi, konkurensi tinggi, pola arsitektur bersih, dan penyetelan kinerja perusahaan.",
+    "mobinS2Title": "Full-Stack Modern",
+    "mobinS3Title": "Cloud & DevOps",
+    "mobinS4Title": "Keamanan Fintech",
+    "mobinS4Desc": "Enkripsi data ujung ke ujung, kepatuhan ISO & PCI, audit penetrasi, dan transaksi terisolasi.",
+    "mobinExpTitle": "Tanggung Jawab & Pengalaman",
+    "mobinVisionTitle": "Visi Teknis untuk Ekosistem Safi"
+  },
+  "mujtabaRahmani": {
+    "name": "Mujtaba Rahmani",
+    "firstName": "Mujtaba",
+    "lastName": "Rahmani",
+    "role": "Chief Operating Officer (COO)",
+    "office": "Operasi Eksekutif • Kabul / Dubai",
+    "coordinates": "Kabul, Afganistan & Dubai, UEA",
+    "badgeCOO": "Chief Operating Officer",
+    "badgeOps": "Operasi Global",
+    "badgeExecution": "Chief Operating Officer",
+    "bio": "Chief Operating Officer Ekosistem Global Safi, Direktur Operasi Perusahaan & Pemimpin Eksekusi Korporat.",
+    "manifestoTitle": "Keunggulan Operasional & Manifes Eksekusi Global",
+    "manifestoQuote": "«Operasi bukan sekadar mengelola logistik; ini adalah detak jantung vital yang mengubah visi ambisius menjadi eksekusi harian sempurna di seluruh benua.»",
+    "manifestoAuthor": "— Mujtaba Rahmani • Chief Operating Officer",
+    "backLink": "Kembali ke Dewan Eksekutif",
+    "clickCopy": "Klik untuk menyalin alamat email",
+    "copied": "Tersalin!",
+    "directContact": "Kontak Eksekutif Langsung",
+    "contactDesc": "Untuk kemitraan perusahaan strategis, investasi institusional, atau pidato internasional:",
+    "portfolioBadge": "Portofolio Korporat",
+    "portfolioTitle": "Perusahaan Global Safi",
+    "techBadge": "Rekayasa Sistem",
+    "techTitle": "Stack Teknis Inti",
+    "milestonesBadge": "Tonggak Eksekutif",
+    "pedigreeBadge": "Kualifikasi Akademik",
+    "languagesBadge": "Kemampuan Bahasa",
+    "manifestoP1": "Nama saya adalah Sayed Mujtaba Rahmani. Di dunia di mana batas-batas digital memudar dan kedaulatan ekonomi diatur oleh kode, misi hidup saya adalah merekayasa sistem yang memberi para pelajar dan profesional akses tanpa hambatan ke instrumen keuangan global dan pendidikan teknik.",
+    "manifestoP2": "Memiliki landasan akademis khusus dalam Ekonomi dan Bisnis Online dari University of the People (AS), saya mendedikasikan diri untuk menjembatani model makroekonomi tradisional dengan arsitektur fintech modern.",
+    "mujtabaRoleTitle": "Chief Operating Officer (COO)",
+    "mujtabaSubtitle": "Operasi & Tata Kelola Siber • Kabul"
+  },
+  "sahelSalem": {
+    "name": "Sahel Salem",
+    "firstName": "Sahel",
+    "lastName": "Salem",
+    "role": "Chief Executive Officer (CEO) & Hubungan Eropa",
+    "office": "Operasi Eksekutif • Frankfurt / London",
+    "coordinates": "Frankfurt, Jerman & London, Inggris Raya",
+    "badgeCEO": "Chief Executive Officer (CEO)",
+    "badgeEuro": "Hubungan Eropa",
+    "badgeExpansion": "Chief Executive Officer (CEO)",
+    "bio": "Chief Executive Officer Safi Academy, Direktur Hubungan Eropa & Pemimpin Kemitraan Akademik Lintas Batas.",
+    "manifestoTitle": "Visi Global & Manifes Integrasi Eropa",
+    "manifestoQuote": "«Pendidikan tanpa mobilitas global adalah pintu yang setengah terbuka. Keharusan kami adalah memastikan bahwa upaya setiap siswa diakui secara langsung di pusat-pusat ekonomi Eropa dan sekitarnya.»",
+    "manifestoAuthor": "— Sahel Salem • CEO & Hubungan Eropa",
+    "pillarsBadge": "Strategi Global",
+    "pillarsTitle": "Pilar Ekspansi Internasional",
+    "p1Title": "Koridor Perbankan UE",
+    "p1Desc": "Membangun koneksi langsung dengan lembaga keuangan tingkat atas Eropa untuk menyediakan layanan penyelesaian IBAN yang patuh bagi para ekspatriat Afghanistan.",
+    "p2Title": "Jaringan Instan SEPA",
+    "p2Desc": "Merancang perutean transaksi sub-detik di 36 negara anggota SEPA, menghapus biaya transfer predator dan penundaan berhari-hari.",
+    "p3Title": "Kepatuhan Global",
+    "p3Desc": "Mengawasi standar Anti-Pencucian Uang (AML) yang ketat, telemetri Kenali-Nasabah-Anda (KYC), dan kepatuhan terhadap regulasi keuangan internasional.",
+    "pedigreeTitle": "Latar Belakang Akademik",
+    "edu1Title": "Mahasiswa BBA (Sarjana Administrasi Bisnis)",
+    "edu1Subtitle": "Kandidat Administrasi Bisnis & Manajemen",
+    "edu1Desc": "Program pendidikan tinggi yang berfokus pada administrasi perusahaan multinasional, akuntansi keuangan, kepemimpinan strategis, dan ekspansi komersial internasional.",
+    "edu2Title": "Studi Tata Kelola & Kepatuhan Fintech",
+    "edu2Subtitle": "Pelatihan Eksekutif (2025 - Sekarang)",
+    "edu2Desc": "Kursus khusus dalam transfer kredit SEPA, protokol pembayaran lintas batas, dan keamanan infrastruktur pembayaran digital.",
+    "networkTitle": "Jaringan Bahasa & Eksekutif",
+    "networkSub": "Kemahiran Bahasa",
+    "langEn": "Bahasa Inggris",
+    "langEnLevel": "Tingkat Kerja Profesional",
+    "langFa": "Persia / Dari",
+    "langFaLevel": "Bahasa Ibu",
+    "langPs": "Pashto",
+    "langPsLevel": "Bahasa Ibu",
+    "executiveDesk": "Meja Eksekutif",
+    "directChannel": "Saluran WhatsApp Langsung",
+    "inquireNow": "Hubungi Sekarang",
+    "backLink": "Kembali ke Dewan Eksekutif",
+    "clickCopy": "Klik untuk menyalin alamat email",
+    "copied": "Tersalin!",
+    "directContact": "Kontak Eksekutif Langsung",
+    "contactDesc": "Untuk kemitraan perusahaan strategis, investasi institusional, atau pidato internasional:",
+    "portfolioBadge": "Portofolio Korporat",
+    "portfolioTitle": "Perusahaan Global Safi",
+    "techBadge": "Rekayasa Sistem",
+    "techTitle": "Stack Teknis Inti",
+    "milestonesBadge": "Tonggak Eksekutif",
+    "pedigreeBadge": "Kualifikasi Akademik",
+    "languagesBadge": "Kemampuan Bahasa",
+    "manifestoP1": "Nama saya adalah Sahel Salem, Chief Executive Officer (CEO) dan Direktur Hubungan Eropa di Safi Academy. Lahir pada 19 Maret 2007, panggilan hidup saya adalah meruntuhkan tembok birokrasi yang menghalangi talenta berkembang untuk berpartisipasi langsung dalam ekonomi Eropa.",
+    "manifestoP2": "Melalui integrasi strategis dengan jaringan keuangan Jerman, Inggris, dan pan-Eropa, saya memimpin inisiatif mobilitas pelajar internasional dan jembatan perbankan SEPA di Safi Academy.",
+    "sahelRoleTitle": "Chief Executive Officer (CEO) & Hubungan Eropa",
+    "sahelSubtitle": "Ekspansi Perbankan Eropa • Pemimpin Global"
+  }
+}

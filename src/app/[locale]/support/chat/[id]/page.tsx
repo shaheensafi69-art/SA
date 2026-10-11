@@ -1,11 +1,12 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getSupportTranslation } from "@/utils/supportTranslations";
 
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { uploadFileToR2 } from "@/utils/upload";
 import {  useRouter , usePathname } from "next/navigation";
-import { ArrowLeft, Send, BotMessageSquare, Loader2, ShieldCheck, User as UserIcon, Sparkles, Paperclip, FileText, Download, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Send, BotMessageSquare, Loader2, ShieldCheck, User as UserIcon, Sparkles, Paperclip, FileText, Download, X } from "lucide-react";
 
 type SupportMessage = {
     id: string;
@@ -25,6 +26,7 @@ export default function ChatScreen({ params }: { params: { id: string } }) {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
+  const st = getSupportTranslation(currentLocale);
     const router = useRouter();
     const supabase = createClient();
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -170,7 +172,7 @@ export default function ChatScreen({ params }: { params: { id: string } }) {
     }
 
     return (
-        <div className="fixed inset-0 z-[9999] bg-[#050505] text-white font-sans flex flex-col overflow-hidden">
+        <div className={`fixed inset-0 z-[9999] bg-[#050505] text-white font-sans flex flex-col overflow-hidden ${st.isRtl ? "rtl" : "ltr"}`} dir={st.isRtl ? "rtl" : "ltr"}>
             <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
                 <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-pink-600/5 rounded-full blur-[150px]"></div>
                 <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-blue-600/5 rounded-full blur-[150px]"></div>
@@ -182,17 +184,17 @@ export default function ChatScreen({ params }: { params: { id: string } }) {
                         onClick={() => router.push(`/${currentLocale}/support`)}
                         className="w-10 h-10 rounded-full bg-white/[0.02] hover:bg-white/[0.06] flex items-center justify-center transition-all border border-white/[0.05]"
                     >
-                        <ArrowLeft size={18} className="text-neutral-400 group-hover:text-white" />
+                        {st.isRtl ? <ArrowRight size={18} className="text-neutral-400 group-hover:text-white" /> : <ArrowLeft size={18} className="text-neutral-400 group-hover:text-white" />}
                     </button>
                     <div className="flex flex-col">
                         <div className="flex items-center gap-2.5">
-                            <h2 className="text-[14px] font-black tracking-widest uppercase text-white/90">Safi Support</h2>
+                            <h2 className="text-[14px] font-black tracking-widest uppercase text-white/90">{st.safiSupport}</h2>
                             {ticket?.status === "escalated" ? <ShieldCheck size={16} className="text-emerald-400" /> : <BotMessageSquare size={16} className="text-pink-400" />}
                         </div>
                         <div className="flex items-center gap-2 mt-1">
                             <span className={`w-1.5 h-1.5 rounded-full ${ticket?.status === "escalated" ? "bg-amber-400 animate-pulse" : ticket?.status === "closed" ? "bg-red-500" : "bg-emerald-400"}`}></span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-                                {ticket?.status === "escalated" ? "Human Agent Connected" : ticket?.status === "closed" ? "Session Closed" : "AI Intelligence Active"}
+                                {ticket?.status === "escalated" ? st.humanAgentConnected : ticket?.status === "closed" ? st.sessionClosed : st.aiActive}
                             </span>
                         </div>
                     </div>
@@ -204,7 +206,7 @@ export default function ChatScreen({ params }: { params: { id: string } }) {
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/[0.02] border border-white/[0.05] mb-3">
                         <Sparkles className="w-5 h-5 text-neutral-500" />
                     </div>
-                    <p className="text-[10px] text-neutral-600 font-bold uppercase tracking-[0.2em]">{t.publicPages.secureSession}</p>
+                    <p className="text-[10px] text-neutral-600 font-bold uppercase tracking-[0.2em]">{st.secureSession}</p>
                 </div>
 
                 {messages.map((msg) => {
@@ -221,15 +223,15 @@ export default function ChatScreen({ params }: { params: { id: string } }) {
                     if (isMe) {
                         bubbleClass = "bg-gradient-to-br from-blue-600/90 to-indigo-800/90 text-white rounded-[1.5rem] rounded-br-[4px] shadow-[0_10px_30px_rgba(79,70,229,0.15)]";
                         icon = <UserIcon size={12} className="text-indigo-200" />;
-                        senderName = "You";
+                        senderName = st.you;
                     } else if (isAI) {
                         bubbleClass = "bg-white/[0.03] backdrop-blur-2xl border border-pink-500/20 text-neutral-200 rounded-[1.5rem] rounded-tl-sm shadow-[0_10px_30px_rgba(0,0,0,0.5)]";
                         icon = <BotMessageSquare size={12} className="text-pink-400" />;
-                        senderName = "Safi AI";
+                        senderName = st.safiAi;
                     } else {
                         bubbleClass = "bg-white/[0.03] backdrop-blur-2xl border border-emerald-500/20 text-neutral-200 rounded-[1.5rem] rounded-tl-sm shadow-[0_10px_30px_rgba(0,0,0,0.5)]";
                         icon = <ShieldCheck size={12} className="text-emerald-400" />;
-                        senderName = "Safi Admin";
+                        senderName = st.safiAdmin;
                     }
 
                     return (
@@ -245,7 +247,7 @@ export default function ChatScreen({ params }: { params: { id: string } }) {
                                     {msg.attachment_url && (
                                         <div className="mt-3 pt-3 border-t border-white/10 flex items-center gap-2">
                                             <a href={msg.attachment_url} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs text-pink-300 hover:underline">
-                                                <FileText size={16} /> {t.common.view} <Download size={14} />
+                                                <FileText size={16} /> {st.viewAttachment} <Download size={14} />
                                             </a>
                                         </div>
                                     )}
@@ -294,7 +296,7 @@ export default function ChatScreen({ params }: { params: { id: string } }) {
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         disabled={ticket?.status === "closed" || isTyping || isUploading}
-                        placeholder={ticket?.status === "closed" ? "This session is closed." : ticket?.status === "escalated" ? "Message human admin..." : "Message Safi AI..."}
+                        placeholder={ticket?.status === "closed" ? st.sessionClosedMsg : ticket?.status === "escalated" ? st.messageAdmin : st.messageAi}
                         className="flex-1 bg-transparent border-none px-4 py-3.5 text-[14px] font-medium text-white placeholder-neutral-600 focus:outline-none focus:ring-0 disabled:opacity-50"
                         style={{ direction: /[\u0600-\u06FF]/.test(newMessage) ? 'rtl' : 'ltr' }}
                     />

@@ -1,10 +1,11 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getSupportTranslation } from "@/utils/supportTranslations";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import {  useRouter , usePathname } from "next/navigation";
-import { MessageCircle, Clock3, ChevronRight, Sparkles, LifeBuoy, ArrowLeft, Loader2 } from "lucide-react";
+import { MessageCircle, Clock3, ChevronRight, Sparkles, LifeBuoy, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 
 type SupportTicket = {
   id: string;
@@ -18,6 +19,7 @@ export default function MinimalSupportPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
+  const st = getSupportTranslation(currentLocale);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false); // جلوگیری از کلیک‌های همزمان
@@ -26,7 +28,7 @@ export default function MinimalSupportPage() {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return `${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}, ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}`;
+    return `${date.toLocaleDateString(currentLocale === 'fa' || currentLocale === 'ps' ? 'fa-AF' : currentLocale, { month: 'short', day: 'numeric' })}, ${date.toLocaleTimeString(currentLocale, { hour: '2-digit', minute: '2-digit', hour12: false })}`;
   };
 
   useEffect(() => {
@@ -71,10 +73,10 @@ export default function MinimalSupportPage() {
 
   const getStatusText = (status: SupportTicket["status"]) => {
     switch (status) {
-      case "open": return "Pending";
-      case "answered": return "Answered";
-      case "escalated": return "Admin";
-      default: return "Closed";
+      case "open": return st.statusOpen;
+      case "answered": return st.statusAnswered;
+      case "escalated": return st.statusEscalated;
+      default: return st.statusClosed;
     }
   };
 
@@ -94,13 +96,13 @@ export default function MinimalSupportPage() {
     // ساخت تیکت جدید در دیتابیس
     const { data: newTicket, error } = await supabase.from("tickets").insert({
       student_id: user.id,
-      subject: "General Live Support",
+      subject: st.defaultSubject,
       department: "Technical",
       status: "open"
     }).select().single();
 
     if (error || !newTicket) {
-      alert("Error creating chat session.");
+      alert(st.errorCreatingSession);
       setIsCreating(false);
       return;
     }
@@ -109,7 +111,7 @@ export default function MinimalSupportPage() {
     await supabase.from("ticket_messages").insert({
       ticket_id: newTicket.id,
       sender_id: null,
-      message_text: "Hello! I am Safi AI Support. How can I help you today? (سلام! من پشتیبان هوشمند سافی هستم. چطور می‌توانم کمکتان کنم؟)"
+      message_text: st.initialAiGreeting
     });
 
     // هدایت به صفحه چت با شناسه واقعی تیکت (دیگر از /new استفاده نمی‌کنیم)
@@ -121,15 +123,15 @@ export default function MinimalSupportPage() {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] w-full h-[100dvh] bg-[#030305] text-white font-sans overflow-y-auto">
+    <div className={`fixed inset-0 z-[9999] w-full h-[100dvh] bg-[#030305] text-white font-sans overflow-y-auto ${st.isRtl ? "rtl" : "ltr"}`} dir={st.isRtl ? "rtl" : "ltr"}>
 
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] max-w-[800px] h-[400px] bg-[#C2185B]/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
 
       <button
         onClick={() => router.push(`/${currentLocale}/dashboard`)}
-        className="absolute top-6 left-6 z-50 w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full flex items-center justify-center text-neutral-400 hover:text-white transition-all shadow-lg backdrop-blur-md"
+        className={`absolute top-6 ${st.isRtl ? "right-6" : "left-6"} z-50 w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full flex items-center justify-center text-neutral-400 hover:text-white transition-all shadow-lg backdrop-blur-md`}
       >
-        <ArrowLeft size={18} />
+        {st.isRtl ? <ArrowRight size={18} /> : <ArrowLeft size={18} />}
       </button>
 
       <div className="max-w-4xl mx-auto px-5 sm:px-8 pt-20 sm:pt-24 pb-20 relative z-10">
@@ -139,10 +141,10 @@ export default function MinimalSupportPage() {
             <LifeBuoy className="w-8 h-8 sm:w-10 sm:h-10 text-pink-300" strokeWidth={1.5} />
           </div>
           <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight mb-3">
-            How can we help, <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-[#C2185B]">{firstName || "Student"}</span>?
+            {st.howCanWeHelp} <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-[#C2185B]">{firstName || st.student}</span>?
           </h1>
           <p className="text-neutral-400 text-sm sm:text-base font-medium max-w-lg mx-auto leading-relaxed">
-            Our AI assistant is ready to provide instant answers. For complex issues, human support is just a tap away.
+            {st.aiAssistantReady}
           </p>
         </div>
 
@@ -156,8 +158,8 @@ export default function MinimalSupportPage() {
                 <MessageCircle className="w-6 h-6" />
               </div>
               <div>
-                <h2 className="text-lg sm:text-xl font-black text-white group-hover:text-pink-300 transition-colors">{t.publicPages.startLiveChat}</h2>
-                <p className="text-xs sm:text-sm text-neutral-500 font-medium mt-1">{t.publicPages.connectWithAgent}</p>
+                <h2 className="text-lg sm:text-xl font-black text-white group-hover:text-pink-300 transition-colors">{st.startLiveChat}</h2>
+                <p className="text-xs sm:text-sm text-neutral-500 font-medium mt-1">{st.connectWithAgent}</p>
               </div>
             </div>
             <button
@@ -166,7 +168,7 @@ export default function MinimalSupportPage() {
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-white/5 hover:bg-pink-500/20 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all cursor-pointer border border-white/10 hover:border-pink-500/40 disabled:opacity-50"
             >
               {isCreating ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={14} className="text-pink-400" />}
-              {isCreating ? "Initializing..." : "New Chat"}
+              {isCreating ? st.initializing : st.newChat}
             </button>
           </div>
         </div>
@@ -174,7 +176,7 @@ export default function MinimalSupportPage() {
         <div>
           <div className="flex items-center gap-3 mb-6 px-2">
             <Clock3 className="w-5 h-5 text-neutral-500" />
-            <h3 className="text-sm font-black text-neutral-300 uppercase tracking-widest">{t.publicPages.recentConversations}</h3>
+            <h3 className="text-sm font-black text-neutral-300 uppercase tracking-widest">{st.recentConversations}</h3>
           </div>
 
           <div className="space-y-3">
@@ -211,14 +213,14 @@ export default function MinimalSupportPage() {
                         </div>
                       </div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-neutral-600 group-hover:text-neutral-300 transition-colors shrink-0 ml-4" />
+                    <ChevronRight className={`w-5 h-5 text-neutral-600 group-hover:text-neutral-300 transition-colors shrink-0 ${st.isRtl ? "mr-4 rotate-180" : "ml-4"}`} />
                   </div>
                 );
               })
             ) : (
               <div className="text-center py-16 bg-white/[0.01] border border-white/[0.03] rounded-3xl">
                 <LifeBuoy className="w-10 h-10 mx-auto text-neutral-700 mb-4" strokeWidth={1.5} />
-                <p className="text-neutral-400 text-sm font-medium">{t.publicPages.noActiveSupportHistory}</p>
+                <p className="text-neutral-400 text-sm font-medium">{st.noActiveSupportHistory}</p>
               </div>
             )}
           </div>

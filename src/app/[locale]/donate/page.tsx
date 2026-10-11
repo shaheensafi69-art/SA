@@ -1241,7 +1241,7 @@ export default function DonatePage() {
 
                 <div className="pt-4 border-t border-white/5 flex items-center gap-2 text-[11px] text-emerald-400 font-semibold">
                   <CheckCircle2 size={13} />
-                  <span>{dt.verifiedScholarship || (dt.isRtl ? "بورسیه تحصیلی تأیید شده" : "Verified Scholarship Recipient")}</span>
+                  <span>{dt.verifiedScholarship}</span>
                 </div>
               </motion.div>
             ))}

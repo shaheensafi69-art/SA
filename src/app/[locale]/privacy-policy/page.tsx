@@ -1,5 +1,6 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getPrivacyTranslation } from "@/utils/privacyTranslations";
 import { usePathname } from "next/navigation";
 
 import { useState, useEffect } from "react";
@@ -34,42 +35,43 @@ export default function PrivacyPolicyPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
+  const pm = getPrivacyTranslation(currentLocale);
+  const isRtl = pm.isRtl;
   const [activeSection, setActiveSection] = useState("controller");
 
   const sections = [
-    { id: "controller", title: "1. Data Controller", icon: Building2 },
-    { id: "collection", title: "2. Information We Collect", icon: Eye },
-    { id: "affiliates", title: "3. Affiliates & Third Parties", icon: Share2, isHighlight: true },
-    { id: "usage", title: "4. How We Use Data", icon: Server },
-    { id: "cookies", title: "5. Cookies & Tracking", icon: Cookie },
-    { id: "security", title: "6. Security & Storage", icon: Lock },
-    { id: "rights", title: "7. Your Legal Rights", icon: Scale },
-    { id: "contact", title: "8. Privacy Inquiries", icon: Mail },
+    { id: "controller", title: pm.sections[0].title, icon: Building2 },
+    { id: "collection", title: pm.sections[1].title, icon: Eye },
+    { id: "affiliates", title: pm.sections[2].title, icon: Share2, isHighlight: true },
+    { id: "usage", title: pm.sections[3].title, icon: Server },
+    { id: "cookies", title: pm.sections[4].title, icon: Cookie },
+    { id: "security", title: pm.sections[5].title, icon: Lock },
+    { id: "rights", title: pm.sections[6].title, icon: Scale },
+    { id: "contact", title: pm.sections[7].title, icon: Mail },
   ];
 
   const highlights = [
     {
-      title: "Zero Data Selling",
-      desc: "We strictly never sell or rent your personal information to third-party data brokers.",
+      title: pm.highlights[0].title,
+      desc: pm.highlights[0].desc,
       icon: ShieldCheck,
       color: "emerald"
     },
     {
-      title: "Affiliate Transparency",
-      desc: "Clear disclosures regarding referral cookies & external partners like Registered Agents Inc.",
+      title: pm.highlights[1].title,
+      desc: pm.highlights[1].desc,
       icon: Share2,
       color: "amber"
     },
     {
-      title: "Enterprise Encryption",
-      desc: "End-to-end TLS/SSL encryption across all academy courses, credentials, and data.",
+      title: pm.highlights[2].title,
+      desc: pm.highlights[2].desc,
       icon: Lock,
       color: "blue"
     },
     {
-      title: "Full GDPR Control",
-      desc: "Unrestricted rights to access, rectify, port, or erase your account data at any time.",
+      title: pm.highlights[3].title,
+      desc: pm.highlights[3].desc,
       icon: UserCheck,
       color: "purple"
     }
@@ -114,7 +116,7 @@ export default function PrivacyPolicyPage() {
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-emerald-400 mb-6"
           >
-            <Shield size={14} className="animate-pulse" /> Official Data Charter & Privacy Policy
+            <Shield size={14} className="animate-pulse" /> {pm.badge}
           </motion.div>
 
           <motion.h1
@@ -123,9 +125,9 @@ export default function PrivacyPolicyPage() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight mb-6"
           >
-            Your Privacy & Data <br />
+            {pm.heroTitleLine1} <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500">
-              Are Fully Protected
+              {pm.heroTitleLine2}
             </span>
           </motion.h1>
 
@@ -135,9 +137,7 @@ export default function PrivacyPolicyPage() {
             transition={{ delay: 0.2 }}
             className="text-neutral-400 text-sm md:text-base leading-relaxed"
           >
-            {isRtl
-              ? "آکادمی صافی تحت بالاترین استانداردهای یکپارچگی داده‌ها و انطباق با قوانین حریم خصوصی فعالیت می‌کند. در این بخش با نحوه پردازش و امنیت داده‌های شما در Safi International Capital LTD آشنا می‌شوید."
-              : "Safi Academy operates under the highest standards of data integrity and regulatory compliance. Learn how Safi International Capital LTD processes, secures, and honors your personal data."}
+            {pm.heroSub}
           </motion.p>
 
           {/* Metadata Pill Bar */}
@@ -147,11 +147,11 @@ export default function PrivacyPolicyPage() {
             transition={{ delay: 0.3 }}
             className="mt-8 inline-flex flex-wrap items-center justify-center gap-3 p-2 bg-neutral-900/80 border border-white/10 rounded-2xl text-xs text-neutral-300 backdrop-blur-md"
           >
-            <span className="px-3 py-1 rounded-lg bg-white/5 font-semibold text-white">Entity: Safi International Capital LTD</span>
+            <span className="px-3 py-1 rounded-lg bg-white/5 font-semibold text-white">{pm.entityLabel}</span>
             <span className="hidden sm:inline text-neutral-600">•</span>
-            <span className="px-3 py-1 rounded-lg bg-white/5 text-neutral-400 font-mono">Reg: 17063286 (UK)</span>
+            <span className="px-3 py-1 rounded-lg bg-white/5 text-neutral-400 font-mono">{pm.regLabel}</span>
             <span className="hidden sm:inline text-neutral-600">•</span>
-            <span className="px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 font-medium">UK GDPR & DPA 2018</span>
+            <span className="px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 font-medium">{pm.lawLabel}</span>
           </motion.div>
         </div>
 
@@ -175,7 +175,7 @@ export default function PrivacyPolicyPage() {
                   <p className="text-xs text-neutral-400 leading-relaxed">{item.desc}</p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-white/5 flex items-center gap-1.5 text-[11px] text-emerald-400 font-bold uppercase tracking-wider">
-                  <Check className="w-3.5 h-3.5" /> {isRtl ? "استاندارد تضمین‌شده" : "Guaranteed Standard"}
+                  <Check className="w-3.5 h-3.5" /> {pm.highlights[0].badge}
                 </div>
               </motion.div>
             );
@@ -191,8 +191,8 @@ export default function PrivacyPolicyPage() {
             {/* Table of Contents Card */}
             <div className="bg-neutral-900/80 border border-white/10 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
-                <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">{t.publicPages.navigationIndex}</span>
-                <span className="text-[11px] font-mono text-neutral-500">{isRtl ? "۸ بخش قانونی" : "8 Sections"}</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">{pm.tocTitle}</span>
+                <span className="text-[11px] font-mono text-neutral-500">{pm.tocCount}</span>
               </div>
 
               <nav className="space-y-1">
@@ -225,16 +225,16 @@ export default function PrivacyPolicyPage() {
             <div className="bg-gradient-to-br from-neutral-900/90 to-neutral-950 border border-white/10 rounded-3xl p-6 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
               <h4 className="text-sm font-bold text-white mb-2 flex items-center gap-2">
-                <Mail className="w-4 h-4 text-emerald-400" /> Have Data Questions?
+                <Mail className="w-4 h-4 text-emerald-400" /> {pm.legalHelp.title}
               </h4>
               <p className="text-xs text-neutral-400 leading-relaxed mb-4">
-                Reach our designated compliance officer for GDPR access, data modification, or third-party inquiries.
+                {pm.legalHelp.desc}
               </p>
               <a
                 href="mailto:contact@safiacademy.org"
                 className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-emerald-400 transition-colors"
               >
-                <span>{t.publicPages.emailPrivacyTeam}</span>
+                <span>{pm.legalHelp.btn}</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -251,27 +251,27 @@ export default function PrivacyPolicyPage() {
                   <Building2 className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">Section 1</span>
-                  <h2 className="text-2xl font-black text-white">Data Controller & Operating Entity</h2>
+                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">{pm.section1.secBadge}</span>
+                  <h2 className="text-2xl font-black text-white">{pm.section1.title}</h2>
                 </div>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-6">
-                Safi Academy is operated by <strong>Safi International Capital LTD</strong>, a corporation officially registered and governed under the laws of England and Wales. We act as the primary data controller for all personal information collected through our educational platform.
+                {pm.section1.desc}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white/[0.02] border border-white/5 rounded-2xl p-5 text-xs text-neutral-300">
                 <div>
-                  <span className="text-neutral-500 block mb-1 font-mono uppercase text-[10px]">Legal Entity</span>
+                  <span className="text-neutral-500 block mb-1 font-mono uppercase text-[10px]">{pm.section1.legalEntityLabel}</span>
                   <strong className="text-white text-sm">Safi International Capital LTD</strong>
                 </div>
                 <div>
-                  <span className="text-neutral-500 block mb-1 font-mono uppercase text-[10px]">Company Number</span>
+                  <span className="text-neutral-500 block mb-1 font-mono uppercase text-[10px]">{pm.section1.companyNumLabel}</span>
                   <strong className="text-white text-sm font-mono">17063286 (UK)</strong>
                 </div>
                 <div className="sm:col-span-2 pt-3 border-t border-white/5">
-                  <span className="text-neutral-500 block mb-1 font-mono uppercase text-[10px]">Headquarters Address</span>
-                  <span className="text-neutral-300">71-75 Shelton Street, Covent Garden, London, WC2H 9JQ, United Kingdom</span>
+                  <span className="text-neutral-500 block mb-1 font-mono uppercase text-[10px]">{pm.section1.hqLabel}</span>
+                  <span className="text-neutral-300">{pm.section1.hqValue}</span>
                 </div>
               </div>
             </div>
@@ -283,13 +283,13 @@ export default function PrivacyPolicyPage() {
                   <Eye className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">Section 2</span>
-                  <h2 className="text-2xl font-black text-white">Categories of Information We Collect</h2>
+                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">{pm.section2.secBadge}</span>
+                  <h2 className="text-2xl font-black text-white">{pm.section2.title}</h2>
                 </div>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-6">
-                We only gather data necessary to provide seamless course experiences, secure authentication, and verified educational credentials.
+                {pm.section2.desc}
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -555,15 +555,15 @@ export default function PrivacyPolicyPage() {
                     <Trash2 className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-white">Need to permanently delete your account & erase your data?</p>
-                    <p className="text-[11px] text-neutral-400">Access our official self-service App Store & GDPR Account Deletion Gateway.</p>
+                    <p className="text-xs font-bold text-white">{pm.section7.deletionBox.title}</p>
+                    <p className="text-[11px] text-neutral-400">{pm.section7.deletionBox.sub}</p>
                   </div>
                 </div>
                 <Link
                   href={`/${currentLocale}/delete-account`}
                   className="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-black text-xs uppercase tracking-wider transition-all whitespace-nowrap shadow-md flex items-center gap-1.5 shrink-0"
                 >
-                  <span>Delete Account</span>
+                  <span>{pm.section7.deletionBox.btn}</span>
                   <ExternalLink size={12} />
                 </Link>
               </div>
@@ -587,7 +587,7 @@ export default function PrivacyPolicyPage() {
 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/5 mb-6">
                 <div>
-                  <div className="text-xs text-neutral-500 uppercase font-mono mb-1">Direct Support Channel</div>
+                  <div className="text-xs text-neutral-500 uppercase font-mono mb-1">{pm.section8.emailLabel}</div>
                   <div className="text-base font-bold text-white font-mono">contact@safiacademy.org</div>
                 </div>
                 <a
@@ -595,7 +595,7 @@ export default function PrivacyPolicyPage() {
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs uppercase tracking-wider transition-all"
                 >
                   <Mail className="w-4 h-4" />
-                  <span>Send Inquiries</span>
+                  <span>{pm.section8.btn}</span>
                 </a>
               </div>
 

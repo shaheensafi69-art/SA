@@ -1,6 +1,7 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
 import { getAboutTranslation } from "@/utils/aboutTranslations";
+import { getFounderLocaleData } from "@/utils/founderTranslations";
 import { isRtlLocale } from "@/dictionaries";
 
 import { useEffect, useState, forwardRef } from "react";
@@ -199,48 +200,7 @@ type TeacherInfo = {
   teacher_info_courses: { courses: { title: string } }[] | null;
 };
 
-const teamMembers = [
-  {
-    name: "Shaheen Safi",
-    role: "FOUNDER & DIRECTOR",
-    slug: "shaheen-safi",
-    image: "/team/shaheen.jpeg",
-    borderClass: "border-yellow-500/30 hover:border-yellow-500",
-    textClass: "text-yellow-500",
-  },
-  {
-    name: "Sahel Salem",
-    role: "CHIEF EXECUTIVE OFFICER (CEO) & EUROPEAN RELATIONS",
-    slug: "sahel-salem",
-    image: "/team/sahel.jpeg",
-    borderClass: "border-emerald-500/30 hover:border-emerald-500",
-    textClass: "text-emerald-500",
-  },
-  {
-    name: "Shirin Gol Ahmadi",
-    role: "GENERAL MANAGER OF ALL SAFI ECOSYSTEM",
-    slug: "shirin-gol-ahmadi",
-    image: "/team/shirin.jpeg",
-    borderClass: "border-rose-500/30 hover:border-rose-500",
-    textClass: "text-rose-500",
-  },
-  {
-    name: "Mujtaba Rahmani",
-    role: "CHIEF OPERATING OFFICER (COO)",
-    slug: "mujtaba-rahmani",
-    image: "/team/mujtaba.jpeg",
-    borderClass: "border-blue-500/30 hover:border-blue-500",
-    textClass: "text-blue-500",
-  },
-  {
-    name: "Mobin Hassani",
-    role: "LEAD DEVELOPER & HEAD OF SOFTWARE ENGINEERING",
-    slug: "mobin-hassani",
-    image: "/team/mobin.jpeg",
-    borderClass: "border-cyan-500/30 hover:border-cyan-500",
-    textClass: "text-cyan-400",
-  }
-];
+
 
 const ecosystemCompanies = [
   {
@@ -360,7 +320,51 @@ export default function AboutPage() {
   const currentLocale = pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
   const ab = getAboutTranslation(currentLocale);
+  const { dict: fDict } = getFounderLocaleData(currentLocale);
   const isRtl = isRtlLocale(currentLocale);
+
+  const teamMembers = [
+    {
+      name: fDict.shaheenSafi.name,
+      role: fDict.shaheenSafi.role,
+      slug: "shaheen-safi",
+      image: "/team/shaheen.jpeg",
+      borderClass: "border-yellow-500/30 hover:border-yellow-500",
+      textClass: "text-yellow-500",
+    },
+    {
+      name: fDict.sahelSalem.name,
+      role: fDict.sahelSalem.role,
+      slug: "sahel-salem",
+      image: "/team/sahel.jpeg",
+      borderClass: "border-emerald-500/30 hover:border-emerald-500",
+      textClass: "text-emerald-500",
+    },
+    {
+      name: fDict.shirinGolAhmadi.name,
+      role: fDict.shirinGolAhmadi.role,
+      slug: "shirin-gol-ahmadi",
+      image: "/team/shirin.jpeg",
+      borderClass: "border-rose-500/30 hover:border-rose-500",
+      textClass: "text-rose-500",
+    },
+    {
+      name: fDict.mujtabaRahmani.name,
+      role: fDict.mujtabaRahmani.role,
+      slug: "mujtaba-rahmani",
+      image: "/team/mujtaba.jpeg",
+      borderClass: "border-blue-500/30 hover:border-blue-500",
+      textClass: "text-blue-500",
+    },
+    {
+      name: fDict.mobinHassani.name,
+      role: fDict.mobinHassani.role,
+      slug: "mobin-hassani",
+      image: "/team/mobin.jpeg",
+      borderClass: "border-cyan-500/30 hover:border-cyan-500",
+      textClass: "text-cyan-400",
+    }
+  ];
   const [teachers, setTeachers] = useState<TeacherInfo[]>([]);
   const [isLoadingTeachers, setIsLoadingTeachers] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -432,17 +436,15 @@ export default function AboutPage() {
         </div>
 
         <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tight mb-8 leading-[1.08] animate-[fadeInUp_0.6s_ease-out]">
-          {isRtl ? "معماری آینده‌ی " : "Architecting The Future of "}
+          {ab.heroLine1}
           <br className="hidden md:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-600 drop-shadow-2xl">
-            {isRtl ? "آموزش و تخصص جهانی." : "Global Education."}
+            {ab.heroLine2}
           </span>
         </h1>
 
         <p className="text-neutral-300 text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed mb-12 animate-[fadeInUp_0.7s_ease-out]">
-          {isRtl
-            ? "آکادمی صافی نهاد بین‌المللی پیشرو در اکوسیستم صافی است. با دفتر مرکزی در لندن، ما فاصله میان تخصص واقعی بازار و فناوری‌های نوین آموزشی را پیوند می‌دهیم تا ده‌ها هزار دانشجو در سراسر جهان به استقلال مالی و فناوری دست یابند."
-            : "Safi Academy is the premier international institution within the Safi Ecosystem. Headquartered in London, we bridge the gap between real-world industry mastery and modern educational technology, empowering tens of thousands of global students to achieve financial, technological, and intellectual independence."}
+          {ab.heroDesc}
         </p>
 
         {/* Core Institutional Stats Bar */}
@@ -555,7 +557,7 @@ export default function AboutPage() {
                   </p>
                 </div>
                 <div className="mt-8 pt-4 border-t border-white/5 flex items-center gap-2 text-xs text-yellow-400 font-bold">
-                  <Check className="w-4 h-4" /> {isRtl ? "شامل گواهی‌نامه رسمی" : "Full Certification Included"}
+                  <Check className="w-4 h-4" /> {ab.fullCertIncluded}
                 </div>
               </div>
             );
@@ -594,7 +596,7 @@ export default function AboutPage() {
                   <p className="text-xs text-neutral-400 leading-relaxed">{pillar.desc}</p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-white/5 text-[11px] font-mono text-neutral-500 uppercase">
-                  {isRtl ? "استاندارد سازمانی" : "Institutional Standard"}
+                  {ab.institutionalStandard}
                 </div>
               </div>
             );
@@ -606,14 +608,14 @@ export default function AboutPage() {
       <section className="relative py-24 px-4 md:px-12 max-w-7xl mx-auto z-10">
         <div className="flex flex-col items-center mb-16">
           <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-yellow-500 mb-3">
-            {isRtl ? "رهبری و حاکمیت" : "Leadership & Governance"}
+            {ab.leadershipBadge}
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-white tracking-wider uppercase mb-4 text-center">
-            {isRtl ? "هیئت مدیره اجرایی" : "The Executive Board"}
+            {ab.executiveBoardTitle}
           </h2>
           <div className="w-24 h-1.5 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-full mb-6"></div>
           <p className="text-neutral-400 text-xs sm:text-sm font-bold tracking-widest uppercase text-center max-w-2xl">
-            {isRtl ? "رهبران، مهندسان و استراتژیست‌های راهبر اکوسیستم صافی" : "The Visionaries, Engineers, and Strategists Guiding The Safi Ecosystem"}
+            {ab.executiveBoardDesc}
           </p>
         </div>
 
@@ -624,11 +626,11 @@ export default function AboutPage() {
               title={member.name}
               subtitle={member.role}
               imageUrl={member.image}
-              actionText={isRtl ? "مشاهده بیوگرافی" : "Read Full Bio"}
+              actionText={ab.readFullBio}
               href={`/${currentLocale}/founder/${member.slug}`}
               borderClass={member.borderClass}
               textClass={member.textClass}
-              badge={isRtl ? "هیئت مدیره" : "Executive Board"}
+              badge={ab.executiveBoardBadge}
             />
           ))}
         </div>
@@ -638,14 +640,14 @@ export default function AboutPage() {
       <section className="relative py-24 px-4 md:px-12 max-w-7xl mx-auto z-10 bg-[#07070a]/50 border-y border-white/5">
         <div className="flex flex-col items-center mb-16">
           <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-fuchsia-400 mb-3">
-            Elite Faculty
+            {ab.eliteFaculty}
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-white tracking-wider uppercase mb-4 text-center">
-            Instructors & Department Leads
+            {ab.facultyTitle}
           </h2>
           <div className="w-24 h-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-600 rounded-full mb-6"></div>
           <p className="text-neutral-400 text-xs sm:text-sm font-bold tracking-widest uppercase text-center max-w-2xl">
-            Learn directly from senior software architects, professional institutional traders, and industry leaders.
+            {ab.facultyDesc}
           </p>
         </div>
 
@@ -766,7 +768,7 @@ export default function AboutPage() {
                 </p>
 
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 group-hover:text-white transition-colors mt-auto">
-                  <ExternalLink className="w-4 h-4" /> {isRtl ? "مشاهده پلتفرم" : "Explore Platform"}
+                  <ExternalLink className="w-4 h-4" /> {ab.explorePlatform}
                 </div>
               </div>
             </a>
@@ -797,19 +799,15 @@ export default function AboutPage() {
               </div>
 
               <h3 className="text-2xl sm:text-4xl font-black text-white mb-6">
-                {isRtl ? "حاکمیت شرکتی و ثبت رسمی در بریتانیا" : "Corporate Governance & UK Registry"}
+                {ab.corporateGovTitle}
               </h3>
 
               <p className="text-neutral-300">
-                {isRtl
-                  ? <>آکادمی صافی پرچمدار آموزشی هلدینگ بین‌المللی <strong className="text-white text-lg">Safi International Capital LTD</strong> می‌باشد که رسماً در بریتانیا تحت شماره <span className="text-yellow-400 font-bold bg-yellow-500/10 px-2.5 py-1 rounded-md font-mono">17063286</span> به ثبت رسیده است.</>
-                  : <>Safi Academy is the educational flagship of <strong className="text-white text-lg">Safi International Capital LTD</strong>, a premier corporate financial entity officially registered in the United Kingdom under Company Number <span className="text-yellow-400 font-bold bg-yellow-500/10 px-2.5 py-1 rounded-md font-mono">17063286</span>.</>}
+                {ab.corporateGovP1}
               </p>
 
               <p className="mt-4 text-neutral-300">
-                {isRtl
-                  ? <>دفتر مرکزی ما در قلب تجاری لندن در آدرس <strong className="text-white">71-75 Shelton Street, Covent Garden, London, WC2H 9JQ</strong> واقع شده است. اطلاعات ثبتی ما نزد اداره ثبت شرکت‌های بریتانیا (Companies House شناسه پیگیری: <span className="text-yellow-400 font-bold bg-yellow-500/10 px-2 py-0.5 rounded font-mono">114-030414</span>) کاملاً قابل استعلام است.</>
-                  : <>Our global corporate headquarters is situated in the prestigious commercial heart of London at <strong className="text-white">71-75 Shelton Street, Covent Garden, London, WC2H 9JQ</strong>. Our filings and corporate structure are fully verifiable with the UK Registrar of Companies (Companies House Tracker ID: <span className="text-yellow-400 font-bold bg-yellow-500/10 px-2 py-0.5 rounded font-mono">114-030414</span>).</>}
+                {ab.corporateGovP2}
               </p>
 
               {/* Corporate Identity Key Facts Table */}
@@ -825,10 +823,10 @@ export default function AboutPage() {
 
               <div className="mt-12 pt-8 border-t border-white/10 text-center">
                 <p className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 italic">
-                  "We do not merely adapt to the future; we architect it."
+                  {ab.corporateGovQuote}
                 </p>
                 <p className="text-xs text-neutral-500 mt-4 uppercase tracking-[0.3em] font-bold">
-                  — The Safi Executive Board
+                  {ab.corporateGovAuthor}
                 </p>
               </div>
             </div>
@@ -847,7 +845,7 @@ export default function AboutPage() {
             {ab.faqTitle}
           </h2>
           <p className="mt-4 text-neutral-400 text-sm md:text-base">
-            {isRtl ? "همه چیزهایی که باید درباره آکادمی صافی، استانداردها و گواهی‌نامه‌ها بدانید." : "Everything you need to know about Safi Academy, our standards, certifications, and operations."}
+            {ab.faqSubtitle}
           </p>
           <div className="w-24 h-1 bg-yellow-500 mx-auto mt-6 rounded-full"></div>
         </div>
@@ -922,21 +920,21 @@ export default function AboutPage() {
         <div className="bg-gradient-to-br from-yellow-500/20 to-amber-600/5 border border-yellow-500/20 rounded-[3rem] p-12 backdrop-blur-md shadow-[0_0_50px_rgba(234,179,8,0.1)]">
           <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight">{t.publicPages.readyToShapeFuture}</h2>
           <p className="text-neutral-300 text-sm md:text-base mb-10 max-w-xl mx-auto leading-relaxed">
-            Join thousands of ambitious students worldwide who are acquiring elite skills, earning verifiable certifications, and thriving in the Safi Ecosystem.
+            {ab.footerCtaDesc}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
               href={`/${currentLocale}/register`}
               className="inline-block px-10 py-5 bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-black uppercase tracking-widest text-sm rounded-2xl hover:scale-105 transition-all shadow-[0_0_30px_rgba(234,179,8,0.4)]"
             >
-              {isRtl ? "ثبت‌نام و عضویت در آکادمی" : "Enroll as a Student"}
+              {ab.enrollAsStudent}
             </Link>
 
             <Link
               href={`/${currentLocale}/instructor-application`}
               className="inline-block px-8 py-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold uppercase tracking-widest text-sm rounded-2xl transition-all"
             >
-              {isRtl ? "درخواست تدریس به عنوان استاد" : "Apply as Instructor"}
+              {ab.applyAsInstructor}
             </Link>
           </div>
         </div>

@@ -1,0 +1,319 @@
+{
+  "common": {
+    "backLink": "取締役会に戻る",
+    "clickCopy": "クリックしてメールアドレスをコピー",
+    "copied": "コピーしました！",
+    "directContact": "エグゼクティブ直接連絡先",
+    "contactDesc": "戦略的な企業パートナーシップ、機関投資、国際的な基調講演については："
+  },
+  "shaheenSafi": {
+    "name": "シャヒーン サフィ",
+    "firstName": "シャヒーン",
+    "lastName": "サフィ",
+    "role": "ディレクター兼創業者",
+    "office": "エグゼクティブオフィス • ロンドン / カブール",
+    "coordinates": "英国ロンドン＆アフガニスタン・カブール",
+    "badgeLead": "リードアーキテクト",
+    "badgeFintech": "フルスタックFinTech",
+    "badgeFounder": "ディレクター兼創業者",
+    "reg": "Safi International Capital LTD • UK Reg: 17063286",
+    "bio": "サフィ・グローバル・エコシステムのディレクター、創業者兼リードFinTechシステムアーキテクト。",
+    "manifestoTitle": "アーキテクチャ方針とエグゼクティブ・マニフェスト",
+    "manifestoQuote": "「私たちは単にデジタル経済に参加するためだけにサフィ・アカデミーとSafiPayを設立したのではなく、若者たちを欧米の企業市場に直接結びつける強固な教育と金融の架け橋を築くために創設しました。」",
+    "manifestoAuthor": "— シャヒーン サフィ • 英国ロンドン",
+    "backLink": "取締役会に戻る",
+    "clickCopy": "クリックしてメールアドレスをコピー",
+    "copied": "コピーしました！",
+    "directContact": "エグゼクティブ直接連絡先",
+    "contactDesc": "戦略的な企業パートナーシップ、機関投資、国際的な基調講演については：",
+    "portfolioBadge": "企業ポートフォリオ",
+    "portfolioTitle": "サフィ・グローバル・エンタープライズ",
+    "techBadge": "システムエンジニアリング",
+    "techTitle": "コア技術スタック",
+    "milestonesBadge": "エグゼクティブ・マイルストーン",
+    "pedigreeBadge": "学術的経歴と資格",
+    "languagesBadge": "語学力",
+    "manifestoP1": "私のプロフェッショナルとしての道は、国際金融市場というボラティリティの高い環境から始まりました。2016年から2024年末まで為替市場の専業トレーダーとして活動し、グローバルな流動性フロー、オーダーブック構造、機関レベルのリスク管理に対する深い知見を培いました。",
+    "manifestoP2": "2024年12月、IFTA（国際テクニカルアナリスト連盟）の国際認定を取得した際、真の金融主権はトレード単体では達成できず、グローバル取引を処理する堅牢なデジタルインフラとエンタープライズ・ソフトウェアのアーキテクチャこそが不可欠であると確信しました。",
+    "manifestoP3": "イスタンブール工科大学（ITU）のコンピュータサイエンス学士号を有し、厳格なソフトウェア工学と企業経営ビジョンを融合。Safi International Capital LTDの創業者兼グループCEOとして、SafiPay、Safi TopUp、SafiPro、Safi Academyの技術統括を指揮しています。",
+    "pillars": [
+      {
+        "title": "SafiPay Digital Banking",
+        "desc": "150か国以上で即時バーチャル＆リアルVisaカード発行、SEPA Instant準拠、シームレスな流動性を提供する次世代マルチ通貨決済基盤。",
+        "linkText": "SafiPayプロトコルを見る"
+      },
+      {
+        "title": "Safi TopUp Global",
+        "desc": "世界700社以上の通信キャリアと直結し、即時モバイルチャージや国際ゲームPINを提供するグローバル決済ネットワーク。",
+        "linkText": "Safi TopUpネットワークを見る"
+      },
+      {
+        "title": "Safi Academy",
+        "desc": "英国法人番号17063286の下で運営される旗艦教育機関。Eコマース、応用AI、金融市場の公式認証および100%全額免除奨学金を提供。",
+        "linkText": "学部一覧を見る"
+      },
+      {
+        "title": "SafiPro Apparel",
+        "desc": "認証オーガニックコットン、ミニマル・サイバーパンクの意匠、カーボンニュートラルな国際配送を備えたエンジニア向けプレミアム・アパレル。",
+        "linkText": "SafiProアパレルを見る"
+      }
+    ],
+    "techStack": [
+      {
+        "title": "フロントエンド＆モバイル",
+        "desc": "Next.js 14/15 App Router, React.js, TypeScript, Flutter, Dart, Tailwind CSS, Framer Motion."
+      },
+      {
+        "title": "バックエンド＆データ",
+        "desc": "PostgreSQL, Supabase Enterprise, Node.js, Python, Redis Caching, Microservices, REST & GraphQL."
+      },
+      {
+        "title": "ネットワークセキュリティ",
+        "desc": "Cisco IOS, Routing & Switching, Hardware Firewalls, Encrypted VPN Tunnels, SSL/TLS, ISO 27001."
+      },
+      {
+        "title": "金融市場＆クオンツ分析",
+        "desc": "Smart Money Concepts (SMC), Order Flow, IFTA Technical Analysis, Algorithmic Risk Execution."
+      }
+    ],
+    "milestones": [
+      {
+        "title": "創業者兼グループCEO",
+        "org": "Safi International Capital LTD (2025 - Present)",
+        "desc": "イングランドおよびウェールズで法人登記（番号17063286）。持ち株会社の統治、国際コンプライアンス、世界的なFinTech展開を指揮。"
+      },
+      {
+        "title": "専業・機関為替トレーダー",
+        "org": "Global Currency Markets (2016 - 2024)",
+        "desc": "8年以上にわたり高頻度流動性、オーダーブック管理、為替執行を統括。2024年末より自動化FinTechインフラの構築へと発展。"
+      },
+      {
+        "title": "リードIT＆システムスペシャリスト",
+        "org": "Afghanistan Football Federation (2019 - 2024)",
+        "desc": "エンタープライズ・ネットワーク構造、高スループットサーバー、衛星中継リンク、デジタル身元認証データベースを構築。"
+      }
+    ],
+    "pedigree": [
+      {
+        "school": "Istanbul Technical University (ITU)",
+        "degree": "コンピュータサイエンス学士（2019 - 2023）",
+        "desc": "ユーラシア有数の名門工科大学にて、分散システムアーキテクチャ、計算複雑性理論、暗号セキュリティを専攻。"
+      },
+      {
+        "school": "IFTA国際テクニカルアナリスト認定",
+        "degree": "国際テクニカルアナリスト連盟（2024年12月）",
+        "desc": "計量市場モデリング、リスク解析、マクロ金融行動分析における最高水準の国際認定資格。"
+      }
+    ],
+    "languages": [
+      {
+        "lang": "英語",
+        "level": "ビジネス流暢"
+      },
+      {
+        "lang": "ペルシャ語 / ダリー語",
+        "level": "ネイティブ"
+      },
+      {
+        "lang": "パシュトー語",
+        "level": "ネイティブ"
+      },
+      {
+        "lang": "トルコ語",
+        "level": "学術・日常会話"
+      }
+    ],
+    "accreditationsTitle": "公式機関認定および資格",
+    "accreditations": [
+      {
+        "title": "IFTAグローバル認定資格",
+        "desc": "テクニカル分析＆金融工学"
+      },
+      {
+        "title": "英国企業登記局公認",
+        "desc": "法人登記番号 17063286（英国ロンドン）"
+      },
+      {
+        "title": "イスタンブール工科大学CS修了",
+        "desc": "イスタンブール工科大学同窓生"
+      },
+      {
+        "title": "20以上の企業セミナー登壇",
+        "desc": "Eコマース＆FinTech基調講演"
+      }
+    ]
+  },
+  "shirinGolAhmadi": {
+    "name": "シリン ゴル・アフマディ",
+    "firstName": "シリン",
+    "lastName": "ゴル・アフマディ",
+    "role": "サフィ全エコシステム統括ゼネラルマネージャー",
+    "office": "統括オペレーション＆AIシステム • イスラマバード",
+    "coordinates": "パキスタン・イスラマバード＆グローバル",
+    "born": "生年月日：2004年12月16日",
+    "badgeAI": "応用AIシステム",
+    "badgeAgents": "自律型エージェント",
+    "badgeManager": "サフィ全エコシステム統括ゼネラルマネージャー",
+    "boardText": "取締役会 • サフィ・グローバル・エコシステム",
+    "bio": "サフィ全エコシステム統括ゼネラルマネージャー、応用AIシステムディレクター兼デジタルストラテジスト。",
+    "manifestoTitle": "エグゼクティブリーダーシップ＆応用AI方針",
+    "manifestoQuote": "「SafiPayとサフィ・アカデミーにおいて、私たちの使命は従来の運営を超越しています。私たちはAIを単なる目新しさとしてではなく、生徒の習熟を加速させ、世界市場を開拓する中核的な力として活用しています。」",
+    "manifestoAuthor": "— シリン ゴル・アフマディ • ゼネラルマネージャー＆AIスペシャリスト",
+    "backLink": "取締役会に戻る",
+    "clickCopy": "クリックしてメールアドレスをコピー",
+    "copied": "コピーしました！",
+    "directContact": "エグゼクティブ直接連絡先",
+    "contactDesc": "戦略的な企業パートナーシップ、機関投資、国際的な基調講演については：",
+    "portfolioBadge": "企業ポートフォリオ",
+    "portfolioTitle": "サフィ・グローバル・エンタープライズ",
+    "techBadge": "システムエンジニアリング",
+    "techTitle": "コア技術スタック",
+    "milestonesBadge": "エグゼクティブ・マイルストーン",
+    "pedigreeBadge": "学術的経歴と資格",
+    "languagesBadge": "語学力",
+    "manifestoP1": "シリン・ゴル・アフマディ（Shirin Gol Ahmadi）と申します。SafiPayにおけるサフィ・全エコシステム総支配人兼応用AIシステム総括ディレクターを務めています。経済学理論、フルスタック工学、高品位UI/UX、自律型AIの融合を追求しています。",
+    "manifestoP2": "パキスタン・イスラマバードの名門NUST（国立科学技術大学）経済学部を卒業。計量経済学とマクロ金融の視点から組織を統率し、開発スプリントと市場需要を完全に同期させています。",
+    "manifestoP3": "経営管理にとどまらず、現役のフルスタック・エンジニアおよびデザイナーとしても従事。Next.js、TypeScript、Pythonによるウェブ基盤設計を自ら手掛け、サフィ傘下の全インターフェースにおける美学、性能、アクセシビリティの最高峰を担保しています。",
+    "shirinCompetenciesBadge": "学際的エキスパート",
+    "shirinCompetenciesTitle": "主要エグゼクティブ能力",
+    "shirinC1Title": "オペレーション＆戦略",
+    "shirinC1Desc": "組織リーダーシップ、アジャイル業務調整、部門横断オペレーション、戦略的リソース配分。",
+    "shirinC2Title": "フルスタック開発",
+    "shirinC2Desc": "React.js, Next.js, Node.js, TypeScript, Python, Tailwind CSS, PostgreSQL, REST API, マイクロサービス。",
+    "shirinC3Title": "応用AIシステム",
+    "shirinC3Desc": "高度プロンプト工学、LLM統合、Safi AI自律チューター、ワークフロー・オーケストレーション。",
+    "shirinC4Title": "デザイン＆ブランド",
+    "shirinC4Desc": "Figma UI/UX、デザインシステム、Adobe Photoshop & Illustrator、ビジュアルアイデンティティ設計。",
+    "shirinHistoryTitle": "エグゼクティブ経歴",
+    "shirinPedigreeTitle": "学歴・アカデミック背景",
+    "shirinMultilingualTitle": "多言語コミュニケーション能力",
+    "shirinDistinctionsTitle": "エグゼクティブ表彰・実績"
+  },
+  "mobinHassani": {
+    "name": "モビン ハッサニ",
+    "firstName": "モビン",
+    "lastName": "ハッサニ",
+    "role": "リード開発者兼ソフトウェアエンジニアリング責任者",
+    "office": "技術エグゼクティブ • サフィ・グローバル・エコシステム",
+    "coordinates": "国際リモート＆テックコア",
+    "badgeCore": "コアエンジニアリング",
+    "badgeCloud": "フルスタッククラウドシステム",
+    "badgeLead": "リード開発者",
+    "badgeActive": "ACTIVE CORE ARCHITECT",
+    "bio": "リードソフトウェアエンジニア、クラウドシステムアーキテクト兼サフィ・開発部門責任者。",
+    "manifestoTitle": "リード開発者マニフェスト＆システムアーキテクチャ",
+    "manifestoQuote": "「完璧なソフトウェアアーキテクチャ、高並行処理の最適化、妥協のないセキュリティが、現代のデジタル信頼の基盤を形成します。世界中でシームレスに動作するようサフィプラットフォームを設計しています。」",
+    "manifestoAuthor": "— モビン ハッサニ • リード開発者",
+    "backLink": "取締役会に戻る",
+    "clickCopy": "クリックしてメールアドレスをコピー",
+    "copied": "コピーしました！",
+    "directContact": "エグゼクティブ直接連絡先",
+    "contactDesc": "戦略的な企業パートナーシップ、機関投資、国際的な基調講演については：",
+    "portfolioBadge": "企業ポートフォリオ",
+    "portfolioTitle": "サフィ・グローバル・エンタープライズ",
+    "techBadge": "システムエンジニアリング",
+    "techTitle": "コア技術スタック",
+    "milestonesBadge": "エグゼクティブ・マイルストーン",
+    "pedigreeBadge": "学術的経歴と資格",
+    "languagesBadge": "語学力",
+    "manifestoP1": "モビン・ハッサニ（Mobin Hassani）と申します。サフィ・エコシステムにおけるリード・ソフトウェアエンジニア兼クラウドアーキテクト。銀行水準のセキュリティと極限の低遅延を誇る分散基盤の設計・統括を担当しています。",
+    "manifestoP2": "開発チームのリードとして、リアクティブなフロントエンド設計、高スループットAPI、マルチクラウド・オーケストレーション、CI/CD自動デプロイ、脆弱性防御まで全工程を直接統括しています。",
+    "mobinSkillsTitle": "中核技術スタック＆エンジニアリング能力",
+    "mobinS1Title": "ソフトウェアアーキテクチャ",
+    "mobinS1Desc": "分散システム設計、高並行処理、クリーンアーキテクチャ、エンタープライズ性能チューニング。",
+    "mobinS2Title": "モダンフルスタック開発",
+    "mobinS3Title": "クラウド＆DevOps",
+    "mobinS4Title": "FinTechセキュリティ",
+    "mobinS4Desc": "エンドツーエンド暗号化、ISO＆PCIコンプライアンス、侵入テスト監査、分離型トランザクション。",
+    "mobinExpTitle": "責任および職務経験",
+    "mobinVisionTitle": "Safiエコシステムの技術的ビジョン"
+  },
+  "mujtabaRahmani": {
+    "name": "ムジタバ ラフマニ",
+    "firstName": "ムジタバ",
+    "lastName": "ラフマニ",
+    "role": "最高執行責任者 (COO)",
+    "office": "エグゼクティブ・オペレーション • カブール / ドバイ",
+    "coordinates": "アフガニスタン・カブール＆アラブ首長国連邦ドバイ",
+    "badgeCOO": "最高執行責任者",
+    "badgeOps": "グローバル・オペレーション",
+    "badgeExecution": "最高執行責任者",
+    "bio": "サフィ・グローバル・エコシステム最高執行責任者、エンタープライズ・オペレーション・ディレクター。",
+    "manifestoTitle": "オペレーショナル・エクセレンス＆グローバル実行マニフェスト",
+    "manifestoQuote": "「オペレーションは単なるロジスティクスの管理ではなく、野心的なビジョンを大陸を越えた完璧な日常の実行へと変える不可欠な鼓動です。」",
+    "manifestoAuthor": "— ムジタバ ラフマニ • 最高執行責任者",
+    "backLink": "取締役会に戻る",
+    "clickCopy": "クリックしてメールアドレスをコピー",
+    "copied": "コピーしました！",
+    "directContact": "エグゼクティブ直接連絡先",
+    "contactDesc": "戦略的な企業パートナーシップ、機関投資、国際的な基調講演については：",
+    "portfolioBadge": "企業ポートフォリオ",
+    "portfolioTitle": "サフィ・グローバル・エンタープライズ",
+    "techBadge": "システムエンジニアリング",
+    "techTitle": "コア技術スタック",
+    "milestonesBadge": "エグゼクティブ・マイルストーン",
+    "pedigreeBadge": "学術的経歴と資格",
+    "languagesBadge": "語学力",
+    "manifestoP1": "サイエド・ムジタバ・ラフマニ（Sayed Mujtaba Rahmani）と申します。デジタルの国境が消滅し、経済的主権がコードによって規定される現代において、若者や研究者に対し、世界水準の金融インフラと専門教育への自由なアクセスを提供するシステムの構築を使命としています。",
+    "manifestoP2": "米国のUniversity of the Peopleにて経済学およびオンラインビジネスの専門教育を修め、伝統的マクロ経済モデルと最新のFinTechアーキテクチャの架橋に尽力してきました。",
+    "mujtabaRoleTitle": "最高執行責任者（COO）",
+    "mujtabaSubtitle": "オペレーション＆サイバーガバナンス • カブール"
+  },
+  "sahelSalem": {
+    "name": "サヘル サレム",
+    "firstName": "サヘル",
+    "lastName": "サレム",
+    "role": "最高経営責任者 (CEO) 兼欧州渉外責任者",
+    "office": "エグゼクティブ・オペレーション • フランクフルト / ロンドン",
+    "coordinates": "ドイツ・フランクフルト＆英国ロンドン",
+    "badgeCEO": "最高経営責任者 (CEO)",
+    "badgeEuro": "欧州渉外",
+    "badgeExpansion": "最高経営責任者 (CEO)",
+    "bio": "サフィ・アカデミー最高経営責任者、欧州渉外ディレクター兼国境を越えた学術パートナーシップ責任者。",
+    "manifestoTitle": "グローバルビジョン＆欧州統合マニフェスト",
+    "manifestoQuote": "「グローバルな流動性を伴わない教育は、半分しか開いていない扉です。すべての学生の努力が欧州をはじめとする世界の経済拠点において直接評価されることを目指しています。」",
+    "manifestoAuthor": "— サヘル サレム • CEO兼欧州渉外責任者",
+    "pillarsBadge": "グローバル戦略",
+    "pillarsTitle": "国際展開の基盤ピラー",
+    "p1Title": "EU銀行決済コリドー",
+    "p1Desc": "アフガニスタン出身の在外居住者に向け、ティア1欧州金融機関との直接接続による準拠IBAN決済口座サービスを提供。",
+    "p2Title": "SEPA即時決済レール",
+    "p2Desc": "SEPA加盟36カ国にまたがるミリ秒単位のトランザクションルーティングを構築し、法外な手数料と数日間のタイムラグを排除。",
+    "p3Title": "グローバル・コンプライアンス",
+    "p3Desc": "厳格なマネーロンダリング防止（AML）基準、本人確認（KYC）テレメトリ、および国際金融規制の徹底的な遵守を統括。",
+    "pedigreeTitle": "学術的バックグラウンド",
+    "edu1Title": "経営学士（BBA: Bachelor of Business Administration）在籍",
+    "edu1Subtitle": "企業経営・組織戦略・国際商業展開専攻",
+    "edu1Desc": "多国籍企業マネジメント、財務会計、戦略的リーダーシップ、国際商業展開に重点を置いた高等教育プログラム。",
+    "edu2Title": "フィンテック・ガバナンス＆コンプライアンス研究",
+    "edu2Subtitle": "エグゼクティブ・トレーニング（2025年〜現在）",
+    "edu2Desc": "SEPA送金メカニズム、国境を越えた国際決済プロトコル、デジタル決済インフラのセキュリティに関する専門講義。",
+    "networkTitle": "語学力および国際ネットワーク",
+    "networkSub": "言語運用能力",
+    "langEn": "英語",
+    "langEnLevel": "ビジネス実務レベル",
+    "langFa": "ペルシャ語／ダリー語",
+    "langFaLevel": "母国語",
+    "langPs": "パシュトー語",
+    "langPsLevel": "母国語",
+    "executiveDesk": "代表直通エグゼクティブ窓口",
+    "directChannel": "専用WhatsAppダイレクト回線",
+    "inquireNow": "今すぐ問い合わせる",
+    "backLink": "取締役会に戻る",
+    "clickCopy": "クリックしてメールアドレスをコピー",
+    "copied": "コピーしました！",
+    "directContact": "エグゼクティブ直接連絡先",
+    "contactDesc": "戦略的な企業パートナーシップ、機関投資、国際的な基調講演については：",
+    "portfolioBadge": "企業ポートフォリオ",
+    "portfolioTitle": "サフィ・グローバル・エンタープライズ",
+    "techBadge": "システムエンジニアリング",
+    "techTitle": "コア技術スタック",
+    "milestonesBadge": "エグゼクティブ・マイルストーン",
+    "pedigreeBadge": "学術的経歴と資格",
+    "languagesBadge": "語学力",
+    "manifestoP1": "サヘル・サレム（Sahel Salem）と申します。サフィ・アカデミー最高経営責任者（CEO）兼欧州関係総括ディレクター。2007年3月19日生まれ。若き才能が欧州経済圏へダイレクトに参画することを阻む地理的・官僚的障壁を打破することを使命としています。",
+    "manifestoP2": "ドイツ、イギリス、汎欧州の金融ネットワークとの戦略的提携を通じ、サフィ・アカデミーの国際人材流動化イニシアチブ、企業アライアンス、SEPA銀行決済ブリッジを統括しています。",
+    "sahelRoleTitle": "最高経営責任者（CEO）兼欧州関係総括",
+    "sahelSubtitle": "欧州バンキング展開 • グローバルリード"
+  }
+}

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { ArrowLeft, Sparkles, Plus, Play, User } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getStoriesTranslation } from "@/utils/storiesTranslations";
 import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 interface StoryUser {
@@ -20,7 +21,8 @@ export default function StoriesOverviewPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
+  const st = getStoriesTranslation(currentLocale);
+  const isRtl = st.isRtl;
 
   const [storyUsers, setStoryUsers] = useState<StoryUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,7 +56,7 @@ export default function StoriesOverviewPage() {
           data.forEach((item: any) => {
             const uId = item.user_id;
             const prof = item.profiles;
-            const name = `${prof?.first_name || ""} ${prof?.last_name || ""}`.trim() || "Academy Member";
+            const name = `${prof?.first_name || ""} ${prof?.last_name || ""}`.trim() || st.defaultMemberName;
             const avatar = prof?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
 
             if (!userMap.has(uId)) {
@@ -100,26 +102,21 @@ export default function StoriesOverviewPage() {
             className="flex items-center gap-2 text-neutral-300 hover:text-white bg-white/5 border border-white/10 px-4 py-2 rounded-2xl text-xs font-bold transition-all hover:bg-white/10"
           >
             <ArrowLeft size={16} className={isRtl ? "rotate-180" : ""} />
-            <span>{(t.feed as any)?.backToFeed || (isRtl ? "بازگشت به فید" : "Back to Feed")}</span>
+            <span>{st.backToFeed}</span>
           </Link>
 
           <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-black uppercase tracking-wider">
             <Sparkles size={13} />
-            <span>Campus Stories</span>
+            <span>{st.campusBadge}</span>
           </div>
         </div>
 
         <div className="text-center max-w-2xl mx-auto mb-10">
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-3">
-            {currentLocale === "fa" ? "استوری‌های زنده آکادمی" :
-             currentLocale === "ps" ? "د اکاډمۍ ژوندۍ کیسې" :
-             currentLocale === "ar" ? "قصص الأكاديمية المباشرة" :
-             "Live Academy Stories"}
+            {st.title}
           </h1>
           <p className="text-neutral-400 text-sm leading-relaxed">
-            {currentLocale === "fa" ? "مشاهده آخرین استوری‌ها و دستاوردهای اعضای کامیونیتی آکادمی صافی طی ۲۴ ساعت گذشته." :
-             currentLocale === "ps" ? "په تېرو ۲۴ ساعتونو کې د صافي اکاډمۍ د ټولنې د غړو وروستۍ کیسې وګورئ." :
-             "Browse daily moments, project milestones, and video updates from community members."}
+            {st.subtitle}
           </p>
         </div>
 
@@ -132,18 +129,17 @@ export default function StoriesOverviewPage() {
           <div className="bg-[#0a0a0f]/80 border border-white/10 rounded-3xl p-12 text-center max-w-md mx-auto my-8">
             <User size={36} className="text-neutral-500 mx-auto mb-4" />
             <h3 className="text-lg font-bold text-white mb-2">
-              {currentLocale === "fa" ? "استوری جدیدی ثبت نشده است" : "No active stories yet"}
+              {st.noStoriesTitle}
             </h3>
             <p className="text-neutral-400 text-xs mb-6">
-              {currentLocale === "fa" ? "اولین نفری باشید که داستان روز خود را با هم‌دانشگاهی‌هایتان به اشتراک می‌گذارد." :
-               "Be the first to share your learning update with the campus!"}
+              {st.noStoriesSubtitle}
             </p>
             <Link
               href={`/${currentLocale}/feed`}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-black text-xs transition-all"
             >
               <Plus size={16} />
-              <span>{currentLocale === "fa" ? "ایجاد استوری در فید" : "Create Story in Feed"}</span>
+              <span>{st.createStoryBtn}</span>
             </Link>
           </div>
         ) : (
@@ -187,7 +183,7 @@ export default function StoriesOverviewPage() {
                     {item.name}
                   </p>
                   <span className="text-[10px] text-neutral-300 flex items-center gap-1 mt-0.5 opacity-80 group-hover:opacity-100">
-                    <Play size={10} className="fill-current" /> Watch Story
+                    <Play size={10} className="fill-current" /> {st.watchStory}
                   </span>
                 </div>
               </Link>

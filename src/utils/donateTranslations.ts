@@ -107,6 +107,7 @@ export interface DonateTranslation {
   bottomCtaTitle: string;
   bottomCtaDesc: string;
   bottomCtaBtn: string;
+  verifiedScholarship: string;
 }
 
 const en: DonateTranslation = {
@@ -302,7 +303,8 @@ const en: DonateTranslation = {
   bottomCtaBadge: "Join the Resistance for Education",
   bottomCtaTitle: "Be the Light in Afghanistan's Darkest Hour.",
   bottomCtaDesc: "Every girl we teach to code is a future leader they cannot silence. Choose your amount today and write history.",
-  bottomCtaBtn: "Donate Now & Open a Future"
+  bottomCtaBtn: "Donate Now & Open a Future",
+  verifiedScholarship: "Verified Scholarship Recipient"
 };
 
 const fa: DonateTranslation = {
@@ -498,7 +500,8 @@ const fa: DonateTranslation = {
   bottomCtaBadge: "به جنبش مقاومت آموزشی بپیوندید",
   bottomCtaTitle: "نوری در تاریک‌ترین روزهای افغانستان باشید.",
   bottomCtaDesc: "هر دختری که برنامه‌نویسی می‌آموزد، رهبری برای آینده است که صدای او هرگز خاموش نخواهد شد.",
-  bottomCtaBtn: "همین حالا دونیت کنید و آینده بسازید"
+  bottomCtaBtn: "همین حالا دونیت کنید و آینده بسازید",
+  verifiedScholarship: "بورسیه تحصیلی تأیید شده"
 };
 
 const ps: DonateTranslation = {
@@ -530,7 +533,97 @@ const ps: DonateTranslation = {
   copiedText: "کاپي شو!",
   receiptHeader: "د بانکي رسید تصدیق او ثبتول",
   submitReceiptBtn: "رسید واستوئ",
-  bottomCtaBtn: "همدا اوس مرسته وکړئ"
+  bottomCtaBtn: "همدا اوس مرسته وکړئ",
+  verifiedScholarship: "تایید شوی تحصیلي بورس",
+  trustBadge1Title: "۱۰۰٪ مستقیم اغیز",
+  trustBadge1Desc: "صفر اداري لګښتونه. هره روپۍ مستقیماً افغان زده کوونکو ته رسیږي.",
+  trustBadge2Title: "غیرمتمرکز رسول",
+  trustBadge2Desc: "د خوندي شخصي چینلونو له لارې محلي بانکي بندیزونه شنډوي.",
+  trustBadge3Title: "پلټل شوی او تایید شوی",
+  trustBadge3Desc: "شفاف مالي حسابونه او تایید شوي فراغت اسناد.",
+  storiesBadge: "بدل شوي واقعي ژوندونه",
+  storiesTitle: "له تیاره څخه تر نړیوال کار پورې",
+  storiesSub: "ولولئ چې ستاسو ملاتړ څنګه انزوا ماتوي او اقتصادي خپلواکي جوړوي.",
+  stories: [
+    {
+      name: "فاطمه ر.",
+      location: "کابل، افغانستان",
+      track: "د بشپړ ویب پراختیا فارغه",
+      quote: "کله چې زما په مخ د پوهنتون دروازې وتړل شوې، ما اوونۍ اوونۍ ژړل. صافي اکاډمۍ ما ته یو کوډ شوی لپټاپ راکړ، د 4G انټرنیټ لګښت یې ورکړ او په پټه یې د پروګرامینګ زده کړه راکړه. نن زه له خپلې خونې کار کوم او د خپلې کورنۍ نفقه ګټم.",
+      avatar: "ف"
+    },
+    {
+      name: "مریم ک.",
+      location: "هرات، افغانستان",
+      track: "د پایتون او ډیټا ساینس زده کوونکې",
+      quote: "زموږ په ښار کې نجونو ته حتی عامه کتابتونونو ته د تګ اجازه نشته. دلته زده کړه کول خپله یو مقاومت دی. هر ماښام د صافي اکاډمۍ له لارې درسونه لولم. ستاسو مرسته زموږ د جهالت پر وړاندې وسله ده.",
+      avatar: "م"
+    },
+    {
+      name: "زهرا س.",
+      location: "مزارشریف، افغانستان",
+      track: "د ډیجیټل محصول ډیزاین (UI/UX)",
+      quote: "نن ورځ د افغان نجلۍ تر ټولو سخته برخه دا ده چې نړۍ مو هېره کړي. صافي اکاډمۍ ما ته یادونه وکړه چې زما عقل ارزښت لري. زه خپل لومړنی نړیوال ډیزاین ملاتړ ترلاسه کړم. له ټولو مرسته کوونکو مننه.",
+      avatar: "ز"
+    }
+  ],
+  transparencyBadge: "مالي شفافیت",
+  transparencyTitle: "هر ډالر چیرته لګول کیږي؟",
+  transparencySub: "سل په سلو کې بشپړ شفافیت. د ۲۰۲۶ کال عملیاتي لګښتونه وګورئ.",
+  allocations: [
+    {
+      percent: "۴۵٪",
+      title: "مستقیم تحصیلي بورسونه او ډیپلومونه",
+      desc: "کورسونو ته بشپړ لاسرسی، د ښوونکو سره ځانګړي ساعتونه او نړیوال معتبر سندونه."
+    },
+    {
+      percent: "۲۵٪",
+      title: "چټک انټرنیټ او کوډ شوي ډیټا بستې",
+      desc: "په افغانستان کې د نجونو لپاره د میاشتني 4G او سپوږمکۍ انټرنیټ لګښت."
+    },
+    {
+      percent: "۱۸٪",
+      title: "ډیجیټل سرورونه او د فلټرینګ ضد زېرمې",
+      desc: "د زده کړې محرم چینلونه او د ویډیوګانو سپک فارمټ د ضعیف انټرنیټ لپاره."
+    },
+    {
+      percent: "۱۲٪",
+      title: "لپټاپونه او د لمریزې برېښنا بستې",
+      desc: "د لپټاپونو او بېټرۍ اخیستل ترڅو د برېښنا د نشتوالي ستونزه حل شي."
+    }
+  ],
+  faqBadge: "پرله‌پسې پوښتنې",
+  faqTitle: "د مرسته کوونکو پوښتنو ته ځوابونه",
+  faqSub: "هغه څه چې تاسو باید د تادیې د امنیت او د زده کوونکو د محرمیت په اړه پوه شئ.",
+  faqs: [
+    {
+      q: "زما مرسته څنګه پروسس کیږي او ایا خوندي ده؟",
+      a: "ټولې تادیات د پرمختللي ۲۵۶-بیټ کوډ کولو له لارې د Stripe او PayPal لخوا خوندي کیږي. ستاسو د کارټ معلومات هیڅکله زموږ په سرورونو کې نه ساتل کیږي."
+    },
+    {
+      q: "په افغانستان کې د نجونو خوندیتوب څنګه تضمینیږي؟",
+      a: "امنیت زموږ لومړیتوب دی. د زده کوونکو نوم، موقعیت او د شبکې پته په بشپړه توګه پټه او کوډ شوې ده."
+    },
+    {
+      q: "ایا زه کولی شم په خپل ځايي اسعارو مرسته وکړم؟",
+      a: "هو! زموږ درګاه د نړۍ د ۱۳۵ هیوادونو د کارتونو ملاتړ کوي او ستاسو بانک تبادله په اتومات ډول ترسره کوي."
+    },
+    {
+      q: "ایا زه کولی شم په پټه او بې نومه مرسته وکړم؟",
+      a: "هو، تاسو کولی شئ خپل نوم پټ وساتئ. موږ د مرسته کوونکو معلومات هیڅکله له دریم اړخ سره نه شریکوو."
+    },
+    {
+      q: "مستحقې زده کوونکې څنګه غوره کیږي؟",
+      a: "زموږ ښوونیز ټیم غوښتنلیکونه په دقت ګوري او اولویت هغو نجونو ته ورکول کیږي چې له زده کړې محرومې شوې دي."
+    },
+    {
+      q: "ایا له تادیې وروسته رسمي رسید راکول کیږي؟",
+      a: "هو، له بریالۍ تادیې سمدلاسه وروسته ډیجیټل رسید ستاسو سکرین ته راځي او بریښنالیک ته مو هم استول کیږي."
+    }
+  ],
+  bottomCtaBadge: "د ښوونې مقاومت سره یوځای شئ",
+  bottomCtaTitle: "د افغانستان په توره تیاره کې رڼا شئ.",
+  bottomCtaDesc: "هره نجلۍ چې پروګرامینګ زده کوي، د راتلونکي یو نه خاموشه کیدونکی غږ دی."
 };
 
 const ar: DonateTranslation = {
@@ -562,7 +655,97 @@ const ar: DonateTranslation = {
   copiedText: "تم النسخ!",
   receiptHeader: "تأكيد إيصال التحويل البنكي",
   submitReceiptBtn: "إرسال إيصال التحويل",
-  bottomCtaBtn: "تبرع الآن واصنع مستقبلاً"
+  bottomCtaBtn: "تبرع الآن واصنع مستقبلاً",
+  verifiedScholarship: "حاصلة على منحة دراسية معتمدة",
+  trustBadge1Title: "100% أثر مباشر",
+  trustBadge1Desc: "صفر اقتطاعات إدارية. كل سنت يصل مباشرة إلى الطالبات.",
+  trustBadge2Title: "توصيل لا مركزي",
+  trustBadge2Desc: "تجاوز القيود المصرفية عبر قنوات مشفرة وآمنة تماماً.",
+  trustBadge3Title: "مدقق ومعتمد",
+  trustBadge3Desc: "سجلات مالية شفافة وشهادات تخرج رقمية يمكن التحقق منها.",
+  storiesBadge: "قصص ملهمة حقيقية",
+  storiesTitle: "من العزلة إلى آفاق العمل العالمي",
+  storiesSub: "اكتشف كيف يفكك دعمك جدار العزلة ويبني الاستقلال الاقتصادي.",
+  stories: [
+    {
+      name: "فاطمة ر.",
+      location: "كابول، أفغانستان",
+      track: "خريجة تطوير الويب الشامل",
+      quote: "حين أغلقت أبواب الجامعات في وجوهنا بكيت لأيام. قدمت لي أكاديمية صافي حاسوباً مشفراً وتكفلت بإنترنت 4G، وتعلّمت البرمجة سراً. واليوم أعمل عن بعد وأعيل أسرتي المكونة من ستة أفراد.",
+      avatar: "ف"
+    },
+    {
+      name: "مريم ك.",
+      location: "هرات، أفغانستان",
+      track: "طالبة بايثون وعلم البيانات",
+      quote: "في مدينتنا يُحظر على الفتيات حتى دخول المكتبات. التعلم هنا مقاومة. كل مساء أدرس عبر القنوات الآمنة لأكاديمية صافي. تبرعكم هو سلاحنا في مواجهة الظلام.",
+      avatar: "م"
+    },
+    {
+      name: "زهراء س.",
+      location: "مزار شريف، أفغانستان",
+      track: "تصميم واجهات وتجربة المستخدم (UI/UX)",
+      quote: "أصعب ما في كونك فتاة أفغانية اليوم هو أن ينسى العالم وجودك. أعادت لي أكاديمية صافي كرامتي وأملي بعد حصولي على أول منحة تصميم دولية.",
+      avatar: "ز"
+    }
+  ],
+  transparencyBadge: "الشفافية المالية",
+  transparencyTitle: "أين يذهب كل دولار؟",
+  transparencySub: "شفافية مطلقة بلا أي غموض. مخصصاتنا التشغيلية لعام 2026.",
+  allocations: [
+    {
+      percent: "45%",
+      title: "المنح الدراسية المباشرة والشهادات",
+      desc: "وصول كامل للمقررات، وساعات إرشاد مع كبار المهندسين، وشهادات معتمدة وتوجيه مهني."
+    },
+    {
+      percent: "25%",
+      title: "باقات إنترنت 4G فضائي عالي السرعة",
+      desc: "تغطية الاشتراكات الشهرية لإنترنت الهواتف والأقمار الصناعية للفتيات المحاصرات."
+    },
+    {
+      percent: "18%",
+      title: "البنية التحتية السحابية وتجاوز الحجب",
+      desc: "خوادم سحابية، وبث فيديو منخفض الاستهلاك، وقنوات اتصال مشفرة."
+    },
+    {
+      percent: "12%",
+      title: "الحواسيب وبطاريات الطاقة الشمسية",
+      desc: "تأمين حواسيب محمولة ومصادر طاقة بديلة للتغلب على انقطاع الكهرباء المستمر."
+    }
+  ],
+  faqBadge: "الأسئلة الشائعة",
+  faqTitle: "إجابات على أسئلة الداعمين",
+  faqSub: "كل ما تحتاج معرفته حول أمان الدفع، وخصوصية الطالبات، واستخدام التبرعات.",
+  faqs: [
+    {
+      q: "كيف تتم معالجة تبرعي وهل العملية آمنة؟",
+      a: "تتم المعاملات بتشفير 256-bit TLS عبر بوابات عالمية معتمدة مثل Stripe وPayPal. لا نحتفظ ببيانات بطاقتك أبداً."
+    },
+    {
+      q: "كيف تتم حماية خصوصية وأمان الطالبات في أفغانستان؟",
+      a: "الأمان هو أولويتنا القصوى؛ فالأسماء والمواقع وبيانات الاتصال مشفرة بالكامل، وجميع الدروس متاحة للتنزيل دون اتصال."
+    },
+    {
+      q: "هل يمكنني التبرع بعملتي المحلية؟",
+      a: "نعم! تقبل بواباتنا البطاقات المصرفية من أكثر من 135 دولة، وسيقوم مصرفك بتحويل العملة تلقائياً."
+    },
+    {
+      q: "هل يمكنني التبرع دون الكشف عن هويتي؟",
+      a: "نعم، يمكنك اختيار التبرع كداعم مجهول. نحن لا نشارك معلومات الداعمين مع أي طرف ثالث."
+    },
+    {
+      q: "كيف يتم اختيار الطالبات المستحقات للمنح؟",
+      a: "تقوم لجنتنا الأكاديمية بدراسة الطلبات بعناية فائقة، مع إعطاء الأولوية للفتيات المحرومات من التعليم والأيتام."
+    },
+    {
+      q: "هل أحصل على إيصال رسمي بعد الدفع؟",
+      a: "نعم، يظهر الإيصال الرقمي مع رمز التتبع فوراً بعد اكتمال الدفع ويُرسل إلى بريدك الإلكتروني."
+    }
+  ],
+  bottomCtaBadge: "انضم إلى مقاومة التجهيل",
+  bottomCtaTitle: "كن النور في أحلك أوقات أفغانستان.",
+  bottomCtaDesc: "كل فتاة نعلمها البرمجة هي قائدة مستقبلية لن يستطيع أحد إسكات صوتها."
 };
 
 const ur: DonateTranslation = {
@@ -594,7 +777,97 @@ const ur: DonateTranslation = {
   copiedText: "کاپی ہو گیا!",
   receiptHeader: "بینک ٹرانسفر رسید کی تصدیق",
   submitReceiptBtn: "رسید جمع کرائیں",
-  bottomCtaBtn: "ابھی عطیہ دیں اور مستقبل بنائیں"
+  bottomCtaBtn: "ابھی عطیہ دیں اور مستقبل بنائیں",
+  verifiedScholarship: "تصدیق شدہ تعلیمی اسکالرشپ وصول کنندہ",
+  trustBadge1Title: "100% براہ راست اثر",
+  trustBadge1Desc: "صفر انتظامی کٹوتیاں۔ ہر پیسہ براہ راست افغان طالبات تک پہنچتا ہے۔",
+  trustBadge2Title: "غیر مرکزی ترسیل",
+  trustBadge2Desc: "محفوظ نجی نیٹ ورکس کے ذریعے مقامی بینکنگ پابندیوں کا مؤثر حل۔",
+  trustBadge3Title: "آڈٹ شدہ اور تصدیق شدہ",
+  trustBadge3Desc: "شفاف مالیاتی حسابات اور قابل تصدیق گریجویشن ڈپلومہ اسناد۔",
+  storiesBadge: "حقیقی تبدیل شدہ زندگیاں",
+  storiesTitle: "تاریکی سے عالمی کیریئر تک",
+  storiesSub: "جانیے کہ آپ کی مدد کس طرح قید کو ختم کرتی اور خود مختاری بناتی ہے۔",
+  stories: [
+    {
+      name: "فاطمہ ر.",
+      location: "کابل، افغانستان",
+      track: "فل اسٹیک ویب ڈویلپمنٹ گریجویٹ",
+      quote: "جب یونیورسٹی کے دروازے ہمارے منہ پر بند ہوئے تو میں ہفتوں روتی رہی۔ صافی اکیڈمی نے مجھے انکرپٹڈ لیپ ٹاپ دیا، 4G انٹرنیٹ کا خرچ اٹھایا اور خفیہ طور پر کوڈنگ سکھائی۔ آج میں اپنے کمرے سے فری لانسنگ کر کے چھ افراد کے خاندان کی کفالت کر رہی ہوں۔",
+      avatar: "ف"
+    },
+    {
+      name: "مریم ک.",
+      location: "ہرات، افغانستان",
+      track: "پائتھون اور ڈیٹا سائنس اسکالر",
+      quote: "ہمارے شہر میں لڑکیوں کا پبلک لائبریری جانا بھی منع ہے۔ یہاں تعلیم حاصل کرنا بذات خود ایک جدوجہد ہے۔ ہر شام صافی اکیڈمی کے آف لائن پراکسی کے ذریعے اسباق پڑھتی ہوں۔ آپ کا عطیہ جہالت کے خلاف ہمارا ہتھیار ہے۔",
+      avatar: "م"
+    },
+    {
+      name: "زہرا س.",
+      location: "مزار شریف، افغانستان",
+      track: "یو آئی/یو ایکس ڈیجیٹل پروڈکٹ ڈیزائن",
+      quote: "آج ایک افغان لڑکی ہونے کا سب سے دکھ بھرا پہلو یہ ہے کہ دنیا آپ کو بھول جائے۔ صافی اکیڈمی نے مجھے یاد دلایا کہ میری سوچ کی اہمیت ہے۔ آپ سب کا شکریہ جنہوں نے عطیات دیے۔",
+      avatar: "ز"
+    }
+  ],
+  transparencyBadge: "مالیاتی شفافیت",
+  transparencyTitle: "ہر ڈالر کہاں خرچ ہوتا ہے؟",
+  transparencySub: "مکمل شفافیت۔ بلا کسی ابہام کے ہماری 2026 آپریشنل تقسیم دیکھیں۔",
+  allocations: [
+    {
+      percent: "45%",
+      title: "براہ راست طلباء اسکالرشپس اور اسناد",
+      desc: "کورسز تک مکمل رسائی، سینئر اساتذہ کے ساتھ رہنمائی اور بین الاقوامی تسلیم شدہ اسناد۔"
+    },
+    {
+      percent: "25%",
+      title: "تیز رفتار انٹرنیٹ اور انکرپٹڈ ڈیٹا پیکس",
+      desc: "سخت پابندیوں میں رہنے والی طالبات کے لیے ماہانہ موبائل 4G اور سیٹلائٹ انٹرنیٹ پیکجز۔"
+    },
+    {
+      percent: "18%",
+      title: "کلاؤڈ سرورز اور سنسرشپ سے پاک انفراسٹرکچر",
+      desc: "محفوظ کلاؤڈ سرورز، کم رفتار انٹرنیٹ کے لیے ہلکے اسباق اور پرائیویٹ ٹنلز۔"
+    },
+    {
+      percent: "12%",
+      title: "لیپ ٹاپس اور سولر پاور کٹس",
+      desc: "بجلی کی بندش سے نمٹنے کے لیے لیپ ٹاپس اور پاور بینک کٹس کی فراہمی۔"
+    }
+  ],
+  faqBadge: "اکثر پوچھے جانے والے سوالات",
+  faqTitle: "معاونین کے سوالات کے جوابات",
+  faqSub: "ادائیگی کی حفاظت اور طالبات کی رازداری کے متعلق مکمل معلومات۔",
+  faqs: [
+    {
+      q: "میرا عطیہ کیسے پراسیس ہوتا ہے اور کیا یہ محفوظ ہے؟",
+      a: "تمام ٹرانزیکشنز 256-bit TLS انکرپشن کے ساتھ معتبر اداروں جیسے Stripe اور PayPal کے ذریعے محفوظ کی جاتی ہیں۔"
+    },
+    {
+      q: "افغانستان میں لڑکیوں کا تحفظ کیسے یقینی بنایا جاتا ہے؟",
+      a: "حفاظت ہماری اولین ترجیح ہے۔ تمام طالبات کا ڈیٹا اور نام مکمل طور پر خفیہ اور کوڈڈ ہوتا ہے۔"
+    },
+    {
+      q: "کیا میں اپنی مقامی کرنسی میں عطیہ دے سکتا ہوں؟",
+      a: "جی ہاں! ہمارے گیٹ ویز 135 سے زائد ممالک کے بینک کارڈز کو سپورٹ کرتے ہیں۔"
+    },
+    {
+      q: "کیا میں گمنام طور پر عطیہ دے سکتا ہوں؟",
+      a: "جی ہاں، آپ بغیر نام ظاہر کیے عطیہ دے سکتے ہیں۔ ہم ڈونرز کا ڈیٹا کسی کے ساتھ شیئر نہیں کرتے۔"
+    },
+    {
+      q: "مستحق طالبات کا انتخاب کیسے کیا جاتا ہے؟",
+      a: "ہماری ٹیم درخواستوں کا بغور جائزہ لیتی ہے اور تعلیم سے محروم ہونے والی طالبات کو ترجیح دی جاتی ہے۔"
+    },
+    {
+      q: "کیا ادائیگی کے بعد سرکاری رسید ملتی ہے؟",
+      a: "جی ہاں، کامیاب ادائیگی کے فوراً بعد ڈیجیٹل رسید اسکرین پر اور ای میل پر بھیجی جاتی ہے۔"
+    }
+  ],
+  bottomCtaBadge: "تعلیمی جدوجہد میں شامل ہوں",
+  bottomCtaTitle: "افغانستان کے تاریک دور میں امید کی کرن بنیں۔",
+  bottomCtaDesc: "جس لڑکی کو ہم کوڈنگ سکھاتے ہیں وہ مستقبل کی ایک ایسی لیڈر ہے جس کی آواز کو دبایا نہیں جا سکتا۔"
 };
 
 const de: DonateTranslation = {
@@ -626,7 +899,8 @@ const de: DonateTranslation = {
   copiedText: "Kopiert!",
   receiptHeader: "Überweisungsbeleg bestätigen",
   submitReceiptBtn: "Überweisungsbeleg einreichen",
-  bottomCtaBtn: "Jetzt spenden & Zukunft schenken"
+  bottomCtaBtn: "Jetzt spenden & Zukunft schenken",
+  verifiedScholarship: "Verifizierte Stipendiatin"
 };
 
 const fr: DonateTranslation = {
@@ -658,7 +932,8 @@ const fr: DonateTranslation = {
   copiedText: "Copié !",
   receiptHeader: "Confirmer le reçu de virement",
   submitReceiptBtn: "Envoyer le reçu",
-  bottomCtaBtn: "Donner maintenant & ouvrir l'avenir"
+  bottomCtaBtn: "Donner maintenant & ouvrir l'avenir",
+  verifiedScholarship: "Boursière vérifiée"
 };
 
 const es: DonateTranslation = {
@@ -690,7 +965,8 @@ const es: DonateTranslation = {
   copiedText: "¡Copiado!",
   receiptHeader: "Confirmar comprobante de transferencia",
   submitReceiptBtn: "Enviar comprobante",
-  bottomCtaBtn: "Donar ahora y construir futuro"
+  bottomCtaBtn: "Donar ahora y construir futuro",
+  verifiedScholarship: "Becaria verificada"
 };
 
 const ru: DonateTranslation = {
@@ -722,7 +998,8 @@ const ru: DonateTranslation = {
   copiedText: "Скопировано!",
   receiptHeader: "Подтверждение квитанции перевода",
   submitReceiptBtn: "Отправить квитанцию",
-  bottomCtaBtn: "Пожертвовать и подарить будущее"
+  bottomCtaBtn: "Пожертвовать и подарить будущее",
+  verifiedScholarship: "Подтверждённая стипендиатка"
 };
 
 const tr: DonateTranslation = {
@@ -754,7 +1031,8 @@ const tr: DonateTranslation = {
   copiedText: "Kopyalandı!",
   receiptHeader: "Havale Dekontunu Onayla",
   submitReceiptBtn: "Dekontu Gönder",
-  bottomCtaBtn: "Şimdi Bağış Yapın ve Gelecek Açın"
+  bottomCtaBtn: "Şimdi Bağış Yapın ve Gelecek Açın",
+  verifiedScholarship: "Doğrulanmış Bursiyer"
 };
 
 const zh: DonateTranslation = {
@@ -786,7 +1064,8 @@ const zh: DonateTranslation = {
   copiedText: "已复制！",
   receiptHeader: "确认汇款凭证",
   submitReceiptBtn: "提交汇款凭据",
-  bottomCtaBtn: "立即捐助，点亮未来"
+  bottomCtaBtn: "立即捐助，点亮未来",
+  verifiedScholarship: "经认证的奖学金获得者"
 };
 
 const hi: DonateTranslation = {
@@ -818,7 +1097,8 @@ const hi: DonateTranslation = {
   copiedText: "कॉपी हो गया!",
   receiptHeader: "बैंक ट्रांसफर रसीद दर्ज करें",
   submitReceiptBtn: "रसीद जमा करें",
-  bottomCtaBtn: "अभी दान करें और भविष्य संवारें"
+  bottomCtaBtn: "अभी दान करें और भविष्य संवारें",
+  verifiedScholarship: "सत्यापित छात्रवृत्ति प्राप्तकर्ता"
 };
 
 const it: DonateTranslation = {
@@ -850,7 +1130,8 @@ const it: DonateTranslation = {
   copiedText: "Copiato!",
   receiptHeader: "Conferma ricevuta bonifico",
   submitReceiptBtn: "Invia ricevuta",
-  bottomCtaBtn: "Dona ora e crea un futuro"
+  bottomCtaBtn: "Dona ora e crea un futuro",
+  verifiedScholarship: "Borsista verificata"
 };
 
 const pt: DonateTranslation = {
@@ -882,7 +1163,8 @@ const pt: DonateTranslation = {
   copiedText: "Copiado!",
   receiptHeader: "Confirmar comprovante bancário",
   submitReceiptBtn: "Enviar comprovante",
-  bottomCtaBtn: "Doe agora e abra um futuro"
+  bottomCtaBtn: "Doe agora e abra um futuro",
+  verifiedScholarship: "Bolsista verificada"
 };
 
 const ja: DonateTranslation = {
@@ -914,7 +1196,8 @@ const ja: DonateTranslation = {
   copiedText: "コピー完了！",
   receiptHeader: "振込受領証の確認・送信",
   submitReceiptBtn: "受領証を送信する",
-  bottomCtaBtn: "今すぐ寄付して未来を拓く"
+  bottomCtaBtn: "今すぐ寄付して未来を拓く",
+  verifiedScholarship: "認定奨学生"
 };
 
 const ko: DonateTranslation = {
@@ -946,7 +1229,8 @@ const ko: DonateTranslation = {
   copiedText: "복사됨!",
   receiptHeader: "송금 영수증 제출 및 확인",
   submitReceiptBtn: "영수증 제출",
-  bottomCtaBtn: "지금 후원하고 미래를 열어주세요"
+  bottomCtaBtn: "지금 후원하고 미래를 열어주세요",
+  verifiedScholarship: "인증된 장학생"
 };
 
 const nl: DonateTranslation = {
@@ -978,7 +1262,8 @@ const nl: DonateTranslation = {
   copiedText: "Gekopieerd!",
   receiptHeader: "Bevestig overschrijvingsbewijs",
   submitReceiptBtn: "Bewijs versturen",
-  bottomCtaBtn: "Doneer nu en open de toekomst"
+  bottomCtaBtn: "Doneer nu en open de toekomst",
+  verifiedScholarship: "Geverifieerde beursontvanger"
 };
 
 const uz: DonateTranslation = {
@@ -1010,7 +1295,8 @@ const uz: DonateTranslation = {
   copiedText: "Nusxalandi!",
   receiptHeader: "To'lov kvitansiyasini tasdiqlash",
   submitReceiptBtn: "Kvitansiyani yuborish",
-  bottomCtaBtn: "Hozir ehson qiling va kelajak oching"
+  bottomCtaBtn: "Hozir ehson qiling va kelajak oching",
+  verifiedScholarship: "Tasdiqlangan stipendiat"
 };
 
 const id: DonateTranslation = {
@@ -1042,7 +1328,8 @@ const id: DonateTranslation = {
   copiedText: "Tersalin!",
   receiptHeader: "Konfirmasi Bukti Transfer",
   submitReceiptBtn: "Kirim Bukti Transfer",
-  bottomCtaBtn: "Donasi Sekarang & Buka Masa Depan"
+  bottomCtaBtn: "Donasi Sekarang & Buka Masa Depan",
+  verifiedScholarship: "Penerima Beasiswa Terverifikasi"
 };
 
 export const donateTranslationsMap: Record<string, DonateTranslation> = {

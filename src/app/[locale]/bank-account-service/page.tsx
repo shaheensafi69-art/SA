@@ -111,18 +111,17 @@ export default function BankAccountServicePage() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/5 border border-amber-500/30 text-amber-300 text-xs font-black uppercase tracking-widest shadow-[0_0_20px_rgba(245,158,11,0.15)] mb-8">
               <Sparkles size={14} className="animate-pulse" />
-              <span>{t.bankService?.badge || "Global Banking Infrastructure"}</span>
+              <span>{bs.badge}</span>
             </div>
 
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.05] mb-6">
-              {t.bankService?.heroTitle || "Banking without borders."}
+              {bs.heroTitle}
             </h1>
 
             {/* Subtitle */}
             <p className="text-neutral-300 text-base sm:text-lg leading-relaxed max-w-2xl font-normal mb-10">
-              {t.bankService?.heroSubtitle ||
-                "A premium international-account experience designed for people and businesses operating across currencies, countries and digital markets."}
+              {bs.heroSubtitle}
             </p>
 
             {/* Action Buttons */}
@@ -131,7 +130,7 @@ export default function BankAccountServicePage() {
                 href="#application"
                 className="px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-black font-black uppercase tracking-wider text-xs shadow-[0_0_30px_rgba(245,158,11,0.35)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
               >
-                <span>{t.bankService?.startApplication || "Start Application"}</span>
+                <span>{bs.startApplication}</span>
                 {isRtl ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
               </a>
 
@@ -139,7 +138,7 @@ export default function BankAccountServicePage() {
                 href="#providers"
                 className="px-8 py-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 text-white font-black uppercase tracking-wider text-xs backdrop-blur-xl transition-all flex items-center gap-2"
               >
-                <span>{t.bankService?.exploreProviders || "Explore Providers"}</span>
+                <span>{bs.exploreProviders}</span>
                 <Globe size={16} className="text-amber-400" />
               </a>
             </div>
@@ -231,44 +230,41 @@ export default function BankAccountServicePage() {
         <section className="mb-24 lg:mb-32">
           <div className="max-w-3xl mb-14">
             <div className="text-xs font-black uppercase tracking-[0.25em] text-amber-400 mb-3">
-              {t.bankService?.archBadge || "01 / Architecture"}
+              {bs.archBadge || "01 / Architecture"}
             </div>
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-4">
-              {t.bankService?.archTitle || "A financial interface built like a product, not a form."}
+              {bs.archTitle || "A financial interface built like a product, not a form."}
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
-              {t.bankService?.archSubtitle ||
-                "Understand what each rail provides and prepare your dossier with precision."}
+              {bs.archSubtitle}
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
+            {(bs.features || [
               {
                 num: "01",
-                icon: Globe,
                 title: "Multi-Currency Vault",
                 desc: "Hold and convert major international currencies with real mid-market rates across 40+ countries without hidden fees."
               },
               {
                 num: "02",
-                icon: Building2,
                 title: "Dedicated IBAN Rails",
                 desc: "Receive dedicated local bank credentials in Europe (SEPA), United Kingdom (Faster Payments), and the US (ACH)."
               },
               {
                 num: "03",
-                icon: CreditCard,
                 title: "Corporate & Virtual Cards",
                 desc: "Issue virtual cards instantly for SaaS tools, cloud servers, and international advertising campaigns."
               },
               {
                 num: "04",
-                icon: ShieldCheck,
                 title: "Strict Regulatory Safeguard",
                 desc: "Customer funds are safeguarded in segregated accounts under UK FCA and European Central Bank regulations."
               }
-            ].map((feature, idx) => (
+            ]).map((feature, idx) => {
+              const FeatureIcon = [Globe, Building2, CreditCard, ShieldCheck][idx % 4];
+              return (
               <div
                 key={idx}
                 className="group p-7 rounded-3xl bg-white/[0.02] border border-white/8 hover:border-amber-500/40 hover:bg-white/[0.04] transition-all duration-300 flex flex-col justify-between"
@@ -279,7 +275,7 @@ export default function BankAccountServicePage() {
                       {feature.num}
                     </span>
                     <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
-                      <feature.icon size={20} />
+                      <FeatureIcon size={20} />
                     </div>
                   </div>
                   <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
@@ -288,7 +284,8 @@ export default function BankAccountServicePage() {
                   </p>
                 </div>
               </div>
-            ))}
+            );
+          })}
           </div>
         </section>
 
@@ -298,13 +295,13 @@ export default function BankAccountServicePage() {
         <section id="providers" className="mb-24 lg:mb-32 pt-8">
           <div className="max-w-3xl mb-12">
             <div className="text-xs font-black uppercase tracking-[0.25em] text-amber-400 mb-3">
-              {t.bankService?.providersBadge || "02 / Global Providers"}
+              {bs.providersBadge}
             </div>
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mb-4">
-              {t.bankService?.providersTitle || "Know the rails behind the logo."}
+              {bs.providersTitle}
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
-              Explore the four flagship international banking and fintech ecosystems we support.
+              {bs.providersSub}
             </p>
           </div>
 
@@ -361,7 +358,7 @@ export default function BankAccountServicePage() {
 
               <div className="space-y-3 mb-8">
                 <div className="text-xs font-black uppercase tracking-widest text-neutral-400 mb-2">
-                  Verified Capabilities & Rails:
+                  {bs.verifiedCapabilitiesLabel || "Verified Capabilities & Rails:"}
                 </div>
                 {partners[activePartner].details.map((detail, idx) => (
                   <div
@@ -376,13 +373,13 @@ export default function BankAccountServicePage() {
 
               <div className="pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
                 <span className="text-[11px] text-neutral-500 max-w-sm">
-                  Full eligibility, jurisdictional availability, and pricing terms are confirmed during personal advisory onboarding.
+                  {bs.termsDisclaimer}
                 </span>
                 <a
                   href="#application"
                   className="px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-black text-xs uppercase tracking-wider transition-all"
                 >
-                  Apply for {partners[activePartner].name}
+                  {bs.applyForPartner || "Apply for"} {partners[activePartner].name}
                 </a>
               </div>
             </div>

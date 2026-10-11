@@ -1,5 +1,6 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getScholarshipTranslation } from "@/utils/scholarshipTranslations";
 import { usePathname } from "next/navigation";
 
 import { useState, useEffect, useMemo, useRef } from "react";
@@ -33,6 +34,7 @@ export default function EnglishScholarshipsPage() {
   const currentLocale = pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
   const isRtl = t.isRtl;
+  const st = getScholarshipTranslation(currentLocale);
 
   const CURRENT_LANG = currentLocale;
   const [scholarships, setScholarships] = useState<Scholarship[]>([]);
@@ -821,8 +823,8 @@ export default function EnglishScholarshipsPage() {
                     <FileText size={20} />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-sm sm:text-base">{isRtl ? "ویرایش و بازنویسی تخصصی انگیزه‌نامه (SOP)" : "Motivation Letter (SOP) Surgery"}</h4>
-                    <p className="text-neutral-400 text-xs sm:text-sm mt-0.5">{isRtl ? "بررسی کلمه به کلمه ساختار روایی، هدف شغلی و تطابق با معیارهای پذیرش دانشگاه." : "We analyze your narrative arc, hook, career objectives, and university alignment word-by-word."}</p>
+                    <h4 className="text-white font-bold text-sm sm:text-base">{st.sopTitle}</h4>
+                    <p className="text-neutral-400 text-xs sm:text-sm mt-0.5">{st.sopDesc}</p>
                   </div>
                 </div>
 
@@ -831,8 +833,8 @@ export default function EnglishScholarshipsPage() {
                     <GraduationCap size={20} />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-sm sm:text-base">{isRtl ? "بهینه‌سازی رزومه مطابق استانداردهای یوروپس و ATS آمریکا" : "Europass & US ATS CV Optimization"}</h4>
-                    <p className="text-neutral-400 text-xs sm:text-sm mt-0.5">{isRtl ? "فرمت‌بندی دستاوردها، مقالات پژوهشی و سوابق علمی بر اساس استانداردهای کمیته‌های بین‌المللی." : "Format your achievements, research publications, and leadership milestones according to international committee standards."}</p>
+                    <h4 className="text-white font-bold text-sm sm:text-base">{st.cvTitle}</h4>
+                    <p className="text-neutral-400 text-xs sm:text-sm mt-0.5">{st.cvDesc}</p>
                   </div>
                 </div>
 
@@ -841,8 +843,8 @@ export default function EnglishScholarshipsPage() {
                     <Users size={20} />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-sm sm:text-base">{isRtl ? "شبیه‌سازی مصاحبه و دفاعیه با برندگان قبلی بورسیه" : "Mock Interview & Defense Panels"}</h4>
-                    <p className="text-neutral-400 text-xs sm:text-sm mt-0.5">{isRtl ? "تمرین با برندگان بورسیه از دانشگاه‌های آکسفورد و مونیخ جهت تسلط بر سوالات علمی و رفتاری." : "Practice with past scholarship winners from Oxford, TUM Germany, and Tokyo Tech to master behavioral and academic interview questions."}</p>
+                    <h4 className="text-white font-bold text-sm sm:text-base">{st.mockTitle}</h4>
+                    <p className="text-neutral-400 text-xs sm:text-sm mt-0.5">{st.mockDesc}</p>
                   </div>
                 </div>
               </div>
@@ -852,7 +854,7 @@ export default function EnglishScholarshipsPage() {
                   href={`/${currentLocale}/support`} 
                   className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black uppercase tracking-widest text-xs shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-105 transition-all"
                 >
-                  <Sparkles size={16} /> {isRtl ? "ارتباط با منتورهای پذیرش تحصیلی" : "Connect With Application Mentors"}
+                  <Sparkles size={16} /> {st.connectBtn}
                 </Link>
               </div>
             </div>
@@ -863,44 +865,44 @@ export default function EnglishScholarshipsPage() {
               
               <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-6">
                 <div>
-                  <h3 className="text-xl font-black text-white">{isRtl ? "چک‌لیست آمادگی و مدارک پذیرش" : "Application Readiness Dossier"}</h3>
-                  <p className="text-xs text-neutral-400 mt-0.5">{isRtl ? "استاندارد مدارک الزامی جهت ارسال به دانشگاه‌ها و بورسیه‌های بین‌المللی" : "Standard requirements for competitive global applications"}</p>
+                  <h3 className="text-xl font-black text-white">{st.dossierTitle}</h3>
+                  <p className="text-xs text-neutral-400 mt-0.5">{st.dossierSub}</p>
                 </div>
                 <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
-                  {isRtl ? "الگوی تایید شده" : "Verified Matrix"}
+                  {st.verifiedMatrix}
                 </div>
               </div>
 
               <div className="space-y-4 text-xs sm:text-sm">
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <span className="text-neutral-300 font-medium">{isRtl ? "۱. ریز نمرات رسمی و دانشنامه تحصیلی" : "1. Official Transcripts & Degree Certificates"}</span>
-                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> {isRtl ? "الزامی" : "Required"}</span>
+                  <span className="text-neutral-300 font-medium">{st.checkTranscripts}</span>
+                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> {st.checkTranscriptsBadge}</span>
                 </div>
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <span className="text-neutral-300 font-medium">{isRtl ? "۲. انگیزه‌نامه هدفمند (SOP / Motivation)" : "2. Statement of Purpose (SOP / Motivation)"}</span>
-                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> {isRtl ? "حیاتی" : "Crucial"}</span>
+                  <span className="text-neutral-300 font-medium">{st.checkSop}</span>
+                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> {st.checkSopBadge}</span>
                 </div>
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <span className="text-neutral-300 font-medium">{isRtl ? "۳. توصیه‌نامه‌های آکادمیک (۲ الی ۳ مورد)" : "3. Academic Letters of Recommendation (2-3)"}</span>
-                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> {isRtl ? "الزامی" : "Required"}</span>
+                  <span className="text-neutral-300 font-medium">{st.checkLetters}</span>
+                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> {st.checkTranscriptsBadge}</span>
                 </div>
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <span className="text-neutral-300 font-medium">{isRtl ? "۴. مدرک زبان (آیلتس، تافل یا گواهی MOI)" : "4. English Proficiency (IELTS / TOEFL / MOI)"}</span>
-                  <span className="text-yellow-400 font-black flex items-center gap-1"><Check size={14} /> {isRtl ? "قابل معافیت" : "Waiverable"}</span>
+                  <span className="text-neutral-300 font-medium">{st.checkLanguage}</span>
+                  <span className="text-yellow-400 font-black flex items-center gap-1"><Check size={14} /> {st.checkLanguageBadge}</span>
                 </div>
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <span className="text-neutral-300 font-medium">{isRtl ? "۵. رزومه تحصیلی مطابق استاندارد ATS" : "5. Detailed Academic CV / Resume (ATS Standard)"}</span>
-                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> {isRtl ? "الزامی" : "Required"}</span>
+                  <span className="text-neutral-300 font-medium">{st.checkCv}</span>
+                  <span className="text-emerald-400 font-black flex items-center gap-1"><Check size={14} /> {st.checkTranscriptsBadge}</span>
                 </div>
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <span className="text-neutral-300 font-medium">{isRtl ? "۶. پروپوزال پژوهشی (ویژه مقاطع ارشد و دکتری)" : "6. Research Proposal (Masters by Research & PhD)"}</span>
-                  <span className="text-cyan-400 font-black flex items-center gap-1"><Check size={14} /> {isRtl ? "بسته به رشته" : "Program Specific"}</span>
+                  <span className="text-neutral-300 font-medium">{st.checkProposal}</span>
+                  <span className="text-cyan-400 font-black flex items-center gap-1"><Check size={14} /> {st.checkProposalBadge}</span>
                 </div>
               </div>
 
               <div className="mt-8 p-4 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 text-xs leading-relaxed flex items-center gap-3">
                 <Sparkles size={20} className="shrink-0 text-yellow-400" />
-                <span>{isRtl ? <>نکته کلیدی: بسیاری از دانشگاه‌های اروپایی در صورت گذراندن مقطع قبلی به زبان انگلیسی، <strong>گواهی زبان تدریس (MOI)</strong> را به جای آیلتس می‌پذیرند.</> : <>Tip: Many European universities accept an <strong>English Medium of Instruction (MOI) Certificate</strong> instead of IELTS if your previous degree was in English.</>}</span>
+                <span>{st.tipText}</span>
               </div>
             </div>
 
@@ -911,43 +913,18 @@ export default function EnglishScholarshipsPage() {
         <section className="py-20 px-4 sm:px-6 md:px-12 max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-black uppercase tracking-widest mb-4">
-              <HelpCircle size={14} /> Clarifications & Guidance
+              <HelpCircle size={14} /> {st.faqBadge}
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
-              Frequently Asked Questions
+              {st.faqTitle}
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
-              Everything you need to know about international scholarship applications, deadlines, English proficiency, and Safi Academy mentorship.
+              {st.faqSub}
             </p>
           </div>
 
           <div className="space-y-4">
-            {[
-              {
-                q: "Can I apply for global scholarships without an IELTS or TOEFL score?",
-                a: "Yes, in many cases! Hundreds of universities across Germany, France, Italy, Hungary, China, and Malaysia accept an English Medium of Instruction (MOI) letter from your previous university. Furthermore, prestigious scholarships like the DAAD or Turkiye Burslari frequently offer language prep years or accept Duolingo English Test (DET) scores."
-              },
-              {
-                q: "Does Safi Academy charge any fee for scholarship listings or mentorship?",
-                a: "Absolutely not. Safi Academy is a non-profit humanitarian and educational initiative. Our scholarship database, document review guides, application webinars, and community mentorship are 100% free of charge for all students."
-              },
-              {
-                q: "Are high school graduates eligible for fully-funded Bachelor degrees abroad?",
-                a: "Yes. Major international government grants such as the Turkiye Burslari, MEXT Undergraduate, Chinese Government Scholarship (CSC), Romanian Government Grant, and various Korean GKS programs offer full funding for Bachelor students, including language training and living allowances."
-              },
-              {
-                q: "How early should I begin preparing my scholarship documents?",
-                a: "We strongly recommend beginning 6 to 9 months before the target university deadline. Document translation, notarization, writing your motivation letter, and requesting recommendations from university professors typically take between 60 to 90 days."
-              },
-              {
-                q: "Can Afghan students facing visa restrictions still secure international scholarships?",
-                a: "Yes. Despite consular closures in Kabul, thousands of Afghan scholars successfully process their student visas through neighboring hubs like Islamabad, Tehran, New Delhi, or Dubai. Numerous European and North American universities offer official sponsorship letters and visa expedition assistance for enrolled scholars."
-              },
-              {
-                q: "What makes an application stand out to scholarship selection committees?",
-                a: "Beyond solid grades, committees prioritize purposeful commitment: clearly articulating how your studies will solve real-world problems in your home country, demonstrable leadership or volunteer experience, and genuine familiarity with the specific curriculum of the host university."
-              }
-            ].map((faq, idx) => (
+            {st.faqs.map((faq, idx) => (
               <div 
                 key={idx}
                 className="bg-[#0a0a0f]/90 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300"

@@ -1,0 +1,319 @@
+{
+  "common": {
+    "backLink": "Yönetim Kuruluna Geri Dön",
+    "clickCopy": "E-posta adresini kopyalamak için tıklayın",
+    "copied": "Kopyalandı!",
+    "directContact": "Doğrudan Yönetici İletişimi",
+    "contactDesc": "Stratejik kurumsal ortaklıklar, kurumsal yatırımlar veya uluslararası açılış konuşmaları için:"
+  },
+  "shaheenSafi": {
+    "name": "Şahin Safi",
+    "firstName": "Şahin",
+    "lastName": "Safi",
+    "role": "Direktör ve Kurucu",
+    "office": "Yönetici Ofisi • Londra / Kabil",
+    "coordinates": "Londra, Birleşik Krallık & Kabil, Afganistan",
+    "badgeLead": "Baş Mimar",
+    "badgeFintech": "Full-Stack FinTech",
+    "badgeFounder": "Direktör ve Kurucu",
+    "reg": "Safi International Capital LTD • UK Reg: 17063286",
+    "bio": "Direktör, Safi Küresel Ekosistemi Kurucusu ve Lider FinTech Sistemleri Mimarı.",
+    "manifestoTitle": "Mimari Direktif ve Yönetici Manifestosu",
+    "manifestoQuote": "\"Safi Academy ve SafiPay'i yalnızca dijital ekonomide yer almak için kurmadık; amacımız gençleri doğrudan Avrupa ve Amerikan kurumsal pazarlarına bağlayan sarsılmaz bir eğitim ve finansal altyapı köprüsü inşa etmekti.\"",
+    "manifestoAuthor": "— Şahin Safi • Londra, Birleşik Krallık",
+    "backLink": "Yönetim Kuruluna Geri Dön",
+    "clickCopy": "E-posta adresini kopyalamak için tıklayın",
+    "copied": "Kopyalandı!",
+    "directContact": "Doğrudan Yönetici İletişimi",
+    "contactDesc": "Stratejik kurumsal ortaklıklar, kurumsal yatırımlar veya uluslararası açılış konuşmaları için:",
+    "portfolioBadge": "Kurumsal Portföy",
+    "portfolioTitle": "Safi Küresel Girişimi",
+    "techBadge": "Sistem Mühendisliği",
+    "techTitle": "Temel Teknik Yığın",
+    "milestonesBadge": "Yönetici Aşamaları",
+    "pedigreeBadge": "Akademik Geçmiş",
+    "languagesBadge": "Dil Yetkinliği",
+    "manifestoP1": "Mesleki yolculuğum uluslararası finans piyasalarının yüksek tempolu ve değişken ortamında başladı. 2016'dan 2024 sonuna kadar Forex ve döviz piyasalarında tam zamanlı yatırımcı olarak küresel likidite akışları, emir defteri dinamikleri ve kurumsal risk yönetimi konularında derin bir uzmanlık kazandım.",
+    "manifestoP2": "Aralık 2024'te, IFTA'dan (Uluslararası Teknik Analistler Federasyonu) prestijli Uluslararası Teknik Analiz Sertifikası'nı aldıktan sonra, gerçek finansal bağımsızlığın yalnızca alım satım yapmakla sağlanamayacağını, küresel işlemleri işleyen dijital kanalların ve kurumsal yazılımların inşa edilmesini gerektirdiğini kavradım.",
+    "manifestoP3": "İstanbul Teknik Üniversitesi (İTÜ) Bilgisayar Mühendisliği lisans derecesine sahip olarak, titiz hesaplamalı mühendisliği kurumsal vizyonla birleştiriyorum. Safi International Capital LTD Kurucusu ve Grup CEO'su olarak SafiPay, Safi TopUp, SafiPro ve Safi Academy'nin teknik mimarisini yönetiyorum.",
+    "pillars": [
+      {
+        "title": "SafiPay Digital Banking",
+        "desc": "Fiziki ve sanal Visa kart ihracı, SEPA Instant uyumluluğu ve 150'den fazla ülkede sınır ötesi likidite sağlayan yeni nesil çok para birimli finansal altyapı.",
+        "linkText": "SafiPay Protokolünü Keşfet"
+      },
+      {
+        "title": "Safi TopUp Global",
+        "desc": "Dünya çapında 700'den fazla telekom operatörüne bağlı, gerçek zamanlı mobil yüklemeler ve uluslararası dijital pinler sunan ağ.",
+        "linkText": "Safi TopUp Ağını Keşfet"
+      },
+      {
+        "title": "Safi Academy",
+        "desc": "İngiltere'de 17063286 numarasıyla tescilli, E-Ticaret, Yapay Zeka ve Finans Piyasalarında doğrulanabilir sertifikalar ve %100 burslar sunan öncü akademi.",
+        "linkText": "Akademik Fakülteleri İncele"
+      },
+      {
+        "title": "SafiPro Apparel",
+        "desc": "Sertifikalı organik pamuk, minimalist siberpunk tasarımı ve uluslararası karbon-nötr dağıtımıyla geliştirici sokak modası.",
+        "linkText": "SafiPro Giyimi Keşfet"
+      }
+    ],
+    "techStack": [
+      {
+        "title": "Ön Yüz ve Mobil",
+        "desc": "Next.js 14/15 App Router, React.js, TypeScript, Flutter, Dart, Tailwind CSS, Framer Motion."
+      },
+      {
+        "title": "Arka Yüz ve Veri",
+        "desc": "PostgreSQL, Supabase Enterprise, Node.js, Python, Redis Caching, Microservices, REST & GraphQL."
+      },
+      {
+        "title": "Ağ Güvenliği",
+        "desc": "Cisco IOS, Routing & Switching, Hardware Firewalls, Encrypted VPN Tunnels, SSL/TLS, ISO 27001."
+      },
+      {
+        "title": "Finansal Piyasalar",
+        "desc": "Smart Money Concepts (SMC), Order Flow, IFTA Technical Analysis, Algorithmic Risk Execution."
+      }
+    ],
+    "milestones": [
+      {
+        "title": "Kurucu ve Grup CEO'su",
+        "org": "Safi International Capital LTD (2025 - Present)",
+        "desc": "İngiltere ve Galler'de 17063286 Şirket Numarası ile tescilli. Kurumsal holding yönetişimi, uluslararası uyumluluk ve küresel FinTech platformlarının dağıtımı."
+      },
+      {
+        "title": "Tam Zamanlı Kurumsal Forex Yatırımcısı",
+        "org": "Global Currency Markets (2016 - 2024)",
+        "desc": "8 yılı aşkın süre yüksek frekanslı likidite, emir defterleri ve döviz işlemleri yönetimi. 2024 sonlarında otomatik FinTech altyapısı kurmaya odaklanma."
+      },
+      {
+        "title": "Kıdemli BT ve Sistem Uzmanı",
+        "org": "Afghanistan Football Federation (2019 - 2024)",
+        "desc": "Kurumsal ağ topolojisi, yüksek verimli sunucu omurgaları, canlı yayın bağlantıları ve ulusal dijital kimlik veritabanlarının mimarisi."
+      }
+    ],
+    "pedigree": [
+      {
+        "school": "Istanbul Technical University (ITU)",
+        "degree": "Bilgisayar Mühendisliği Lisans Derecesi (2019 - 2023)",
+        "desc": "Avrasya'nın en prestijli teknik üniversitelerinden birinde Dağıtık Sistemler Mimarisi, Hesaplamalı Karmaşıklık ve Kriptografik Güvenlik uzmanlığı."
+      },
+      {
+        "school": "IFTA Profesyonel Sertifikasyonu",
+        "degree": "Uluslararası Teknik Analistler Federasyonu (Aralık 2024)",
+        "desc": "Kantitatif piyasa modellemesi, risk analizi ve makro-finansal davranışsal analitik alanlarında uluslararası sertifika."
+      }
+    ],
+    "languages": [
+      {
+        "lang": "İngilizce",
+        "level": "Profesyonel Akıcı"
+      },
+      {
+        "lang": "Farsça / Derice",
+        "level": "Anadili"
+      },
+      {
+        "lang": "Peştuca",
+        "level": "Anadili"
+      },
+      {
+        "lang": "Türkçe",
+        "level": "Akademik ve Günlük"
+      }
+    ],
+    "accreditationsTitle": "Kurumsal Akreditasyonlar",
+    "accreditations": [
+      {
+        "title": "IFTA Küresel Sertifikası",
+        "desc": "Teknik Analiz ve Finansal Piyasa Mühendisliği"
+      },
+      {
+        "title": "Birleşik Krallık Şirketler Tescili",
+        "desc": "Kayıt No: 17063286 (Londra, Birleşik Krallık)"
+      },
+      {
+        "title": "İTÜ Bilgisayar Mühendisliği Mezunu",
+        "desc": "İstanbul Teknik Üniversitesi Mezunlar Ağı"
+      },
+      {
+        "title": "20'den Fazla Kurumsal Seminer",
+        "desc": "E-Ticaret ve FinTech Üzerine Açılış Konuşmaları"
+      }
+    ]
+  },
+  "shirinGolAhmadi": {
+    "name": "Şirin Gül Ahmedi",
+    "firstName": "Şirin",
+    "lastName": "Gül Ahmedi",
+    "role": "Tüm Safi Ekosisteminin Genel Müdürü",
+    "office": "Genel Operasyonlar ve Yapay Zeka Sistemleri • İslamabad",
+    "coordinates": "İslamabad, Pakistan & Küresel",
+    "born": "Doğum: 16 Aralık 2004",
+    "badgeAI": "Uygulamalı Yapay Zeka Sistemleri",
+    "badgeAgents": "Otonom Ajanlar",
+    "badgeManager": "Tüm Safi Ekosisteminin Genel Müdürü",
+    "boardText": "Yönetim Kurulu • Safi Küresel Ekosistemi",
+    "bio": "Tüm Safi Ekosisteminin Genel Müdürü, Uygulamalı Yapay Zeka Sistemleri Direktörü ve Dijital Stratejist.",
+    "manifestoTitle": "Yönetici Liderliği ve Uygulamalı Yapay Zeka Direktifi",
+    "manifestoQuote": "\"SafiPay ve Safi Academy'de misyonumuz geleneksel operasyonların ötesine geçmektedir. Yapay zekayı öğrencilerin başarısını hızlandıran, ödeme uyumunu kolaylaştıran ve uluslararası pazarları açan temel bir güç olarak kullanıyoruz.\"",
+    "manifestoAuthor": "— Şirin Gül Ahmedi • Genel Müdür & Yapay Zeka Uzmanı",
+    "backLink": "Yönetim Kuruluna Geri Dön",
+    "clickCopy": "E-posta adresini kopyalamak için tıklayın",
+    "copied": "Kopyalandı!",
+    "directContact": "Doğrudan Yönetici İletişimi",
+    "contactDesc": "Stratejik kurumsal ortaklıklar, kurumsal yatırımlar veya uluslararası açılış konuşmaları için:",
+    "portfolioBadge": "Kurumsal Portföy",
+    "portfolioTitle": "Safi Küresel Girişimi",
+    "techBadge": "Sistem Mühendisliği",
+    "techTitle": "Temel Teknik Yığın",
+    "milestonesBadge": "Yönetici Aşamaları",
+    "pedigreeBadge": "Akademik Geçmiş",
+    "languagesBadge": "Dil Yetkinliği",
+    "manifestoP1": "Ben Şirin Gol Ahmadi; SafiPay'de Tüm Safi Ekosistemi Genel Müdürü ve Uygulamalı Yapay Zeka Sistemleri Direktörüyüm. 16 Aralık 2004 doğumlu olup, kariyerim ekonomi teorisi, full-stack mühendislik, üst düzey UI/UX tasarımı ve otonom yapay zeka otomasyonunu birleştirmekle şekillendi.",
+    "manifestoP2": "İslamabad'daki saygın Ulusal Bilim ve Teknoloji Üniversitesi'nden (NUST) Ekonomi lisans derecesiyle mezun olarak kurumsal liderliğe analitik ve makro-finansal bir bakış açısıyla yaklaşıyor, mühendislik sprintlerini pazar talebiyle hizalıyorum.",
+    "manifestoP3": "Kurumsal yönetimin ötesinde aktif bir Full-Stack Geliştirici ve Grafik Tasarımcısıyım. Next.js, TypeScript ve Python ile eksiksiz web platformları inşa ederek, Safi çatısı altındaki her arayüzün tavizsiz zarafet, performans ve erişilebilirlik standartlarına ulaşmasını sağlıyorum.",
+    "shirinCompetenciesBadge": "Disiplinlerarası Uzmanlık",
+    "shirinCompetenciesTitle": "Temel Yönetimsel Yetkinlikler",
+    "shirinC1Title": "Operasyon ve Strateji",
+    "shirinC1Desc": "Kurumsal liderlik, Çevik iş akışı koordinasyonu, departmanlar arası operasyonlar, kaynak tahsisi.",
+    "shirinC2Title": "Full-Stack Geliştirme",
+    "shirinC2Desc": "React.js, Next.js, Node.js, TypeScript, Python, Tailwind CSS, PostgreSQL, REST API'ler, Mikro Hizmetler.",
+    "shirinC3Title": "Uygulamalı Yapay Zeka Sistemleri",
+    "shirinC3Desc": "Gelişmiş Prompt Mühendisliği, LLM Entegrasyonu, Otonom Yapay Zeka Eğitimi (Safi AI), İş Akışı Orkestrasyonu.",
+    "shirinC4Title": "Tasarım ve Marka",
+    "shirinC4Desc": "Figma UI/UX, Tasarım Sistemleri, Adobe Photoshop ve Illustrator, Görsel Kimlik Mimarisi, Duyarlı Düzenler.",
+    "shirinHistoryTitle": "Yönetici Geçmişi",
+    "shirinPedigreeTitle": "Akademik Geçmiş",
+    "shirinMultilingualTitle": "Çok Dilli Yetkinlik",
+    "shirinDistinctionsTitle": "Yönetici Başarıları"
+  },
+  "mobinHassani": {
+    "name": "Mobin Hassani",
+    "firstName": "Mobin",
+    "lastName": "Hassani",
+    "role": "Baş Geliştirici ve Yazılım Mühendisliği Başkanı",
+    "office": "Teknik Yönetim • Safi Küresel Ekosistemi",
+    "coordinates": "Uluslararası Uzaktan ve Teknik Merkez",
+    "badgeCore": "Çekirdek Mühendislik",
+    "badgeCloud": "Full-Stack Bulut Sistemleri",
+    "badgeLead": "Baş Geliştirici",
+    "badgeActive": "ACTIVE CORE ARCHITECT",
+    "bio": "Kıdemli Yazılım Mühendisi, Bulut Sistemleri Mimarı ve Safi Ekosistemi Geliştirici Bölümü Başkanı.",
+    "manifestoTitle": "Baş Geliştirici Manifestosu ve Mimarisi",
+    "manifestoQuote": "\"Kusursuz yazılım mimarisi, yüksek eşzamanlılık optimizasyonu ve tavizsiz güvenlik, modern dijital güvenin temelini oluşturur. Safi platformlarını tüm dünyada sorunsuz çalışacak şekilde tasarlıyoruz.\"",
+    "manifestoAuthor": "— Mobin Hassani • Baş Geliştirici",
+    "backLink": "Yönetim Kuruluna Geri Dön",
+    "clickCopy": "E-posta adresini kopyalamak için tıklayın",
+    "copied": "Kopyalandı!",
+    "directContact": "Doğrudan Yönetici İletişimi",
+    "contactDesc": "Stratejik kurumsal ortaklıklar, kurumsal yatırımlar veya uluslararası açılış konuşmaları için:",
+    "portfolioBadge": "Kurumsal Portföy",
+    "portfolioTitle": "Safi Küresel Girişimi",
+    "techBadge": "Sistem Mühendisliği",
+    "techTitle": "Temel Teknik Yığın",
+    "milestonesBadge": "Yönetici Aşamaları",
+    "pedigreeBadge": "Akademik Geçmiş",
+    "languagesBadge": "Dil Yetkinliği",
+    "manifestoP1": "Ben Mobin Hassani; Safi Ekosistemi Kıdemli Geliştiricisi ve Yazılım Mimarisi Lideriyim. Misyonum; finansal uygulamalarımıza, küresel öğrenci portallarına ve mikro hizmetlerimize sıfıra yakın gecikme ve banka düzeyinde güvenlik sağlayan dayanıklı teknik temelleri tasarlamak ve yönetmektir.",
+    "manifestoP2": "Geliştirme ekibine liderlik ederek; reaktif ön yüz deneyimlerinden yüksek verimli arka yüz API'lerine, bulut orkestrasyonundan CI/CD dağıtım hatlarına kadar tüm yazılım yaşam döngüsünü denetliyorum.",
+    "mobinSkillsTitle": "Temel Teknik Yığın ve Mühendislik Yetenekleri",
+    "mobinS1Title": "Yazılım Mimarisi",
+    "mobinS1Desc": "Dağıtık sistem tasarımı, yüksek eşzamanlılık, temiz mimari kalıpları ve kurumsal performans ayarlama.",
+    "mobinS2Title": "Modern Full-Stack",
+    "mobinS3Title": "Bulut ve DevOps",
+    "mobinS4Title": "FinTek Güvenliği",
+    "mobinS4Desc": "Uçtan uca veri şifreleme, ISO ve PCI uyumluluğu, sızma denetimleri ve izole işlemler.",
+    "mobinExpTitle": "Sorumluluklar ve Deneyim",
+    "mobinVisionTitle": "Safi Ekosistemi Teknik Vizyonu"
+  },
+  "mujtabaRahmani": {
+    "name": "Mücteba Rahmani",
+    "firstName": "Mücteba",
+    "lastName": "Rahmani",
+    "role": "Operasyon Direktörü (COO)",
+    "office": "Yönetici Operasyonları • Kabil / Dubai",
+    "coordinates": "Kabil, Afganistan & Dubai, BAE",
+    "badgeCOO": "Operasyon Direktörü",
+    "badgeOps": "Küresel Operasyonlar",
+    "badgeExecution": "Operasyon Direktörü",
+    "bio": "Safi Küresel Ekosistemi Operasyon Direktörü, Kurumsal Operasyonlar ve Stratejik İcra Lideri.",
+    "manifestoTitle": "Operasyonel Mükemmellik ve Küresel İcra Manifestosu",
+    "manifestoQuote": "\"Operasyon yalnızca lojistiği yönetmek değildir; büyük vizyonları kıtalar arası kusursuz bir günlük icraya dönüştüren canlı kalp atışıdır.\"",
+    "manifestoAuthor": "— Mücteba Rahmani • Operasyon Direktörü",
+    "backLink": "Yönetim Kuruluna Geri Dön",
+    "clickCopy": "E-posta adresini kopyalamak için tıklayın",
+    "copied": "Kopyalandı!",
+    "directContact": "Doğrudan Yönetici İletişimi",
+    "contactDesc": "Stratejik kurumsal ortaklıklar, kurumsal yatırımlar veya uluslararası açılış konuşmaları için:",
+    "portfolioBadge": "Kurumsal Portföy",
+    "portfolioTitle": "Safi Küresel Girişimi",
+    "techBadge": "Sistem Mühendisliği",
+    "techTitle": "Temel Teknik Yığın",
+    "milestonesBadge": "Yönetici Aşamaları",
+    "pedigreeBadge": "Akademik Geçmiş",
+    "languagesBadge": "Dil Yetkinliği",
+    "manifestoP1": "Benim adım Seyid Mücteba Rahmani. Dijital sınırların kalktığı ve ekonomik egemenliğin kodlarla belirlendiği bir dünyada, yaşam misyonum; gençlere ve araştırmacılara dünya standartlarında finansal araçlara ve teknik eğitime engelsiz erişim sağlayan sistemler kurmaktır.",
+    "manifestoP2": "University of the People'dan (ABD) Ekonomi ve Çevrimiçi İşletme alanında akademik altyapıya sahip olarak, kendimi geleneksel makroekonomik modeller ile modern FinTech mimarisini birleştirmeye adadım.",
+    "mujtabaRoleTitle": "Operasyon Direktörü (COO)",
+    "mujtabaSubtitle": "Operasyonlar ve Siber Yönetişim • Kabil"
+  },
+  "sahelSalem": {
+    "name": "Sahel Salem",
+    "firstName": "Sahel",
+    "lastName": "Salem",
+    "role": "İcra Kurulu Başkanı (CEO) ve Avrupa İlişkileri",
+    "office": "Yönetici Operasyonları • Frankfurt / Londra",
+    "coordinates": "Frankfurt, Almanya & Londra, Birleşik Krallık",
+    "badgeCEO": "İcra Kurulu Başkanı (CEO)",
+    "badgeEuro": "Avrupa İlişkileri",
+    "badgeExpansion": "İcra Kurulu Başkanı (CEO)",
+    "bio": "Safi Academy İcra Kurulu Başkanı, Avrupa İlişkileri Direktörü ve Uluslararası Akademik Ortaklıklar Lideri.",
+    "manifestoTitle": "Küresel Vizyon ve Avrupa Entegrasyonu Manifestosu",
+    "manifestoQuote": "\"Küresel hareketlilik olmadan eğitim yarı açık bir kapıdır. Amacımız, her öğrencinin emeğinin Avrupa'nın ve dünyanın ekonomik merkezlerinde doğrudan karşılık bulmasını sağlamaktır.\"",
+    "manifestoAuthor": "— Sahel Salem • CEO & Avrupa İlişkileri",
+    "pillarsBadge": "Küresel Strateji",
+    "pillarsTitle": "Uluslararası Genişleme İlkeleri",
+    "p1Title": "AB Bankacılık Koridorları",
+    "p1Desc": "Afgan gurbetçilere özel, mevzuata uygun IBAN ödeme hizmetleri sunmak için birinci sınıf Avrupa finans kuruluşlarıyla doğrudan bağlantılar kurmak.",
+    "p2Title": "SEPA Anlık Ödeme Ağları",
+    "p2Desc": "36 SEPA üye ülkesinde saniyenin altında işlem yönlendirmesi tasarlayarak haksız komisyonları ve günlerce süren gecikmeleri ortadan kaldırmak.",
+    "p3Title": "Küresel Uyum ve Denetim",
+    "p3Desc": "Sıkı Kara Para Aklamanın Önlenmesi (AML) standartlarını, Müşterini Tanı (KYC) süreçlerini ve uluslararası finansal düzenlemeleri denetlemek.",
+    "pedigreeTitle": "Akademik Geçmiş",
+    "edu1Title": "BBA Öğrencisi (İşletme Lisans Programı)",
+    "edu1Subtitle": "İşletme Yönetimi ve Organizasyon Uzmanlığı",
+    "edu1Desc": "Çok uluslu işletme yönetimi, kurumsal davranış, finansal muhasebe, stratejik liderlik ve uluslararası ticari genişlemeye odaklanan yüksek öğrenim programı.",
+    "edu2Title": "Fintek Yönetişimi ve Uyum Çalışmaları",
+    "edu2Subtitle": "Yönetici Eğitimi (2025 - Günümüz)",
+    "edu2Desc": "SEPA kredi transferleri, sınır ötesi ödeme protokolleri ve dijital ödeme altyapı güvenliği üzerine uzmanlık dersleri.",
+    "networkTitle": "Dil Yetkinliği ve Yönetici Ağı",
+    "networkSub": "Dil Yeterliliği",
+    "langEn": "İngilizce",
+    "langEnLevel": "Profesyonel Çalışma",
+    "langFa": "Farsça / Derice",
+    "langFaLevel": "Anadil",
+    "langPs": "Peştuca",
+    "langPsLevel": "Anadil",
+    "executiveDesk": "Yönetici Masası",
+    "directChannel": "Doğrudan WhatsApp Kanalı",
+    "inquireNow": "Şimdi İletişime Geçin",
+    "backLink": "Yönetim Kuruluna Geri Dön",
+    "clickCopy": "E-posta adresini kopyalamak için tıklayın",
+    "copied": "Kopyalandı!",
+    "directContact": "Doğrudan Yönetici İletişimi",
+    "contactDesc": "Stratejik kurumsal ortaklıklar, kurumsal yatırımlar veya uluslararası açılış konuşmaları için:",
+    "portfolioBadge": "Kurumsal Portföy",
+    "portfolioTitle": "Safi Küresel Girişimi",
+    "techBadge": "Sistem Mühendisliği",
+    "techTitle": "Temel Teknik Yığın",
+    "milestonesBadge": "Yönetici Aşamaları",
+    "pedigreeBadge": "Akademik Geçmiş",
+    "languagesBadge": "Dil Yetkinliği",
+    "manifestoP1": "Benim adım Sahel Salem; Safi Academy CEO'su ve Avrupa İlişkileri Direktörüyüm. 19 Mart 2007 doğumlu olup amacım; genç yeteneklerin Avrupa ekonomisine doğrudan katılmasını engelleyen coğrafi ve bürokratik engelleri ortadan kaldırmaktır.",
+    "manifestoP2": "Alman, İngiliz ve Avrupa finans ağlarıyla derin stratejik entegrasyon yoluyla Safi Academy'nin uluslararası öğrenci hareketliliği girişimlerine, kurumsal ortaklıklara ve SEPA bankacılık köprülerine liderlik ediyorum.",
+    "sahelRoleTitle": "İcra Kurulu Başkanı (CEO) ve Avrupa İlişkileri",
+    "sahelSubtitle": "Avrupa Bankacılık Genişlemesi • Küresel Lider"
+  }
+}

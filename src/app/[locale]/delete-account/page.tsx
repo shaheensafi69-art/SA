@@ -61,17 +61,17 @@ export default function AccountDeletionPortal() {
     e.preventDefault();
     if (!email || !email.includes("@")) {
       setFormStatus("error");
-      setErrorMessage(isRtl ? "لطفاً یک آدرس ایمیل معتبر وارد کنید." : "Please enter a valid registered email address.");
+      setErrorMessage(da.errEmail);
       return;
     }
     if (!fullName.trim()) {
       setFormStatus("error");
-      setErrorMessage(isRtl ? "لطفاً نام و نام خانوادگی کامل خود را وارد کنید." : "Please provide your full registered name.");
+      setErrorMessage(da.errName);
       return;
     }
     if (!confirmConsequences || !confirmIrreversible) {
       setFormStatus("error");
-      setErrorMessage(isRtl ? "باید هر دو گزینه تأیید را قبل از ارسال تیک بزنید." : "You must check both confirmation boxes before submitting.");
+      setErrorMessage(da.errConfirm);
       return;
     }
 
@@ -147,7 +147,7 @@ export default function AccountDeletionPortal() {
             href={`/${currentLocale}`}
             className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-all text-xs font-bold uppercase tracking-widest bg-white/[0.04] border border-white/10 px-4 py-2 rounded-full hover:bg-white/[0.08]"
           >
-            <ArrowLeft size={14} /> {isRtl ? "بازگشت به صفحه اصلی" : "Back to Homepage"}
+            <ArrowLeft size={14} /> {da.backHome}
           </Link>
 
           <div className="flex items-center gap-3">
@@ -157,7 +157,7 @@ export default function AccountDeletionPortal() {
             </div>
             <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold">
               <Scale size={13} />
-              <span>{isRtl ? "تایید شده مطابق با UK GDPR و استانداردهای اپ استور" : "UK GDPR & App Store Certified"}</span>
+              <span>{da.certifiedBadge}</span>
             </div>
           </div>
         </div>
@@ -324,7 +324,7 @@ export default function AccountDeletionPortal() {
               <div className="flex items-center gap-3 mb-4">
                 <span className="w-3 h-8 rounded-full bg-gradient-to-b from-rose-400 to-red-600" />
                 <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-                  {isRtl ? "ثبت آنلاین درخواست امحای حساب کاربری" : "Online Account Erasure Request"}
+                  {da.onlineRequestBadge}
                 </h2>
               </div>
               <p className="text-neutral-400 text-sm mb-8 leading-relaxed">
@@ -359,7 +359,7 @@ export default function AccountDeletionPortal() {
 
                   <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 text-left max-w-xl mx-auto text-xs text-neutral-400 space-y-2">
                     <p className="flex items-center gap-2 text-white font-bold">
-                      <Clock size={14} className="text-yellow-400" /> {isRtl ? "مراحل بعدی چیست:" : "What happens next:"}
+                      <Clock size={14} className="text-yellow-400" /> {da.whatNext}
                     </p>
                     <p>• {da.gracePeriodNotice}</p>
                     <p>• {da.step3Desc}</p>
@@ -376,7 +376,7 @@ export default function AccountDeletionPortal() {
                     }}
                     className="mt-8 inline-flex items-center gap-2 text-xs font-bold text-neutral-400 hover:text-white uppercase tracking-wider underline underline-offset-4"
                   >
-                    <RefreshCw size={12} /> {isRtl ? "ثبت درخواست دیگر" : "Submit Another Request"}
+                    <RefreshCw size={12} /> {da.submitAnother}
                   </button>
                 </motion.div>
               ) : (
@@ -411,7 +411,7 @@ export default function AccountDeletionPortal() {
                         type="text"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        placeholder={isRtl ? "مثال: احمد شاه" : "e.g. Ahmad Shah"}
+                        placeholder={da.namePlaceholder}
                         required
                         className="w-full px-4 py-3.5 rounded-2xl bg-white/[0.03] border border-white/10 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-rose-500/60 focus:bg-white/[0.06] transition-all"
                       />
@@ -420,18 +420,18 @@ export default function AccountDeletionPortal() {
 
                   <div>
                     <label className="block text-xs font-black uppercase tracking-wider text-neutral-300 mb-2">
-                      {da.reasonLabel} <span className="text-neutral-500">({isRtl ? "اختیاری" : "Optional"})</span>
+                      {da.reasonLabel} <span className="text-neutral-500">({da.optionalLabel})</span>
                     </label>
                     <select
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
                       className="w-full px-4 py-3.5 rounded-2xl bg-[#0a0a10] border border-white/10 text-white text-sm focus:outline-none focus:border-rose-500/60 transition-all cursor-pointer"
                     >
-                      <option value="leaving">{isRtl ? "به اهداف آموزشی خود رسیده‌ام" : "I have completed my academic goals"}</option>
-                      <option value="privacy">{isRtl ? "ملاحظات مربوط به حریم خصوصی" : "Privacy / Data Sovereignty considerations"}</option>
-                      <option value="duplicate">{isRtl ? "حساب کاربری تکراری دارم" : "I have a duplicate or secondary account"}</option>
-                      <option value="app_issues">{isRtl ? "مشکلات فنی با اپلیکیشن" : "Technical difficulties with the mobile application"}</option>
-                      <option value="other">{isRtl ? "دلایل دیگر (در کادر زیر بنویسید)" : "Other reason (Please specify below)"}</option>
+                      <option value="leaving">{da.reasonGoal}</option>
+                      <option value="privacy">{da.reasonPrivacy}</option>
+                      <option value="duplicate">{da.reasonDuplicate}</option>
+                      <option value="app_issues">{da.reasonAppIssues}</option>
+                      <option value="other">{da.reasonOther}</option>
                     </select>
                   </div>
 
@@ -443,7 +443,7 @@ export default function AccountDeletionPortal() {
                       rows={3}
                       value={additionalDetails}
                       onChange={(e) => setAdditionalDetails(e.target.value)}
-                      placeholder={isRtl ? "نظرات و پیشنهادات خود را برای بهبود آکادمی با ما در میان بگذارید..." : "Tell us how we can improve Safi Academy or provide specific data erasure notes..."}
+                      placeholder={da.feedbackPlaceholder}
                       className="w-full px-4 py-3.5 rounded-2xl bg-white/[0.03] border border-white/10 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-rose-500/60 focus:bg-white/[0.06] transition-all resize-none"
                     />
                   </div>

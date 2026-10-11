@@ -1,0 +1,319 @@
+{
+  "common": {
+    "backLink": "Ijroiya kengashiga qaytish",
+    "clickCopy": "E-pochta manzilini nusxalash uchun bosing",
+    "copied": "Nusxalandi!",
+    "directContact": "To'g'ridan-to'g'ri ijroiya aloqasi",
+    "contactDesc": "Strategik korporativ hamkorlik, institutsional investitsiyalar yoki xalqaro ma'ruzalar uchun:"
+  },
+  "shaheenSafi": {
+    "name": "Shahin Safiy",
+    "firstName": "Shahin",
+    "lastName": "Safiy",
+    "role": "Direktor va Asoschi",
+    "office": "Ijroiya idorasi • London / Qobil",
+    "coordinates": "London, Buyuk Britaniya va Qobil, Afg'oniston",
+    "badgeLead": "Bosh arxitektor",
+    "badgeFintech": "Full-Stack FinTech",
+    "badgeFounder": "Direktor va Asoschi",
+    "reg": "Safi International Capital LTD • UK Reg: 17063286",
+    "bio": "Direktor, Safiy global ekotizimi asoschisi va yetakchi FinTech tizimlari me'mori.",
+    "manifestoTitle": "Arxitektura yo'riqnomasi va Ijroiya manifesti",
+    "manifestoQuote": "«Biz Safiy Academy va SafiPay'ni shunchaki raqamli iqtisodiyotda ishtirok etish uchun tashkil qilmadik; maqsadimiz yoshlarni to'g'ridan-to'g'ri Yevropa va Amerika korporativ bozorlariga bog'lovchi mustahkam ta'lim va moliya ko'prigini qurish edi.»",
+    "manifestoAuthor": "— Shahin Safiy • London, Buyuk Britaniya",
+    "backLink": "Ijroiya kengashiga qaytish",
+    "clickCopy": "E-pochta manzilini nusxalash uchun bosing",
+    "copied": "Nusxalandi!",
+    "directContact": "To'g'ridan-to'g'ri ijroiya aloqasi",
+    "contactDesc": "Strategik korporativ hamkorlik, institutsional investitsiyalar yoki xalqaro ma'ruzalar uchun:",
+    "portfolioBadge": "Korporativ portfel",
+    "portfolioTitle": "Safiy global korxonasi",
+    "techBadge": "Tizim muhandisligi",
+    "techTitle": "Asosiy texnik to'plam",
+    "milestonesBadge": "Ijroiya bosqichlari",
+    "pedigreeBadge": "Akademik malaka",
+    "languagesBadge": "Til bilish darajasi",
+    "manifestoP1": "Mening kasbiy yo'lim xalqaro moliya bozorlarining o'ta dinamik muhitida boshlandi. 2016-yildan 2024-yil oxirigacha Forex va valyuta bozorlarida to'liq vaqtli treyder sifatida global likvidlik oqimlari, orderlar kitobi dinamikasi va institutsional xavflarni boshqarish bo'yicha chuqur tajriba orttirdim.",
+    "manifestoP2": "2024-yil dekabrida IFTA xalqaro texnik tahlil sertifikatini qo'lga kiritgach, haqiqiy moliyaviy mustaqillik faqat treyding orqali emas, balki global tranzaksiyalarni qayta ishlovchi raqamli infratuzilma va dasturiy ta'minotni yaratish orqali amalga oshishini angladim.",
+    "manifestoP3": "Istanbul Texnika Universiteti (ITU) kompyuter fanlari bakalavriatiga ega bo'lib, chuqur hisoblash muhandisligini korporativ qarashlar bilan birlashtiraman. Safi International Capital LTD asoschisi va bosh direktori sifatida SafiPay, Safi TopUp, SafiPro va Safi Academy me'morchiligini boshqaraman.",
+    "pillars": [
+      {
+        "title": "SafiPay Digital Banking",
+        "desc": "150 dan ortiq mamlakatda jismoniy va virtual Visa kartalarini tezkor chiqarish, SEPA Instant va transchegaraviy to'lovlarni ta'minlovchi yangi avlod moliyaviy tizimi.",
+        "linkText": "SafiPay protokolini ko'rish"
+      },
+      {
+        "title": "Safi TopUp Global",
+        "desc": "Dunyo bo'ylab 700 dan ortiq aloqa operatorlariga ulangan, mobil aloqa va o'yin pinlarini to'lash tarmog'i.",
+        "linkText": "Safi TopUp tarmog'ini ko'rish"
+      },
+      {
+        "title": "Safi Academy",
+        "desc": "Buyuk Britaniyada ro'yxatdan o'tgan (№ 17063286) yetakchi ta'lim akademiyasi: sun'iy intellekt, e-tijorat va moliya bo'yicha 100% to'liq grantlar.",
+        "linkText": "Akademik fakultetlarni ko'rish"
+      },
+      {
+        "title": "SafiPro Apparel",
+        "desc": "Dasturchilar uchun sertifikatlangan organik paxtadan tayyorlangan, minimalist dizayndagi premium kiyim-kechak brendi.",
+        "linkText": "SafiPro kiyimlarini ko'rish"
+      }
+    ],
+    "techStack": [
+      {
+        "title": "Frontend va mobil dasturlash",
+        "desc": "Next.js 14/15 App Router, React.js, TypeScript, Flutter, Dart, Tailwind CSS, Framer Motion."
+      },
+      {
+        "title": "Backend va ma'lumotlar",
+        "desc": "PostgreSQL, Supabase Enterprise, Node.js, Python, Redis Caching, Microservices, REST & GraphQL."
+      },
+      {
+        "title": "Tarmoq xavfsizligi",
+        "desc": "Cisco IOS, Routing & Switching, Hardware Firewalls, Encrypted VPN Tunnels, SSL/TLS, ISO 27001."
+      },
+      {
+        "title": "Moliya bozorlari",
+        "desc": "Smart Money Concepts (SMC), Order Flow, IFTA Technical Analysis, Algorithmic Risk Execution."
+      }
+    ],
+    "milestones": [
+      {
+        "title": "Asoschi va guruh bosh direktori",
+        "org": "Safi International Capital LTD (2025 - Present)",
+        "desc": "Angliya va Uelsda 17063286 kompaniya raqami bilan ro'yxatdan o'tgan. Xolding boshqaruvi va global FinTech platformalarini joriy etish rahbari."
+      },
+      {
+        "title": "To'liq vaqtli institutsional Forex treyderi",
+        "org": "Global Currency Markets (2016 - 2024)",
+        "desc": "Yuqori chastotali likvidlik va valyuta operatsiyalarini boshqarish bo'yicha 8 yildan ortiq tajriba. 2024-yil oxirida FinTech infratuzilmasiga o'tish."
+      },
+      {
+        "title": "Yetakchi IT va tizimlar mutaxassisi",
+        "org": "Afghanistan Football Federation (2019 - 2024)",
+        "desc": "Korporativ tarmoq topologiyasi, yuqori tezlikdagi serverlar, jonli efir ulanishlari va raqamli identifikatsiya bazalarini loyihalash."
+      }
+    ],
+    "pedigree": [
+      {
+        "school": "Istanbul Technical University (ITU)",
+        "degree": "Kompyuter fanlari bakalavriati (2019 - 2023)",
+        "desc": "Yevrosiyoning nufuzli texnika universitetida taqsimlangan tizimlar arxitekturasi va kriptografik xavfsizlik bo'yicha mutaxassislik."
+      },
+      {
+        "school": "IFTA professional sertifikati",
+        "degree": "Xalqaro texnik tahlilchilar federatsiyasi (Dekabr 2024)",
+        "desc": "Bozorlarni miqdoriy modellashtirish, xavflarni tahlil qilish va makro-moliyaviy tahlil bo'yicha xalqaro sertifikat."
+      }
+    ],
+    "languages": [
+      {
+        "lang": "Ingliz tili",
+        "level": "Professional ravon"
+      },
+      {
+        "lang": "Fors / Dariy tili",
+        "level": "Ona tili"
+      },
+      {
+        "lang": "Pushtu tili",
+        "level": "Ona tili"
+      },
+      {
+        "lang": "Turk tili",
+        "level": "Akademik muloqot"
+      }
+    ],
+    "accreditationsTitle": "Institutsional akkreditatsiyalar",
+    "accreditations": [
+      {
+        "title": "IFTA global sertifikati",
+        "desc": "Texnik tahlil va moliya bozori muhandisligi"
+      },
+      {
+        "title": "Buyuk Britaniya Kompaniyalar Palatasi",
+        "desc": "Ro'yxatdan o'tish raqami: 17063286 (London, Buyuk Britaniya)"
+      },
+      {
+        "title": "ITU kompyuter fanlari bitiruvchisi",
+        "desc": "Istanbul Texnika Universiteti bitiruvchisi"
+      },
+      {
+        "title": "20 dan ortiq korporativ seminarlar",
+        "desc": "Elektron tijorat va FinTech bo'yicha asosiy ma'ruzalar"
+      }
+    ]
+  },
+  "shirinGolAhmadi": {
+    "name": "Shirin Gul Ahmadiy",
+    "firstName": "Shirin",
+    "lastName": "Gul Ahmadiy",
+    "role": "Barcha Safiy ekotizimining Bosh menejeri",
+    "office": "Umumiy operatsiyalar va AI tizimlari • Islomobod",
+    "coordinates": "Islomobod, Pokiston va global",
+    "born": "Tug'ilgan sana: 16-dekabr, 2004-yil",
+    "badgeAI": "Amaliy AI tizimlari",
+    "badgeAgents": "Avtonom agentlar",
+    "badgeManager": "Barcha Safiy ekotizimining Bosh menejeri",
+    "boardText": "Ijroiya kengashi • Safiy global ekotizimi",
+    "bio": "Barcha Safiy ekotizimining Bosh menejeri, Amaliy sun'iy intellekt tizimlari direktori va raqamli strateg.",
+    "manifestoTitle": "Ijroiya yetakchiligi va Amaliy AI yo'riqnomasi",
+    "manifestoQuote": "«SafiPay va Safiy Academy'da bizning vazifamiz an'anaviy operatsiyalardan ancha yuqori. Biz sun'iy intellektni talabalarning mahoratini oshiruvchi va xalqaro bozorlarni ochuvchi asosiy kuch sifatida joriy qilmoqdamiz.»",
+    "manifestoAuthor": "— Shirin Gul Ahmadiy • Bosh menejer va AI bo'yicha mutaxassis",
+    "backLink": "Ijroiya kengashiga qaytish",
+    "clickCopy": "E-pochta manzilini nusxalash uchun bosing",
+    "copied": "Nusxalandi!",
+    "directContact": "To'g'ridan-to'g'ri ijroiya aloqasi",
+    "contactDesc": "Strategik korporativ hamkorlik, institutsional investitsiyalar yoki xalqaro ma'ruzalar uchun:",
+    "portfolioBadge": "Korporativ portfel",
+    "portfolioTitle": "Safiy global korxonasi",
+    "techBadge": "Tizim muhandisligi",
+    "techTitle": "Asosiy texnik to'plam",
+    "milestonesBadge": "Ijroiya bosqichlari",
+    "pedigreeBadge": "Akademik malaka",
+    "languagesBadge": "Til bilish darajasi",
+    "manifestoP1": "Men Shirin Gol Ahmadi, SafiPay'da butun Safiy ekotizimi bosh menejeri va amaliy sun'iy intellekt tizimlari direktoriman. 2004-yil 16-dekabrda tug'ilganman; faoliyatim iqtisodiy nazariya, full-stack muhandislik va avtonom sun'iy intellektni birlashtirishga qaratilgan.",
+    "manifestoP2": "Islomoboddagi nufuzli NUST universitetining iqtisodiyot bakalavriatini tamomlab, korporativ boshqaruvga chuqur tahliliy va moliyaviy yondashuv bilan rahbarlik qilaman.",
+    "manifestoP3": "Ma'muriy boshqaruvdan tashqari, men faol full-stack dasturchi va grafik dizaynerman. Next.js, TypeScript va Python platformalarini yaratib, Safiy mahsulotlarining yuqori estetik va texnik standartlarga mosligini ta'minlayman.",
+    "shirinCompetenciesBadge": "Ko'p tarmoqli mahorat",
+    "shirinCompetenciesTitle": "Asosiy ijroiya malakalari",
+    "shirinC1Title": "Operatsiyalar va strategiya",
+    "shirinC1Desc": "Tashkiliy yetakchilik, Agile ish jarayonlarini muvofiqlashtirish, bo'limlararo operatsiyalar va resurslarni taqsimlash.",
+    "shirinC2Title": "Full-Stack dasturlash",
+    "shirinC2Desc": "React.js, Next.js, Node.js, TypeScript, Python, Tailwind CSS, PostgreSQL, REST API va mikroservislar.",
+    "shirinC3Title": "Amaliy sun'iy intellekt tizimlari",
+    "shirinC3Desc": "Ilg'or prompt muhandisligi, LLM integratsiyasi, Safi AI avtonom ta'lim tizimi va ish jarayonlarini boshqarish.",
+    "shirinC4Title": "Dizayn va brend",
+    "shirinC4Desc": "Figma UI/UX, dizayn tizimlari, Adobe Photoshop va Illustrator, vizual identifikatsiya arxitekturasi.",
+    "shirinHistoryTitle": "Boshqaruv tarixi",
+    "shirinPedigreeTitle": "Akademik malaka",
+    "shirinMultilingualTitle": "Ko'p tilli mahorat",
+    "shirinDistinctionsTitle": "Ijroiya yutuqlari"
+  },
+  "mobinHassani": {
+    "name": "Mobin Hassaniy",
+    "firstName": "Mobin",
+    "lastName": "Hassaniy",
+    "role": "Yetakchi dasturchi va Dasturiy ta'minot muhandisligi bo'limi boshlig'i",
+    "office": "Texnik rahbariyat • Safiy global ekotizimi",
+    "coordinates": "Xalqaro masofaviy va texnik markaz",
+    "badgeCore": "Asosiy muhandislik",
+    "badgeCloud": "Full-Stack bulut tizimlari",
+    "badgeLead": "Yetakchi dasturchi",
+    "badgeActive": "ACTIVE CORE ARCHITECT",
+    "bio": "Yetakchi dasturiy ta'minot muhandisi, Bulut tizimlari arxitektori va Safiy ekotizimi dasturchilar bo'limi rahbari.",
+    "manifestoTitle": "Yetakchi dasturchi manifesti va arxitekturasi",
+    "manifestoQuote": "«Mukammal dasturiy ta'minot arxitekturasi, yuqori yuklamalarga chidamlilik va murosasiz xavfsizlik zamonaviy raqamli ishonchning asosidir. Biz Safiy platformalarini butun dunyo bo'ylab to'xtovsiz ishlashi uchun quramiz.»",
+    "manifestoAuthor": "— Mobin Hassaniy • Yetakchi dasturchi",
+    "backLink": "Ijroiya kengashiga qaytish",
+    "clickCopy": "E-pochta manzilini nusxalash uchun bosing",
+    "copied": "Nusxalandi!",
+    "directContact": "To'g'ridan-to'g'ri ijroiya aloqasi",
+    "contactDesc": "Strategik korporativ hamkorlik, institutsional investitsiyalar yoki xalqaro ma'ruzalar uchun:",
+    "portfolioBadge": "Korporativ portfel",
+    "portfolioTitle": "Safiy global korxonasi",
+    "techBadge": "Tizim muhandisligi",
+    "techTitle": "Asosiy texnik to'plam",
+    "milestonesBadge": "Ijroiya bosqichlari",
+    "pedigreeBadge": "Akademik malaka",
+    "languagesBadge": "Til bilish darajasi",
+    "manifestoP1": "Men Mobin Hassani, Safiy ekotizimi yetakchi dasturchisi va dasturiy ta'minot arxitekturasi rahbariman. Mening vazifam moliyaviy va ta'limiy ilovalarimiz uchun bank darajasidagi xavfsizlikka ega texnik infratuzilmani yaratishdir.",
+    "manifestoP2": "Dasturchilar guruhiga rahbarlik qilib, reaktiv frontend, yuqori tezlikdagi backend APIlar, bulutli infratuzilma va CI/CD jarayonlarini to'liq nazorat qilaman.",
+    "mobinSkillsTitle": "Asosiy texnik stek va muhandislik qobiliyatlari",
+    "mobinS1Title": "Dasturiy ta'minot arxitekturasi",
+    "mobinS1Desc": "Taqsimlangan tizimlar dizayni, yuqori parallelizm, toza arxitektura namunalari va korporativ optimallashtirish.",
+    "mobinS2Title": "Zamonaviy Full-Stack",
+    "mobinS3Title": "Bulut va DevOps",
+    "mobinS4Title": "FinTech xavfsizligi",
+    "mobinS4Desc": "To'liq ma'lumotlar shifrlanishi, ISO va PCI standartlariga moslik, xavfsizlik auditi va izolyatsiya qilingan tranzaksiyalar.",
+    "mobinExpTitle": "Mas'uliyatlar va tajriba",
+    "mobinVisionTitle": "Safi ekotizimi uchun texnik qarash"
+  },
+  "mujtabaRahmani": {
+    "name": "Mujtaba Rahmoniy",
+    "firstName": "Mujtaba",
+    "lastName": "Rahmoniy",
+    "role": "Bosh operatsion direktor (COO)",
+    "office": "Ijroiya operatsiyalari • Qobil / Dubay",
+    "coordinates": "Qobil, Afg'oniston va Dubay, BAA",
+    "badgeCOO": "Bosh operatsion direktor",
+    "badgeOps": "Global operatsiyalar",
+    "badgeExecution": "Bosh operatsion direktor",
+    "bio": "Safiy global ekotizimi bosh operatsion direktori, korporativ operatsiyalar va strategik ijro rahbari.",
+    "manifestoTitle": "Operatsion mukammallik va Global ijro manifesti",
+    "manifestoQuote": "«Operatsiyalar shunchaki logistika emas; bu buyuk rejalarni barcha qit'alarda benuqson kundalik ijroga aylantiruvchi tirik yurak urishidir.»",
+    "manifestoAuthor": "— Mujtaba Rahmoniy • Bosh operatsion direktor",
+    "backLink": "Ijroiya kengashiga qaytish",
+    "clickCopy": "E-pochta manzilini nusxalash uchun bosing",
+    "copied": "Nusxalandi!",
+    "directContact": "To'g'ridan-to'g'ri ijroiya aloqasi",
+    "contactDesc": "Strategik korporativ hamkorlik, institutsional investitsiyalar yoki xalqaro ma'ruzalar uchun:",
+    "portfolioBadge": "Korporativ portfel",
+    "portfolioTitle": "Safiy global korxonasi",
+    "techBadge": "Tizim muhandisligi",
+    "techTitle": "Asosiy texnik to'plam",
+    "milestonesBadge": "Ijroiya bosqichlari",
+    "pedigreeBadge": "Akademik malaka",
+    "languagesBadge": "Til bilish darajasi",
+    "manifestoP1": "Mening ismim Sayed Mujtaba Rahmani. Raqamli chegaralar yo'qolib borayotgan dunyoda, mening maqsadim talabalar va mutaxassislarga jahon darajasidagi moliyaviy vositalar va sifatli ta'limdan erkin foydalanish imkoniyatini beruvchi tizimlarni yaratishdir.",
+    "manifestoP2": "University of the People (AQSh) da iqtisodiyot va onlayn biznes bo'yicha akademik ta'lim olib, an'anaviy makroiqtisodiy modellarni zamonaviy FinTech arxitekturasi bilan bog'lashga o'zimni bag'ishladim.",
+    "mujtabaRoleTitle": "Bosh operatsion direktor (COO)",
+    "mujtabaSubtitle": "Operatsiyalar va kiberboshqaruv • Kobul"
+  },
+  "sahelSalem": {
+    "name": "Sohel Salem",
+    "firstName": "Sohel",
+    "lastName": "Salem",
+    "role": "Bosh ijrochi direktor (CEO) va Yevropa aloqalari rahbari",
+    "office": "Ijroiya operatsiyalari • Frankfurt / London",
+    "coordinates": "Frankfurt, Germaniya va London, Buyuk Britaniya",
+    "badgeCEO": "Bosh ijrochi direktor (CEO)",
+    "badgeEuro": "Yevropa aloqalari",
+    "badgeExpansion": "Bosh ijrochi direktor (CEO)",
+    "bio": "Safiy Academy bosh ijrochi direktori, Yevropa aloqalari direktori va xalqaro akademik hamkorlik rahbari.",
+    "manifestoTitle": "Global qarash va Yevropa integratsiyasi manifesti",
+    "manifestoQuote": "«Global harakatchanliksiz ta'lim yarim ochiq eshikdir. Bizning vazifamiz har bir talabaning mehnati Yevropa va dunyoning iqtisodiy markazlarida bevosita tan olinishini ta'minlashdir.»",
+    "manifestoAuthor": "— Sohel Salem • CEO va Yevropa aloqalari rahbari",
+    "pillarsBadge": "Global strategiya",
+    "pillarsTitle": "Xalqaro kengayish ustunlari",
+    "p1Title": "Yevropa Ittifoqi bank koridorlari",
+    "p1Desc": "Afg'on muhojirlariga maxsus va qonuniy IBAN hisob-kitob xizmatlarini taqdim etish uchun Yevropaning yetakchi moliya institutlari bilan to'g'ridan-to'g'ri aloqalar o'rnatish.",
+    "p2Title": "SEPA lahzalik to'lov tizimi",
+    "p2Desc": "36 ta SEPA a'zo davlatlarida soniyadan kam vaqt ichida tranzaksiyalarni yo'naltirish, ortiqcha to'lovlar va ko'p kunlik kechikishlarni bartaraf etish.",
+    "p3Title": "Global muvofiqlik",
+    "p3Desc": "Pul yuvishga qarshi qat'iy standartlar (AML), mijozni aniqlash tizimi (KYC) va xalqaro moliya qoidalariga rioya etilishini nazorat qilish.",
+    "pedigreeTitle": "Akademik malaka",
+    "edu1Title": "BBA talabasi (Biznes boshqaruvi bakalavri)",
+    "edu1Subtitle": "Biznes boshqaruvi va korporativ yetakchilik yo'nalishi",
+    "edu1Desc": "Ko'pmillatli korxonalarni boshqarish, moliyaviy hisob, strategik yetakchilik va xalqaro savdo kengayishiga yo'naltirilgan oliy ta'lim dasturi.",
+    "edu2Title": "Fintek boshqaruvi va muvofiqlik bo'yicha tadqiqotlar",
+    "edu2Subtitle": "Ijrochi tayyorgarlik (2025 - hozirgi vaqt)",
+    "edu2Desc": "SEPA kredit o'tkazmalari, transchegaraviy to'lov protokollari va raqamli to'lov infratuzilmasi xavfsizligi bo'yicha maxsus kurslar.",
+    "networkTitle": "Til bilish va boshqaruv tarmog'i",
+    "networkSub": "Til bilish darajasi",
+    "langEn": "Ingliz tili",
+    "langEnLevel": "Professional daraja",
+    "langFa": "Fors / Dariy tili",
+    "langFaLevel": "Ona tili",
+    "langPs": "Pushtu tili",
+    "langPsLevel": "Ona tili",
+    "executiveDesk": "Boshqaruv stoli",
+    "directChannel": "To'g'ridan-to'g'ri WhatsApp kanali",
+    "inquireNow": "Hozir bog'lanish",
+    "backLink": "Ijroiya kengashiga qaytish",
+    "clickCopy": "E-pochta manzilini nusxalash uchun bosing",
+    "copied": "Nusxalandi!",
+    "directContact": "To'g'ridan-to'g'ri ijroiya aloqasi",
+    "contactDesc": "Strategik korporativ hamkorlik, institutsional investitsiyalar yoki xalqaro ma'ruzalar uchun:",
+    "portfolioBadge": "Korporativ portfel",
+    "portfolioTitle": "Safiy global korxonasi",
+    "techBadge": "Tizim muhandisligi",
+    "techTitle": "Asosiy texnik to'plam",
+    "milestonesBadge": "Ijroiya bosqichlari",
+    "pedigreeBadge": "Akademik malaka",
+    "languagesBadge": "Til bilish darajasi",
+    "manifestoP1": "Mening ismim Sahel Salem, Safiy Academy bosh ijrochi direktori (CEO) va Yevropa aloqalari direktoriman. 2007-yil 19-martda tug'ilganman; maqsadim yosh iqtidorlarning Yevropa iqtisodiyotida bevosita ishtirok etishiga to'siq bo'lgan to'siqlarni bartaraf etishdir.",
+    "manifestoP2": "Germaniya, Buyuk Britaniya va Yevropa moliya tarmoqlari bilan strategik hamkorlik orqali Safiy Academy xalqaro talabalar mobilligi va SEPA bank aloqalarini boshqaraman.",
+    "sahelRoleTitle": "Bosh ijrochi direktor (CEO) va Yevropa aloqalari",
+    "sahelSubtitle": "Yevropa bank kengayishi • Global yetakchi"
+  }
+}

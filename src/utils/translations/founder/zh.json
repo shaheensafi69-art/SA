@@ -1,0 +1,319 @@
+{
+  "common": {
+    "backLink": "返回执行董事会",
+    "clickCopy": "点击复制电子邮件地址",
+    "copied": "已复制！",
+    "directContact": "直接执行联系",
+    "contactDesc": "战略企业合作、机构投资或国际主题演讲："
+  },
+  "shaheenSafi": {
+    "name": "沙欣·萨菲",
+    "firstName": "沙欣",
+    "lastName": "萨菲",
+    "role": "董事兼创始人",
+    "office": "行政办公室 • 伦敦 / 喀布尔",
+    "coordinates": "英国伦敦与阿富汗喀布尔",
+    "badgeLead": "首席架构师",
+    "badgeFintech": "全栈金融科技",
+    "badgeFounder": "董事兼创始人",
+    "reg": "Safi International Capital LTD • UK Reg: 17063286",
+    "bio": "萨菲全球生态系统董事、创始人兼首席金融科技系统架构师。",
+    "manifestoTitle": "架构指令与执行宣言",
+    "manifestoQuote": "“我们创立萨菲学院和SafiPay不仅是为了参与数字经济——我们的使命是架起一座坚不可摧的教育与金融桥梁，将青年学子直接连接至欧美企业级市场。”",
+    "manifestoAuthor": "— 沙欣·萨菲 • 英国伦敦",
+    "backLink": "返回执行董事会",
+    "clickCopy": "点击复制电子邮件地址",
+    "copied": "已复制！",
+    "directContact": "直接执行联系",
+    "contactDesc": "战略企业合作、机构投资或国际主题演讲：",
+    "portfolioBadge": "企业投资组合",
+    "portfolioTitle": "萨菲全球企业帝国",
+    "techBadge": "系统工程",
+    "techTitle": "核心技术架构栈",
+    "milestonesBadge": "执行里程碑",
+    "pedigreeBadge": "学术背景与资质",
+    "languagesBadge": "多语言能力",
+    "manifestoP1": "我的职业生涯始于国际金融市场风起云涌的环境。从2016年到2024年底，作为外汇全职交易员，我对全球流动性流向、订单簿动态及机构风险对冲机制建立了深刻的洞察与实践经验。",
+    "manifestoP2": "2024年12月，在荣获国际技术分析师联合会（IFTA）的权威专业资质后，我深刻意识到，真正的金融自主权绝不能仅靠交易获取，而是必须构建底层数字枢纽与处理全球跨境结算的企业级软件体系。",
+    "manifestoP3": "凭借伊斯坦布尔理工大学（ITU）计算机科学学士学位，我将严密的计算机工程体系与宏大企业愿景深度交融。作为Safi International Capital LTD的创始人兼集团CEO，我全面统领SafiPay、Safi TopUp、SafiPro与萨菲学院的底层架构与全球化航向。",
+    "pillars": [
+      {
+        "title": "SafiPay Digital Banking",
+        "desc": "新一代多币种金融级基础设施，支持实体与虚拟Visa卡极速签发、SEPA即时清算，并在全球150多个国家提供无缝跨境流动性。",
+        "linkText": "探索SafiPay协议"
+      },
+      {
+        "title": "Safi TopUp Global",
+        "desc": "直连全球700多家电信运营商的即时数字结算网络，支持全球移动话费秒级充值与国际数字点卡核销。",
+        "linkText": "探索Safi TopUp网络"
+      },
+      {
+        "title": "Safi Academy",
+        "desc": "在英国官方注册（注册号：17063286）的旗舰级教育学府，提供电子商务、应用AI、金融衍生品可信认证及100%全额全奖奖学金体系。",
+        "linkText": "查看各学术院系"
+      },
+      {
+        "title": "SafiPro Apparel",
+        "desc": "专为全球程序员与科技极客打造的高端潮流服饰，采用国际认证有机棉、极简赛博朋克美学设计与全球碳中和直配网络。",
+        "linkText": "探索SafiPro潮牌"
+      }
+    ],
+    "techStack": [
+      {
+        "title": "前端与移动端架构",
+        "desc": "Next.js 14/15 App Router, React.js, TypeScript, Flutter, Dart, Tailwind CSS, Framer Motion."
+      },
+      {
+        "title": "后端架构与数据引擎",
+        "desc": "PostgreSQL, Supabase Enterprise, Node.js, Python, Redis Caching, Microservices, REST & GraphQL."
+      },
+      {
+        "title": "网络安全与加密隧道",
+        "desc": "Cisco IOS, Routing & Switching, Hardware Firewalls, Encrypted VPN Tunnels, SSL/TLS, ISO 27001."
+      },
+      {
+        "title": "金融衍生品与量化算法",
+        "desc": "Smart Money Concepts (SMC), Order Flow, IFTA Technical Analysis, Algorithmic Risk Execution."
+      }
+    ],
+    "milestones": [
+      {
+        "title": "创始人兼集团首席执行官",
+        "org": "Safi International Capital LTD (2025 - Present)",
+        "desc": "在英格兰和威尔士合法注册（公司注册编号：17063286）。负责控股集团顶层治理、主权合规及全球多端金融科技产品的研发与部署。"
+      },
+      {
+        "title": "全职机构级外汇交易专家",
+        "org": "Global Currency Markets (2016 - 2024)",
+        "desc": "拥有超过8年的高频流动性撮合、订单簿微观结构管理及跨币种执行实战底蕴。于2024年底全面聚焦于自动化金融科技底座的研发与拓展。"
+      },
+      {
+        "title": "首席IT与企业级系统架构专家",
+        "org": "Afghanistan Football Federation (2019 - 2024)",
+        "desc": "主导设计国家级机构的企业网络拓扑、高吞吐分布式服务器中枢、多路高清实时直播卫星链路及大规模数字身份验证数据库。"
+      }
+    ],
+    "pedigree": [
+      {
+        "school": "Istanbul Technical University (ITU)",
+        "degree": "计算机科学理学学士（2019 - 2023）",
+        "desc": "在欧亚大陆享负盛名的理工学府深造，专攻分布式系统架构、计算复杂性理论及高安全性密码学协议。"
+      },
+      {
+        "school": "IFTA国际技术分析师资格认证",
+        "degree": "国际技术分析师联合会（2024年12月）",
+        "desc": "获得量化市场建模、极端风险度量及宏观金融行为学领域的全球顶尖专业资质认证。"
+      }
+    ],
+    "languages": [
+      {
+        "lang": "英语",
+        "level": "专业商务流利"
+      },
+      {
+        "lang": "波斯语 / 达里语",
+        "level": "母语"
+      },
+      {
+        "lang": "普什图语",
+        "level": "母语"
+      },
+      {
+        "lang": "土耳其语",
+        "level": "学术交流与日常会话"
+      }
+    ],
+    "accreditationsTitle": "官方机构资质与权威认证",
+    "accreditations": [
+      {
+        "title": "IFTA全球技术分析师资质",
+        "desc": "金融市场量化分析与交易工程学"
+      },
+      {
+        "title": "英国企业管理署注册备案",
+        "desc": "英国法定设立注册号：17063286（英国伦敦）"
+      },
+      {
+        "title": "伊斯坦布尔理工大学计算机科学学士",
+        "desc": "伊斯坦布尔理工大学全球校友网络成员"
+      },
+      {
+        "title": "20余场国际企业峰会演讲",
+        "desc": "全球电子商务与金融科技前沿主题报告"
+      }
+    ]
+  },
+  "shirinGolAhmadi": {
+    "name": "希林·戈尔·艾哈迈迪",
+    "firstName": "希林",
+    "lastName": "戈尔·艾哈迈迪",
+    "role": "萨菲全生态系统总经理",
+    "office": "综合运营与人工智能系统 • 伊斯兰堡",
+    "coordinates": "巴基斯坦伊斯兰堡与全球",
+    "born": "出生日期：2004年12月16日",
+    "badgeAI": "应用人工智能系统",
+    "badgeAgents": "自主智能体",
+    "badgeManager": "萨菲全生态系统总经理",
+    "boardText": "执行董事会 • 萨菲全球生态系统",
+    "bio": "萨菲全生态系统总经理、应用人工智能系统总监兼多领域数字战略专家。",
+    "manifestoTitle": "执行领导力与应用人工智能指令",
+    "manifestoQuote": "“在SafiPay和萨菲学院，我们的使命超越了传统运营。我们正积极部署人工智能作为核心驱动力，加速学生的技能掌握并为全球学子开拓国际市场。”",
+    "manifestoAuthor": "— 希林·戈尔·艾哈迈迪 • 总经理兼人工智能专家",
+    "backLink": "返回执行董事会",
+    "clickCopy": "点击复制电子邮件地址",
+    "copied": "已复制！",
+    "directContact": "直接执行联系",
+    "contactDesc": "战略企业合作、机构投资或国际主题演讲：",
+    "portfolioBadge": "企业投资组合",
+    "portfolioTitle": "萨菲全球企业帝国",
+    "techBadge": "系统工程",
+    "techTitle": "核心技术架构栈",
+    "milestonesBadge": "执行里程碑",
+    "pedigreeBadge": "学术背景与资质",
+    "languagesBadge": "多语言能力",
+    "manifestoP1": "我是希琳·戈尔·艾哈迈迪（Shirin Gol Ahmadi），现任SafiPay全生态系统总经理兼萨菲全球应用人工智能系统总监。生于2004年12月16日，我的专业生涯致力于将宏观经济学理论、全栈软件工程、极简美学设计与自主智能体自动化深度融合。",
+    "manifestoP2": "毕业于伊斯兰堡著名的国立科技大学（NUST）经济学学士学位，我以严谨的计量经济学视角执掌企业治理，统筹跨部门研发周期与国际市场需求的无缝对接。",
+    "manifestoP3": "除宏观行政决策外，我亦是一名资深全栈工程师与界面设计师。通过亲自使用Next.js、TypeScript与Python构建完整的前沿数字化平台，我确保萨菲旗下的每一处交互界面均达到优雅美学、极致性能与无障碍体验的顶级工业标准。",
+    "shirinCompetenciesBadge": "跨学科前沿专业造诣",
+    "shirinCompetenciesTitle": "核心高级执行力矩阵",
+    "shirinC1Title": "运营治理与战略统筹",
+    "shirinC1Desc": "组织治理架构、敏捷工作流协同、跨部门业务运营闭环与企业级战略资源精准配置。",
+    "shirinC2Title": "全栈工程架构研发",
+    "shirinC2Desc": "React.js、Next.js、Node.js、TypeScript、Python、Tailwind CSS、PostgreSQL及微服务架构。",
+    "shirinC3Title": "应用人工智能与智能体系统",
+    "shirinC3Desc": "前沿提示工程、大语言模型（LLM）工业化集成、萨菲AI自适应助教及自主业务流程编排。",
+    "shirinC4Title": "品牌视觉与人机交互设计",
+    "shirinC4Desc": "Figma专业级UI/UX交互规范、企业级设计系统（Design System）、品牌视觉识别与全端自适应布局。",
+    "shirinHistoryTitle": "高级管理履历与里程碑",
+    "shirinPedigreeTitle": "学术教育背景与国际认证",
+    "shirinMultilingualTitle": "全球国际多语种精通能力",
+    "shirinDistinctionsTitle": "卓越管理成就与殊荣"
+  },
+  "mobinHassani": {
+    "name": "莫宾·哈萨尼",
+    "firstName": "莫宾",
+    "lastName": "哈萨尼",
+    "role": "首席开发工程师兼软件工程负责人",
+    "office": "技术高管 • 萨菲全球生态系统",
+    "coordinates": "国际远程与核心技术中心",
+    "badgeCore": "核心工程",
+    "badgeCloud": "全栈云系统",
+    "badgeLead": "首席开发工程师",
+    "badgeActive": "ACTIVE CORE ARCHITECT",
+    "bio": "萨菲生态系统首席软件工程师、云系统架构师兼开发者部门负责人。",
+    "manifestoTitle": "首席开发工程师宣言与系统架构",
+    "manifestoQuote": "“无懈可击的软件架构、高并发性能优化以及坚不可摧的安全性，构成了现代数字信任的基石。我们以严苛的标准构建萨菲平台，确保其在全球范围内稳定高效运行。”",
+    "manifestoAuthor": "— 莫宾·哈萨尼 • 首席开发工程师",
+    "backLink": "返回执行董事会",
+    "clickCopy": "点击复制电子邮件地址",
+    "copied": "已复制！",
+    "directContact": "直接执行联系",
+    "contactDesc": "战略企业合作、机构投资或国际主题演讲：",
+    "portfolioBadge": "企业投资组合",
+    "portfolioTitle": "萨菲全球企业帝国",
+    "techBadge": "系统工程",
+    "techTitle": "核心技术架构栈",
+    "milestonesBadge": "执行里程碑",
+    "pedigreeBadge": "学术背景与资质",
+    "languagesBadge": "多语言能力",
+    "manifestoP1": "我是莫宾·哈萨尼（Mobin Hassani），萨菲全球生态系统首席软件架构师与开发团队负责人。我的使命是设计并主导构建高韧性底层技术底座，以极速低延迟与银行级安全标准支撑起全球海量在线金融交易与学术互动。",
+    "manifestoP2": "作为核心研发团队掌舵人，我统揽全栈软件工程的完整生命周期治理——涵盖超响应式前端交互、高并发分布式后端API、跨地域多云编排、自动化CI/CD持续交付流水线及主动式安全漏洞攻防。",
+    "mobinSkillsTitle": "核心全栈技术栈与工程研发能力",
+    "mobinS1Title": "高并发软件架构设计",
+    "mobinS1Desc": "企业级分布式系统设计、高并发吞吐架构、整洁架构设计模式（Clean Architecture）与极致性能调优。",
+    "mobinS2Title": "现代全栈前沿开发",
+    "mobinS3Title": "云原生与DevOps工程化",
+    "mobinS4Title": "金融科技安全与合规防护",
+    "mobinS4Desc": "端到端金融级数据加密、ISO与PCI DSS合规性标准、渗透测试审计与隔离交易引擎。",
+    "mobinExpTitle": "核心职责与技术管理履历",
+    "mobinVisionTitle": "萨菲全球数字生态系统技术愿景"
+  },
+  "mujtabaRahmani": {
+    "name": "穆吉塔巴·拉赫马尼",
+    "firstName": "穆吉塔巴",
+    "lastName": "拉赫马尼",
+    "role": "首席运营官 (COO)",
+    "office": "行政运营 • 喀布尔 / 迪拜",
+    "coordinates": "阿富汗喀布尔与阿联酋迪拜",
+    "badgeCOO": "首席运营官",
+    "badgeOps": "全球运营",
+    "badgeExecution": "首席运营官",
+    "bio": "萨菲全球生态系统首席运营官、企业级运营总监兼战略执行负责人。",
+    "manifestoTitle": "卓越运营与全球战略执行宣言",
+    "manifestoQuote": "“运营绝不仅仅是后勤保障；它是将宏大愿景转化为跨越各大洲的无瑕日常执行力的生命脉搏。”",
+    "manifestoAuthor": "— 穆吉塔巴·拉赫马尼 • 首席运营官",
+    "backLink": "返回执行董事会",
+    "clickCopy": "点击复制电子邮件地址",
+    "copied": "已复制！",
+    "directContact": "直接执行联系",
+    "contactDesc": "战略企业合作、机构投资或国际主题演讲：",
+    "portfolioBadge": "企业投资组合",
+    "portfolioTitle": "萨菲全球企业帝国",
+    "techBadge": "系统工程",
+    "techTitle": "核心技术架构栈",
+    "milestonesBadge": "执行里程碑",
+    "pedigreeBadge": "学术背景与资质",
+    "languagesBadge": "多语言能力",
+    "manifestoP1": "我是赛义德·穆杰塔巴·拉赫马尼（Sayed Mujtaba Rahmani）。在数字边界日益消融、经济主权由底层代码重新定义的时代，我的毕生使命是构建卓越系统，赋予青年学子与全球专业人士自由通达世界一流金融基础设施与尖端工程教育的权利。",
+    "manifestoP2": "依托美国人民大学（University of the People, USA）经济学与数字化商业管理的专业学术积淀，我始终专注于将经典宏观经济学模型与前沿现代金融科技架构进行系统性贯通与工程化落地。",
+    "mujtabaRoleTitle": "首席运营官（COO）",
+    "mujtabaSubtitle": "全球运营交付与网络治理中心 • 喀布尔"
+  },
+  "sahelSalem": {
+    "name": "萨赫尔·萨利姆",
+    "firstName": "萨赫尔",
+    "lastName": "萨利姆",
+    "role": "首席执行官 (CEO) 兼欧洲事务关系负责人",
+    "office": "行政运营 • 法兰克福 / 伦敦",
+    "coordinates": "德国法兰克福与英国伦敦",
+    "badgeCEO": "首席执行官 (CEO)",
+    "badgeEuro": "欧洲关系事务",
+    "badgeExpansion": "首席执行官 (CEO)",
+    "bio": "萨菲学院首席执行官、欧洲事务关系总监兼跨境学术合作负责人。",
+    "manifestoTitle": "全球愿景与欧洲融合战略宣言",
+    "manifestoQuote": "“缺乏全球流动性的教育只是一扇半开的门。我们的使命是确保每位学子的努力都能直接获得欧洲及全球经济中心的认可与对接。”",
+    "manifestoAuthor": "— 萨赫尔·萨利姆 • 首席执行官兼欧洲事务关系负责人",
+    "pillarsBadge": "全球战略布局",
+    "pillarsTitle": "国际业务拓展核心支柱",
+    "p1Title": "欧盟银行清算走廊",
+    "p1Desc": "与欧洲一级顶级金融机构建立直接通道，为海外阿富汗侨民提供合规的专属欧洲IBAN账户与清算结算服务。",
+    "p2Title": "SEPA即时跨行清算网络",
+    "p2Desc": "在36个SEPA成员国间构建亚秒级资金结算路由，彻底消除掠夺性高昂汇款手续费和长达数天的跨境延迟。",
+    "p3Title": "全球金融合规与反洗钱监管",
+    "p3Desc": "严格执行反洗钱（AML）国际标准、了解你的客户（KYC）数字身份风控遥测及全流程合规性监管。",
+    "pedigreeTitle": "学术教育背景与专业认证",
+    "edu1Title": "工商管理学士（BBA）攻读者",
+    "edu1Subtitle": "企业管理、跨国并购与国际商业扩张方向",
+    "edu1Desc": "聚焦于跨国跨行业集团行政管控、财务分析、企业微观行为学、战略决策与跨国贸易版图扩张的高等商业教育项目。",
+    "edu2Title": "金融科技（Fintech）管治与泛欧合规专题研究",
+    "edu2Subtitle": "高级行政研修课程（2025年 - 至今）",
+    "edu2Desc": "深入研习泛欧SEPA信用即时转账机制、跨境支付金融报文协议及数字化清结算基础设施的高强度安全防御体系。",
+    "networkTitle": "国际多语言沟通能力与全球网络",
+    "networkSub": "熟练语言能力",
+    "langEn": "英语",
+    "langEnLevel": "专业工作水准",
+    "langFa": "波斯语 / 达里语",
+    "langFaLevel": "母语",
+    "langPs": "普什图语",
+    "langPsLevel": "母语",
+    "executiveDesk": "总裁直连通道",
+    "directChannel": "专属WhatsApp即时联络通道",
+    "inquireNow": "立即发起联络",
+    "backLink": "返回执行董事会",
+    "clickCopy": "点击复制电子邮件地址",
+    "copied": "已复制！",
+    "directContact": "直接执行联系",
+    "contactDesc": "战略企业合作、机构投资或国际主题演讲：",
+    "portfolioBadge": "企业投资组合",
+    "portfolioTitle": "萨菲全球企业帝国",
+    "techBadge": "系统工程",
+    "techTitle": "核心技术架构栈",
+    "milestonesBadge": "执行里程碑",
+    "pedigreeBadge": "学术背景与资质",
+    "languagesBadge": "多语言能力",
+    "manifestoP1": "我是萨赫勒·萨利姆（Sahel Salem），萨菲学院首席执行官（CEO）兼欧洲国际关系全权总监。生于2007年3月19日，我的使命是坚决打破阻碍广大杰出青年直接参与欧洲高价值经济循环的一切地理与繁文缛节壁垒。",
+    "manifestoP2": "依托与德国、英国及泛欧金融核心网络的深厚战略同盟，我全面统领萨菲学院的国际学术交流计划、跨国企业联合培养通道及泛欧SEPA企业银行结算桥梁。",
+    "sahelRoleTitle": "首席执行官（CEO）兼欧洲区事务总裁",
+    "sahelSubtitle": "欧洲银行清算与泛欧金融拓展 • 全球总裁"
+  }
+}

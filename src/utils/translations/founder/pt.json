@@ -1,0 +1,319 @@
+{
+  "common": {
+    "backLink": "Voltar ao Conselho Executivo",
+    "clickCopy": "Clique para copiar o endereço de e-mail",
+    "copied": "Copiado!",
+    "directContact": "Contato Executivo Direto",
+    "contactDesc": "Para parcerias corporativas estratégicas, investimentos institucionais ou palestras internacionais:"
+  },
+  "shaheenSafi": {
+    "name": "Shaheen Safi",
+    "firstName": "Shaheen",
+    "lastName": "Safi",
+    "role": "Diretor e Fundador",
+    "office": "Gabinete Executivo • Londres / Cabul",
+    "coordinates": "Londres, Reino Unido e Cabul, Afeganistão",
+    "badgeLead": "Arquiteto Principal",
+    "badgeFintech": "FinTech Full-Stack",
+    "badgeFounder": "Diretor e Fundador",
+    "reg": "Safi International Capital LTD • UK Reg: 17063286",
+    "bio": "Diretor, Fundador e Arquiteto Líder de Sistemas Fintech do Ecossistema Global Safi.",
+    "manifestoTitle": "Diretiva Arquitetural e Manifesto Executivo",
+    "manifestoQuote": "«Não fundámos a Safi Academy e o SafiPay apenas para participar na economia digital: criámo-los para construir uma ponte educacional e financeira inabalável que conecta diretamente com os mercados europeus e americanos.»",
+    "manifestoAuthor": "— Shaheen Safi • Londres, Reino Unido",
+    "backLink": "Voltar ao Conselho Executivo",
+    "clickCopy": "Clique para copiar o endereço de e-mail",
+    "copied": "Copiado!",
+    "directContact": "Contato Executivo Direto",
+    "contactDesc": "Para parcerias corporativas estratégicas, investimentos institucionais ou palestras internacionais:",
+    "portfolioBadge": "Portfólio Corporativo",
+    "portfolioTitle": "A Empresa Global Safi",
+    "techBadge": "Engenharia de Sistemas",
+    "techTitle": "Stack Técnico Principal",
+    "milestonesBadge": "Marcos Executivos",
+    "pedigreeBadge": "Percurso Académico",
+    "languagesBadge": "Fluência Linguística",
+    "manifestoP1": "A minha trajetória profissional começou no ambiente dinâmico e de alta volatilidade dos mercados financeiros internacionais. Operando como trader a tempo inteiro em Forex de 2016 ao final de 2024, desenvolvi uma compreensão profunda dos fluxos de liquidez global, dinâmica do livro de ordens e mitigação de risco institucional.",
+    "manifestoP2": "Em dezembro de 2024, após obter a prestigiada Certificação Internacional de Análise Técnica da IFTA, percebi que a verdadeira soberania financeira não se alcança apenas com o trading: exige a arquitetura de infraestruturas digitais empresariais que processam transações globais.",
+    "manifestoP3": "Com licenciatura em Ciências da Computação pela Universidade Técnica de Istambul (ITU), integro engenharia de ponta com visão corporativa. Como Fundador e CEO da Safi International Capital LTD, lidero a arquitetura técnica da SafiPay, Safi TopUp, SafiPro e Safi Academy.",
+    "pillars": [
+      {
+        "title": "SafiPay Digital Banking",
+        "desc": "Infraestrutura financeira multimoeda de última geração que permite a emissão instantânea de cartões Visa físicos e virtuais em mais de 150 países.",
+        "linkText": "Explorar Protocolo SafiPay"
+      },
+      {
+        "title": "Safi TopUp Global",
+        "desc": "Rede de liquidação digital instantânea ligada a mais de 700 operadoras de telecomunicações em todo o mundo.",
+        "linkText": "Explorar Rede Safi TopUp"
+      },
+      {
+        "title": "Safi Academy",
+        "desc": "A academia de referência registada no Reino Unido (#17063286), oferecendo certificações verificáveis em comércio eletrónico, IA e bolsas 100% integrais.",
+        "linkText": "Ver Faculdades Académicas"
+      },
+      {
+        "title": "SafiPro Apparel",
+        "desc": "Streetwear premium para programadores com algodão biológico certificado, estética cyberpunk minimalista e distribuição global neutra em carbono.",
+        "linkText": "Explorar SafiPro Apparel"
+      }
+    ],
+    "techStack": [
+      {
+        "title": "Frontend e Mobile",
+        "desc": "Next.js 14/15 App Router, React.js, TypeScript, Flutter, Dart, Tailwind CSS, Framer Motion."
+      },
+      {
+        "title": "Backend e Dados",
+        "desc": "PostgreSQL, Supabase Enterprise, Node.js, Python, Redis Caching, Microservices, REST & GraphQL."
+      },
+      {
+        "title": "Segurança de Rede",
+        "desc": "Cisco IOS, Routing & Switching, Hardware Firewalls, Encrypted VPN Tunnels, SSL/TLS, ISO 27001."
+      },
+      {
+        "title": "Mercados Financeiros",
+        "desc": "Smart Money Concepts (SMC), Order Flow, IFTA Technical Analysis, Algorithmic Risk Execution."
+      }
+    ],
+    "milestones": [
+      {
+        "title": "Fundador e CEO do Grupo",
+        "org": "Safi International Capital LTD (2025 - Present)",
+        "desc": "Registada em Inglaterra e no País de Gales sob o n.º 17063286. Liderança da governança e implementações de plataformas fintech a nível mundial."
+      },
+      {
+        "title": "Trader Forex Institucional a Tempo Inteiro",
+        "org": "Global Currency Markets (2016 - 2024)",
+        "desc": "Mais de 8 anos a gerir liquidez de alta frequência e operações cambiais. Transição para a criação de infraestrutura fintech no final de 2024."
+      },
+      {
+        "title": "Especialista Líder em TI e Sistemas",
+        "org": "Afghanistan Football Federation (2019 - 2024)",
+        "desc": "Arquitetura de rede empresarial, servidores de alto rendimento, transmissões ao vivo e bases de dados de identidade digital."
+      }
+    ],
+    "pedigree": [
+      {
+        "school": "Istanbul Technical University (ITU)",
+        "degree": "Licenciatura em Ciências da Computação (2019 - 2023)",
+        "desc": "Especialização em arquitetura de sistemas distribuídos, complexidade algorítmica e segurança criptográfica numa instituição prestigiada."
+      },
+      {
+        "school": "Certificação Profissional IFTA",
+        "degree": "Federação Internacional de Analistas Técnicos (Dez. 2024)",
+        "desc": "Credenciais internacionais certificadas em modelação quantitativa de mercado e gestão de risco."
+      }
+    ],
+    "languages": [
+      {
+        "lang": "Inglês",
+        "level": "Fluência Profissional"
+      },
+      {
+        "lang": "Persa / Dari",
+        "level": "Língua Materna"
+      },
+      {
+        "lang": "Pashto",
+        "level": "Língua Materna"
+      },
+      {
+        "lang": "Turco",
+        "level": "Conversacional Académico"
+      }
+    ],
+    "accreditationsTitle": "Acreditações Institucionais",
+    "accreditations": [
+      {
+        "title": "Certificação Global IFTA",
+        "desc": "Análise Técnica e Engenharia de Mercados Financeiros"
+      },
+      {
+        "title": "Registo de Empresas do Reino Unido",
+        "desc": "N.º de registo 17063286 (Londres, Reino Unido)"
+      },
+      {
+        "title": "Graduado em Ciências da Computação da ITU",
+        "desc": "Alumni da Universidade Técnica de Istambul"
+      },
+      {
+        "title": "Mais de 20 Seminários Corporativos",
+        "desc": "Palestras sobre Comércio Eletrónico e FinTech"
+      }
+    ]
+  },
+  "shirinGolAhmadi": {
+    "name": "Shirin Gol Ahmadi",
+    "firstName": "Shirin",
+    "lastName": "Gol Ahmadi",
+    "role": "Diretora Geral de todo o Ecossistema Safi",
+    "office": "Operações Gerais e Sistemas de IA • Islamabad",
+    "coordinates": "Islamabad, Paquistão e Global",
+    "born": "Data de nascimento: 16 de dezembro de 2004",
+    "badgeAI": "Sistemas de IA Aplicada",
+    "badgeAgents": "Agentes Autónomos",
+    "badgeManager": "Diretora Geral de todo o Ecossistema Safi",
+    "boardText": "Conselho Executivo • Ecossistema Global Safi",
+    "bio": "Diretora Geral de todo o Ecossistema Safi, Diretora de Sistemas de IA Aplicada e Estrategista Digital.",
+    "manifestoTitle": "Liderança Executiva e Diretiva de IA Aplicada",
+    "manifestoQuote": "«No SafiPay e na Safi Academy, a nossa missão transcende as operações tradicionais. Implementamos a inteligência artificial como um multiplicador central que acelera a aprendizagem e abre mercados internacionais.»",
+    "manifestoAuthor": "— Shirin Gol Ahmadi • Diretora Geral & Especialista em IA",
+    "backLink": "Voltar ao Conselho Executivo",
+    "clickCopy": "Clique para copiar o endereço de e-mail",
+    "copied": "Copiado!",
+    "directContact": "Contato Executivo Direto",
+    "contactDesc": "Para parcerias corporativas estratégicas, investimentos institucionais ou palestras internacionais:",
+    "portfolioBadge": "Portfólio Corporativo",
+    "portfolioTitle": "A Empresa Global Safi",
+    "techBadge": "Engenharia de Sistemas",
+    "techTitle": "Stack Técnico Principal",
+    "milestonesBadge": "Marcos Executivos",
+    "pedigreeBadge": "Percurso Académico",
+    "languagesBadge": "Fluência Linguística",
+    "manifestoP1": "Sou Shirin Gol Ahmadi, Diretora-Geral de todo o Ecossistema Safi na SafiPay e Diretora de Sistemas de Inteligência Artificial Aplicada. Nascida a 16 de dezembro de 2004, a minha carreira funde teoria económica com engenharia full-stack e automação de IA.",
+    "manifestoP2": "Licenciada em Economia pela prestigiada NUST em Islamabad, abordo a liderança corporativa através de uma perspetiva analítica e macrofinanceira, alinhando engenharia e procura de mercado.",
+    "manifestoP3": "Para além da administração corporativa, sou programadora Full-Stack e designer gráfica. Ao conceber plataformas web com Next.js, TypeScript e Python, asseguro que cada interface Safi atinge padrões intransigentes de elegância e desempenho.",
+    "shirinCompetenciesBadge": "Domínio multidisciplinar",
+    "shirinCompetenciesTitle": "Competências executivas essenciais",
+    "shirinC1Title": "Operações e Estratégia",
+    "shirinC1Desc": "Liderança organizacional, coordenação de fluxos Agile, operações interdepartamentais e alocação de recursos.",
+    "shirinC2Title": "Desenvolvimento Full-Stack",
+    "shirinC2Desc": "React.js, Next.js, Node.js, TypeScript, Python, Tailwind CSS, PostgreSQL, APIs REST, Microsserviços.",
+    "shirinC3Title": "Sistemas de IA Aplicada",
+    "shirinC3Desc": "Engenharia avançada de prompts, integração de LLMs, tutoria autónoma Safi AI e orquestração de fluxos.",
+    "shirinC4Title": "Design e Marca",
+    "shirinC4Desc": "Figma UI/UX, Sistemas de Design, Adobe Photoshop e Illustrator, Identidade Visual e Layouts Responsivos.",
+    "shirinHistoryTitle": "Histórico executivo",
+    "shirinPedigreeTitle": "Formação académica",
+    "shirinMultilingualTitle": "Proficiência multilingue",
+    "shirinDistinctionsTitle": "Distinções executivas"
+  },
+  "mobinHassani": {
+    "name": "Mobin Hassani",
+    "firstName": "Mobin",
+    "lastName": "Hassani",
+    "role": "Desenvolvedor Líder e Chefe de Engenharia de Software",
+    "office": "Executivo Técnico • Ecossistema Global Safi",
+    "coordinates": "Núcleo Técnico & Trabalho Remoto Internacional",
+    "badgeCore": "Engenharia Central",
+    "badgeCloud": "Sistemas Cloud Full-Stack",
+    "badgeLead": "Desenvolvedor Líder",
+    "badgeActive": "ACTIVE CORE ARCHITECT",
+    "bio": "Engenheiro de Software Principal, Arquiteto de Sistemas Cloud e Chefe da Divisão de Desenvolvedores do Safi.",
+    "manifestoTitle": "Manifesto do Desenvolvedor Líder e Arquitetura",
+    "manifestoQuote": "«Uma arquitetura de software impecável, otimização de alta concorrência e segurança inflexível formam a base da confiança digital moderna. Construímos as plataformas do Safi para operarem com perfeição global.»",
+    "manifestoAuthor": "— Mobin Hassani • Desenvolvedor Líder",
+    "backLink": "Voltar ao Conselho Executivo",
+    "clickCopy": "Clique para copiar o endereço de e-mail",
+    "copied": "Copiado!",
+    "directContact": "Contato Executivo Direto",
+    "contactDesc": "Para parcerias corporativas estratégicas, investimentos institucionais ou palestras internacionais:",
+    "portfolioBadge": "Portfólio Corporativo",
+    "portfolioTitle": "A Empresa Global Safi",
+    "techBadge": "Engenharia de Sistemas",
+    "techTitle": "Stack Técnico Principal",
+    "milestonesBadge": "Marcos Executivos",
+    "pedigreeBadge": "Percurso Académico",
+    "languagesBadge": "Fluência Linguística",
+    "manifestoP1": "Sou Mobin Hassani, Programador Principal e Diretor de Arquitetura de Software do Ecossistema Safi. A minha missão é conceber e liderar bases técnicas resilientes para as nossas plataformas financeiras e portais globais com segurança bancária.",
+    "manifestoP2": "Liderando a equipa de desenvolvimento, supervisiono todo o ciclo de vida do software: desde interfaces reativas e APIs de alto débito até à orquestração na nuvem e pipelines CI/CD.",
+    "mobinSkillsTitle": "Stack técnico principal e capacidades de engenharia",
+    "mobinS1Title": "Arquitetura de software",
+    "mobinS1Desc": "Design de sistemas distribuídos, alta concorrência, padrões de arquitetura limpa e otimização empresarial.",
+    "mobinS2Title": "Full-Stack Moderno",
+    "mobinS3Title": "Cloud e DevOps",
+    "mobinS4Title": "Segurança Fintech",
+    "mobinS4Desc": "Encriptação de dados ponta a ponta, conformidade ISO e PCI, auditorias de penetração e transações seguras.",
+    "mobinExpTitle": "Responsabilidades e Experiência",
+    "mobinVisionTitle": "Visão técnica para o Ecossistema Safi"
+  },
+  "mujtabaRahmani": {
+    "name": "Mujtaba Rahmani",
+    "firstName": "Mujtaba",
+    "lastName": "Rahmani",
+    "role": "Diretor de Operações (COO)",
+    "office": "Operações Executivas • Cabul / Dubai",
+    "coordinates": "Cabul, Afeganistão e Dubai, EAU",
+    "badgeCOO": "Diretor de Operações",
+    "badgeOps": "Operações Globais",
+    "badgeExecution": "Diretor de Operações",
+    "bio": "Diretor de Operações do Ecossistema Global Safi, Diretor de Operações Corporativas.",
+    "manifestoTitle": "Excelência Operacional e Manifesto de Execução Global",
+    "manifestoQuote": "«As operações não são apenas logística; são a pulsação vital que transforma visões ambiciosas numa execução diária impecável através dos continentes.»",
+    "manifestoAuthor": "— Mujtaba Rahmani • Diretor de Operações",
+    "backLink": "Voltar ao Conselho Executivo",
+    "clickCopy": "Clique para copiar o endereço de e-mail",
+    "copied": "Copiado!",
+    "directContact": "Contato Executivo Direto",
+    "contactDesc": "Para parcerias corporativas estratégicas, investimentos institucionais ou palestras internacionais:",
+    "portfolioBadge": "Portfólio Corporativo",
+    "portfolioTitle": "A Empresa Global Safi",
+    "techBadge": "Engenharia de Sistemas",
+    "techTitle": "Stack Técnico Principal",
+    "milestonesBadge": "Marcos Executivos",
+    "pedigreeBadge": "Percurso Académico",
+    "languagesBadge": "Fluência Linguística",
+    "manifestoP1": "O meu nome é Sayed Mujtaba Rahmani. Num mundo em que as fronteiras digitais se desvanecem, a minha missão é criar sistemas que proporcionem a estudantes e profissionais acesso sem restrições a instrumentos financeiros globais e educação de elite.",
+    "manifestoP2": "Com formação académica em Economia e Negócios Digitais pela University of the People (EUA), dedico-me a ligar modelos macroeconómicos tradicionais à moderna arquitetura fintech.",
+    "mujtabaRoleTitle": "Diretor de Operações (COO)",
+    "mujtabaSubtitle": "Operações e Cibergovernança • Cabul"
+  },
+  "sahelSalem": {
+    "name": "Sahel Salem",
+    "firstName": "Sahel",
+    "lastName": "Salem",
+    "role": "Diretor Executivo (CEO) e Relações Europeias",
+    "office": "Operações Executivas • Frankfurt / Londres",
+    "coordinates": "Frankfurt, Alemanha e Londres, Reino Unido",
+    "badgeCEO": "Diretor Executivo (CEO)",
+    "badgeEuro": "Relações Europeias",
+    "badgeExpansion": "Diretor Executivo (CEO)",
+    "bio": "Diretor Executivo da Safi Academy, Diretor de Relações Europeias e Parcerias Académicas Internacionais.",
+    "manifestoTitle": "Visão Global e Manifesto de Integração Europeia",
+    "manifestoQuote": "«A educação sem mobilidade global é uma porta entreaberta. O nosso imperativo é assegurar que o esforço de cada estudante seja reconhecido diretamente nos centros económicos da Europa.»",
+    "manifestoAuthor": "— Sahel Salem • CEO e Relações Europeias",
+    "pillarsBadge": "Estratégia Global",
+    "pillarsTitle": "Pilares de Expansão Internacional",
+    "p1Title": "Corredores Bancários da UE",
+    "p1Desc": "Estabelecimento de ligações diretas com instituições financeiras europeias de topo para fornecer aos expatriados afegãos serviços dedicados de liquidação IBAN.",
+    "p2Title": "Redes Instantâneas SEPA",
+    "p2Desc": "Conceção do encaminhamento de transações em frações de segundo em 36 países membros da SEPA, eliminando taxas abusivas e atrasos de dias.",
+    "p3Title": "Conformidade Global",
+    "p3Desc": "Supervisão de rigorosos padrões de combate ao branqueamento de capitais (AML), telemetria KYC e conformidade com os regulamentos financeiros internacionais.",
+    "pedigreeTitle": "Formação Académica",
+    "edu1Title": "Estudante de BBA (Licenciatura em Gestão de Empresas)",
+    "edu1Subtitle": "Candidato em Administração e Gestão de Empresas",
+    "edu1Desc": "Programa de ensino superior focado na administração de empresas multinacionais, contabilidade financeira, liderança estratégica e expansão comercial internacional.",
+    "edu2Title": "Estudos de Governança Fintech e Conformidade",
+    "edu2Subtitle": "Formação Executiva (2025 - Presente)",
+    "edu2Desc": "Cursos especializados em transferências a crédito SEPA, protocolos de pagamento transfronteiriços e segurança de infraestruturas.",
+    "networkTitle": "Rede Linguística e Executiva",
+    "networkSub": "Proficiência Linguística",
+    "langEn": "Inglês",
+    "langEnLevel": "Profissional",
+    "langFa": "Persa / Dari",
+    "langFaLevel": "Língua materna",
+    "langPs": "Pashto",
+    "langPsLevel": "Língua materna",
+    "executiveDesk": "Gabinete Executivo",
+    "directChannel": "Canal Direto de WhatsApp",
+    "inquireNow": "Contactar Agora",
+    "backLink": "Voltar ao Conselho Executivo",
+    "clickCopy": "Clique para copiar o endereço de e-mail",
+    "copied": "Copiado!",
+    "directContact": "Contato Executivo Direto",
+    "contactDesc": "Para parcerias corporativas estratégicas, investimentos institucionais ou palestras internacionais:",
+    "portfolioBadge": "Portfólio Corporativo",
+    "portfolioTitle": "A Empresa Global Safi",
+    "techBadge": "Engenharia de Sistemas",
+    "techTitle": "Stack Técnico Principal",
+    "milestonesBadge": "Marcos Executivos",
+    "pedigreeBadge": "Percurso Académico",
+    "languagesBadge": "Fluência Linguística",
+    "manifestoP1": "O meu nome é Sahel Salem, CEO e Diretor de Relações Europeias na Safi Academy. Nascido a 19 de março de 2007, a minha vocação é derrubar as barreiras que impedem os talentos de participar diretamente na economia europeia.",
+    "manifestoP2": "Através de uma integração estratégica com as redes financeiras europeias, lidero as iniciativas de mobilidade estudantil e as pontes bancárias SEPA da Safi Academy.",
+    "sahelRoleTitle": "Diretor Executivo (CEO) e Relações Europeias",
+    "sahelSubtitle": "Expansão bancária europeia • Líder global"
+  }
+}
