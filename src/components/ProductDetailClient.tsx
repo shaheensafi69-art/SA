@@ -99,93 +99,37 @@ export default function ProductDetailClient({ product, currentLocale }: ProductD
     setIsSubmitting(true);
 
     try {
-      const { data: orderData, error: orderError } = await supabase
-        .from('reseller_orders')
-        .insert({
-          product_id: product.id,
-          cost_price: totalCostPrice,
-          sale_price: totalSalePrice,
-          profit_amount: totalProfit,
-          status: 'pending',
-          order_payload: {
-            customer_name: formData.fullName,
-            email: formData.email,
-            whatsapp: formData.whatsapp,
-            telegram: formData.telegram,
-            quantity: quantity,
-            total_usd: totalUSD,
-            total_afn: totalAFN,
-            exchange_rate: effectiveRate
-          }
+      const response = await fetch('/api/store/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: product.id,
+          quantity,
+          fullName: formData.fullName,
+          email: formData.email,
+          whatsapp: formData.whatsapp,
+          telegram: formData.telegram,
+          totalUSD,
+          totalAFN,
+          effectiveRate,
+          productName: product.name,
+          category: product.category,
+          costPrice: product.cost_price,
+          sellingPrice: product.selling_price
         })
-        .select()
-        .single();
+      });
 
-      if (orderError) {
-        console.error("Database Error:", orderError);
-        throw new Error("Failed to save order to database.");
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Failed to process order.");
       }
 
-      const orderId = orderData.id;
-      setLastOrderId(orderId);
-
-      const telegramBotToken =
-        process.env.TELEGRAM_BOT_TOKEN ||
-        process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN ||
-        "8668673040:AAEI6Q4r28KWiTAGwvQrT0Y9j6S92KhtwiI";
-      const telegramChatId =
-        process.env.TELEGRAM_CHAT_ID ||
-        process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID ||
-        "5195615040";
-
-      const message = `
-🆕 *New Order Submitted (Safi Academy Store)*
----------------------------------------------
-🛒 *Order ID:* \`${orderId}\`
-
-👤 *Customer Details:*
-• Name: ${formData.fullName}
-• Email: ${formData.email}
-• WhatsApp: ${formData.whatsapp}
-• Telegram: @${formData.telegram.replace('@', '')}
-
-📦 *Product Details:*
-• Name: ${product.name}
-• Product ID: \`${product.id}\`
-• Category: ${product.category}
-• Quantity: ${quantity}
-
-💰 *Financials:*
-• Total Cost: $${totalCostPrice.toFixed(2)}
-• Total Sale: $${totalSalePrice.toFixed(2)}
-• Estimated Profit: $${totalProfit.toFixed(2)}
-
-💳 *Customer Payable:*
-• Total USD: *$${totalUSD.toFixed(2)}*
-• Total AFN: *${totalAFN.toLocaleString()} AFN*
-_(Rate: ${baseRate.toFixed(2)} + ${EXCHANGE_PROFIT_MARGIN} AFN = ${effectiveRate.toFixed(2)})_
-
-⏳ *Status:* Pending (24h Delivery SLA)
-      `;
-
-      try {
-        await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: telegramChatId,
-            text: message,
-            parse_mode: 'Markdown'
-          })
-        });
-      } catch (telegramErr) {
-        console.warn("Telegram dispatch error:", telegramErr);
-      }
-
+      setLastOrderId(data.orderId);
       setIsSuccess(true);
     } catch (error: any) {
       console.error("Submission Error:", error);
-      alert("Error processing your request. Please try again or contact support on WhatsApp.");
+      alert(error.message || "Error processing your request. Please try again or contact support on WhatsApp.");
     } finally {
       setIsSubmitting(false);
     }

@@ -205,72 +205,68 @@ export default function ManualPaymentGatewayClient({
     setIsSubmitting(true);
 
     try {
-      // 1. If Supabase is available and we have an order ID, update or log payment proof
-      if (supabase && incomingOrderId) {
-        try {
-          await supabase
-            .from("reseller_orders")
-            .update({
-              status: "payment_submitted",
-              order_payload: {
-                payment_method: config.name,
-                tx_id: txId,
-                payer_name: payerName,
-                payer_phone: payerPhone,
-                paid_amount: paidAmount,
-                notes: notes,
-                submitted_at: new Date().toISOString()
-              }
-            })
-            .eq("id", incomingOrderId);
-        } catch (dbErr) {
-          console.warn("Supabase update error:", dbErr);
-        }
-      }
-
-      // 2. Dispatch Telegram Alert
-      const telegramBotToken =
-        process.env.TELEGRAM_BOT_TOKEN ||
-        process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN ||
-        "8668673040:AAEI6Q4r28KWiTAGwvQrT0Y9j6S92KhtwiI";
-      const telegramChatId =
-        process.env.TELEGRAM_CHAT_ID ||
-        process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID ||
-        "5195615040";
-
-      const telegramMsg = `
-💳 *MANUAL PAYMENT PROOF SUBMITTED*
----------------------------------------
-🏦 *Gateway:* ${config.name} (${config.phone})
-🔖 *Order ID:* \`${incomingOrderId || "Manual/Direct"}\`
-📦 *Product:* ${productName || "Direct Transfer / Custom Payment"}
-🔢 *Quantity:* ${quantity}
-
-👤 *Payer Information:*
-• Name: ${payerName}
-• Phone / WhatsApp: ${payerPhone}
-
-💰 *Payment Details:*
-• Amount Reported: *${paidAmount || "Not specified"}*
-• TxID / Reference: \`${txId}\`
-• Notes: ${notes || "None"}
-• Timestamp: ${new Date().toLocaleString()}
-
-⚡ *Action Required:* Check ${config.name} merchant statement & verify incoming funds!
-      `;
-
-      try {
-        await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+      if (incomingOrderId) {
+        const response = await fetch('/api/store/order', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            chat_id: telegramChatId,
-            text: telegramMsg,
-            parse_mode: "Markdown"
+            orderId: incomingOrderId,
+            payerName,
+            payerPhone,
+            txId,
+            paidAmount,
+            notes,
+            paymentMethod: config.name,
+            productName,
+            quantity
           })
         });
-      } catch (tgErr) {
-        console.warn("Telegram alert error:", tgErr);
+
+        if (!response.ok) {
+          const errData = await response.json();
+          console.warn("Payment proof API warning:", errData);
+        }
+      } else {
+        // Direct manual payment alert without existing order ID
+        const telegramBotToken =
+          process.env.TELEGRAM_BOT_TOKEN ||
+          process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN ||
+          "8668673040:AAEI6Q4r28KWiTAGwvQrT0Y9j6S92KhtwiI";
+        const telegramChatId =
+          process.env.TELEGRAM_CHAT_ID ||
+          process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID ||
+          "5195615040";
+
+        const telegramMsg = `
+💳 <b>رسید پرداخت مستقیم / دستی</b>
+━━━━━━━━━━━━━━━━━━━━━━━
+🏦 <b>درگاه:</b> ${config.name} (${config.phone})
+📦 <b>محصول:</b> ${productName || "Direct Transfer / Custom Payment"}
+🔢 <b>تعداد:</b> ${quantity}
+
+👤 <b>اطلاعات پرداخت‌کننده:</b>
+• نام: ${payerName}
+• شماره / واتساپ: ${payerPhone}
+
+💰 <b>اطلاعات واریز:</b>
+• مبلغ اعلامی: <b>${paidAmount || "نامشخص"}</b>
+• شناسه پیگیری (TxID): <code>${txId}</code>
+• توضیحات: <i>${notes || "ندارد"}</i>
+        `;
+
+        try {
+          await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: telegramChatId,
+              text: telegramMsg.trim(),
+              parse_mode: "HTML"
+            })
+          });
+        } catch (tgErr) {
+          console.warn("Telegram alert error:", tgErr);
+        }
       }
 
       setIsSuccess(true);
