@@ -28,6 +28,7 @@ import {
   Maximize2
 } from "lucide-react";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getManualPaymentTranslation } from "@/utils/manualPaymentTranslations";
 import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -45,7 +46,8 @@ export default function ManualPaymentGatewayClient({
 }: ManualPaymentGatewayClientProps) {
   const searchParams = useSearchParams();
   const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
+  const mp = getManualPaymentTranslation(currentLocale);
+  const isRtl = mp.isRtl;
 
   // URL parameters from store/product page
   const productId = searchParams.get("id") || "";
@@ -69,41 +71,10 @@ export default function ManualPaymentGatewayClient({
         badgeBg: "bg-cyan-500/10 border-cyan-500/30 text-cyan-300",
         cardBorder: "border-cyan-500/30 hover:border-cyan-400/60",
         glowEffect: "shadow-[0_0_35px_rgba(6,182,212,0.18)]",
-        title: isRtl
-          ? "درگاه پرداخت رسمی حساب‌پی (HesabPay)"
-          : "HesabPay Official Payment Gateway",
-        subtitle: isRtl
-          ? "انتقال وجه آنی و پرداخت دیجیتال امن در سراسر افغانستان بدون نیاز به کارت‌های بین‌المللی"
-          : "Instant local transfer & secure digital wallet across Afghanistan with zero international banking fees",
-        appHint: isRtl
-          ? "قابل پرداخت از طریق تمامی حساب‌های بانکی متصل به شبکه حساب‌پی و اپلیکیشن موبایل"
-          : "Payable via all Afghan bank accounts connected to HesabPay mobile app",
-        steps: [
-          {
-            title: isRtl ? "۱. باز کردن اپلیکیشن حساب‌پی" : "1. Open HesabPay App",
-            desc: isRtl
-              ? "اپلیکیشن HesabPay را در گوشی خود باز کرده و وارد حساب کاربری خود شوید."
-              : "Launch the official HesabPay app on your mobile device and log in."
-          },
-          {
-            title: isRtl ? "۲. اسکن کیو آر کد یا ورود شماره" : "2. Scan QR or Enter Phone",
-            desc: isRtl
-              ? "گزینه «اسکن QR» را زده و کد زیر را اسکن کنید، یا شماره 0796040415 را در بخش انتقال وجه وارد نمایید."
-              : "Select 'Scan QR' to scan the official code below, or manually enter phone +93796040415."
-          },
-          {
-            title: isRtl ? "۳. وارد کردن مبلغ و شناسه" : "3. Enter Amount & Reference",
-            desc: isRtl
-              ? "مبلغ فاکتور را به افغانی یا دالر درج کرده و در توضیحات نام یا شماره سفارش خود را بنویسید."
-              : "Input the payable amount in AFN or USD, and write your Name or Order Reference in the note."
-          },
-          {
-            title: isRtl ? "۴. تکمیل و ثبت رسید پرداخت" : "4. Save Receipt & Confirm",
-            desc: isRtl
-              ? "پس از تکمیل تراکنش، شناسه پیگیری (TxID) را در فرم زیر وارد کرده یا رسید را در واتساپ بفرستید."
-              : "Once completed, copy your Transaction ID into the verification form below or send to WhatsApp."
-          }
-        ]
+        title: mp.hesabTitle,
+        subtitle: mp.hesabSubtitle,
+        appHint: mp.hesabAppHint,
+        steps: mp.hesabSteps
       }
     : {
         name: "AtomaPay",
@@ -115,41 +86,10 @@ export default function ManualPaymentGatewayClient({
         badgeBg: "bg-emerald-500/10 border-emerald-500/30 text-emerald-300",
         cardBorder: "border-emerald-500/30 hover:border-emerald-400/60",
         glowEffect: "shadow-[0_0_35px_rgba(16,185,129,0.18)]",
-        title: isRtl
-          ? "درگاه پرداخت رسمی اتوماپی (AtomaPay)"
-          : "AtomaPay Official Payment Gateway",
-        subtitle: isRtl
-          ? "سامانه هوشمند و امن تبادلات مالی سریع و مستقیم در افغانستان با تایید آنی"
-          : "Smart, secure, and instant Afghan payment network with direct merchant verification",
-        appHint: isRtl
-          ? "پشتیبانی از انتقال مستقیم، کیف‌پول اتوما و تسویه سریع در شبکه صرافی‌ها و بانک‌ها"
-          : "Supports Atoma Wallet transfer, instant QR checkout, and fast merchant settlement",
-        steps: [
-          {
-            title: isRtl ? "۱. باز کردن اپلیکیشن اتوماپی" : "1. Open AtomaPay App",
-            desc: isRtl
-              ? "وارد اپلیکیشن یا پورتال کاربری اتوماپی در گوشی هوشمند خود شوید."
-              : "Log in to your AtomaPay mobile application or web portal."
-          },
-          {
-            title: isRtl ? "۲. اسکن کیو آر کد یا شماره حساب" : "2. Scan QR or Enter Account",
-            desc: isRtl
-              ? "کیو آر کد روبرو را اسکن نموده یا شماره 0773449567 را جهت ارسال وجه انتخاب کنید."
-              : "Scan the displayed Atoma QR code or choose send money to +93773449567."
-          },
-          {
-            title: isRtl ? "۳. مشخص نمودن مبلغ قابل پرداخت" : "3. Specify Amount & Note",
-            desc: isRtl
-              ? "مبلغ مشخص‌شده سفارش را وارد نموده و در فیلد شرح تراکنش، نام خریدار را ذکر نمایید."
-              : "Specify the exact order total in AFN or USD and add your order note."
-          },
-          {
-            title: isRtl ? "۴. ارسال رسید و تایید فوری" : "4. Submit Proof & Verify",
-            desc: isRtl
-              ? "شناسه تراکنش (کد ارجاع) را در فرم زیر درج کنید تا تیم فنی سرویس شما را فعال نماید."
-              : "Submit your reference code in the form below or chat directly on WhatsApp for 24h SLA delivery."
-          }
-        ]
+        title: mp.atomaTitle,
+        subtitle: mp.atomaSubtitle,
+        appHint: mp.atomaAppHint,
+        steps: mp.atomaSteps
       };
 
   // Form State

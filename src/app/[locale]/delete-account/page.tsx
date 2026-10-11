@@ -1,5 +1,7 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getDeleteAccountTranslation } from "@/utils/deleteAccountTranslations";
+import { isRtlLocale } from "@/dictionaries";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -37,7 +39,8 @@ export default function AccountDeletionPortal() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
+  const da = getDeleteAccountTranslation(currentLocale);
+  const isRtl = isRtlLocale(currentLocale);
 
   // Form State
   const [email, setEmail] = useState("");
@@ -58,17 +61,17 @@ export default function AccountDeletionPortal() {
     e.preventDefault();
     if (!email || !email.includes("@")) {
       setFormStatus("error");
-      setErrorMessage("Please enter a valid registered email address.");
+      setErrorMessage(isRtl ? "لطفاً یک آدرس ایمیل معتبر وارد کنید." : "Please enter a valid registered email address.");
       return;
     }
     if (!fullName.trim()) {
       setFormStatus("error");
-      setErrorMessage("Please provide your full registered name.");
+      setErrorMessage(isRtl ? "لطفاً نام و نام خانوادگی کامل خود را وارد کنید." : "Please provide your full registered name.");
       return;
     }
     if (!confirmConsequences || !confirmIrreversible) {
       setFormStatus("error");
-      setErrorMessage("You must check both confirmation boxes before submitting.");
+      setErrorMessage(isRtl ? "باید هر دو گزینه تأیید را قبل از ارسال تیک بزنید." : "You must check both confirmation boxes before submitting.");
       return;
     }
 
@@ -144,7 +147,7 @@ export default function AccountDeletionPortal() {
             href={`/${currentLocale}`}
             className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-all text-xs font-bold uppercase tracking-widest bg-white/[0.04] border border-white/10 px-4 py-2 rounded-full hover:bg-white/[0.08]"
           >
-            <ArrowLeft size={14} /> Back to Homepage
+            <ArrowLeft size={14} /> {isRtl ? "بازگشت به صفحه اصلی" : "Back to Homepage"}
           </Link>
 
           <div className="flex items-center gap-3">
@@ -162,46 +165,43 @@ export default function AccountDeletionPortal() {
         {/* ================= HERO THEATER ================= */}
         <div className="text-center max-w-4xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-black uppercase tracking-[0.25em] mb-6 shadow-inner">
-            <ShieldAlert size={14} className="animate-pulse" /> {t.publicPages.deleteAccountTitle}
+            <ShieldAlert size={14} className="animate-pulse" /> {da.badge}
           </div>
 
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white mb-6 leading-tight">
-            Account Deletion & <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-amber-300 to-rose-500">
-              Data Privacy Erasure
-            </span>
+            {da.title}
           </h1>
 
           <p className="text-neutral-300 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto font-normal text-justify sm:text-center">
-            At Safi Academy and Safi International Capital LTD, we respect your fundamental right to digital privacy, autonomy, and data sovereignty. This portal provides complete transparency regarding how your account and data are permanently purged in strict adherence with <strong className="text-white">UK GDPR</strong>, the <strong className="text-white">UK Data Protection Act 2018</strong>, and the mandatory <strong className="text-white">Google Play Store & Apple App Store</strong> account deletion directives.
+            {da.desc}
           </p>
 
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-10">
             <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-xl text-left">
               <div className="flex items-center gap-2 text-rose-400 mb-2 font-black text-xs uppercase tracking-wider">
-                <Clock size={16} /> {t.publicPages.thirtyDayGracePeriod}
+                <Clock size={16} /> {da.step2Title}
               </div>
               <p className="text-xs text-neutral-400 leading-relaxed">
-                Your data is safely frozen for 30 calendar days, allowing cancellation before permanent cryptographic destruction.
+                {da.step2Desc}
               </p>
             </div>
 
             <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-xl text-left">
               <div className="flex items-center gap-2 text-amber-400 mb-2 font-black text-xs uppercase tracking-wider">
-                <Database size={16} /> Complete PII Purge
+                <Database size={16} /> {da.step3Title}
               </div>
               <p className="text-xs text-neutral-400 leading-relaxed">
-                Zero leftover profile records, chat logs, auth tokens, device identifiers, or assignment history in production.
+                {da.step3Desc}
               </p>
             </div>
 
             <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-xl text-left">
               <div className="flex items-center gap-2 text-emerald-400 mb-2 font-black text-xs uppercase tracking-wider">
-                <Scale size={16} /> Legal Transparency
+                <Scale size={16} /> {da.step1Title}
               </div>
               <p className="text-xs text-neutral-400 leading-relaxed">
-                Strict disclosures regarding non-PII financial invoices required by UK HMRC statutory regulations.
+                {da.step1Desc}
               </p>
             </div>
           </div>
@@ -324,11 +324,11 @@ export default function AccountDeletionPortal() {
               <div className="flex items-center gap-3 mb-4">
                 <span className="w-3 h-8 rounded-full bg-gradient-to-b from-rose-400 to-red-600" />
                 <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-                  Online Account Erasure Request
+                  {isRtl ? "ثبت آنلاین درخواست امحای حساب کاربری" : "Online Account Erasure Request"}
                 </h2>
               </div>
               <p className="text-neutral-400 text-sm mb-8 leading-relaxed">
-                Submit your registered credentials below. Our automated identity verification engine will match your record and schedule your account for permanent erasure following the 30-day grace window.
+                {da.warningDesc}
               </p>
 
               {formStatus === "success" ? (
@@ -340,13 +340,13 @@ export default function AccountDeletionPortal() {
                   <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-5 shadow-lg">
                     <CheckCircle2 size={36} />
                   </div>
-                  <h3 className="text-2xl font-black text-white mb-2">{t.publicPages.deletionRequestSubmitted}</h3>
+                  <h3 className="text-2xl font-black text-white mb-2">{da.successTitle}</h3>
                   <p className="text-neutral-300 text-sm max-w-xl mx-auto mb-6 leading-relaxed">
-                    Your request has been logged and assigned to our automated compliance queue. A formal confirmation dispatch has been routed to your registered email address.
+                    {da.successDesc}
                   </p>
 
                   <div className="inline-flex items-center gap-3 p-4 rounded-2xl bg-black/60 border border-emerald-500/30 mb-6">
-                    <span className="text-xs text-neutral-400 uppercase font-black tracking-wider">{t.publicPages.referenceTicketId}:</span>
+                    <span className="text-xs text-neutral-400 uppercase font-black tracking-wider">{da.referenceLabel}:</span>
                     <span className="font-mono text-emerald-400 font-black text-base">{ticketId}</span>
                     <button
                       onClick={copyTicket}
@@ -359,11 +359,10 @@ export default function AccountDeletionPortal() {
 
                   <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 text-left max-w-xl mx-auto text-xs text-neutral-400 space-y-2">
                     <p className="flex items-center gap-2 text-white font-bold">
-                      <Clock size={14} className="text-yellow-400" /> What happens next:
+                      <Clock size={14} className="text-yellow-400" /> {isRtl ? "مراحل بعدی چیست:" : "What happens next:"}
                     </p>
-                    <p>• <strong>Days 1–30:</strong> Your account is suspended and hidden from public view.</p>
-                    <p>• <strong>Need to Cancel?</strong> Log in before Day 30 or contact support quoting ticket <code>{ticketId}</code>.</p>
-                    <p>• <strong>Day 30:</strong> Permanent, non-recoverable cryptographic data purge is executed.</p>
+                    <p>• {da.gracePeriodNotice}</p>
+                    <p>• {da.step3Desc}</p>
                   </div>
 
                   <button
@@ -377,7 +376,7 @@ export default function AccountDeletionPortal() {
                     }}
                     className="mt-8 inline-flex items-center gap-2 text-xs font-bold text-neutral-400 hover:text-white uppercase tracking-wider underline underline-offset-4"
                   >
-                    <RefreshCw size={12} /> Submit Another Request
+                    <RefreshCw size={12} /> {isRtl ? "ثبت درخواست دیگر" : "Submit Another Request"}
                   </button>
                 </motion.div>
               ) : (
@@ -392,7 +391,7 @@ export default function AccountDeletionPortal() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-xs font-black uppercase tracking-wider text-neutral-300 mb-2">
-                        Registered Account Email <span className="text-rose-400">*</span>
+                        {da.emailLabel} <span className="text-rose-400">*</span>
                       </label>
                       <input
                         type="email"
@@ -406,13 +405,13 @@ export default function AccountDeletionPortal() {
 
                     <div>
                       <label className="block text-xs font-black uppercase tracking-wider text-neutral-300 mb-2">
-                        Full Name on Profile <span className="text-rose-400">*</span>
+                        {da.nameLabel} <span className="text-rose-400">*</span>
                       </label>
                       <input
                         type="text"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        placeholder="e.g. Ahmad Shah"
+                        placeholder={isRtl ? "مثال: احمد شاه" : "e.g. Ahmad Shah"}
                         required
                         className="w-full px-4 py-3.5 rounded-2xl bg-white/[0.03] border border-white/10 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-rose-500/60 focus:bg-white/[0.06] transition-all"
                       />
@@ -421,30 +420,30 @@ export default function AccountDeletionPortal() {
 
                   <div>
                     <label className="block text-xs font-black uppercase tracking-wider text-neutral-300 mb-2">
-                      Primary Reason for Termination <span className="text-neutral-500">(Optional)</span>
+                      {da.reasonLabel} <span className="text-neutral-500">({isRtl ? "اختیاری" : "Optional"})</span>
                     </label>
                     <select
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
                       className="w-full px-4 py-3.5 rounded-2xl bg-[#0a0a10] border border-white/10 text-white text-sm focus:outline-none focus:border-rose-500/60 transition-all cursor-pointer"
                     >
-                      <option value="leaving">I have completed my academic goals</option>
-                      <option value="privacy">Privacy / Data Sovereignty considerations</option>
-                      <option value="duplicate">I have a duplicate or secondary account</option>
-                      <option value="app_issues">Technical difficulties with the mobile application</option>
-                      <option value="other">Other reason (Please specify below)</option>
+                      <option value="leaving">{isRtl ? "به اهداف آموزشی خود رسیده‌ام" : "I have completed my academic goals"}</option>
+                      <option value="privacy">{isRtl ? "ملاحظات مربوط به حریم خصوصی" : "Privacy / Data Sovereignty considerations"}</option>
+                      <option value="duplicate">{isRtl ? "حساب کاربری تکراری دارم" : "I have a duplicate or secondary account"}</option>
+                      <option value="app_issues">{isRtl ? "مشکلات فنی با اپلیکیشن" : "Technical difficulties with the mobile application"}</option>
+                      <option value="other">{isRtl ? "دلایل دیگر (در کادر زیر بنویسید)" : "Other reason (Please specify below)"}</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-xs font-black uppercase tracking-wider text-neutral-300 mb-2">
-                      Additional Feedback or Instructions <span className="text-neutral-500">(Optional)</span>
+                      {da.detailsLabel}
                     </label>
                     <textarea
                       rows={3}
                       value={additionalDetails}
                       onChange={(e) => setAdditionalDetails(e.target.value)}
-                      placeholder="Tell us how we can improve Safi Academy or provide specific data erasure notes..."
+                      placeholder={isRtl ? "نظرات و پیشنهادات خود را برای بهبود آکادمی با ما در میان بگذارید..." : "Tell us how we can improve Safi Academy or provide specific data erasure notes..."}
                       className="w-full px-4 py-3.5 rounded-2xl bg-white/[0.03] border border-white/10 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-rose-500/60 focus:bg-white/[0.06] transition-all resize-none"
                     />
                   </div>
@@ -460,7 +459,7 @@ export default function AccountDeletionPortal() {
                         required
                       />
                       <span className="text-xs text-neutral-300 leading-relaxed">
-                        I understand that my course enrollments, lecture progress, quiz records, community posts, and wallet credits will be <strong className="text-white">permanently deleted</strong>.
+                        {da.confirm1}
                       </span>
                     </label>
 
@@ -473,7 +472,7 @@ export default function AccountDeletionPortal() {
                         required
                       />
                       <span className="text-xs text-neutral-300 leading-relaxed">
-                        I understand that this action is <strong className="text-white">irreversible after the 30-day grace period</strong> and that Safi Academy will not be able to restore my learning history.
+                        {da.confirm2}
                       </span>
                     </label>
                   </div>
@@ -486,12 +485,12 @@ export default function AccountDeletionPortal() {
                     {formStatus === "loading" ? (
                       <>
                         <Loader2 size={16} className="animate-spin" />
-                        <span>{t.publicPages.submittingRequest}</span>
+                        <span>{da.processingBtn}</span>
                       </>
                     ) : (
                       <>
                         <Trash2 size={16} />
-                        <span>{t.publicPages.submitDeletionRequest}</span>
+                        <span>{da.submitBtn}</span>
                       </>
                     )}
                   </button>

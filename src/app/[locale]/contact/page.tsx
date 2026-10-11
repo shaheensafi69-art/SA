@@ -1,5 +1,7 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getContactTranslation } from "@/utils/contactTranslations";
+import { isRtlLocale } from "@/dictionaries";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -17,14 +19,15 @@ export default function ContactPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
+  const ct = getContactTranslation(currentLocale);
+  const isRtl = isRtlLocale(currentLocale);
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [selectedSubject, setSelectedSubject] = useState("");
   const [messageLength, setMessageLength] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const subjectPresets = [
+  const subjectPresets = ct.subjects && ct.subjects.length > 0 ? ct.subjects : [
     { label: "🎓 Scholarship & Admissions", value: "Scholarship & Admissions Inquiry" },
     { label: "💻 Enterprise & Software", value: "Enterprise Software & Development Inquiry" },
     { label: "🤝 Institutional Alliance", value: "Strategic Partnership Proposal" },
@@ -32,7 +35,7 @@ export default function ContactPage() {
     { label: "💖 Philanthropic Grant", value: "Philanthropic Grant & Donation Inquiry" },
   ];
 
-  const communicationDesks = [
+  const rawDesks = [
     {
       icon: GraduationCap,
       color: "text-amber-400",
@@ -75,7 +78,15 @@ export default function ContactPage() {
     }
   ];
 
-  const slaMatrix = [
+  const communicationDesks = rawDesks.map((d, i) => ({
+    ...d,
+    title: ct.desks[i]?.title || d.title,
+    sla: ct.desks[i]?.sla || d.sla,
+    description: ct.desks[i]?.desc || d.description,
+    coverage: ct.desks[i]?.coverage || d.coverage,
+  }));
+
+  const rawSla = [
     {
       channel: "Telegram Dispatch Terminal",
       speed: "2 – 4 Hours",
@@ -106,28 +117,15 @@ export default function ContactPage() {
     }
   ];
 
-  const contactFaqs = [
-    {
-      q: "How quickly can I expect a reply after submitting the dispatch form?",
-      a: "Dispatches submitted via this form are parsed directly into our centralized operations terminal via Telegram API with automated triage. Typical response time is under 4 business hours, and under 1 hour for urgent student or enterprise queries."
-    },
-    {
-      q: "Can I schedule a live video consultation with an academic advisor or solutions architect?",
-      a: "Yes. In your dispatch, indicate your preferred timezone and topic (e.g. 'Admissions Evaluation' or 'Enterprise Project Scoping'). Our coordinator will respond with a direct Google Meet or Zoom scheduling link."
-    },
-    {
-      q: "How do corporate clients and partners verify Safi International Capital LTD's credentials?",
-      a: "Safi International Capital LTD is an incorporated UK company registered at Companies House with Company Registration Number 17063286 and registered offices at 71-75 Shelton Street, Covent Garden, London, United Kingdom. Official certified extracts and VAT documentation are provided upon request."
-    },
-    {
-      q: "Can international educators or software engineers apply for roles through this page?",
-      a: "Yes. Select 'Strategic Partnership Proposal' or 'Enterprise Software' as your subject and attach your LinkedIn profile, GitHub repository, and pedagogical experience in the message body. Our talent committee reviews all candidate dispatches weekly."
-    },
-    {
-      q: "What security measures protect the data transmitted through this portal?",
-      a: "All dispatches are transmitted via TLS 1.3 encryption and relayed over secure bot protocols directly into our restricted headquarters chat. We enforce strict GDPR and UK Data Protection Act compliance — your credentials will never be commercialized or shared with third parties."
-    }
-  ];
+  const slaMatrix = rawSla.map((s, i) => ({
+    ...s,
+    channel: ct.slaItems[i]?.channel || s.channel,
+    speed: ct.slaItems[i]?.speed || s.speed,
+    status: ct.slaItems[i]?.status || s.status,
+    availability: ct.slaItems[i]?.availability || s.availability,
+  }));
+
+  const contactFaqs = ct.faqs && ct.faqs.length > 0 ? ct.faqs : [];
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -199,19 +197,16 @@ export default function ContactPage() {
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-yellow-500"></span>
           </span>
           <span className="text-xs font-mono font-bold tracking-widest text-neutral-300 uppercase">
-            Operations Active • 24/7 Global Dispatch Gateway
+            {ct.badge}
           </span>
         </div>
 
         <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tight leading-[1.08]">
-          Direct Dispatch & <br className="hidden sm:inline" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600">
-            Global Communications
-          </span>
+          {ct.heroTitle}
         </h1>
 
         <p className="text-neutral-300 text-base sm:text-lg md:text-xl leading-relaxed max-w-3xl mx-auto font-normal">
-          Whether you are an ambitious student seeking scholarship enrollment, an enterprise contracting custom software, or a university pursuing accredited partnership — our centralized command team handles your inquiry with confidentiality and speed.
+          {ct.heroSub}
         </p>
 
         {/* Global Key Metrics Bar */}
@@ -459,17 +454,17 @@ export default function ContactPage() {
             </div>
             
             <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-              Transmit an Official Dispatch
+              {isRtl ? "ارسال پیام رسمی و محرمانه" : "Transmit an Official Dispatch"}
             </h2>
             <p className="text-neutral-400 mt-2 text-sm leading-relaxed">
-              Complete the parameters below. Your submission is instantly routed to our central executive terminal with real-time tracking.
+              {isRtl ? "مشخصات خود را تکمیل نمایید. پیام شما مستقیماً به ترمینال مرکزی با قابلیت رهگیری لحظه‌ای ارسال می‌گردد." : "Complete the parameters below. Your submission is instantly routed to our central executive terminal with real-time tracking."}
             </p>
           </div>
 
           {/* Preset Subject Chips */}
           <div className="relative z-10 mb-8 space-y-2">
             <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 font-bold block">
-              Quick Routing Presets (Click to Auto-fill Subject):
+              {isRtl ? "مسیریابی سریع دپارتمان‌ها (کلیک جهت انتخاب خودکار):" : "Quick Routing Presets (Click to Auto-fill Subject):"}
             </label>
             <div className="flex flex-wrap gap-2">
               {subjectPresets.map((preset, idx) => (
@@ -496,20 +491,20 @@ export default function ContactPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-neutral-300 flex items-center justify-between">
-                  <span>{t.publicPages.fullLegalName} <span className="text-yellow-500">*</span></span>
+                  <span>{ct.nameLabel} <span className="text-yellow-500">*</span></span>
                 </label>
                 <input 
                   required 
                   type="text" 
                   name="name" 
-                  placeholder="e.g. Alexander Wright" 
+                  placeholder={isRtl ? "مثال: احمد رضایی" : "e.g. Alexander Wright"}
                   className="w-full bg-black/60 border border-white/15 rounded-2xl px-5 py-4 text-white placeholder-neutral-500 text-sm font-medium focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400/50 shadow-inner transition-all"
                 />
               </div>
               
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-neutral-300 flex items-center justify-between">
-                  <span>Email Address <span className="text-yellow-500">*</span></span>
+                  <span>{ct.emailLabel} <span className="text-yellow-500">*</span></span>
                 </label>
                 <input 
                   required 
@@ -524,10 +519,10 @@ export default function ContactPage() {
             {/* Row 2: Subject Matter */}
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-neutral-300 flex items-center justify-between">
-                <span>{t.publicPages.subjectDepartmentTarget} <span className="text-yellow-500">*</span></span>
+                <span>{ct.subjectLabel} <span className="text-yellow-500">*</span></span>
                 {selectedSubject && (
                   <span className="text-[10px] text-yellow-400 font-mono font-normal">
-                    Preset Selected
+                    {isRtl ? "پیش‌فرض انتخاب شد" : "Preset Selected"}
                   </span>
                 )}
               </label>
@@ -537,7 +532,7 @@ export default function ContactPage() {
                 name="subject" 
                 value={selectedSubject}
                 onChange={(e) => setSelectedSubject(e.target.value)}
-                placeholder="e.g. Scholarship Application Tier-1, Web3 Platform Scoping..." 
+                placeholder={isRtl ? "مثال: درخواست بورسیه، استعلام پروژه سازمانی..." : "e.g. Scholarship Application Tier-1, Web3 Platform Scoping..."}
                 className="w-full bg-black/60 border border-white/15 rounded-2xl px-5 py-4 text-white placeholder-neutral-500 text-sm font-medium focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400/50 shadow-inner transition-all"
               />
             </div>
@@ -546,7 +541,7 @@ export default function ContactPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold uppercase tracking-wider text-neutral-300">
-                  Detailed Transmission Body <span className="text-yellow-500">*</span>
+                  {ct.messageLabel} <span className="text-yellow-500">*</span>
                 </label>
                 <span className="text-[11px] font-mono text-neutral-500">
                   {messageLength} chars entered
@@ -557,7 +552,7 @@ export default function ContactPage() {
                 name="message" 
                 rows={6} 
                 onChange={(e) => setMessageLength(e.target.value.length)}
-                placeholder="Detail your inquiry, proposed scope, or background credentials with specific goals..." 
+                placeholder={isRtl ? "جزئیات درخواست، مدارک یا پیشنهادات خود را کامل بنویسید..." : "Detail your inquiry, proposed scope, or background credentials with specific goals..."}
                 className="w-full bg-black/60 border border-white/15 rounded-2xl px-5 py-4 text-white placeholder-neutral-500 text-sm font-normal focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400/50 shadow-inner transition-all resize-y min-h-[140px]"
               ></textarea>
             </div>
@@ -571,25 +566,25 @@ export default function ContactPage() {
               {status === "idle" && (
                 <>
                   <Send size={18} className="group-hover:translate-x-1 transition-transform" /> 
-                  Transmit Official Dispatch
+                  {ct.submitBtn}
                 </>
               )}
               {status === "loading" && (
                 <>
                   <Loader2 size={18} className="animate-spin" /> 
-                  Encrypting & Routing Transmission...
+                  {ct.sendingBtn}
                 </>
               )}
               {status === "success" && (
                 <>
                   <CheckCircle2 size={18} className="text-black" /> 
-                  Signal Successfully Transmitted & Logged
+                  {ct.successTitle}
                 </>
               )}
               {status === "error" && (
                 <>
                   <AlertCircle size={18} /> 
-                  Transmission Failed — Click to Retry
+                  {ct.errorTitle}
                 </>
               )}
             </button>
@@ -605,8 +600,8 @@ export default function ContactPage() {
                 >
                   <CheckCircle2 size={20} className="text-emerald-400 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="font-bold text-emerald-200 block mb-0.5">{t.publicPages.transmissionConfirmed}</strong>
-                    Your dispatch has been securely delivered to Central Headquarters. A senior coordinator has been notified and will review your file shortly.
+                    <strong className="font-bold text-emerald-200 block mb-0.5">{ct.successTitle}</strong>
+                    {ct.successDesc}
                   </div>
                 </motion.div>
               )}
@@ -620,8 +615,8 @@ export default function ContactPage() {
                 >
                   <AlertCircle size={20} className="text-red-400 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="font-bold text-red-200 block mb-0.5">{t.publicPages.transmissionInterrupted}</strong>
-                    A momentary connection latency occurred. Please verify your internet or contact our direct WhatsApp hotline at <a href="https://wa.me/447476620282" className="underline font-bold text-white">+44 7476 620282</a>.
+                    <strong className="font-bold text-red-200 block mb-0.5">{ct.errorTitle}</strong>
+                    {ct.errorDesc}
                   </div>
                 </motion.div>
               )}
@@ -648,13 +643,13 @@ export default function ContactPage() {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-mono font-bold uppercase mb-4">
             <Sparkles size={14} />
-            Precision Department Routing
+            {isRtl ? "مسیریابی دقیق دپارتمان‌ها" : "Precision Department Routing"}
           </div>
           <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-            How Your Dispatch is Triaged
+            {isRtl ? "نحوه بررسی و دسته‌بندی پیام شما" : "How Your Dispatch is Triaged"}
           </h2>
           <p className="text-neutral-400 mt-4 text-base leading-relaxed">
-            We don&apos;t use generic, unmonitored ticket queues. Every incoming inquiry is classified and handed to the respective senior department lead.
+            {isRtl ? "ما از صف‌های تیکت عمومی استفاده نمی‌کنیم. هر پیام ورودی مستقیماً توسط مدیر ارشد دپارتمان مربوطه بررسی می‌شود." : "We don't use generic, unmonitored ticket queues. Every incoming inquiry is classified and handed to the respective senior department lead."}
           </p>
         </div>
 
@@ -707,13 +702,13 @@ export default function ContactPage() {
       <div className="mb-28 relative z-10 bg-[#080813]/90 rounded-[2.5rem] border border-white/10 p-8 sm:p-12 lg:p-16 backdrop-blur-2xl shadow-2xl">
         <div className="max-w-3xl mb-12">
           <span className="text-xs font-mono font-bold text-yellow-400 uppercase tracking-widest block mb-2">
-            Institutional Accountability
+            {isRtl ? "تعهد سازمانی و شفافیت" : "Institutional Accountability"}
           </span>
           <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-            Service Level Agreement (SLA) Matrix
+            {isRtl ? "ماتریس سطح تعهد خدمات (SLA)" : "Service Level Agreement (SLA) Matrix"}
           </h2>
           <p className="text-neutral-400 mt-2 text-sm sm:text-base leading-relaxed">
-            We maintain strict response benchmarks so you are never left waiting. Below are our contractual and operational response targets across every channel.
+            {isRtl ? "ما استانداردهای دقیقی برای زمان پاسخگویی داریم تا هیچ درخواستی بی‌پاسخ نماند. در زیر زمان‌بندی پاسخگویی در هر کانال آمده است." : "We maintain strict response benchmarks so you are never left waiting. Below are our contractual and operational response targets across every channel."}
           </p>
         </div>
 
@@ -756,13 +751,13 @@ export default function ContactPage() {
       <div className="mb-28 relative z-10 max-w-4xl mx-auto">
         <div className="text-center mb-14">
           <span className="text-xs font-mono font-bold text-yellow-400 uppercase tracking-widest block mb-2">
-            Inquiry Clarifications
+            {isRtl ? "شفاف‌سازی سوالات" : "Inquiry Clarifications"}
           </span>
           <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-            Frequently Asked Questions
+            {isRtl ? "پاسخ به سوالات متداول" : "Frequently Asked Questions"}
           </h2>
           <p className="text-neutral-400 mt-3 text-sm sm:text-base">
-            Essential guidelines regarding meeting schedules, corporate verification, and dispatch protocols.
+            {isRtl ? "دستورالعمل‌های ضروری در خصوص جلسات، استعلام سازمانی و پروتکل‌های ارتباطی." : "Essential guidelines regarding meeting schedules, corporate verification, and dispatch protocols."}
           </p>
         </div>
 
@@ -813,13 +808,13 @@ export default function ContactPage() {
         <div className="relative z-10 max-w-3xl mx-auto space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-mono font-bold uppercase">
             <Zap size={14} />
-            Alternative Self-Serve Portals
+            {isRtl ? "پورتال‌های مستقیم و خودکار" : "Alternative Self-Serve Portals"}
           </div>
           <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-            Prefer Immediate Self-Service?
+            {isRtl ? "دسترسی مستقیم و فوری بدون انتظار" : "Prefer Immediate Self-Service?"}
           </h2>
           <p className="text-neutral-300 text-sm sm:text-base leading-relaxed">
-            You don&apos;t have to wait for a dispatch reply if you are seeking course details, full-ride scholarships, or agency portfolios. Explore our live self-serve directories right now:
+            {isRtl ? "اگر به دنبال ثبت‌نام در دوره‌ها، درخواست بورسیه یا مشاهده نمونه کارها هستید، نیازی به انتظار برای پاسخ ندارید:" : "You don't have to wait for a dispatch reply if you are seeking course details, full-ride scholarships, or agency portfolios. Explore our live self-serve directories right now:"}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
@@ -828,28 +823,28 @@ export default function ContactPage() {
               className="px-6 py-3.5 rounded-xl bg-yellow-500 text-black font-black text-xs uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-lg flex items-center gap-2"
             >
               <GraduationCap size={16} />
-              Explore All Courses
+              {isRtl ? "مشاهده تمام دوره‌ها" : "Explore All Courses"}
             </Link>
             <Link
               href={`/${currentLocale}/scholarships`}
               className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-wider transition-all border border-white/10 flex items-center gap-2"
             >
               <FileText size={16} />
-              Apply for Scholarships
+              {isRtl ? "درخواست بورسیه تحصیلی" : "Apply for Scholarships"}
             </Link>
             <Link
               href={`/${currentLocale}/development-services`}
               className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-wider transition-all border border-white/10 flex items-center gap-2"
             >
               <Laptop size={16} />
-              Software Services
+              {isRtl ? "خدمات مهندسی نرم‌افزار" : "Software Services"}
             </Link>
             <Link
               href={`/${currentLocale}/partners`}
               className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-wider transition-all border border-white/10 flex items-center gap-2"
             >
               <HeartHandshake size={16} />
-              Institutional Partners
+              {isRtl ? "شرکای بین‌المللی" : "Institutional Partners"}
             </Link>
           </div>
         </div>

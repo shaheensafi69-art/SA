@@ -1,5 +1,7 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getAboutTranslation } from "@/utils/aboutTranslations";
+import { isRtlLocale } from "@/dictionaries";
 
 import { useEffect, useState, forwardRef } from "react";
 import Link from "next/link";
@@ -357,10 +359,29 @@ export default function AboutPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
+  const ab = getAboutTranslation(currentLocale);
+  const isRtl = isRtlLocale(currentLocale);
   const [teachers, setTeachers] = useState<TeacherInfo[]>([]);
   const [isLoadingTeachers, setIsLoadingTeachers] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const localizedDisciplines = academicDisciplines.map((item, idx) => ({
+    ...item,
+    title: ab.disciplines[idx]?.title || item.title,
+    desc: ab.disciplines[idx]?.desc || item.desc,
+  }));
+
+  const localizedPillars = techPillars.map((pillar, idx) => ({
+    ...pillar,
+    title: ab.techPillars[idx]?.title || pillar.title,
+    desc: ab.techPillars[idx]?.desc || pillar.desc,
+  }));
+
+  const localizedCompanies = ecosystemCompanies.map((c, idx) => ({
+    ...c,
+    name: ab.companies[idx]?.name || c.name,
+    description: ab.companies[idx]?.description || c.description,
+  }));
 
   useEffect(() => {
     const fetchTeachers = async () => {
@@ -390,41 +411,6 @@ export default function AboutPage() {
 
     fetchTeachers();
   }, []);
-
-  const faqs = [
-    {
-      q: "What is Safi Academy and who owns it?",
-      a: "Safi Academy is the flagship digital educational institution of Safi International Capital LTD, a prestigious financial and corporate holding company registered in England and Wales under company number 17063286, headquartered in Covent Garden, London, United Kingdom."
-    },
-    {
-      q: "How does Safi Academy differ from generic online platforms like Udemy or Coursera?",
-      a: "Unlike generic marketplaces that sell static, unmonitored videos, Safi Academy operates as an elite, structured academy. We combine live interactive Agora RTC broadcasts with hands-on project reviews, direct teacher mentorship, automated coding/trading quizzes, and an integrated fintech ecosystem (SafiPay) that helps students monetize their skills immediately."
-    },
-    {
-      q: "Are graduation certificates verifiable by international employers?",
-      a: "Yes. Every student who successfully completes a course, passes the required threshold on quizzes, and submits final assignments receives an official Certificate of Completion containing a unique, verifiable Certificate Code. Employers and partners can authenticate any certificate directly through our verification portal."
-    },
-    {
-      q: "How do live cohort classes work across different global time zones?",
-      a: "Our student body spans the UK, Europe, Middle East, Central Asia, and the Americas. Live cohort classes are scheduled at times convenient for international attendees, and every single live session is automatically recorded in HD and archived into the student's dashboard within minutes for 24/7 on-demand review."
-    },
-    {
-      q: "What payment methods are supported for course enrollment?",
-      a: "We support seamless global payments via international Visa, Mastercard, American Express (processed securely via Stripe), SafiPay digital accounts, direct bank wire transfer, and approved digital assets. We ensure students in developing nations can enroll without financial friction."
-    },
-    {
-      q: "How does Safi Academy support female students and learners in restricted regions?",
-      a: "Empowerment and equal access are fundamental pillars of our mission. Through our scholarship funds and community grants, we provide free and heavily subsidized access to thousands of motivated female students and underprivileged youth who face geographical or political barriers to quality education."
-    },
-    {
-      q: "What is the relationship between Safi Academy and external corporate partners?",
-      a: "To help our students form legitimate international businesses, Safi Academy provides educational resources and vetted referral pathways to trusted providers such as Registered Agents Inc for US LLC/Corporation formation, US registered agent representation, and state compliance."
-    },
-    {
-      q: "Can I teach at Safi Academy as an instructor?",
-      a: "Yes! We continuously recruit elite practitioners, engineers, traders, and founders. You can apply directly through our official Instructor Application portal. Faculty members earn up to 70% revenue share and gain access to our live classroom broadcast suite."
-    }
-  ];
 
   return (
     <div dir={isRtl ? "rtl" : "ltr"} className="min-h-screen bg-[#020202] text-white font-sans selection:bg-yellow-500/30 overflow-hidden">
@@ -487,26 +473,20 @@ export default function AboutPage() {
 
           <div className="max-w-4xl mx-auto space-y-8">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-yellow-500">
-              <Compass className="w-4 h-4" /> The Safi Academy Manifesto
+              <Compass className="w-4 h-4" /> {ab.manifestoBadge}
             </div>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
-              Why We Built Safi Academy: <br />
+              {ab.manifestoTitle} <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">
-                Skills Over Theory. Execution Over Speculation.
+                {ab.manifestoHighlight}
               </span>
             </h2>
 
             <div className="space-y-6 text-neutral-300 text-sm md:text-base leading-relaxed">
-              <p>
-                For decades, traditional higher education has failed to keep pace with the hyper-accelerated evolution of modern capitalism and technology. Students spend years accumulating debt for theoretical degrees that are rendered obsolete before graduation. Meanwhile, geographic barriers continue to prevent brilliant minds in emerging economies from accessing world-class financial and technological knowledge.
-              </p>
-              <p>
-                <strong>{t.publicPages.shatterLimitations}</strong> Initiated by visionary entrepreneur <strong className="text-white">Shaheen Safi</strong> and backed by the financial infrastructure of <strong className="text-white">Safi International Capital LTD</strong>, we set out to build an uncompromising institution where teaching is delivered exclusively by active practitioners—senior engineers who write production code, e-commerce titans who generate millions in revenue, and institutional traders who manage substantial market capital.
-              </p>
-              <p>
-                From our corporate headquarters in Covent Garden, London, we serve as an educational launching pad. We do not simply teach students; we integrate them into our global network, connect them with our fintech platform <strong className="text-yellow-400">SafiPay</strong>, guide them through forming legal US entities, and celebrate their victories on our public Wall of Fame.
-              </p>
+              <p>{ab.manifestoP1}</p>
+              <p>{ab.manifestoP2}</p>
+              <p>{ab.manifestoP3}</p>
             </div>
 
             {/* Core Values Grid */}
@@ -544,19 +524,19 @@ export default function AboutPage() {
       <section className="relative py-24 px-6 md:px-12 max-w-7xl mx-auto z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-yellow-500 mb-3">
-            Comprehensive Curriculum
+            {ab.curriculumBadge}
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-            Our Academic Disciplines
+            {ab.curriculumTitle}
           </h2>
           <p className="mt-4 text-neutral-400 text-sm md:text-base leading-relaxed">
-            Six high-demand faculties engineered to equip founders, software engineers, and traders with career-defining mastery.
+            {ab.curriculumDesc}
           </p>
           <div className="w-24 h-1 bg-yellow-500 mx-auto mt-6 rounded-full"></div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {academicDisciplines.map((item, idx) => {
+          {localizedDisciplines.map((item, idx) => {
             const Icon = item.icon;
             return (
               <div
@@ -575,7 +555,7 @@ export default function AboutPage() {
                   </p>
                 </div>
                 <div className="mt-8 pt-4 border-t border-white/5 flex items-center gap-2 text-xs text-yellow-400 font-bold">
-                  <Check className="w-4 h-4" /> Full Certification Included
+                  <Check className="w-4 h-4" /> {isRtl ? "شامل گواهی‌نامه رسمی" : "Full Certification Included"}
                 </div>
               </div>
             );
@@ -587,19 +567,19 @@ export default function AboutPage() {
       <section className="relative py-24 px-6 md:px-12 max-w-7xl mx-auto z-10 bg-[#07070a]/60 border-y border-white/5">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-yellow-500 mb-3">
-            Advanced Virtual Campus
+            {ab.techBadge}
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-            Next-Generation Educational Tech
+            {ab.techTitle}
           </h2>
           <p className="mt-4 text-neutral-400 text-sm md:text-base leading-relaxed">
-            We don't use off-the-shelf third-party course plugins. Safi Academy is built from the ground up on our own proprietary cloud architecture.
+            {ab.techDesc}
           </p>
           <div className="w-24 h-1 bg-yellow-500 mx-auto mt-6 rounded-full"></div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {techPillars.map((pillar, idx) => {
+          {localizedPillars.map((pillar, idx) => {
             const Icon = pillar.icon;
             return (
               <div
@@ -614,7 +594,7 @@ export default function AboutPage() {
                   <p className="text-xs text-neutral-400 leading-relaxed">{pillar.desc}</p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-white/5 text-[11px] font-mono text-neutral-500 uppercase">
-                  Institutional Standard
+                  {isRtl ? "استاندارد سازمانی" : "Institutional Standard"}
                 </div>
               </div>
             );
@@ -626,14 +606,14 @@ export default function AboutPage() {
       <section className="relative py-24 px-4 md:px-12 max-w-7xl mx-auto z-10">
         <div className="flex flex-col items-center mb-16">
           <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-yellow-500 mb-3">
-            Leadership & Governance
+            {isRtl ? "رهبری و حاکمیت" : "Leadership & Governance"}
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-white tracking-wider uppercase mb-4 text-center">
-            The Executive Board
+            {isRtl ? "هیئت مدیره اجرایی" : "The Executive Board"}
           </h2>
           <div className="w-24 h-1.5 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-full mb-6"></div>
           <p className="text-neutral-400 text-xs sm:text-sm font-bold tracking-widest uppercase text-center max-w-2xl">
-            The Visionaries, Engineers, and Strategists Guiding The Safi Ecosystem
+            {isRtl ? "رهبران، مهندسان و استراتژیست‌های راهبر اکوسیستم صافی" : "The Visionaries, Engineers, and Strategists Guiding The Safi Ecosystem"}
           </p>
         </div>
 
@@ -644,11 +624,11 @@ export default function AboutPage() {
               title={member.name}
               subtitle={member.role}
               imageUrl={member.image}
-              actionText="Read Full Bio"
+              actionText={isRtl ? "مشاهده بیوگرافی" : "Read Full Bio"}
               href={`/${currentLocale}/founder/${member.slug}`}
               borderClass={member.borderClass}
               textClass={member.textClass}
-              badge="Executive Board"
+              badge={isRtl ? "هیئت مدیره" : "Executive Board"}
             />
           ))}
         </div>
@@ -752,19 +732,19 @@ export default function AboutPage() {
       <section className="relative py-24 px-6 md:px-12 max-w-7xl mx-auto z-10">
         <div className="flex flex-col items-center mb-16">
           <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-yellow-500 mb-3">
-            Synergy & Infrastructure
+            {ab.ecosystemBadge}
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-white tracking-wider uppercase mb-4 text-center">
-            The Safi Ecosystem
+            {ab.ecosystemTitle}
           </h2>
           <div className="w-24 h-1.5 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-full mb-6"></div>
           <p className="text-neutral-400 text-xs sm:text-sm font-bold tracking-widest uppercase text-center max-w-2xl">
-            A Unified Network of Finance, Education, Artificial Intelligence, and Global Commerce
+            {ab.ecosystemDesc}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ecosystemCompanies.map((company, i) => (
+          {localizedCompanies.map((company, i) => (
             <a
               key={i}
               href={company.url}
@@ -786,7 +766,7 @@ export default function AboutPage() {
                 </p>
 
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 group-hover:text-white transition-colors mt-auto">
-                  <ExternalLink className="w-4 h-4" /> Explore Platform
+                  <ExternalLink className="w-4 h-4" /> {isRtl ? "مشاهده پلتفرم" : "Explore Platform"}
                 </div>
               </div>
             </a>
@@ -827,7 +807,9 @@ export default function AboutPage() {
               </p>
 
               <p className="mt-4 text-neutral-300">
-                Our global corporate headquarters is situated in the prestigious commercial heart of London at <strong className="text-white">71-75 Shelton Street, Covent Garden, London, WC2H 9JQ</strong>. Our filings and corporate structure are fully verifiable with the UK Registrar of Companies (Companies House Tracker ID: <span className="text-yellow-400 font-bold bg-yellow-500/10 px-2 py-0.5 rounded font-mono">114-030414</span>).
+                {isRtl
+                  ? <>دفتر مرکزی ما در قلب تجاری لندن در آدرس <strong className="text-white">71-75 Shelton Street, Covent Garden, London, WC2H 9JQ</strong> واقع شده است. اطلاعات ثبتی ما نزد اداره ثبت شرکت‌های بریتانیا (Companies House شناسه پیگیری: <span className="text-yellow-400 font-bold bg-yellow-500/10 px-2 py-0.5 rounded font-mono">114-030414</span>) کاملاً قابل استعلام است.</>
+                  : <>Our global corporate headquarters is situated in the prestigious commercial heart of London at <strong className="text-white">71-75 Shelton Street, Covent Garden, London, WC2H 9JQ</strong>. Our filings and corporate structure are fully verifiable with the UK Registrar of Companies (Companies House Tracker ID: <span className="text-yellow-400 font-bold bg-yellow-500/10 px-2 py-0.5 rounded font-mono">114-030414</span>).</>}
               </p>
 
               {/* Corporate Identity Key Facts Table */}
@@ -859,19 +841,19 @@ export default function AboutPage() {
       <section className="relative py-24 px-6 md:px-12 max-w-4xl mx-auto z-10">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-yellow-500 mb-3">
-            Clear Answers
+            {ab.faqBadge}
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-            Frequently Asked Questions
+            {ab.faqTitle}
           </h2>
           <p className="mt-4 text-neutral-400 text-sm md:text-base">
-            Everything you need to know about Safi Academy, our standards, certifications, and operations.
+            {isRtl ? "همه چیزهایی که باید درباره آکادمی صافی، استانداردها و گواهی‌نامه‌ها بدانید." : "Everything you need to know about Safi Academy, our standards, certifications, and operations."}
           </p>
           <div className="w-24 h-1 bg-yellow-500 mx-auto mt-6 rounded-full"></div>
         </div>
 
         <div className="space-y-4">
-          {faqs.map((faq, idx) => (
+          {ab.faqs.map((faq, idx) => (
             <div
               key={idx}
               className="bg-neutral-900/60 border border-white/5 hover:border-white/15 rounded-2xl overflow-hidden transition-colors"
@@ -954,7 +936,7 @@ export default function AboutPage() {
               href={`/${currentLocale}/instructor-application`}
               className="inline-block px-8 py-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold uppercase tracking-widest text-sm rounded-2xl transition-all"
             >
-              Apply as Instructor
+              {isRtl ? "درخواست تدریس به عنوان استاد" : "Apply as Instructor"}
             </Link>
           </div>
         </div>

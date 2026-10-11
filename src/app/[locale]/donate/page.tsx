@@ -1,4 +1,5 @@
 "use client";
+import { getDictionary, isRtlLocale } from "@/dictionaries";
 import { getPortalTranslation } from "@/utils/portalTranslations";
 import { getDonateTranslation } from "@/utils/donateTranslations";
 import { CircularFlag } from "@/components/CircularFlag";
@@ -147,9 +148,10 @@ export default function DonatePage() {
   const pathname = usePathname() || "/en";
   const params = useParams();
   const currentLocale = (params?.locale as string) || pathname.split("/")[1] || "en";
+  const dict = getDictionary(currentLocale);
+  const dt = (dict as any).donate || getDonateTranslation(currentLocale);
+  const isRtl = isRtlLocale(currentLocale);
   const t = getPortalTranslation(currentLocale);
-  const dt = getDonateTranslation(currentLocale);
-  const isRtl = dt.isRtl;
 
   
   const [amount, setAmount] = useState<number | "">(75);
@@ -182,15 +184,26 @@ export default function DonatePage() {
     }
   };
 
+  // Localized Bank Accounts derived from dictionary if present
+  const localizedBankAccounts: BankAccount[] =
+    dt.bankAccounts && Array.isArray(dt.bankAccounts) && dt.bankAccounts.length === 5
+      ? dt.bankAccounts.map((item: any, idx: number) => ({
+          ...BANK_ACCOUNTS[idx],
+          title: item.title || BANK_ACCOUNTS[idx].title,
+          subtitle: item.subtitle || BANK_ACCOUNTS[idx].subtitle,
+          note: item.note || BANK_ACCOUNTS[idx].note,
+        }))
+      : BANK_ACCOUNTS;
+
   const handleBankTransferSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!bankForm.name || !bankForm.email || !bankForm.amount) {
-      alert("Please fill in your name, email and transfer amount.");
+      alert(dt.alertFillRequired || "Please fill in your name, email and transfer amount.");
       return;
     }
     setIsSubmittingBank(true);
     try {
-      const selectedAcc = BANK_ACCOUNTS[selectedBankIdx];
+      const selectedAcc = localizedBankAccounts[selectedBankIdx] || BANK_ACCOUNTS[selectedBankIdx];
       const res = await fetch("/api/donate/bank-transfer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -208,11 +221,11 @@ export default function DonatePage() {
       if (res.ok && data.success) {
         setBankSuccessRef(data.referenceId);
       } else {
-        alert(data.error || "Failed to submit transfer receipt.");
+        alert(data.error || dt.alertSubmitFailed || "Failed to submit transfer receipt.");
       }
     } catch (err) {
       console.error("Bank transfer submit error:", err);
-      alert("Network error. Please try again or contact us directly.");
+      alert(dt.alertNetworkError || "Network error. Please try again or contact us directly.");
     } finally {
       setIsSubmittingBank(false);
     }
@@ -247,7 +260,7 @@ export default function DonatePage() {
   const currentPreset = dt.tiers.find((p) => p.amount === amount) || dt.tiers[2];
 
   const initStripeCheckout = async () => {
-    if (!amount || amount < 5) return alert("Minimum donation is $5");
+    if (!amount || amount < 5) return alert(dt.alertMinDonation || "Minimum donation is $5");
     setIsProcessing(true);
     try {
       const response = await fetch("/api/checkout", {
@@ -391,15 +404,15 @@ export default function DonatePage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2 border-t border-white/10 text-center">
             <div className="p-2">
               <div className="text-lg sm:text-xl font-black text-white">1,240+</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{t.publicPages.girlsEnrolled || "Girls Enrolled"}</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{dt.girlsEnrolled || t.publicPages?.girlsEnrolled || "Girls Enrolled"}</div>
             </div>
             <div className="p-2">
               <div className="text-lg sm:text-xl font-black text-white">100%</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{t.publicPages.freeScholarships || "Free Scholarships"}</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{dt.freeScholarships || t.publicPages?.freeScholarships || "Free Scholarships"}</div>
             </div>
             <div className="p-2">
               <div className="text-lg sm:text-xl font-black text-white">48+</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{t.publicPages.liveClassrooms || "Classrooms"}</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider">{dt.liveClassrooms || t.publicPages?.liveClassrooms || "Classrooms"}</div>
             </div>
             <div className="p-2">
               <div className="text-lg sm:text-xl font-black text-white">256-bit</div>
@@ -607,7 +620,7 @@ export default function DonatePage() {
                       }}
                       className="w-full py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold uppercase tracking-widest text-neutral-300 hover:text-white transition-colors"
                     >
-                      Cancel & Change Amount
+                      {dt.cancelBtn || "Cancel & Change Amount"}
                     </button>
                   </motion.div>
                 )}
@@ -769,7 +782,7 @@ export default function DonatePage() {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5">
-                    {BANK_ACCOUNTS.map((acc, idx) => {
+                    {localizedBankAccounts.map((acc, idx) => {
                       const isSelected = selectedBankIdx === idx;
                       return (
                         <button
@@ -799,7 +812,7 @@ export default function DonatePage() {
 
                 {/* Selected Bank Details Card */}
                 {(() => {
-                  const acc = BANK_ACCOUNTS[selectedBankIdx];
+                  const acc = localizedBankAccounts[selectedBankIdx] || BANK_ACCOUNTS[selectedBankIdx];
                   const allDetailsText = [
                     `${dt.beneficiaryLabel}: ${acc.beneficiary}`,
                     acc.iban ? `${dt.ibanLabel}: ${acc.iban}` : null,
@@ -1061,7 +1074,7 @@ export default function DonatePage() {
                           <input
                             type="text"
                             required
-                            placeholder="e.g. Ahmad Reza"
+                            placeholder={dt.donorNamePlaceholder || "e.g. Ahmad Reza"}
                             value={bankForm.name}
                             onChange={(e) => setBankForm({ ...bankForm, name: e.target.value })}
                             className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-emerald-500 transition-colors"
@@ -1075,7 +1088,7 @@ export default function DonatePage() {
                           <input
                             type="email"
                             required
-                            placeholder="e.g. ahmad@example.com"
+                            placeholder={dt.donorEmailPlaceholder || "e.g. ahmad@example.com"}
                             value={bankForm.email}
                             onChange={(e) => setBankForm({ ...bankForm, email: e.target.value })}
                             className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-emerald-500 transition-colors"
@@ -1113,7 +1126,7 @@ export default function DonatePage() {
                           </label>
                           <input
                             type="text"
-                            placeholder="Reference code on your bank slip"
+                            placeholder={dt.txIdPlaceholder || "Reference code on your bank slip"}
                             value={bankForm.txId}
                             onChange={(e) => setBankForm({ ...bankForm, txId: e.target.value })}
                             className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-emerald-500 transition-colors"
@@ -1228,7 +1241,7 @@ export default function DonatePage() {
 
                 <div className="pt-4 border-t border-white/5 flex items-center gap-2 text-[11px] text-emerald-400 font-semibold">
                   <CheckCircle2 size={13} />
-                  <span>{dt.isRtl ? "بورسیه تحصیلی تأیید شده" : "Verified Scholarship Recipient"}</span>
+                  <span>{dt.verifiedScholarship || (dt.isRtl ? "بورسیه تحصیلی تأیید شده" : "Verified Scholarship Recipient")}</span>
                 </div>
               </motion.div>
             ))}

@@ -333,5 +333,195 @@
     "poweredBy": "Didukung oleh Safi AI v4.1",
     "holding": "Holding",
     "hiring": "Karier"
+  },
+  "donate": {
+    "isRtl": false,
+    "home": "Beranda",
+    "heroBadge": "Bantuan Pendidikan Darurat • Menentang Larangan",
+    "heroTitle1": "Mereka mengunci gerbang sekolah.",
+    "heroTitle2": "Kami membuka semesta.",
+    "heroDesc1": "Ketika 1,4 juta anak perempuan dan wanita muda di Afghanistan dirampas hak pendidikannya, Safi Academy menolak berdiam diri. Melalui jaringan terenkripsi yang aman, kami membawa pendidikan coding dan teknologi langsung ke rumah wanita tangguh.",
+    "heroDesc2": "Donasi Anda bukan sekadar amal, melainkan tindakan nyata demi kemerdekaan berpikir. 100% donasi langsung dialokasikan untuk kuota internet, laptop, dan beasiswa.",
+    "liveGoalLabel": "Target Bantuan Akademik 2026",
+    "raisedOf": "terkumpul dari",
+    "goal": "target",
+    "fundedBadge": "Decentralized • Zero Overhead",
+    "boxTitle": "Bantu seorang siswi hari ini",
+    "boxSubtitle": "Dapat dikurangkan dari pajak • Tanda terima resmi instan",
+    "customAmount": "Jumlah Kustom",
+    "dedicationLabel": "Leave a tribute, message of solidarity, or student dedication:",
+    "dedicationPlaceholder": "e.g. 'In solidarity with Afghan girls' or 'From Zahra with love' (Optional)",
+    "tabCard": "Kartu / Apple Pay",
+    "tabCardSub": "Instant Stripe Checkout",
+    "tabPaypal": "PayPal",
+    "tabPaypalSub": "Instant Checkout",
+    "tabBank": "Transfer Bank",
+    "tabBankSub": "Manual SEPA / UK / US",
+    "tiers": [
+      {
+        "amount": 15,
+        "label": "$15",
+        "tier": "Digital Lifeline",
+        "impact": "Provides 1 month of encrypted high-speed internet & secure VPN access for an underground student.",
+        "badge": "Essential"
+      },
+      {
+        "amount": 35,
+        "label": "$35",
+        "tier": "Learning Toolkit",
+        "impact": "Covers cloud coding sandbox environments, course materials, and offline lesson downloads.",
+        "badge": "Student Kit"
+      },
+      {
+        "amount": 75,
+        "label": "$75",
+        "tier": "Full Course + Mentorship",
+        "impact": "Funds 1 complete technical course with weekly 1-on-1 office hours from senior software engineers.",
+        "badge": "Most Popular"
+      },
+      {
+        "amount": 150,
+        "label": "$150",
+        "tier": "Semester Scholarship",
+        "impact": "Full 6-month comprehensive scholarship (Coding, UI/UX, or English) with verifiable graduation diploma.",
+        "badge": "High Impact"
+      },
+      {
+        "amount": 350,
+        "label": "$350",
+        "tier": "Hardware & Solar Kit",
+        "impact": "Sponsors a refurbished programming laptop plus a high-capacity power bank for frequent electrical blackouts.",
+        "badge": "Lifesaver"
+      },
+      {
+        "amount": 500,
+        "label": "$500",
+        "tier": "Classroom Guardian",
+        "impact": "Sponsors an entire virtual cohort of 5 courageous students with equipment, connectivity, and mentorship.",
+        "badge": "Champion"
+      }
+    ],
+    "donateNowBtn": "Donasi Aman Sekarang",
+    "processingBtn": "Menyiapkan terowongan aman...",
+    "encryptedNotice": "256-Bit Bank-Grade Encryption • PCI Level 1 Certified",
+    "paypalTitle": "PayPal Direct Checkout",
+    "paypalDesc": "Pay quickly and securely with your PayPal account or linked debit/credit card.",
+    "paypalError": "PayPal error occurred. If PayPal is restricted in your region, please use Card or Direct Bank Transfer.",
+    "bankSelectLabel": "Pilih Rekening Bank & Mata Uang:",
+    "bankVerifiedBadge": "5 Rekening Terverifikasi",
+    "copyAllBtn": "Salin Semua Info",
+    "allCopiedText": "Semua Tersalin!",
+    "copiedText": "Tersalin!",
+    "beneficiaryLabel": "Beneficiary / Account Holder",
+    "ibanLabel": "IBAN (International Bank Account)",
+    "bicLabel": "BIC / SWIFT Code",
+    "routingLabel": "Routing Number (US ACH / Wire)",
+    "sortCodeLabel": "Sort Code (UK Domestic)",
+    "accountNumberLabel": "Account Number",
+    "bankNameLabel": "Bank Name",
+    "bankAddressLabel": "Bank Address",
+    "noticeLabel": "Important Notice",
+    "receiptHeader": "Konfirmasi Bukti Transfer",
+    "receiptSub": "After transferring, enter your details below so our finance team can verify and dispatch your confirmation.",
+    "donorNameLabel": "Full Name",
+    "donorEmailLabel": "Email Address",
+    "transferAmountLabel": "Transferred Amount",
+    "txIdLabel": "Transaction ID / Reference Number (Optional)",
+    "notesLabel": "Message or Note (Optional)",
+    "submitReceiptBtn": "Kirim Bukti Transfer",
+    "submittingReceiptBtn": "Submitting...",
+    "successReceiptTitle": "Transfer Receipt Registered!",
+    "successReceiptDesc": "Thank you for standing with Afghan students. Our team will verify the deposit and email your official confirmation.",
+    "trackingRefLabel": "Tracking Reference:",
+    "trustBadge1Title": "100% Direct Impact",
+    "trustBadge1Desc": "Zero administrative deductions. Every cent reaches students directly.",
+    "trustBadge2Title": "Decentralized Delivery",
+    "trustBadge2Desc": "Circumvents local banking bans via secure private networks.",
+    "trustBadge3Title": "Audited & Verified",
+    "trustBadge3Desc": "Open financial ledgers and verifiable graduation diploma credentials.",
+    "storiesBadge": "Real Lives Transformed",
+    "storiesTitle": "From Shadows to Global Careers",
+    "storiesSub": "Read how your support directly dismantles isolation and builds economic autonomy.",
+    "stories": [
+      {
+        "name": "Fatima R.",
+        "location": "Kabul, Afghanistan",
+        "track": "Full-Stack Web Development Graduate",
+        "quote": "When the university gates were slammed shut in my face, I cried for weeks. My world ended that day. Safi Academy gave me an encrypted laptop, paid for my 4G internet data, and taught me React and Node.js in secret. Today, I work on remote freelance contracts from my room and feed my family of six. They barred our classrooms, but they could not bar our minds.",
+        "avatar": "F"
+      },
+      {
+        "name": "Maryam K.",
+        "location": "Herat, Afghanistan",
+        "track": "Python & Data Science Scholar",
+        "quote": "In our city, teenage girls are not even allowed into public libraries. Studying here is an act of defiance. Every evening, when the house is quiet, I open my lessons on my smartphone through Safi Academy's offline proxy. I am building an automated database for local healthcare clinics. Your donation is not charity; it is our weapon against darkness.",
+        "avatar": "M"
+      },
+      {
+        "name": "Zahra S.",
+        "location": "Mazar-i-Sharif, Afghanistan",
+        "track": "UI/UX & Digital Product Design",
+        "quote": "The hardest part of being an Afghan girl today is the world forgetting that you exist. Safi Academy reminded me that my intellect has value. I completed my design portfolio, received mentorship from engineers in Germany and Canada, and won my first international design grant. Thank you to everyone who donates. You give us our dignity back.",
+        "avatar": "Z"
+      }
+    ],
+    "transparencyBadge": "Financial Stewardship",
+    "transparencyTitle": "Where Does Every Dollar Go?",
+    "transparencySub": "Complete transparency. Zero ambiguity. See our 2026 operational allocation.",
+    "allocations": [
+      {
+        "percent": "45%",
+        "title": "Direct Student Scholarships & Diplomas",
+        "desc": "Comprehensive course access, live mentor office hours, accredited digital certificates, and career placement coaching."
+      },
+      {
+        "percent": "25%",
+        "title": "Encrypted High-Speed Internet & Data Packs",
+        "desc": "Subsidizing monthly mobile 4G and satellite internet data packs for female students living under strict restrictions."
+      },
+      {
+        "percent": "18%",
+        "title": "Anti-Censorship Digital Infrastructure",
+        "desc": "Cloud servers, lightweight low-bandwidth video streaming, offline lesson packs, and secure encrypted communication tunnels."
+      },
+      {
+        "percent": "12%",
+        "title": "Hardware & Emergency Solar Battery Grants",
+        "desc": "Refurbished coding laptops and high-capacity portable power banks to overcome chronic electrical power cuts."
+      }
+    ],
+    "faqBadge": "Clarity & Trust",
+    "faqTitle": "Frequently Asked Questions",
+    "faqSub": "Everything you need to know about donation security, student privacy, and impact.",
+    "faqs": [
+      {
+        "q": "How is my donation processed and is it safe?",
+        "a": "Every transaction is encrypted using bank-grade 256-bit TLS encryption powered by Stripe & PayPal, industry-leading PCI Level 1 certified processors. Safi Academy never stores your card numbers."
+      },
+      {
+        "q": "How do you protect the safety of female students in Afghanistan?",
+        "a": "Safety is our paramount priority. We utilize zero-knowledge principles: student real names, exact physical locations, and IP addresses are completely masked and encrypted. Lessons can be downloaded and studied offline."
+      },
+      {
+        "q": "Can I donate from outside the United States in my local currency?",
+        "a": "Yes! Stripe and PayPal automatically support cards from over 135 countries. Whether you hold GBP, EUR, CAD, AUD, or other currencies, your bank converts the amount seamlessly."
+      },
+      {
+        "q": "Can I make an anonymous donation?",
+        "a": "Yes. You can leave the tribute note blank or write 'Anonymous Supporter'. We respect your privacy and never share your data with third parties."
+      },
+      {
+        "q": "How are scholarship recipients selected?",
+        "a": "Students undergo a compassionate application process administered by our advisory board. Priority is granted to girls barred from secondary schools or universities, orphans, and dedicated learners."
+      },
+      {
+        "q": "Will I receive a receipt for my contribution?",
+        "a": "Yes. Immediately upon completing checkout, an official digital receipt with a unique transaction reference ID is generated on-screen and dispatched to your email address."
+      }
+    ],
+    "bottomCtaBadge": "Join the Resistance for Education",
+    "bottomCtaTitle": "Be the Light in Afghanistan's Darkest Hour.",
+    "bottomCtaDesc": "Every girl we teach to code is a future leader they cannot silence. Choose your amount today and write history.",
+    "bottomCtaBtn": "Donasi Sekarang & Buka Masa Depan"
   }
 }

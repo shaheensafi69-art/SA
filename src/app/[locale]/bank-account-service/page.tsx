@@ -21,112 +21,22 @@ import {
   Laptop
 } from "lucide-react";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getBankAccountServiceTranslation } from "@/utils/bankAccountServiceTranslations";
 import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 type AccountType = "Personal" | "Business";
 
-interface Partner {
-  name: string;
-  domain: string;
-  accent: string;
-  badge: string;
-  description: string;
-  details: string[];
-}
-
-const partners: Partner[] = [
-  {
-    name: "Wise",
-    domain: "wise.com",
-    accent: "Multi-Currency & Low-Fee Global Transfers",
-    badge: "Personal & Business",
-    description:
-      "Wise is a premier global financial technology platform specialized in multi-currency borderless accounts. It allows holding 40+ currencies with real mid-market exchange rates, dedicated local bank account details (IBAN in Europe, routing numbers in the US, sort codes in the UK), and low-cost cross-border payments.",
-    details: [
-      "Local account details (EUR IBAN, USD ACH, GBP Sort Code)",
-      "Real mid-market exchange rate without hidden markups",
-      "Digital & physical international debit cards",
-      "Direct integration with global payment gateways and marketplaces",
-      "Stringent regulatory safeguarding under UK FCA and European authorities"
-    ]
-  },
-  {
-    name: "Payoneer",
-    domain: "payoneer.com",
-    accent: "Commercial Freelance & Marketplace Payouts",
-    badge: "B2B & Freelance Hub",
-    description:
-      "Payoneer is the benchmark cross-border infrastructure for international freelancers, digital agencies, and e-commerce merchants. Seamlessly receive payouts from global marketplaces including Upwork, Fiverr, Amazon, and direct B2B foreign clients into dedicated receiving accounts.",
-    details: [
-      "Automated marketplace payouts from 2,000+ global platforms",
-      "Multi-currency receiving accounts in EUR, USD, GBP, JPY, CAD",
-      "Commercial debit cards for corporate ad spend and SaaS tools",
-      "Fast withdrawal to local bank accounts across 150+ countries",
-      "Enterprise billing and automated invoice generation tools"
-    ]
-  },
-  {
-    name: "Wirex",
-    domain: "wirexapp.com",
-    accent: "Next-Gen Digital Asset & Card Infrastructure",
-    badge: "Crypto-Fiat Hybrid",
-    description:
-      "Wirex unites traditional fiat banking rails with digital asset capabilities in supported corridors. Featuring mobile-first multi-currency accounts and cards, it enables instant conversion between traditional fiat currencies and digital stablecoins with worldwide point-of-sale acceptance.",
-    details: [
-      "Seamless bridge between digital stablecoins and fiat currencies",
-      "Multi-currency contactless payment cards (Visa / Mastercard)",
-      "Instant zero-fee peer-to-peer digital remittances",
-      "Institutional-grade digital asset custody and multi-sig security",
-      "High daily spending and ATM withdrawal allowances in supported regions"
-    ]
-  },
-  {
-    name: "WorldFirst",
-    domain: "worldfirst.com",
-    accent: "Enterprise Foreign Exchange & Trade Settlements",
-    badge: "Enterprise Trade",
-    description:
-      "WorldFirst is an enterprise foreign-exchange powerhouse and global payment infrastructure built for high-volume cross-border trade, international import/export, and wholesale global merchant settlement with dedicated account managers.",
-    details: [
-      "High-volume wholesale foreign exchange hedging and spot contracts",
-      "Dedicated multi-currency corporate receiving accounts",
-      "Same-day settlement across major international trade corridors",
-      "Personalized treasury management and corporate compliance desk",
-      "Built-in compliance clearing for large-scale enterprise transactions"
-    ]
-  }
-];
-
 const currencies = ["EUR", "USD", "GBP", "AED", "CAD", "CHF", "JPY", "AUD", "SGD", "AFN"];
-
-const faqs = [
-  {
-    q: "Is this a traditional high-street bank account?",
-    a: "Depending on the selected provider, the underlying facility is an authorized electronic money institution (EMI), payment institution, or commercial receiving account backed by regulated European or UK tier-1 safeguarding banks."
-  },
-  {
-    q: "Why does Safi Academy showcase multiple providers?",
-    a: "International financial operations are multifaceted. Freelancers, international students, and e-commerce companies have distinct cross-border needs. We guide you toward the optimal rail based on your location and transaction profile."
-  },
-  {
-    q: "Will every applicant receive dedicated European or US receiving details?",
-    a: "Account feature availability (including dedicated IBANs, local routing numbers, or debit cards) is contingent upon your nationality, verified residency, compliance screening, and the provider's regulatory license."
-  },
-  {
-    q: "What compliance documentation is required for onboarding?",
-    a: "Standard verification requires a valid passport or national ID card, proof of residential address (utility bill or bank statement), and a brief declaration of account purpose or source of funds."
-  },
-  {
-    q: "How does Safi Academy assist in the onboarding workflow?",
-    a: "Our specialized advisory desk reviews your profile, prepares your documentation dossier, and directs you through the most viable compliant onboarding pipeline to ensure maximum approval probability."
-  }
-];
 
 export default function BankAccountServicePage() {
   const pathname = usePathname();
   const currentLocale = pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
+  const bs = getBankAccountServiceTranslation(currentLocale);
+  const isRtl = bs.isRtl;
+
+  const partners = bs.partners;
+  const faqs = bs.faqs;
 
   const [accountType, setAccountType] = useState<AccountType>("Personal");
   const [activePartner, setActivePartner] = useState(0);
@@ -237,7 +147,7 @@ export default function BankAccountServicePage() {
             {/* Currencies Bar */}
             <div className="flex flex-wrap items-center gap-2 pt-6 border-t border-white/10">
               <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mr-2 rtl:ml-2">
-                Settlement Currencies:
+                {bs.settlementCurrencies}
               </span>
               {currencies.map((curr) => (
                 <span
@@ -264,10 +174,10 @@ export default function BankAccountServicePage() {
                 <div className="flex items-center justify-between mb-12 relative z-10">
                   <div>
                     <div className="text-xs font-black uppercase tracking-[0.25em] text-amber-400">
-                      SAFI GLOBAL
+                      {bs.cardTitle}
                     </div>
                     <div className="text-[11px] font-semibold text-neutral-400 mt-1">
-                      Multi-Currency Commercial IBAN
+                      {bs.cardSubtitle}
                     </div>
                   </div>
                   <div className="px-3.5 py-1.5 rounded-xl bg-white/10 border border-white/20 text-xs font-black tracking-widest text-white shadow-inner">
@@ -291,11 +201,11 @@ export default function BankAccountServicePage() {
 
                 <div className="flex items-center justify-between text-xs text-neutral-400 border-t border-white/10 pt-4 font-mono">
                   <div>
-                    <div className="text-[9px] uppercase tracking-widest text-neutral-500">CARDHOLDER</div>
-                    <div className="font-bold text-neutral-200 mt-0.5">SAFI INTERNATIONAL</div>
+                    <div className="text-[9px] uppercase tracking-widest text-neutral-500">{bs.cardHolderLabel}</div>
+                    <div className="font-bold text-neutral-200 mt-0.5">{bs.cardHolderName}</div>
                   </div>
                   <div className="text-right rtl:text-left">
-                    <div className="text-[9px] uppercase tracking-widest text-neutral-500">EXPIRY</div>
+                    <div className="text-[9px] uppercase tracking-widest text-neutral-500">{bs.expiryLabel}</div>
                     <div className="font-bold text-neutral-200 mt-0.5">12/29</div>
                   </div>
                 </div>
@@ -489,14 +399,13 @@ export default function BankAccountServicePage() {
 
             <div className="text-center max-w-2xl mx-auto mb-10">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs font-black uppercase tracking-widest mb-4">
-                <Lock size={12} /> {t.bankService?.applyBadge || "03 / Application Portal"}
+                <Lock size={12} /> {bs.applicationBadge}
               </div>
               <h2 className="text-3xl sm:text-4xl font-black text-white mb-3">
-                {t.bankService?.applyTitle || "Initialize your account application."}
+                {bs.applicationTitle}
               </h2>
               <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed">
-                {t.bankService?.applySubtitle ||
-                  "Submit your basic information. Our specialized financial onboarding team will review your profile."}
+                {bs.applicationSub}
               </p>
             </div>
 
@@ -513,9 +422,7 @@ export default function BankAccountServicePage() {
                       : "text-neutral-400 hover:text-white"
                   }`}
                 >
-                  {type === "Personal"
-                    ? t.bankService?.personalAccount || "Personal Account"
-                    : t.bankService?.businessAccount || "Business Account"}
+                  {type === "Personal" ? bs.personalTab : bs.businessTab}
                 </button>
               ))}
             </div>
@@ -524,17 +431,17 @@ export default function BankAccountServicePage() {
               <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-center mb-8 flex flex-col items-center">
                 <CheckCircle2 size={36} className="mb-2" />
                 <h4 className="font-black text-lg text-white mb-1">
-                  {t.bankService?.successMsg || "Application Received!"}
+                  {bs.successTitle}
                 </h4>
                 <p className="text-xs text-neutral-300 max-w-md">
-                  Our compliance and financial onboarding desk has received your file. An advisor will contact you via WhatsApp or Email within 24 hours.
+                  {bs.successDesc}
                 </p>
               </div>
             )}
 
             {submitStatus === "error" && (
               <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center mb-8">
-                An error occurred while submitting your request. Please try again or reach out to us directly on WhatsApp.
+                {bs.errorDesc}
               </div>
             )}
 
@@ -542,7 +449,7 @@ export default function BankAccountServicePage() {
               <div className="grid sm:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-xs font-bold text-neutral-300 uppercase tracking-wider mb-2">
-                    {t.bankService?.firstName || "First Name"} *
+                    {bs.firstNameLabel} *
                   </label>
                   <input
                     required
@@ -550,13 +457,13 @@ export default function BankAccountServicePage() {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    placeholder="e.g. Ahmad"
+                    placeholder={bs.firstNamePlaceholder}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-neutral-300 uppercase tracking-wider mb-2">
-                    {t.bankService?.lastName || "Last Name"} *
+                    {bs.lastNameLabel} *
                   </label>
                   <input
                     required
@@ -564,7 +471,7 @@ export default function BankAccountServicePage() {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    placeholder="e.g. Rahimi"
+                    placeholder={bs.lastNamePlaceholder}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
                   />
                 </div>
@@ -573,7 +480,7 @@ export default function BankAccountServicePage() {
               <div className="grid sm:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-xs font-bold text-neutral-300 uppercase tracking-wider mb-2">
-                    {t.bankService?.email || "Email Address"} *
+                    {bs.emailLabel} *
                   </label>
                   <input
                     required
@@ -581,13 +488,13 @@ export default function BankAccountServicePage() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    placeholder="name@domain.com"
+                    placeholder={bs.emailPlaceholder}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-neutral-300 uppercase tracking-wider mb-2">
-                    {t.bankService?.phone || "Phone / WhatsApp"} *
+                    {bs.phoneLabel} *
                   </label>
                   <input
                     required
@@ -595,7 +502,7 @@ export default function BankAccountServicePage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    placeholder="+93 799 000 000"
+                    placeholder={bs.phonePlaceholder}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
                   />
                 </div>
@@ -603,7 +510,7 @@ export default function BankAccountServicePage() {
 
               <div>
                 <label className="block text-xs font-bold text-neutral-300 uppercase tracking-wider mb-2">
-                  {t.bankService?.country || "Country of Residence"} *
+                  {bs.countryLabel} *
                 </label>
                 <input
                   required
@@ -611,7 +518,7 @@ export default function BankAccountServicePage() {
                   name="country"
                   value={formData.country}
                   onChange={handleInputChange}
-                  placeholder="e.g. Afghanistan, UAE, Turkey, Germany..."
+                  placeholder={bs.countryPlaceholder}
                   className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
                 />
               </div>
@@ -620,27 +527,27 @@ export default function BankAccountServicePage() {
                 <div className="grid sm:grid-cols-2 gap-5 pt-3 border-t border-white/10">
                   <div>
                     <label className="block text-xs font-bold text-amber-300 uppercase tracking-wider mb-2">
-                      {t.bankService?.companyName || "Company Name"}
+                      {bs.companyNameLabel}
                     </label>
                     <input
                       type="text"
                       name="companyName"
                       value={formData.companyName}
                       onChange={handleInputChange}
-                      placeholder="e.g. Safi Tech LLC"
+                      placeholder={bs.companyNamePlaceholder}
                       className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
                     />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-amber-300 uppercase tracking-wider mb-2">
-                      {t.bankService?.companyRegNumber || "Company Reg Number"}
+                      {bs.companyRegLabel}
                     </label>
                     <input
                       type="text"
                       name="companyRegNumber"
                       value={formData.companyRegNumber}
                       onChange={handleInputChange}
-                      placeholder="e.g. 17063286"
+                      placeholder={bs.companyRegPlaceholder}
                       className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-400 transition-colors"
                     />
                   </div>
@@ -653,10 +560,10 @@ export default function BankAccountServicePage() {
                 className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 text-black font-black uppercase tracking-wider text-sm shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
-                  <span>{t.bankService?.submitting || "Transmitting Data..."}</span>
+                  <span>{bs.submittingBtn}</span>
                 ) : (
                   <>
-                    <span>{t.bankService?.submitBtn || "Submit Secure Application"}</span>
+                    <span>{bs.submitBtn}</span>
                     {isRtl ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
                   </>
                 )}
@@ -680,10 +587,10 @@ export default function BankAccountServicePage() {
         <section className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-black uppercase tracking-widest mb-3">
-              <HelpCircle size={14} /> Questions & Answers
+              <HelpCircle size={14} /> {bs.faqsBadge}
             </div>
             <h2 className="text-3xl sm:text-4xl font-black text-white">
-              Frequently Answered Inquiries
+              {bs.faqsTitle}
             </h2>
           </div>
 

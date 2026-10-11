@@ -1,5 +1,6 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getCoursePartnershipTranslation } from "@/utils/coursePartnershipTranslations";
 import { usePathname } from "next/navigation";
 
 import Link from "next/link";
@@ -13,54 +14,21 @@ export default function CoursePartnershipPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
-  const benefits = [
-    {
-      title: "Passive Revenue Share",
-      desc: "Earn a fixed percentage of every enrollment fee. Your dividends grow automatically as the course reaches a global audience.",
-      icon: <PieChart className="w-6 h-6 text-yellow-400" />
-    },
-    {
-      title: "Secure & Regulated",
-      desc: "Invest with confidence. All partnership agreements are backed by our UK-registered financial entity, ensuring full legal compliance.",
-      icon: <ShieldCheck className="w-6 h-6 text-yellow-400" />
-    },
-    {
-      title: "Instant Global Payouts",
-      desc: "Receive your monthly dividends directly and instantly through the SafiPay digital banking infrastructure in your preferred currency.",
-      icon: <Wallet className="w-6 h-6 text-yellow-400" />
-    }
+  const cp = getCoursePartnershipTranslation(currentLocale);
+  const isRtl = cp.isRtl;
+
+  const BENEFIT_ICONS = [
+    <PieChart key="pie" className="w-6 h-6 text-yellow-400" />,
+    <ShieldCheck key="shield" className="w-6 h-6 text-yellow-400" />,
+    <Wallet key="wallet" className="w-6 h-6 text-yellow-400" />
   ];
 
-  const activeOpportunities = [
-    {
-      title: "Global E-Commerce Masterclass",
-      category: "E-Commerce",
-      targetRaise: "$50,000",
-      minInvestment: "$5,000",
-      expectedROI: "18% - 24% APY",
-      progress: 65,
-      investors: 4
-    },
-    {
-      title: "Full-Stack AI & Next.js Bootcamp",
-      category: "Technology",
-      targetRaise: "$80,000",
-      minInvestment: "$10,000",
-      expectedROI: "20% - 28% APY",
-      progress: 30,
-      investors: 2
-    },
-    {
-      title: "Institutional Trading & SMC",
-      category: "Financial Markets",
-      targetRaise: "$100,000",
-      minInvestment: "$15,000",
-      expectedROI: "25% - 35% APY",
-      progress: 85,
-      investors: 7
-    }
-  ];
+  const benefits = cp.benefits.map((b, idx) => ({
+    ...b,
+    icon: BENEFIT_ICONS[idx] || BENEFIT_ICONS[0]
+  }));
+
+  const activeOpportunities = cp.opportunities;
 
   return (
     <main dir={isRtl ? "rtl" : "ltr"} className="w-full relative bg-[#050505] text-white font-sans overflow-hidden min-h-screen pt-32 pb-20">
@@ -77,14 +45,14 @@ export default function CoursePartnershipPage() {
         {/* Header Section */}
         <div className="text-center max-w-4xl mx-auto mb-20 animate-[fadeInDown_1s_ease-out]">
           <div className="inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-5 py-2 text-xs font-black uppercase tracking-widest text-yellow-500 mb-6 shadow-[0_0_20px_rgba(234,179,8,0.2)]">
-            <Gem size={16} /> {t.publicPages.exclusiveInvestmentOpportunity}
+            <Gem size={16} /> {cp.badge}
           </div>
           <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-6 leading-tight">
-            {t.publicPages.coOwnFuture} <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">{t.publicPages.premiumEducation}</span>
+            {cp.title} <br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">{cp.titleHighlight}</span>
           </h1>
           <p className="text-lg md:text-xl text-neutral-400 leading-relaxed mb-8 max-w-3xl mx-auto font-medium">
-            Become a strategic partner at Safi Academy. Buy equity shares in our top-tier courses and earn lifetime passive income from a rapidly expanding global student base.
+            {cp.subtitle}
           </p>
         </div>
 
@@ -113,11 +81,11 @@ export default function CoursePartnershipPage() {
         <div className="mb-24">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
             <div>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-2">{t.publicPages.liveFundingRounds}</h2>
-              <p className="text-neutral-400">{t.publicPages.availableCoursePartnerships}</p>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-2">{cp.liveRoundsTitle}</h2>
+              <p className="text-neutral-400">{cp.liveRoundsSubtitle}</p>
             </div>
             <div className="flex items-center gap-2 text-sm font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-4 py-2 rounded-xl">
-              <TrendingUp size={18} /> {t.publicPages.highYieldPotential}
+              <TrendingUp size={18} /> {cp.highYieldBadge}
             </div>
           </div>
 
@@ -136,7 +104,7 @@ export default function CoursePartnershipPage() {
                     {opp.category}
                   </span>
                   <div className="flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-md">
-                    <Users size={12} /> {opp.investors} Partners
+                    <Users size={12} /> {opp.investors} {cp.partnersCount}
                   </div>
                 </div>
 
@@ -146,15 +114,15 @@ export default function CoursePartnershipPage() {
 
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-neutral-500">{t.publicPages.targetRaise}</span>
+                    <span className="text-neutral-500">{cp.targetRaiseLabel}</span>
                     <span className="font-bold text-white">{opp.targetRaise}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-neutral-500">{t.publicPages.minInvestment}</span>
+                    <span className="text-neutral-500">{cp.minInvestmentLabel}</span>
                     <span className="font-bold text-white">{opp.minInvestment}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-neutral-500">{t.publicPages.expectedReturn}</span>
+                    <span className="text-neutral-500">{cp.expectedReturnLabel}</span>
                     <span className="font-black text-emerald-400">{opp.expectedROI}</span>
                   </div>
                 </div>
@@ -162,7 +130,7 @@ export default function CoursePartnershipPage() {
                 {/* Progress Bar */}
                 <div className="mb-8">
                   <div className="flex justify-between text-xs font-bold text-neutral-400 mb-2">
-                    <span>{t.publicPages.funded}</span>
+                    <span>{cp.fundedLabel}</span>
                     <span className="text-yellow-500">{opp.progress}%</span>
                   </div>
                   <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
@@ -179,7 +147,7 @@ export default function CoursePartnershipPage() {
                   href={`/${currentLocale}/contact`} 
                   className="w-full flex items-center justify-center gap-2 py-3.5 bg-white/5 hover:bg-yellow-500 text-white hover:text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all border border-white/10 hover:border-yellow-500"
                 >
-                  {t.publicPages.requestDetails} <ArrowRight size={16} />
+                  {cp.requestDetailsBtn} <ArrowRight size={16} />
                 </Link>
               </motion.div>
             ))}
@@ -198,15 +166,15 @@ export default function CoursePartnershipPage() {
           
           <div className="w-full md:w-2/3 relative z-10">
             <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
-              {t.publicPages.readyToBecome} <span className="text-yellow-500">{t.publicPages.partnerQuestion}</span>
+              {cp.ctaTitle} <span className="text-yellow-500">{cp.ctaTitleHighlight}</span>
             </h2>
             <p className="text-neutral-400 text-lg leading-relaxed mb-6">
-              Our investment relations team is ready to provide you with detailed prospectuses, financial projections, and legal frameworks for our upcoming courses.
+              {cp.ctaSubtitle}
             </p>
             <ul className="space-y-2 mb-8">
-              <li className="flex items-center gap-2 text-sm font-bold text-neutral-300"><CheckCircle2 size={18} className="text-yellow-500" /> {t.publicPages.ndaProvided}</li>
-              <li className="flex items-center gap-2 text-sm font-bold text-neutral-300"><CheckCircle2 size={18} className="text-yellow-500" /> {t.publicPages.fullAccessMetrics}</li>
-              <li className="flex items-center gap-2 text-sm font-bold text-neutral-300"><CheckCircle2 size={18} className="text-yellow-500" /> {t.publicPages.dedicatedAccountManager}</li>
+              <li className="flex items-center gap-2 text-sm font-bold text-neutral-300"><CheckCircle2 size={18} className="text-yellow-500" /> {cp.ctaBullet1}</li>
+              <li className="flex items-center gap-2 text-sm font-bold text-neutral-300"><CheckCircle2 size={18} className="text-yellow-500" /> {cp.ctaBullet2}</li>
+              <li className="flex items-center gap-2 text-sm font-bold text-neutral-300"><CheckCircle2 size={18} className="text-yellow-500" /> {cp.ctaBullet3}</li>
             </ul>
           </div>
           
@@ -215,7 +183,7 @@ export default function CoursePartnershipPage() {
               href={`/${currentLocale}/contact`} 
               className="inline-flex items-center justify-center gap-3 px-8 py-5 bg-yellow-500 text-black font-black text-sm uppercase tracking-widest rounded-2xl transition-all shadow-[0_10px_30px_rgba(234,179,8,0.3)] hover:shadow-[0_15px_40px_rgba(234,179,8,0.5)] hover:bg-yellow-400 hover:-translate-y-1 active:scale-95"
             >
-              <Landmark size={20} /> Contact Investment Team
+              <Landmark size={20} /> {cp.ctaButton}
             </Link>
           </div>
         </motion.div>

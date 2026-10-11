@@ -38,12 +38,13 @@ import {
   FileCode2
 } from "lucide-react";
 import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
+import { getDevelopmentServicesTranslation } from "@/utils/developmentServicesTranslations";
 
 export default function DevelopmentServicesPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
-  const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
+  const dt = getDevelopmentServicesTranslation(currentLocale);
+  const isRtl = dt.isRtl;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -96,131 +97,19 @@ export default function DevelopmentServicesPage() {
     }
   };
 
-  // --------------------------------------------------------------------------
-  // 6 Core Engineering Solutions with Deep Technical Authority
-  // --------------------------------------------------------------------------
-  const services = [
-    {
-      id: "web-app",
-      title: "Enterprise Full-Stack Web Applications",
-      badge: "High Concurrency",
-      icon: Code2,
-      color: "border-blue-500/30",
-      glow: "bg-blue-500/10",
-      iconColor: "text-blue-400",
-      shortDesc: "Sub-second load times, SEO-optimized server rendering, and scalable component architecture.",
-      longDesc:
-        "We engineer high-performance web platforms using Next.js 14/15, React, TypeScript, and modern edge runtimes. By implementing Server-Side Rendering (SSR), Incremental Static Regeneration (ISR), and intelligent edge caching, we guarantee Core Web Vitals with Largest Contentful Paint (LCP) under 1.2 seconds. From multi-tenant SaaS dashboards to complex corporate portals, our web applications scale smoothly to millions of active users.",
-      features: [
-        "Next.js App Router & TypeScript Strict Mode",
-        "Sub-second TTFB with Global Edge Caching",
-        "Enterprise RBAC & SSO (OAuth2 / SAML)",
-        "State Management via Zustand & React Query",
-        "Responsive Glassmorphic UI with Tailwind CSS",
-        "Automated Lighthouse & Performance CI Audits"
-      ]
-    },
-    {
-      id: "mobile-apps",
-      title: "Cross-Platform & Native Mobile Apps",
-      badge: "iOS & Android",
-      icon: Smartphone,
-      color: "border-emerald-500/30",
-      glow: "bg-emerald-500/10",
-      iconColor: "text-emerald-400",
-      shortDesc: "Fluid 60 FPS mobile applications engineered with Flutter and native device integrations.",
-      longDesc:
-        "Deliver a single, pixel-perfect codebase across iOS and Android without sacrificing native performance. Utilizing Flutter, Dart, and native Swift/Kotlin bridging, our mobile applications feature buttery-smooth 60/120 FPS animations, offline-first SQLite/Hive synchronization, biometrics (FaceID/Fingerprint), in-app purchases, and automated deployment pipelines to Apple App Store and Google Play Console.",
-      features: [
-        "Flutter & Dart Cross-Platform Architecture",
-        "Offline-First SQLite Data Synchronization",
-        "Biometric Authentication & Secure Keychain",
-        "Low-Latency Push Notifications & Deep Linking",
-        "Background Geolocation & Background Tasks",
-        "Automated CI/CD App Store Deployment"
-      ]
-    },
-    {
-      id: "backend-cloud",
-      title: "High-Throughput Cloud & Backend Architecture",
-      badge: "Distributed Scale",
-      icon: Database,
-      color: "border-purple-500/30",
-      glow: "bg-purple-500/10",
-      iconColor: "text-purple-400",
-      shortDesc: "Resilient microservices, real-time relational databases, and fault-tolerant cloud APIs.",
-      longDesc:
-        "We build distributed backend systems capable of processing millions of concurrent requests. Built upon Node.js, Go, Python FastAPI, PostgreSQL, Supabase, and Redis caching layers, our systems incorporate strict database connection pooling, asynchronous task queues, and zero-downtime database migrations. Fully containerized with Docker and orchestrated on AWS or GCP for automatic horizontal scaling.",
-      features: [
-        "PostgreSQL & Supabase Real-Time Engine",
-        "Redis In-Memory Distributed Caching",
-        "Go & Node.js Asynchronous Microservices",
-        "Docker Containerization & Kubernetes Ready",
-        "Strict Schema Validation via Zod & Prisma",
-        "Rate Limiting, Anti-DDoS & WAF Protection"
-      ]
-    },
-    {
-      id: "ai-integration",
-      title: "Autonomous AI Agents & LLM Infrastructure",
-      badge: "Next-Gen AI",
-      icon: Bot,
-      color: "border-cyan-500/30",
-      glow: "bg-cyan-500/10",
-      iconColor: "text-cyan-400",
-      shortDesc: "Enterprise Retrieval-Augmented Generation (RAG), custom fine-tuning, and automated workflows.",
-      longDesc:
-        "Supercharge your operational efficiency by embedding autonomous AI agents directly into your software workflow. We construct enterprise RAG (Retrieval-Augmented Generation) pipelines, connect proprietary vector databases (pgvector, Pinecone), and integrate state-of-the-art models from OpenAI, Anthropic Claude, and open-source Llama 3. Automate document ingestion, customer support triage, complex data analysis, and code generation.",
-      features: [
-        "Enterprise RAG Pipelines with Hybrid Search",
-        "Custom Vector Embeddings (pgvector / Pinecone)",
-        "Autonomous Task Orchestration & Tool Calling",
-        "Multi-Modal Vision, Speech & OCR Pipelines",
-        "Hallucination Guardrails & Token Optimization",
-        "Private On-Premise LLM Deployments (Ollama)"
-      ]
-    },
-    {
-      id: "fintech-ecommerce",
-      title: "FinTech & E-Commerce Payment Systems",
-      badge: "PCI-DSS Level 1",
-      icon: DollarSign,
-      color: "border-amber-500/30",
-      glow: "bg-amber-500/10",
-      iconColor: "text-amber-400",
-      shortDesc: "High-security payment gateways, ledger accounting, recurring billing, and multi-currency checkout.",
-      longDesc:
-        "FinTech software requires zero room for error. We engineer mission-critical billing engines and transactional ledgers supporting Stripe, PayPal, Apple Pay, and cryptocurrency gateways. Our payment implementations adhere to PCI-DSS Level 1 compliance standards, implement double-entry bookkeeping ledgers to prevent race conditions, and automate recurring subscriptions, usage-based invoicing, and tax calculations.",
-      features: [
-        "Stripe Embedded & Custom Checkout Gateways",
-        "Double-Entry Accounting Transaction Ledgers",
-        "Webhook Event Queue Idempotency & Retries",
-        "Multi-Currency Dynamic Conversion & FX Handling",
-        "Automated Subscription Lifecycle & Churn Prevention",
-        "Real-Time Anti-Fraud & Chargeback Detection"
-      ]
-    },
-    {
-      id: "cybersecurity-audit",
-      title: "Cybersecurity Auditing & Code Hardening",
-      badge: "Zero-Trust",
-      icon: ShieldCheck,
-      color: "border-rose-500/30",
-      glow: "bg-rose-500/10",
-      iconColor: "text-rose-400",
-      shortDesc: "Vulnerability assessments, penetration testing, source code review, and compliance readiness.",
-      longDesc:
-        "Protect your enterprise from data breaches, intellectual property theft, and zero-day vulnerabilities. Our security engineers perform comprehensive static and dynamic code analysis, automated dependency audits, OWASP Top 10 penetration testing, and IAM role segregation. We architect your infrastructure with zero-trust networking, end-to-end encryption at rest and in transit, and prepare your startup for SOC-2, GDPR, and HIPAA compliance.",
-      features: [
-        "OWASP Top 10 Web & API Penetration Testing",
-        "Automated Static Analysis (SAST) in CI/CD",
-        "End-to-End AES-256 Data Encryption",
-        "Zero-Trust Network Access & Strict IAM Roles",
-        "Comprehensive Vulnerability Remediation Reports",
-        "GDPR, HIPAA & SOC-2 Architecture Alignment"
-      ]
-    }
-  ];
+  const SERVICE_STYLES: Record<string, { icon: any; color: string; glow: string; iconColor: string }> = {
+    "web-app": { icon: Code2, color: "border-blue-500/30", glow: "bg-blue-500/10", iconColor: "text-blue-400" },
+    "mobile-apps": { icon: Smartphone, color: "border-emerald-500/30", glow: "bg-emerald-500/10", iconColor: "text-emerald-400" },
+    "backend-cloud": { icon: Database, color: "border-purple-500/30", glow: "bg-purple-500/10", iconColor: "text-purple-400" },
+    "ai-integration": { icon: Bot, color: "border-cyan-500/30", glow: "bg-cyan-500/10", iconColor: "text-cyan-400" },
+    "fintech-ecommerce": { icon: DollarSign, color: "border-amber-500/30", glow: "bg-amber-500/10", iconColor: "text-amber-400" },
+    "cybersecurity-audit": { icon: ShieldCheck, color: "border-rose-500/30", glow: "bg-rose-500/10", iconColor: "text-rose-400" },
+  };
+
+  const services = dt.services.map((s) => ({
+    ...s,
+    ...(SERVICE_STYLES[s.id] || { icon: Code2, color: "border-blue-500/30", glow: "bg-blue-500/10", iconColor: "text-blue-400" })
+  }));
 
   // --------------------------------------------------------------------------
   // Interactive Technology Stack Arsenal
@@ -276,97 +165,14 @@ export default function DevelopmentServicesPage() {
     ]
   };
 
-  // --------------------------------------------------------------------------
-  // 6-Stage Battle-Tested Agile Delivery Blueprint
-  // --------------------------------------------------------------------------
-  const deliveryStages = [
-    {
-      stage: "01",
-      title: "Technical Discovery & Blueprinting",
-      desc: "We analyze your business model, define user personas, design system entity-relationship diagrams (ERD), map API endpoints, and establish architectural milestones to eliminate ambiguity."
-    },
-    {
-      stage: "02",
-      title: "Interactive UI/UX & Design Systems",
-      desc: "Our design team creates sleek, high-fidelity clickable Figma prototypes with dark modes, glassmorphism, responsive breakpoints, and micro-interactions before writing a single line of code."
-    },
-    {
-      stage: "03",
-      title: "Agile Sprints & Bi-Weekly Demos",
-      desc: "Development proceeds in 2-week focused sprints. You receive staging access, automated test reports, and live video demonstrations at every milestone so you maintain total project visibility."
-    },
-    {
-      stage: "04",
-      title: "Rigorous QA, Security & Load Testing",
-      desc: "Every build undergoes static analysis, cross-browser compatibility checks, OWASP security audits, and simulated stress testing (10,000+ concurrent users) to guarantee fault tolerance."
-    },
-    {
-      stage: "05",
-      title: "Zero-Downtime Cloud Deployment",
-      desc: "We provision your production cloud infrastructure on AWS, GCP, or Hostinger, configure global CDNs, configure SSL certificates, and execute zero-downtime continuous deployment."
-    },
-    {
-      stage: "06",
-      title: "24/7 SLA, Monitoring & Code Handoff",
-      desc: "Upon launch, we transfer 100% intellectual property and repositories to you, provide comprehensive documentation, and offer dedicated 24/7 SLA monitoring to support your growth."
-    }
-  ];
+  const GUARANTEE_ICONS = [Award, Shield, Headphones, Globe];
+  const clientGuarantees = dt.clientGuarantees.map((g, idx) => ({
+    ...g,
+    icon: GUARANTEE_ICONS[idx] || Award
+  }));
 
-  // --------------------------------------------------------------------------
-  // Client Trust Guarantees
-  // --------------------------------------------------------------------------
-  const clientGuarantees = [
-    {
-      title: "100% Full IP & Code Ownership",
-      desc: "You retain full ownership of all source code, design assets, database schemas, and intellectual property. No vendor lock-in; everything is cleanly documented.",
-      icon: Award
-    },
-    {
-      title: "Strict Non-Disclosure Agreements (NDA)",
-      desc: "We treat your business ideas and proprietary datasets with complete confidentiality. Comprehensive NDAs are signed before discovery discussions.",
-      icon: Shield
-    },
-    {
-      title: "Direct Senior Engineer Communication",
-      desc: "No non-technical account managers or communication bottlenecks. You collaborate directly with lead software engineers via private Slack, WhatsApp, or Teams channels.",
-      icon: Headphones
-    },
-    {
-      title: "UK-Registered Enterprise Standards",
-      desc: "Operated with strict international corporate compliance, milestone-based transparent invoicing, and clear legal protections for global founders.",
-      icon: Globe
-    }
-  ];
-
-  // --------------------------------------------------------------------------
-  // Frequently Asked Questions
-  // --------------------------------------------------------------------------
-  const faqs = [
-    {
-      q: "How quickly can your engineering team start on my project?",
-      a: "Depending on current sprint allocations, we typically initiate technical discovery and architectural blueprinting within 3 to 5 business days following project agreement and NDA execution."
-    },
-    {
-      q: "Who owns the code and intellectual property once built?",
-      a: "You do. 100%. Upon completion of project milestones and final sign-off, full copyright, proprietary source code, Git repositories, deployment credentials, and documentation are transferred unconditionally to your company."
-    },
-    {
-      q: "How are project payments structured?",
-      a: "We operate on transparent, milestone-based payments. Projects are divided into clear deliverables (e.g., Discovery & Architecture, MVP Prototype, Core Backend & APIs, Final Production QA). You only approve payments when working deliverables are reviewed and verified on staging."
-    },
-    {
-      q: "Can you take over and refactor an existing software codebase?",
-      a: "Yes. Our team frequently conducts comprehensive code audits for startups and legacy systems. We identify technical debt, refactor bottlenecks, upgrade outdated dependencies, patch security vulnerabilities, and migrate to modern Next.js/Go architectures."
-    },
-    {
-      q: "What happens after our application goes live?",
-      a: "We don't abandon you after launch. Every project includes a post-launch warranty period for bug fixes and stability monitoring. We also provide ongoing monthly Maintenance SLAs covering security patches, feature expansions, and 24/7 cloud uptime monitoring."
-    },
-    {
-      q: "Do you build custom AI models or just integrate third-party APIs?",
-      a: "We do both. We build advanced RAG (Retrieval-Augmented Generation) pipelines connecting proprietary company data to top LLMs, fine-tune custom open-source models (like Llama 3 or Mistral) on private GPU clusters, and deploy autonomous agents tailored to your business logic."
-    }
-  ];
+  const deliveryStages = dt.deliveryStages;
+  const faqs = dt.faqs;
 
   return (
     <main dir={isRtl ? "rtl" : "ltr"} className="w-full relative bg-[#030307] text-white font-sans overflow-hidden min-h-screen pt-32 pb-28">
@@ -384,18 +190,15 @@ export default function DevelopmentServicesPage() {
         {/* ================================================================== */}
         <div className="text-center max-w-4xl mx-auto mb-24 animate-[fadeInDown_1s_ease-out]">
           <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-5 py-2 text-xs font-black uppercase tracking-widest text-cyan-400 mb-6 shadow-[0_0_25px_rgba(6,182,212,0.25)]">
-            <Terminal size={16} /> Elite Software Engineering Division
+            <Terminal size={16} /> {dt.heroBadge}
           </div>
 
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-white tracking-tight mb-6 leading-[1.08]">
-            We Engineer Software That <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-400">
-              Powers Global Enterprises
-            </span>
+            {dt.heroTitle}
           </h1>
 
           <p className="text-base sm:text-lg md:text-xl text-neutral-300 leading-relaxed mb-10 max-w-3xl mx-auto font-normal">
-            Hire the elite technical team behind the Safi Ecosystem. From high-concurrency SaaS platforms and fluid cross-platform mobile apps to autonomous AI workflows and hardened cloud infrastructure, we build digital systems that dominate their markets.
+            {dt.heroSubtitle}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -403,34 +206,34 @@ export default function DevelopmentServicesPage() {
               href="#quote-form"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 text-white font-black text-sm uppercase tracking-widest rounded-2xl transition-all shadow-[0_10px_35px_rgba(6,182,212,0.35)] hover:shadow-[0_15px_45px_rgba(6,182,212,0.55)] hover:scale-105 active:scale-95 group"
             >
-              <span>{t.publicPages.requestProposal}</span>
+              <span>{dt.ctaConsultation}</span>
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </a>
             <a
               href="#services"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-5 bg-white/5 border border-white/10 text-white font-bold text-sm uppercase tracking-widest rounded-2xl transition-all hover:bg-white/10 hover:border-white/20 backdrop-blur-md"
             >
-              Explore Engineering Arsenal
+              {dt.ctaExplore}
             </a>
           </div>
 
           {/* Quick Credibility Trust Badges */}
           <div className="mt-12 pt-8 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
             <div>
-              <div className="text-2xl font-black text-white">99.99%</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">{t.publicPages.uptimeSla}</div>
+              <div className="text-2xl font-black text-white">{dt.stat1Val}</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">{dt.stat1Label}</div>
             </div>
             <div>
-              <div className="text-2xl font-black text-cyan-400">Sub-100ms</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">{t.publicPages.globalApiLatency}</div>
+              <div className="text-2xl font-black text-cyan-400">{dt.stat2Val}</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">{dt.stat2Label}</div>
             </div>
             <div>
-              <div className="text-2xl font-black text-white">100%</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">{t.publicPages.codeIpOwnership}</div>
+              <div className="text-2xl font-black text-white">{dt.stat3Val}</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">{dt.stat3Label}</div>
             </div>
             <div>
-              <div className="text-2xl font-black text-emerald-400">Zero-Trust</div>
-              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">Hardened Security</div>
+              <div className="text-2xl font-black text-emerald-400">{dt.stat4Val}</div>
+              <div className="text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">{dt.stat4Label}</div>
             </div>
           </div>
         </div>
@@ -441,13 +244,13 @@ export default function DevelopmentServicesPage() {
         <div id="services" className="mb-32 scroll-mt-32">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-cyan-400 mb-3">
-              Full-Cycle Engineering
+              {dt.servicesBadge}
             </div>
             <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-              Our Software Engineering Arsenal
+              {dt.servicesTitle}
             </h2>
             <p className="mt-4 text-neutral-300 text-sm md:text-base leading-relaxed">
-              We do not cut corners or rely on fragile templates. Every architecture is custom-crafted for high performance, bulletproof security, and future-proof scalability.
+              {dt.servicesSubtitle}
             </p>
             <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto mt-6 rounded-full"></div>
           </div>
@@ -488,7 +291,7 @@ export default function DevelopmentServicesPage() {
 
                     <div className="bg-black/40 border border-white/5 rounded-2xl p-4 mb-6">
                       <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2.5">
-                        Architectural Highlights:
+                        Architectural Highlights
                       </div>
                       <div className="space-y-1.5">
                         {service.features.map((feat, fIdx) => (
@@ -507,7 +310,7 @@ export default function DevelopmentServicesPage() {
                       onClick={() => setFormData({ ...formData, service: service.title })}
                       className="inline-flex items-center gap-2 text-xs font-bold text-cyan-400 hover:text-cyan-300 transition-colors group/btn"
                     >
-                      <span>Request Architecture Quote</span>
+                      <span>{dt.ctaConsultation}</span>
                       <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
                     </a>
                   </div>
@@ -523,25 +326,25 @@ export default function DevelopmentServicesPage() {
         <div className="mb-32">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-cyan-400 mb-3">
-              Modern Engineering Stack
+              {dt.stackBadge}
             </div>
             <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-              Battle-Tested Technologies We Master
+              {dt.stackTitle}
             </h2>
             <p className="mt-4 text-neutral-300 text-sm md:text-base leading-relaxed">
-              We select tools based on proven scalability, type safety, low latency, and long-term ecosystem stability.
+              {dt.stackSubtitle}
             </p>
             <div className="w-20 h-1 bg-cyan-500 mx-auto mt-6 rounded-full"></div>
 
             {/* Stack Category Switcher Pills */}
             <div className="flex flex-wrap items-center justify-center gap-2 mt-8">
               {[
-                { id: "frontend", label: "Frontend & Web" },
-                { id: "backend", label: "Backend & APIs" },
-                { id: "mobile", label: "Mobile Apps" },
-                { id: "database", label: "Databases & Cache" },
-                { id: "cloud", label: "Cloud & DevOps" },
-                { id: "ai", label: "AI & LLM Infra" }
+                { id: "frontend", label: dt.stackTabFrontend },
+                { id: "backend", label: dt.stackTabBackend },
+                { id: "mobile", label: dt.stackTabMobile },
+                { id: "database", label: dt.stackTabDatabase },
+                { id: "cloud", label: dt.stackTabCloud },
+                { id: "ai", label: dt.stackTabAi }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -586,13 +389,13 @@ export default function DevelopmentServicesPage() {
         <div className="mb-32">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-cyan-400 mb-3">
-              Delivery Methodology
+              {dt.deliveryBadge}
             </div>
             <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-              Our 6-Stage Agile Engineering Roadmap
+              {dt.deliveryTitle}
             </h2>
             <p className="mt-3 text-neutral-400 text-sm md:text-base">
-              A structured, transparent engineering lifecycle designed to ship on schedule without budget surprises.
+              {dt.deliverySubtitle}
             </p>
           </div>
 
@@ -626,13 +429,13 @@ export default function DevelopmentServicesPage() {
 
           <div className="text-center max-w-3xl mx-auto mb-16 relative z-10">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-cyan-400 mb-3">
-              Client Protection Standards
+              {dt.guaranteesBadge}
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-5 tracking-tight">
-              Why Global Startups & Enterprises Partner With Us
+              {dt.guaranteesTitle}
             </h2>
             <p className="text-sm md:text-base text-neutral-300 leading-relaxed">
-              We operate with European and British corporate integrity, providing uncompromising legal, IP, and privacy guarantees.
+              {dt.guaranteesSubtitle}
             </p>
           </div>
 
@@ -675,13 +478,10 @@ export default function DevelopmentServicesPage() {
                 <Rocket className="w-8 h-8" />
               </div>
               <h2 className="text-3xl md:text-4xl font-black text-white mb-4 leading-tight">
-                Let's Build Your <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
-                  Masterpiece
-                </span>
+                {dt.formTitle}
               </h2>
               <p className="text-neutral-300 text-sm leading-relaxed mb-6 font-normal">
-                Fill out the project scope form. Our lead software architects will review your requirements, prepare an initial technical roadmap, and schedule a discovery call within 24 hours.
+                {dt.formSubtitle}
               </p>
             </div>
 
@@ -710,7 +510,7 @@ export default function DevelopmentServicesPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2">
-                    <User size={14} className="text-cyan-400" /> Full Name *
+                    <User size={14} className="text-cyan-400" /> {dt.formNameLabel}
                   </label>
                   <input
                     required
@@ -718,13 +518,13 @@ export default function DevelopmentServicesPage() {
                     value={formData.name}
                     onChange={handleChange}
                     type="text"
-                    placeholder="e.g. Alexander Smith"
+                    placeholder={dt.formNamePlaceholder}
                     className="w-full bg-[#050505] border border-white/15 rounded-xl px-4 py-3.5 text-white outline-none focus:border-cyan-500 transition-colors text-sm"
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2">
-                    <Mail size={14} className="text-cyan-400" /> Work Email *
+                    <Mail size={14} className="text-cyan-400" /> {dt.formEmailLabel}
                   </label>
                   <input
                     required
@@ -732,7 +532,7 @@ export default function DevelopmentServicesPage() {
                     value={formData.email}
                     onChange={handleChange}
                     type="email"
-                    placeholder="alex@company.com"
+                    placeholder={dt.formEmailPlaceholder}
                     className="w-full bg-[#050505] border border-white/15 rounded-xl px-4 py-3.5 text-white outline-none focus:border-cyan-500 transition-colors text-sm"
                   />
                 </div>
@@ -741,7 +541,7 @@ export default function DevelopmentServicesPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2">
-                    <Phone size={14} className="text-cyan-400" /> WhatsApp / Phone *
+                    <Phone size={14} className="text-cyan-400" /> {dt.formPhoneLabel}
                   </label>
                   <input
                     required
@@ -749,13 +549,13 @@ export default function DevelopmentServicesPage() {
                     value={formData.phone}
                     onChange={handleChange}
                     type="text"
-                    placeholder="+1 (555) 000-0000"
+                    placeholder={dt.formPhonePlaceholder}
                     className="w-full bg-[#050505] border border-white/15 rounded-xl px-4 py-3.5 text-white outline-none focus:border-cyan-500 transition-colors text-sm"
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2">
-                    <Zap size={14} className="text-cyan-400" /> Required Service
+                    <Zap size={14} className="text-cyan-400" /> {dt.formServiceLabel}
                   </label>
                   <select
                     name="service"
@@ -776,7 +576,7 @@ export default function DevelopmentServicesPage() {
 
               <div className="space-y-2">
                 <label className="text-xs font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2">
-                  <DollarSign size={14} className="text-cyan-400" /> Estimated Budget
+                  <DollarSign size={14} className="text-cyan-400" /> {dt.formBudgetLabel}
                 </label>
                 <select
                   name="budget"
@@ -793,7 +593,7 @@ export default function DevelopmentServicesPage() {
 
               <div className="space-y-2">
                 <label className="text-xs font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2">
-                  <MessageSquare size={14} className="text-cyan-400" /> Project Details & Goals *
+                  <MessageSquare size={14} className="text-cyan-400" /> {dt.formDetailsLabel}
                 </label>
                 <textarea
                   required
@@ -801,7 +601,7 @@ export default function DevelopmentServicesPage() {
                   value={formData.details}
                   onChange={handleChange}
                   rows={4}
-                  placeholder="Describe your project, target audience, preferred timeline, and any specific technical features you require..."
+                  placeholder={dt.formDetailsPlaceholder}
                   className="w-full bg-[#050505] border border-white/15 rounded-xl px-4 py-3.5 text-white outline-none focus:border-cyan-500 transition-colors text-sm resize-none"
                 ></textarea>
               </div>
@@ -812,18 +612,18 @@ export default function DevelopmentServicesPage() {
                 className="w-full mt-2 inline-flex items-center justify-center gap-3 px-8 py-5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 hover:from-blue-500 hover:to-cyan-400 text-white font-black text-sm uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-cyan-500/25 active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
               >
                 {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
-                <span>{isSubmitting ? "Dispatching to Architecture Team..." : "Submit Project Request"}</span>
+                <span>{isSubmitting ? dt.formSubmittingBtn : dt.formSubmitBtn}</span>
               </button>
 
               {submitStatus === "success" && (
                 <div className="p-4 bg-emerald-500/10 border border-emerald-500/25 rounded-xl flex items-center gap-3 text-emerald-400 text-sm font-bold mt-2">
                   <CheckCircle2 size={18} />
-                  <span>Request received successfully! Our senior lead engineer will contact you within 24 hours.</span>
+                  <span>{dt.formSuccessDesc}</span>
                 </div>
               )}
               {submitStatus === "error" && (
                 <div className="p-4 bg-red-500/10 border border-red-500/25 rounded-xl flex items-center gap-3 text-red-400 text-sm font-bold mt-2">
-                  <span>An error occurred while submitting your request. Please try again or email info@safiacademy.org directly.</span>
+                  <span>{dt.formErrorDesc}</span>
                 </div>
               )}
             </form>
@@ -845,10 +645,10 @@ export default function DevelopmentServicesPage() {
         <div className="max-w-4xl mx-auto mb-20">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-cyan-400 mb-3">
-              Client FAQ
+              {dt.faqsBadge}
             </div>
             <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-              Frequently Asked Questions
+              {dt.faqsTitle}
             </h2>
           </div>
 

@@ -1,5 +1,6 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getInstructorApplicationTranslation } from "@/utils/instructorApplicationTranslations";
 import { usePathname } from "next/navigation";
 
 import { useState, useEffect } from "react";
@@ -41,7 +42,8 @@ export default function InstructorApplicationPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
   const t = getPortalTranslation(currentLocale);
-  const isRtl = t.isRtl;
+  const ia = getInstructorApplicationTranslation(currentLocale);
+  const isRtl = ia.isRtl;
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingResume, setIsUploadingResume] = useState(false);
@@ -303,81 +305,18 @@ export default function InstructorApplicationPage() {
   };
 
   // Benefits
-  const instructorBenefits = [
-    {
-      title: "Up to 70% {t.publicPages.revenueShare}",
-      desc: "Earn high dividends from student enrollments with direct global payouts via SafiPay, bank transfer, or crypto.",
-      icon: DollarSign,
-      highlight: "High Earnings"
-    },
-    {
-      title: "Built-in Agora {t.publicPages.liveClassrooms}",
-      desc: "Broadcast HD interactive lectures with zero lag, screen sharing, student chat, and multi-host moderation.",
-      icon: Video,
-      highlight: "Advanced Tech"
-    },
-    {
-      title: "Automated Student LMS",
-      desc: "Comprehensive tools for assignment grading, quiz attempts, attendance logs, and automatic certificate issuance.",
-      icon: Monitor,
-      highlight: "Time Saving"
-    },
-    {
-      title: "Global Audience & Marketing",
-      desc: "We promote your courses across our 50,000+ student network in the US, UK, Middle East, Central Asia, and Europe.",
-      icon: Globe,
-      highlight: "Global Reach"
-    }
-  ];
+  const BENEFIT_ICONS = [DollarSign, Video, Monitor, Globe];
+  const instructorBenefits = ia.benefits.map((b, idx) => ({
+    ...b,
+    icon: BENEFIT_ICONS[idx] || DollarSign
+  }));
 
   // Hiring Stages
-  const stages = [
-    {
-      num: "01",
-      title: "Application Review",
-      desc: "Our admissions board reviews your background, credentials, and proposed syllabus within 48 to 72 hours."
-    },
-    {
-      num: "02",
-      title: "Pedagogical Audition",
-      desc: "A brief video interview and demonstration lecture to align on audio/video quality and teaching delivery."
-    },
-    {
-      num: "03",
-      title: "Agreement & Setup",
-      desc: "Finalize your course outline, sign the faculty revenue-sharing agreement, and receive teacher portal access."
-    },
-    {
-      num: "04",
-      title: "Course Launch & Scale",
-      desc: "Record modules or schedule live cohorts. Begin welcoming students and tracking revenue in real time."
-    }
-  ];
+  const stages = ia.stages;
 
   // FAQs
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const faqs = [
-    {
-      q: "What qualifications are required to teach at Safi Academy?",
-      a: "We prioritize demonstrable real-world experience, practical industry mastery, and a passion for teaching over formal academic degrees. Whether you are a senior software architect, successful Amazon FBA seller, institutional trader, or business consultant, practical expertise is what matters most."
-    },
-    {
-      q: "Can I teach live cohorts, pre-recorded masterclasses, or both?",
-      a: "Yes! Our platform supports both synchronous live classes (powered by low-latency Agora RTC video broadcasts) and asynchronous pre-recorded video modules with auto-graded quizzes and assignments."
-    },
-    {
-      q: "How and when are instructor payouts distributed?",
-      a: "Instructors receive payouts monthly for both course enrollments and cohort subscriptions. Payouts can be processed via SafiPay, international wire transfer (SWIFT/SEPA), PayPal, or digital currency."
-    },
-    {
-      q: "Do I retain ownership of my teaching curriculum?",
-      a: "Yes. You maintain ownership of your proprietary instructional methods and materials, granting Safi Academy a non-exclusive distribution license to host, market, and broadcast the course to our global community."
-    },
-    {
-      q: "Can I teach in languages other than English?",
-      a: "Absolutely. Safi Academy caters to an international student base. We actively welcome courses taught in English, Persian/Dari, Pashto, and bilingual instruction."
-    }
-  ];
+  const faqs = ia.faqs;
 
   return (
     <main dir={isRtl ? "rtl" : "ltr"} className="w-full relative bg-[#020202] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-32">
@@ -398,7 +337,7 @@ export default function InstructorApplicationPage() {
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-amber-400 mb-6 shadow-[0_0_20px_rgba(245,158,11,0.2)]"
           >
-            <GraduationCap size={16} /> Safi Academy Faculty Recruitment • Cohort 2026
+            <GraduationCap size={16} /> {ia.badge}
           </motion.div>
 
           <motion.h1
@@ -407,9 +346,9 @@ export default function InstructorApplicationPage() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.1] mb-6"
           >
-            Teach the Future. <br />
+            {ia.heroTitle} <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500">
-              Earn With Global Impact.
+              {ia.heroTitleHighlight}
             </span>
           </motion.h1>
 
@@ -419,7 +358,7 @@ export default function InstructorApplicationPage() {
             transition={{ delay: 0.2 }}
             className="text-neutral-300 text-base md:text-lg leading-relaxed max-w-2xl mx-auto"
           >
-            Share your real-world mastery in Tech, E-Commerce, Financial Markets, and Corporate Strategy with ambitious learners worldwide. Enjoy high revenue share, state-of-the-art live classrooms, and full LMS support.
+            {ia.heroSubtitle}
           </motion.p>
 
           {/* Quick Metrics Bar */}
@@ -430,20 +369,20 @@ export default function InstructorApplicationPage() {
             className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto p-3 bg-neutral-900/80 border border-white/10 rounded-3xl backdrop-blur-md shadow-2xl"
           >
             <div className="p-3 text-center">
-              <div className="text-xl md:text-2xl font-black text-amber-400 font-mono">Up to 70%</div>
-              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">{t.publicPages.revenueShare}</div>
+              <div className="text-xl md:text-2xl font-black text-amber-400 font-mono">{ia.metricRevenue}</div>
+              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">{ia.metricRevenueLabel}</div>
             </div>
             <div className="p-3 text-center border-l border-white/5">
-              <div className="text-xl md:text-2xl font-black text-white font-mono">50,000+</div>
-              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">{t.publicPages.globalStudents}</div>
+              <div className="text-xl md:text-2xl font-black text-white font-mono">{ia.metricStudents}</div>
+              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">{ia.metricStudentsLabel}</div>
             </div>
             <div className="p-3 text-center border-l border-white/5">
-              <div className="text-xl md:text-2xl font-black text-amber-400 font-mono">Agora HD</div>
-              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">{t.publicPages.liveClassrooms}</div>
+              <div className="text-xl md:text-2xl font-black text-amber-400 font-mono">{ia.metricClassrooms}</div>
+              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">{ia.metricClassroomsLabel}</div>
             </div>
             <div className="p-3 text-center border-l border-white/5">
-              <div className="text-xl md:text-2xl font-black text-white font-mono">48-72h</div>
-              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">{t.publicPages.reviewWindow}</div>
+              <div className="text-xl md:text-2xl font-black text-white font-mono">{ia.metricReview}</div>
+              <div className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 mt-0.5">{ia.metricReviewLabel}</div>
             </div>
           </motion.div>
         </div>
@@ -1113,14 +1052,11 @@ export default function InstructorApplicationPage() {
         <div className="mb-32">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-3">
-              Roadmap to Launch
+              {ia.stagesBadge}
             </div>
             <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-              Our 4-Stage Onboarding Process
+              {ia.stagesTitle}
             </h2>
-            <p className="mt-3 text-neutral-400 text-sm md:text-base">
-              From application review to course broadcasting, here is how we partner with top educators.
-            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -1155,10 +1091,10 @@ export default function InstructorApplicationPage() {
         <div className="max-w-3xl mx-auto mb-20">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-3">
-              Common Questions
+              {ia.faqsBadge}
             </div>
             <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-              Frequently Asked Questions for Instructors
+              {ia.faqsTitle}
             </h2>
           </div>
 

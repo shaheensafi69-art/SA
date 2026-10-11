@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getDictionary } from "@/dictionaries";
 
 export async function generateMetadata({
   params
@@ -7,30 +8,41 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const currentLocale = locale || "en";
+  const dict = getDictionary(currentLocale);
+  const dt = (dict as any)?.donate;
+
+  const title = dt?.heroTitle1 && dt?.heroTitle2
+    ? `${dt.heroTitle1} ${dt.heroTitle2} | Safi Academy`
+    : "Support Global Education & Student Aid | Donate to Safi Academy";
+
+  const description = dt?.heroDesc1 ||
+    "Join our global philanthropic mission to provide free technology education, verified certificates, and academic laptops to underprivileged students and girls worldwide.";
+
   return {
-  title: "Support Global Education & Student Aid | Donate to Safi Academy",
-  description: "Join our global philanthropic mission to provide free technology education, verified certificates, and academic laptops to underprivileged students and girls worldwide.",
-  keywords: [
-    "Donate Safi Academy",
-    "Support Education Equity",
-    "Global Student Scholarships Fund",
-    "Charity for Afghan Girls Education",
-    "Tech Education Philanthropy",
-    "Non-Profit Educational Impact"
-  ],
-  openGraph: {
-    title: "Support Global Education & Student Aid | Donate to Safi Academy",
-    description: "Empower underserved students and Afghan girls with free world-class education and verified digital skills.",
-    url: `https://safiacademy.org/${currentLocale}/donate`,
-    siteName: "Safi Academy",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Support Global Education & Student Aid | Donate to Safi Academy",
-    description: "Your donation directly funds free education, verified diplomas, and scholarships for disadvantaged youth.",
-  }
-};
+    title,
+    description,
+    keywords: [
+      "Donate Safi Academy",
+      dt?.tabBank || "Bank Transfer",
+      dt?.heroBadge || "Education Charity",
+      dt?.boxTitle || "Sponsor a Student",
+      "Global Student Scholarships Fund",
+      "Tech Education Philanthropy",
+      "Non-Profit Educational Impact"
+    ],
+    openGraph: {
+      title,
+      description,
+      url: `https://safiacademy.org/${currentLocale}/donate`,
+      siteName: "Safi Academy",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    }
+  };
 }
 
 export default function DonateLayout({
