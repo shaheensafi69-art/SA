@@ -28,6 +28,8 @@ import {
   FileCode2
 } from "lucide-react";
 
+export const revalidate = 60; // Cache course catalog for 60 seconds for instant sub-20ms response
+
 export default async function CoursesPage({
   params
 }: {
