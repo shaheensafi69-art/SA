@@ -17,6 +17,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import ShaheenSafiSchema from '@/components/seo/ShaheenSafiSchema';
+
 // Custom Social SVG Components
 const TikTokIcon = ({ size = 18 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -96,6 +98,7 @@ export default function ShaheenSafiExecutiveDossier() {
       className="min-h-screen bg-[#030307] text-white font-sans overflow-x-hidden selection:bg-yellow-500 selection:text-black" 
       onMouseMove={handleMouseMove}
     >
+      <ShaheenSafiSchema />
       {/* ================= BACKGROUND COSMIC SYSTEM ================= */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         {/* Cyber Grid */}

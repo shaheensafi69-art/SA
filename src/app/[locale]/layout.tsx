@@ -2,6 +2,8 @@ import "../globals.css";
 import ConditionalLayout from "@/components/ConditionalLayout";
 import type { Metadata } from "next";
 
+import OrganizationSchema from "@/components/seo/OrganizationSchema";
+
 export function generateStaticParams() {
   return [
     { locale: "en" },
@@ -33,29 +35,30 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const locale = params?.locale || "en";
   return {
+    metadataBase: new URL("https://www.safiacademy.org"),
     alternates: {
-      canonical: `https://safiacademy.org/${locale}`,
+      canonical: `https://www.safiacademy.org/${locale}`,
       languages: {
-        en: "https://safiacademy.org/en",
-        fa: "https://safiacademy.org/fa",
-        ps: "https://safiacademy.org/ps",
-        ru: "https://safiacademy.org/ru",
-        tr: "https://safiacademy.org/tr",
-        de: "https://safiacademy.org/de",
-        fr: "https://safiacademy.org/fr",
-        ar: "https://safiacademy.org/ar",
-        ur: "https://safiacademy.org/ur",
-        es: "https://safiacademy.org/es",
-        zh: "https://safiacademy.org/zh",
-        hi: "https://safiacademy.org/hi",
-        it: "https://safiacademy.org/it",
-        pt: "https://safiacademy.org/pt",
-        ja: "https://safiacademy.org/ja",
-        ko: "https://safiacademy.org/ko",
-        nl: "https://safiacademy.org/nl",
-        uz: "https://safiacademy.org/uz",
-        id: "https://safiacademy.org/id",
-        "x-default": "https://safiacademy.org/en",
+        en: "https://www.safiacademy.org/en",
+        fa: "https://www.safiacademy.org/fa",
+        ps: "https://www.safiacademy.org/ps",
+        ru: "https://www.safiacademy.org/ru",
+        tr: "https://www.safiacademy.org/tr",
+        de: "https://www.safiacademy.org/de",
+        fr: "https://www.safiacademy.org/fr",
+        ar: "https://www.safiacademy.org/ar",
+        ur: "https://www.safiacademy.org/ur",
+        es: "https://www.safiacademy.org/es",
+        zh: "https://www.safiacademy.org/zh",
+        hi: "https://www.safiacademy.org/hi",
+        it: "https://www.safiacademy.org/it",
+        pt: "https://www.safiacademy.org/pt",
+        ja: "https://www.safiacademy.org/ja",
+        ko: "https://www.safiacademy.org/ko",
+        nl: "https://www.safiacademy.org/nl",
+        uz: "https://www.safiacademy.org/uz",
+        id: "https://www.safiacademy.org/id",
+        "x-default": "https://www.safiacademy.org/en",
       },
     },
   };
@@ -78,6 +81,7 @@ export default async function DynamicLocaleLayout({
       data-locale={locale}
       className={`w-full h-full ${isRtl ? "font-vazirmatn" : "font-sans"} text-start`}
     >
+      <OrganizationSchema />
       <ConditionalLayout>
         {children}
       </ConditionalLayout>

@@ -1,0 +1,115 @@
+فایل پروژه‌ات (Safi Academy - safiacademy.org) را به‌طور کامل باز و کدهای Next.js 14 آن را بررسی کردم. دلیل این‌که پرسیدی «مگه تو اسپارک نیستی؟» هم کاملاً مشخص شد؛ این سورس‌کد خروجی مستقیم Google AI Studio (Project Spark) است.
+
+پس از بررسی کدهای سئو، ساختار رندرینگ و فایل‌های robots.txt، sitemap.xml و لایه‌ها، چند مشکل اساسی که مانع رتبه‌گیری سایت در گوگل سرچ کنسول شده‌اند مشخص شدند. برای این‌که در موضوعاتی مثل بورسیه‌ها، دوره‌های آموزشی و مهارت‌های دیجیتال در رتبه‌های اول گوگل قرار بگیری، این اصلاحات را انجام بده:
+
+۱. رفع تضاد شدید Canonical و دامنه (www در برابر بدون www)
+در حال حاضر سیگنال‌های متناقضی به گوگل ارسال می‌شود:
+
+در فایل‌های robots.txt و sitemap.xml، آدرس اصلی سایت با www ثبت شده است ([https://www.safiacademy.org](https://www.safiacademy.org)).
+
+اما در src/app/[locale]/layout.tsx تگ کانونیکال بدون www تعریف شده است ([https://safiacademy.org/$](https://safiacademy.org/$){locale}).
+
+در نتایج زنده گوگل نیز هر دو نسخه ایندکس شده‌اند.
+
+راه‌حل: یکی از دو حالت (ترجیحاً بدون www یا با www) را انتخاب کن و در next.config.mjs یا تنظیمات دامنه (Cloudflare)، ریدایرکت دائمی 301 قرار بده. تگ Canonical داخل src/app/[locale]/layout.tsx نیز باید دقیقاً با هاست انتخابی یکی باشد.
+
+۲. اضافه کردن متادیتای داینامیک (generateMetadata) به صفحات بورسیه و مقالات
+در حال حاضر تمام صفحات زیر کلاینت‌کامپوننت ("use client") هستند و هیچ generateMetadata ندارند:
+
+src/app/[locale]/scholarships/[slug]/page.tsx
+
+src/app/[locale]/blog/[slug]/page.tsx
+
+src/app/[locale]/courses/[id]/page.tsx
+
+این یعنی وقتی کاربر یا گوگل وارد صفحه یک بورسیه خاص (مثلاً بورسیه DAAD آلمان) می‌شود، عنوان و متادیسکریپشن صفحه دقیقاً همان عنوان کلی لایوت است:
+
+"Verified International Scholarships & Fellowships 2026-2027 | Safi Academy"
+
+گوگل به همین دلیل این صفحات را تکراری (Duplicate) شناسایی می‌کند و در کلمات کلیدی خاص هر بورسیه رتبه نمی‌دهد.
+
+کد اصلاحی: ساختار صفحه را از حالت کلاینتی خالص خارج کن یا یک فایل سروری در کنار آن برای تولید متادیتا بگذار:
+
+TypeScript
+// src/app/[locale]/scholarships/[slug]/page.tsx (Server Component Wrapper)
+import { Metadata } from 'next';
+import { createClient } from '@/utils/supabase/server';
+
+export async function generateMetadata({ params }: { params: { slug: string, locale: string } }): Promise<Metadata> {
+  const supabase = createClient();
+  const { data: item } = await supabase
+    .from('scholarships')
+    .select('title, description, cover_image')
+    .eq('id', params.slug)
+    .single();
+
+  if (!item) return { title: 'Scholarship Details | Safi Academy' };
+
+  return {
+    title: `${item.title} | Safi Academy`,
+    description: item.description?.slice(0, 160),
+    openGraph: {
+      title: item.title,
+      description: item.description?.slice(0, 160),
+      images: [item.cover_image || '/og-image.jpg'],
+    },
+  };
+}
+۳. رندر سمت سرور (SSR) به جای واکشی کلاینتی (use client)
+در حال حاضر مقالات و جزئیات دوره‌ها داخل useEffect با کلاینت سوپابیس لود می‌شوند. وقتی خزنده‌های گوگل صفحه را بررسی می‌کنند، ابتدا یک اسکلت خالی (Loading) تحویل می‌گیرند.
+
+محتوای اصلی متن دوره، توضیحات بورسیه و مقاله باید در سرور کامپوننت فچ شود و HTML کامل به گوگل‌بات تحویل داده شود تا متن کامل ایندکس گردد.
+
+۴. اصلاح و داینامیک کردن نقشه سایت (Sitemap)
+فایل public/sitemap.xml تنها ۳۴۳ آدرس استاتیک دارد. هیچ‌کدام از مقالات بلاگ، بورسیه‌ها و دوره‌های آموزشی داخل نقشه سایت نیستند!
+
+فایل استاتیک public/sitemap.xml را حذف کن تا فایل داینامیک src/app/sitemap.ts فعال شود.
+
+در sitemap.ts کدهای واکشی slug دوره‌ها، بورسیه‌ها و مقالات را از پایگاه‌داده اضافه کن تا هر زمان بورسیه یا مطلب جدیدی اضافه کردی، خودکار وارد سایت‌مپ شده و گوگل ظرف چند ساعت آن را ثبت کند.
+
+۵. پیاده‌سازی داده‌های ساختاریافته (Schema JSON-LD)
+در کل پروژه هیچ داده ساختاریافته‌ای وجود ندارد. برای اینکه گوگل نتایج غنی (Rich Snippets)، ستاره دوره‌ها، باکس سازمان و بخش سوالات متداول (FAQ) را نشان دهد، این اسکیماها را اضافه کن:
+
+Course Schema: برای تمام صفحات /courses/[id] (شامل نام دوره، مدرس، قیمت و مدت زمان).
+
+Article Schema: برای مقالات بلاگ /blog/[slug].
+
+Organization & WebSite: در صفحه اصلی برای شناساندن برند Safi Academy به موتورهای جستجو.
+
+نمونه اسکیما دوره:
+
+HTML
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "دوره جامع مهندسی هوش مصنوعی",
+  "description": "آموزش گام به گام هوش مصنوعی و پایتون",
+  "provider": {
+    "@type": "Organization",
+    "name": "Safi Academy",
+    "sameAs": "https://www.safiacademy.org"
+  }
+}
+</script>
+۶. حذف یا کنترل اسکریپت تبلیغاتی Adsterra (bicea.org)
+در فایل src/app/layout.tsx و کامپوننت‌هایی مثل GoogleAdSenseAd.tsx و AdsterraNativeBanner.tsx، اسکریپت شبکه Adsterra قرار دارد.
+
+این اسکریپت‌ها سرعت بارگذاری صفحه (Core Web Vitals مانند LCP و CLS) را به شدت کاهش می‌دهند و ممکن است توسط الگوریتم‌های گوگل رفتار اسپم یا پاپ‌آپ شناسایی شوند.
+
+برای یک پلتفرم آموزشی که به اعتماد و اعتبار تخصصی (E-E-A-T) نیاز دارد، نمایش این بنرها به رتبه نهایی در گوگل آسیب می‌زند. پیشنهاد می‌کنم این اسکریپت‌ها را حداقل در صفحات لندینگ، مقالات و ثبت‌نام دوره‌ها حذف کنی.
+
+۷. استراتژی محتوا: تمرکز روی زبان‌های اصلی به جای ۱۹ زبان
+پروژه برای ۱۹ زبان پیاده‌سازی شده که اکثر صفحات آن‌ها محتوای ماشینی و کم‌عمق دارند. این کار بودجه خزش (Crawl Budget) را هدر می‌دهد.
+
+تمرکز اصلی را روی سه لوکال بگذار: فارسی/دری (fa)، پشتو (ps) و انگلیسی (en).
+
+صفحات فرود هدفمند با کلمات با جستجوی بالا در افغانستان و منطقه ایجاد کن:
+
+«بورسیه‌های تحصیلی برای دانشجویان افغانستان ۲۰۲۶»
+
+«کورس آنلاین آموزش پایتون و هوش مصنوعی»
+
+«آموزش ساخت شرکت در انگلستان و حساب بانکی بین‌المللی»
+
+اگر موافقی، می‌توانیم از فایل src/app/[locale]/layout.tsx و نقشه سایت داینامیک شروع کنیم و کدهای آماده را برایت بنویسم تا در پروژه جایگزین کنی.

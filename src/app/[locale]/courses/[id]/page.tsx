@@ -2,8 +2,67 @@ import { getPortalTranslation } from "@/utils/portalTranslations";
 import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Metadata } from "next";
 import CourseRegistrationForm from "@/components/CourseRegistrationForm";
 import { Sparkles, Wallet, Tag, BookOpen, GraduationCap, Award, Clock } from "lucide-react";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string; locale: string }> | { id: string; locale: string };
+}): Promise<Metadata> {
+  const { id, locale } = await Promise.resolve(params);
+  const currentLocale = locale || "en";
+  const supabase = await createClient();
+
+  const { data: course } = await supabase
+    .from("courses")
+    .select("title, description, thumbnail_url, price, instructor_name, category")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (!course) {
+    return {
+      title: "Course Details | Safi Academy",
+      description: "Explore elite educational courses, fintech engineering, and modern masterclasses at Safi Academy.",
+    };
+  }
+
+  const cleanDescription = course.description
+    ? course.description.replace(/[#*`_\[\]()]/g, "").slice(0, 160).trim()
+    : "Comprehensive professional masterclass at Safi Academy.";
+
+  const pageUrl = `https://www.safiacademy.org/${currentLocale}/courses/${id}`;
+  const ogImage = course.thumbnail_url || "https://www.safiacademy.org/hero.png";
+
+  return {
+    title: `${course.title} | Safi Academy Masterclass`,
+    description: cleanDescription,
+    alternates: {
+      canonical: pageUrl,
+    },
+    openGraph: {
+      title: `${course.title} | Safi Academy`,
+      description: cleanDescription,
+      url: pageUrl,
+      siteName: "Safi Academy",
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: course.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${course.title} | Safi Academy`,
+      description: cleanDescription,
+      images: [ogImage],
+    },
+  };
+}
 
 export default async function CourseDetailPage({
   params,
@@ -109,8 +168,43 @@ export default async function CourseDetailPage({
     { label: t.publicPages.aiIntegration, value: t.publicPages.included, accent: true },
   ];
 
+  const courseSchema = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": course.title,
+    "description": course.description?.slice(0, 300),
+    "provider": {
+      "@type": "EducationalOrganization",
+      "@id": "https://www.safiacademy.org/#organization",
+      "name": "Safi Academy",
+      "sameAs": "https://www.safiacademy.org"
+    },
+    "instructor": {
+      "@type": "Person",
+      "name": course.instructor_name || "Shaheen Safi",
+      "sameAs": "https://www.safiacademy.org/en/founder/shaheen-safi"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": course.price || "0",
+      "priceCurrency": "USD",
+      "category": course.category || "Professional Training",
+      "availability": "https://schema.org/InStock",
+      "url": `https://www.safiacademy.org/${currentLocale}/courses/${id}`
+    },
+    "hasCourseInstance": {
+      "@type": "CourseInstance",
+      "courseMode": "Online",
+      "courseWorkload": "PT12W"
+    }
+  };
+
   return (
     <main dir={isRtl ? "rtl" : "ltr"} className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(234,179,8,0.18),_transparent_35%),linear-gradient(135deg,_#060606_0%,_#0f0f10_100%)] px-4 py-24 text-white sm:px-6 lg:px-8 selection:bg-yellow-500 selection:text-black font-sans relative overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseSchema) }}
+      />
 
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>

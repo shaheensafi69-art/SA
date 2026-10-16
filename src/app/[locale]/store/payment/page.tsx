@@ -114,16 +114,6 @@ export default async function StorePaymentGatewayPage({ params, searchParams }: 
           <ShieldCheck size={18} className="text-cyan-400 shrink-0" />
           <span>{pt.securityNotice}</span>
         </div>
-
-        {/* Contextual Adsterra Native Ad - Non-intrusive Sponsor */}
-        <div className="pt-4">
-          <AdsterraNativeBanner
-            title={pt.adTitle}
-            niche="Fintech, Global Banking, Online Payment Gateways & Secure Transactions"
-            keywords="hesabpay, atomapay, international payment, mastercard, visa, crypto gateway, merchant accounts"
-            className="border-neutral-800/80 bg-neutral-900/40"
-          />
-        </div>
       </div>
     </div>
   );

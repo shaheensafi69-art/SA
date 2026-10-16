@@ -9,6 +9,14 @@ export type Locale = typeof locales[number];
 export const defaultLocale = 'en';
 
 export async function middleware(request: NextRequest) {
+  const host = request.headers.get('host') || '';
+  if (host === 'safiacademy.org') {
+    return NextResponse.redirect(
+      `https://www.safiacademy.org${request.nextUrl.pathname}${request.nextUrl.search}`,
+      301
+    );
+  }
+
   const { pathname } = request.nextUrl;
 
   // 🚫 فیلتر مهم: درخواست‌های API، مسیر کالبک احراز هویت و فایل‌های استاتیک باید بدون دستکاری رد شوند

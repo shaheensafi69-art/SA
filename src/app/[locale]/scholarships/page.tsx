@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
+import FAQSchema from "@/components/seo/FAQSchema";
 
 type Scholarship = {
   id: string;
@@ -911,6 +912,9 @@ export default function EnglishScholarshipsPage() {
 
         {/* ================= SECTION: FREQUENTLY ASKED QUESTIONS (FAQ) ================= */}
         <section className="py-20 px-4 sm:px-6 md:px-12 max-w-5xl mx-auto">
+          {st.faqs && st.faqs.length > 0 && (
+            <FAQSchema items={st.faqs.map(f => ({ question: f.q, answer: f.a }))} />
+          )}
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-black uppercase tracking-widest mb-4">
               <HelpCircle size={14} /> {st.faqBadge}

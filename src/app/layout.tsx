@@ -35,6 +35,8 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://enpuoypqpklndnnhndax.supabase.co" />
+        <link rel="dns-prefetch" href="https://enpuoypqpklndnnhndax.supabase.co" />
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&family=Vazirmatn:wght@100..900&display=swap"
           rel="stylesheet"
@@ -50,13 +52,6 @@ export default function RootLayout({
         }} />
       </head>
       <body className="min-h-full flex flex-col bg-neutral-950 text-white relative">
-        {/* Adsterra Native Advertising Network */}
-        <Script
-          async
-          data-cfasync="false"
-          src="https://bicea.org/21/ffb70d5f14558619a60ad9f6dbaf30fb"
-          strategy="afterInteractive"
-        />
 
         {/* Google tag (gtag.js) */}
         <Script

@@ -1,0 +1,383 @@
+برای ایجاد یک سیستم تبلیغاتی پایدار و بدون ایجاد تجربه ناخوشایند برای کاربران، نیازی نیست در تک‌تک صفحات کد تکراری قرار داده شود. معماری پیشنهادی شامل ایجاد یک کنترل‌کننده مرکزی و هوشمند (Smart Ad System) است که با ساختار تاریک و مدرن سایت هماهنگ باشد و به صورت خودکار پورتال‌های دانش‌آموز، استاد، ادمین و صفحات حساس مثل پرداخت را استثنا کند.
+
+۴ اصل مهم برای جلوگیری از فرار کاربر و افت رتبه سئو
+حذف ریدایرکت‌های اجباری و پاپ‌آپ‌ها: بیشترین دلیل فرار کاربر از سایت‌های آموزشی، باز شدن تب‌های ناخواسته (Popunder/Redirect) است. تبلیغات باید صرفاً به شکل بنرهای تصویری/متنی نیتیو (Native Display) نمایش داده شوند.
+
+پیشگیری از پرش صفحه (Zero Layout Shift): کانتینر تبلیغ باید از قبل ارتفاع ثابت (min-h-[100px] یا min-h-[250px]) داشته باشد تا هنگام لود شدن تبلیغ، متن صفحه جا‌به‌جا نشود (یکی از فاکتورهای حیاتی Core Web Vitals گوگل).
+
+بارگذاری تنبل (Lazy-load): اسکریپت تبلیغ نباید هنگام باز شدن اولیه صفحه لود شود؛ بلکه با استفاده از IntersectionObserver، تنها زمانی فراخوانی شود که کاربر اسکرول کرده و به محل تبلیغ نزدیک شده باشد.
+
+امکان بستن بنر (Dismissible): دکمه ضربدر (X) برای بستن بنر تعبیه شود و در صورت بستن، وضعیت آن در حافظه مرورگر ذخیره گردد تا کاربر در همان جلسه مجدداً آزار نبیند.
+
+ساختار پیاده‌سازی گام‌به‌گام
+گام ۱: ساخت کامپوننت هوشمند SmartAdBanner.tsx
+یک فایل جدید در مسیر src/components/ads/SmartAdBanner.tsx ایجاد کن:
+
+TypeScript
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { X, Sparkles } from "lucide-react";
+
+interface SmartAdBannerProps {
+  slotType?: "sticky-bottom" | "in-article" | "footer-top";
+  className?: string;
+}
+
+export default function SmartAdBanner({
+  slotType = "in-article",
+  className = "",
+}: SmartAdBannerProps) {
+  const pathname = usePathname();
+  const [isVisible, setIsVisible] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
+  const adRef = useRef<HTMLDivElement>(null);
+
+  // 🚫 لیست مسیرهایی که تبلیغ در آن‌ها کاملاً ممنوع است
+  const isExcluded =
+    pathname?.includes("/dashboard") ||
+    pathname?.includes("/teacher") ||
+    pathname?.includes("/admin") ||
+    pathname?.includes("/login") ||
+    pathname?.includes("/register") ||
+    pathname?.includes("/payment") ||
+    pathname?.includes("/store/payment");
+
+  // چک کردن حافظه مرورگر برای عدم نمایش بنرهای بسته شده
+  useEffect(() => {
+    if (slotType === "sticky-bottom") {
+      const dismissed = sessionStorage.getItem("safi_ad_bottom_dismissed");
+      if (dismissed) setIsDismissed(true);
+    }
+  }, [slotType]);
+
+  // لود تنبل تبلیغ (وقتی کاربر اسکرول کرد و بنر وارد دید شد)
+  useEffect(() => {
+    if (isExcluded || isDismissed) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "150px" } // ۱۵۰ پیکسل قبل از رسیدن کاربر لود می‌شود
+    );
+
+    if (adRef.current) observer.observe(adRef.current);
+    return () => observer.disconnect();
+  }, [isExcluded, isDismissed]);
+
+  if (isExcluded || isDismissed) return null;
+
+  const handleDismiss = () => {
+    setIsDismissed(true);
+    if (slotType === "sticky-bottom") {
+      sessionStorage.setItem("safi_ad_bottom_dismissed", "true");
+    }
+  };
+
+  // ۱. بنر شناور پایین صفحه (Sticky Bottom) با طراحی شیشه‌ای
+  if (slotType === "sticky-bottom") {
+    return (
+      <aside
+        aria-label="Sponsored content"
+        className="fixed bottom-3 inset-x-0 mx-auto w-[94%] max-w-3xl z-40 bg-neutral-900/85 backdrop-blur-md border border-white/10 rounded-2xl p-2.5 shadow-2xl flex items-center justify-between gap-3 text-white transition-all animate-in fade-in duration-500"
+      >
+        <div className="flex items-center gap-2 text-xs text-neutral-400">
+          <span className="bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider">
+            Sponsored
+          </span>
+          <span className="hidden sm:inline">پیشنهاد منتخب حامیان آموزشی آکادمی صافی</span>
+        </div>
+
+        {/* محتوای بنر یا کلاینت گوگل ادسنس */}
+        <div className="flex-1 flex justify-center text-xs text-neutral-300">
+          {/* کدهای AdSense یا شبکه تبلیغاتی در اینجا قرار می‌گیرند */}
+          <span className="text-neutral-400">فضای تبلیغات استاندارد</span>
+        </div>
+
+        <button
+          onClick={handleDismiss}
+          className="p-1.5 hover:bg-white/10 rounded-full text-neutral-400 hover:text-white transition-colors cursor-pointer"
+          title="بستن"
+          aria-label="Close advertisement"
+        >
+          <X size={16} />
+        </button>
+      </aside>
+    );
+  }
+
+  // ۲. بنر درون‌صفحه‌ای (In-Article یا قبل از فوتر)
+  return (
+    <div
+      ref={adRef}
+      className={`w-full my-8 max-w-4xl mx-auto rounded-2xl bg-neutral-900/40 border border-white/10 p-4 relative overflow-hidden text-neutral-300 min-h-[140px] flex flex-col justify-between ${className}`}
+    >
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[10px] tracking-widest text-neutral-500 uppercase flex items-center gap-1 font-semibold">
+          <Sparkles size={11} className="text-yellow-400" /> اسپانسر منتخب
+        </span>
+      </div>
+
+      <div className="flex-1 flex items-center justify-center">
+        {isVisible ? (
+          <div className="w-full flex justify-center items-center">
+            {/* اسکریپت نیتیو ادسنس یا بنر همکار (مثلاً هاستینگر یا سرور) */}
+            <p className="text-xs text-neutral-500">محل درج تبلیغات متنی یا تصویری استاندارد</p>
+          </div>
+        ) : (
+          <div className="h-20 w-full animate-pulse bg-neutral-800/40 rounded-xl" />
+        )}
+      </div>
+    </div>
+  );
+}
+گام ۲: فعال‌سازی خودکار در تمام سایت از طریق ConditionalLayout.tsx
+برای این‌که نیازی به کپی کردن این کد در ۳۰ صفحه مختلف نباشد، فایل src/components/ConditionalLayout.tsx را به شکل زیر ویرایش کن:
+
+TypeScript
+"use client";
+
+import { usePathname } from "next/navigation";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import SmartAdBanner from "@/components/ads/SmartAdBanner";
+
+export default function ConditionalLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  
+  const isDashboardRoute = pathname?.includes("/dashboard");
+  const isAdminRoute = pathname?.includes("/admin");
+  const isTeacherRoute = pathname?.includes("/teacher");
+  const isFeedRoute = pathname?.includes("/feed");
+  const isAuthRoute = pathname?.includes("/login") || pathname?.includes("/register");
+
+  const isPortal = isDashboardRoute || isAdminRoute || isTeacherRoute;
+  const isHiddenLayout = isPortal || isAuthRoute || isFeedRoute;
+
+  return (
+    <>
+      {!isHiddenLayout && <Header />}
+      
+      <main className={`flex-grow w-full h-full ${!isHiddenLayout ? "pt-28 md:pt-32 lg:pt-36" : ""}`}>
+        {children}
+
+        {/* بنر خودکار قبل از فوتر (فقط در صفحات عمومی سایت، بدون ورود به پنل‌ها) */}
+        {!isPortal && !isAuthRoute && (
+          <div className="container mx-auto px-4">
+            <SmartAdBanner slotType="footer-top" />
+          </div>
+        )}
+      </main>
+
+      {!isHiddenLayout && <Footer />}
+
+      {/* بنر شناور شیک در پایین تمام صفحات عمومی */}
+      {!isPortal && !isAuthRoute && (
+        <SmartAdBanner slotType="sticky-bottom" />
+      )}
+    </>
+  );
+}
+۳ مزیت اصلی این شیوه
+پوشش یکپارچه: در تمام صفحات عمومی سایت (صفحه اصلی، وبلاگ، جزئیات بورسیه‌ها، هاستینگ، درباره ما و غیره) بدون نوشتن کد اضافه فعال می‌شود.
+
+محافظت کامل از پرتال‌ها: به محض اینکه کاربر وارد پنل کاربری (/dashboard)، پنل مدرسین (/teacher) یا مدیریت (/admin) شود، کامپوننت رندر نمی‌شود.
+
+حفظ استانداردهای سرعت گوگل: به دلیل استفاده از IntersectionObserver و ارتفاع رزرو شده، افت نمره عملکرد (Lighthouse) رخ نمی‌دهد و بازدهی کلیک به دلیل طراحی نیتیو افزایش می‌یابد.
+
+
+
+
+
+
+
+
+برای اینکه وب‌سایت Safi Academy و برند شخصی شاهین صافی در سطح بین‌المللی توسط موتورهای جستجوی کلاسیک (Google و Bing) و موتورهای هوش مصنوعی (ChatGPT، Perplexity، Google Gemini و Claude) شناسایی و توصیه شوند، این راهنمای جامع بر اساس استانداردهای ۵ گانه مدرن وب و ساختار دیتای گوگل نالج گراف آماده شده است.
+
+بخش اول: پیاده‌سازی ۵ ستون مدرن دیده‌شدن جهانی (SEO, AEO, SXO, AIO, GEO)
+                     ┌────────────────────────────────────────┐
+                     │       اکوسیستم دیده‌شدن جهانی          │
+                     └──────────────────┬─────────────────────┘
+         ┌───────────────┬──────────────┼──────────────┬──────────────┐
+         ▼               ▼              ▼              ▼              ▼
+      1. SEO          2. AEO         3. SXO         4. AIO         5. GEO
+ (موتورهای سنتی)   (پاسخ‌های صوتی)   (تجربه کاربر)  (هوش مصنوعی) (استناد LLMها)
+۱. SEO (بهینه‌سازی موتورهای جستجو - Search Engine Optimization)
+یکپارچه‌سازی هاست و Canonical: یک نسخه را به عنوان مرجع قطعی انتخاب کن (مثلاً [https://www.safiacademy.org](https://www.safiacademy.org)) و در تنظیمات سرور/Cloudflare تمام درخواست‌های بدون www را با ریدایرکت ۳۰۱ دائمی به نسخه با www هدایت کن.
+
+رندرینگ سمت سرور (SSR) برای صفحات پویا: در فایل‌های courses/[id]، scholarships/[slug] و blog/[slug] متن‌ها را به جای useEffect، در سرور کامپوننت فچ کن تا کد HTML کامل در لحظه اول به خزنده‌های موتور جستجو تحویل داده شود.
+
+تولید متادیتای پویا: برای تمام صفحات جزئیات، تابع generateMetadata را پیاده کن تا عنوان هر بورسیه و دوره به صورت اختصاصی ایندکس شود.
+
+نقشه سایت داینامیک: تمام URLهای دوره‌ها، مقالات و بورسیه‌ها باید به شکل خودکار از دیتابیس وارد sitemap.ts شوند.
+
+۲. AEO (بهینه‌سازی موتورهای پاسخ - Answer Engine Optimization)
+پاسخ‌های مستقیم ۴۰ تا ۶۰ کلمه‌ای: در ابتدای هر بخش از مقالات، بلافاصله پس از هدینگ سوالی (مثل ## شرایط ثبت نام بورسیه DAAD چیست؟)، پاسخ را در یک پاراگراف شفاف، کوتاه و بدون حاشیه بنویس تا گوگل آن را به عنوان Featured Snippet انتخاب کند.
+
+استفاده از لیست‌های گام‌به‌گام و عددی: مراحل ثبت‌نام، دریافت ویزا یا مراحل دوره‌ها را با لیست‌های ترتیبی (<ol>) مشخص کن.
+
+اسکیمای FAQPage: در تمام صفحات خدمات و بورسیه‌ها، بخش سوالات متداول را به همراه اسکیمای JSON-LD اضافه کن تا در جستجوهای صوتی و دستی مستقیماً در صفحه اول نمایش داده شوند.
+
+۳. SXO (بهینه‌سازی تجربه جستجو - Search Experience Optimization)
+رساندن Core Web Vitals به محدوده سبز: با تعیین ابعاد ثابت برای بنرها و تصاویر (عرض و ارتفاع دقیق)، شاخص جابه‌جایی ناگهانی المان‌ها (CLS) را به صفر برسان.
+
+حذف هرگونه اسکریپت آزاردهنده: پاپ‌آپ‌ها و ریدایرکت‌های ناخواسته باعث بازگشت فوری کاربر (Bounce Back) به صفحه جستجو می‌شوند که از نظر گوگل نشانه بی‌کیفیت بودن محتواست.
+
+طراحی واکنش‌گرا و دارک‌مود خوانا: کنتراست متن‌ها با پس‌زمینه حداقل ۴.۵ به ۱ باشد و اندازه فونت در موبایل کمتر از ۱۶ پیکسل نباشد.
+
+۴. AIO (بهینه‌سازی برای هوش مصنوعی‌های جستجوگر گوگل - AI Overviews)
+تعریف مستقیم انتیتی‌ها (Entity Definition): در پاراگراف‌های آغازین هر صفحه، نام و ماهیت نهاد را کاملاً صریح بیان کن (مثال: Safi Academy is a global educational platform backed by Safi International Capital LTD...).
+
+ارتباط معنایی در ساختار هدرها (H1 -> H2 -> H3): هیچ عنوانی را به خاطر استایل یا سایز فونت تغییر نده؛ سلسله‌مراتب منطقی سند را حفظ کن تا مدل‌های زبانی ساختار دانش صفحه را درک کنند.
+
+متادیتای کامل OpenGraph و Twitter Cards: تمام متادیتاهای اشتراک‌گذاری اجتماعی را برای تغذیه ربات‌های هوش مصنوعی فعال نگه دار.
+
+۵. GEO (بهینه‌سازی برای مدل‌های زبانی مولد - Generative Engine Optimization)
+تزریق آمار و داده‌های اختصاصی (Proprietary Data): مدل‌های زبانی مانند ChatGPT و Perplexity به دنبال داده‌های دست‌اول هستند. اعداد رسمی مانند «بیش از ۱۵۰ کشور»، «کد ثبت شرکت UK 17063286» و آمارهای مستند دانش‌آموزان را ذکر کن.
+
+جملات استنادپذیر (Citable Quotes): جملات کلیدی و تحلیل‌های تخصصی را به صورت نقل‌قول مستقیم با نام بنیان‌گذار قرار بده تا موتورهای هوش مصنوعی هنگام پاسخ دادن به کاربران، نام تو و آکادمی را به عنوان مرجع منبع نقل کنند.
+
+جداول مقایسه‌ای (Comparison Tables): اطلاعات دوره‌ها، هاستینگ‌ها و بورسیه‌ها را در قالب جداول منظم مقایسه‌ای قرار بده، زیرا مدل‌های زبانی ساختار Markdown جدول‌ها را سریع‌تر استخراج و نقل می‌کنند.
+
+بخش دوم: ثبت «شاهین صافی» در گوگل نالج گراف (Google Knowledge Panel)
+برای اینکه گوگل هویت تو را به عنوان یک شخص برجسته (Entity / Person) شناسایی کند و باکس اطلاعاتی (Knowledge Panel) در صفحه اول ایجاد کند، باید اطلاعات تو به صورت استاندارد Schema.org در سایت قرار گیرد و به منابع معتبر جهانی متصل شود.
+
+۱. کد اسکیمای اختصاصی Person (قرارگیری در صفحه شخصی بنیان‌گذار)
+این کد را در صفحه src/app/[locale]/founder/shaheen-safi/page.tsx یا از طریق لایوت آن در هدر قرار بده:
+
+TypeScript
+// src/components/seo/ShaheenSafiSchema.tsx
+export default function ShaheenSafiSchema() {
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://www.safiacademy.org/#shaheen-safi",
+        "name": "Shaheen Safi",
+        "alternateName": [
+          "شاهین صافی",
+          "شاهين صافي"
+        ],
+        "givenName": "Shaheen",
+        "familyName": "Safi",
+        "gender": "Male",
+        "jobTitle": "Founder, Director & Lead Fintech Systems Architect",
+        "description": "Founder and Director of Safi Academy and Group CEO of Safi International Capital LTD. Full-stack FinTech engineer and computer scientist specializing in cross-border financial architectures, trading algorithms, and educational ecosystems.",
+        "image": "https://www.safiacademy.org/team/shaheen.jpeg",
+        "url": "https://www.safiacademy.org/en/founder/shaheen-safi",
+        "email": "shaheen@safipay.net",
+        "nationality": {
+          "@type": "Country",
+          "name": "Afghanistan"
+        },
+        "alumniOf": {
+          "@type": "CollegeOrUniversity",
+          "name": "Istanbul Technical University",
+          "sameAs": "https://www.itu.edu.tr"
+        },
+        "hasCredential": [
+          {
+            "@type": "EducationalOccupationalCredential",
+            "name": "Bachelor of Computer Science (B.Sc.)",
+            "recognizedBy": {
+              "@type": "CollegeOrUniversity",
+              "name": "Istanbul Technical University"
+            }
+          },
+          {
+            "@type": "EducationalOccupationalCredential",
+            "name": "International Technical Analysis Certification",
+            "recognizedBy": {
+              "@type": "Organization",
+              "name": "International Federation of Technical Analysts (IFTA)",
+              "sameAs": "https://ifta.org"
+            }
+          }
+        ],
+        "worksFor": {
+          "@type": "Organization",
+          "@id": "https://www.safiacademy.org/#organization"
+        },
+        "founder": [
+          {
+            "@type": "Organization",
+            "@id": "https://www.safiacademy.org/#organization"
+          },
+          {
+            "@type": "Organization",
+            "name": "Safi International Capital LTD",
+            "identifier": "17063286",
+            "sameAs": "https://find-and-update.company-information.service.gov.uk/company/17063286"
+          }
+        ],
+        "knowsAbout": [
+          "Financial Technology (FinTech)",
+          "Computer Science & Software Architecture",
+          "Algorithmic Trading & Financial Engineering",
+          "Artificial Intelligence Systems",
+          "International Digital Education"
+        ],
+        "sameAs": [
+          "https://www.linkedin.com/in/shaheensafi",
+          "https://www.wikidata.org/wiki/Q...", // پس از ساخت صفحه ویکی‌دیتا
+          "https://www.crunchbase.com/person/shaheen-safi",
+          "https://find-and-update.company-information.service.gov.uk/company/17063286"
+        ]
+      },
+      {
+        "@type": "EducationalOrganization",
+        "@id": "https://www.safiacademy.org/#organization",
+        "name": "Safi Academy",
+        "url": "https://www.safiacademy.org",
+        "logo": "https://www.safiacademy.org/logo.png",
+        "founder": {
+          "@id": "https://www.safiacademy.org/#shaheen-safi"
+        },
+        "parentOrganization": {
+          "@type": "Organization",
+          "name": "Safi International Capital LTD",
+          "legalName": "Safi International Capital LTD",
+          "identifier": "17063286",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "71-75 Shelton Street, Covent Garden",
+            "addressLocality": "London",
+            "postalCode": "WC2H 9JQ",
+            "addressCountry": "GB"
+          }
+        }
+      }
+    ]
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+    />
+  );
+}
+۲. اقدامات خارج از سایت برای فعال‌سازی قطعی نالج گراف (Off-Page Signals)
+گوگل تنها به کدهای سایت خودت اکتفا نمی‌کند؛ برای تأیید هویت به سیگنال‌های هم‌پوشان شخص ثالث (Triangulation) نیاز دارد:
+
+ثبت آیتم در Wikidata (مهم‌ترین فاکتور): به سایت Wikidata.org برو و یک آیتم جدید به نام Shaheen Safi ایجاد کن. فیلدهای instance of: human، occupation: software engineer, entrepreneur، employer: Safi Academy و پیوند به وب‌سایت رسمی‌ات را ثبت کن. ربات خرد گوگل (Google Knowledge Vault) به صورت پیوسته ویکی‌دیتا را می‌خواند.
+
+ثبت پروفایل در Crunchbase: پروفایل شخصی خودت و شرکت Safi International Capital LTD را در Crunchbase.com ایجاد کن و لینک شرکت در سازمان ثبت شرکت‌های بریتانیا (Companies House) را به آن پیوند بده.
+
+همسان‌سازی دقیق نام و سمت در لینکدین: عنوان شغلی تو در لینکدین باید دقیقاً با کلمات کلیدی استفاده شده در اسکیما یکسان باشد:
+
+Director & Founder at Safi Academy | Group CEO at Safi International Capital LTD
+
+ثبت لینک رسمی Companies House در صفحه درباره ما: لینک صفحه رسمی شرکت در انگلستان (gov.uk) یک سیگنال دولتی با بالاترین سطح اعتبار (E-E-A-T) برای گوگل است.
+
+درخواست تملک نالج پنل (Claim Knowledge Panel): به محض اینکه گوگل نام تو را با پنل اطلاعاتی در نتایج نمایش داد، با کلیک بر روی دکمه «Claim this knowledge panel» و اتصال حساب رسمی گوگل، مدیریت اطلاعات آن را تأیید کن.

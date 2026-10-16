@@ -6,7 +6,7 @@ const withPWA = withPWAInit({
   aggressiveFrontEndNavCaching: true,
   reloadOnOnline: true,
   swcMinify: true,
-  disable: process.env.NODE_ENV === "development", // Service Worker فقط در زمان Build و سرور اصلی فعال می‌شود
+  disable: process.env.NODE_ENV === "development",
   workboxOptions: {
     disableDevLogs: true,
   },
@@ -14,11 +14,23 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // فعال‌سازی حالت مستقل برای بسته‌بندی تنها فایل‌های ضروری و کاهش چشمگیر حجم اپ
   output: "standalone",
-
-  // غیرفعال کردن بهینه‌سازی فونت برای جلوگیری از ارورهای AbortError در اینترنت‌های محدود
+  compress: true,
+  swcMinify: true,
   optimizeFonts: false,
+
+  experimental: {
+    optimizePackageImports: ["lucide-react", "framer-motion"],
+  },
+
+  images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 604800, // 7 days
+    remotePatterns: [
+      { protocol: "https", hostname: "**" },
+      { protocol: "http", hostname: "**" },
+    ],
+  },
 
   eslint: {
     ignoreDuringBuilds: true,
@@ -26,6 +38,47 @@ const nextConfig = {
 
   typescript: {
     ignoreBuildErrors: true,
+  },
+
+  // یکپارچه‌سازی هاست و ریدایرکت 301 دائمی از دامنه بدون www به www
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "safiacademy.org",
+          },
+        ],
+        destination: "https://www.safiacademy.org/:path*",
+        permanent: true,
+      },
+    ];
+  },
+
+  // هدرهای بهینه‌سازی سرعت و کش در زیر 100 میلی‌ثانیه
+  async headers() {
+    return [
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/(company|flags|par|team|career-academies-banner.webp|hero.png|logo.png|manifest.json)/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, stale-while-revalidate=604800",
+          },
+        ],
+      },
+    ];
   },
 };
 
