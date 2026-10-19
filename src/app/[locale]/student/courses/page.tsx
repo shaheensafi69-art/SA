@@ -254,7 +254,7 @@ export default function MyCoursesPage() {
 
                       {/* دکمه پخش مرکزی متصل به ماژول لایو کلاس */}
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <Link href={`/${currentLocale}/dashboard/live-classes`} className="w-16 h-16 bg-gradient-to-br from-amber-400 to-yellow-600 text-black rounded-full flex items-center justify-center pl-1 hover:scale-110 transition-transform shadow-[0_0_30px_rgba(245,158,11,0.6)]">
+                        <Link href={`/${currentLocale}/student/live-classes`} className="w-16 h-16 bg-gradient-to-br from-amber-400 to-yellow-600 text-black rounded-full flex items-center justify-center pl-1 hover:scale-110 transition-transform shadow-[0_0_30px_rgba(245,158,11,0.6)]">
                           <Play fill="currentColor" size={28} />
                         </Link>
                       </div>
@@ -306,7 +306,7 @@ export default function MyCoursesPage() {
 
                         {/* دکمه هدایت به پورتال مرکزی کلاس‌های زنده */}
                         <Link 
-                          href={`/${currentLocale}/dashboard/live-classes`}
+                          href={`/${currentLocale}/student/live-classes`}
                           className={`w-full py-3.5 sm:py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 border ${
                             expired 
                               ? "bg-white/5 text-neutral-400 border-white/5 hover:bg-white/10 hover:text-white"

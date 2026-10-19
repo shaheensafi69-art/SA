@@ -298,7 +298,7 @@ export default function QuizzesPage() {
                     {/* Action Button: Start or Locked */}
                     <button 
                       onClick={() => {
-                        if (quiz.status === "pending") router.push(`/${currentLocale}/dashboard/quizzes/${quiz.id}`);
+                        if (quiz.status === "pending") router.push(`/${currentLocale}/student/quizzes/${quiz.id}`);
                       }}
                       disabled={quiz.status !== "pending"}
                       className={`px-6 py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-2 shadow-xl ${

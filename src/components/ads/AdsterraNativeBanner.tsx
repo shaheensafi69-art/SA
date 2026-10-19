@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Sparkles, ShieldCheck, X } from "lucide-react";
 
 interface AdsterraNativeBannerProps {
@@ -24,6 +25,19 @@ export default function AdsterraNativeBanner({
   minimal = false,
   canDismiss = false,
 }: AdsterraNativeBannerProps) {
+  const pathname = usePathname();
+  const currentPath = pathname || (typeof window !== "undefined" ? window.location.pathname : "");
+
+  // مسدودسازی ۱۰۰٪ در بخش استودنت و تمام پورتال‌ها
+  if (
+    currentPath.includes("/student") ||
+    currentPath.includes("/dashboard") ||
+    currentPath.includes("/admin") ||
+    currentPath.includes("/teacher")
+  ) {
+    return null;
+  }
+
   const activeBadge = title || badgeLabel || "Verified Partner";
   const activeCategory = niche || category;
   const containerRef = useRef<HTMLDivElement>(null);

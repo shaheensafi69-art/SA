@@ -58,9 +58,17 @@ export async function middleware(request: NextRequest) {
   // ۵. تعیین وضعیت مسیرهای محافظت‌شده در برابر مسیرهای عمومی
   const isTeacherOnboarding = pathname.includes('/teacher-onboarding') || pathname.includes('/teacher-register');
   const isAuthPage = (pathname.includes('/login') || pathname.includes('/register')) && !isTeacherOnboarding;
+  // اگر کاربر به آدرس قدیمی /dashboard رفت، به مسیر جدید /student ریدایرکت شود
+  if (pathname.includes('/dashboard')) {
+    const newPath = pathname.replace(/\/dashboard(\/|$)/, '/student$1');
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = newPath;
+    return NextResponse.redirect(redirectUrl, 307);
+  }
+
   const isAdminRoute = pathname.includes('/admin');
   const isTeacherRoute = (pathname === `/${currentLocale}/teacher` || pathname.startsWith(`/${currentLocale}/teacher/`)) && !isTeacherOnboarding;
-  const isStudentRoute = pathname.includes('/dashboard');
+  const isStudentRoute = pathname.includes('/student');
 
   const isProtectedRoute = isAdminRoute || isTeacherRoute || isStudentRoute;
 
@@ -118,7 +126,7 @@ export async function middleware(request: NextRequest) {
     const getCorrectDashboardRoot = () => {
       if (userRole === 'super_admin' || userRole === 'admin') return `/${currentLocale}/admin`;
       if (userRole === 'teacher') return `/${currentLocale}/teacher`;
-      return `/${currentLocale}/dashboard`;
+      return `/${currentLocale}/student`;
     };
 
     if (isAuthPage) {

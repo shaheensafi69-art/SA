@@ -194,7 +194,7 @@ export default function AIAssistantPage() {
         <div className="flex items-center gap-3">
           
           {/* دکمه بازگشت فقط در موبایل نمایان است */}
-          <Link href={`/${currentLocale}/dashboard`} className="lg:hidden w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 hover:text-indigo-400 active:scale-95 transition-all">
+          <Link href={`/${currentLocale}/student`} className="lg:hidden w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 hover:text-indigo-400 active:scale-95 transition-all">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
           </Link>
           

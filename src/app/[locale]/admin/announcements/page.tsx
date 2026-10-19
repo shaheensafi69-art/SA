@@ -88,7 +88,7 @@ export default function AdminAnnouncementsPage() {
       // ---- بخش هوشمندسازی لینک بر اساس دیتابیس و Routing سایت ----
       let targetUrl = "https://safiacademy.org"; 
       if (form.target_role === "student" || form.target_role === "all") {
-        targetUrl = `https://safiacademy.org/${currentLocale}/dashboard/announcements`;
+        targetUrl = `https://safiacademy.org/${currentLocale}/student/announcements`;
       } else if (form.target_role === "teacher") {
         targetUrl = `https://safiacademy.org/${currentLocale}/teacher/announcements`;
       }

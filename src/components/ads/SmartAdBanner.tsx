@@ -14,23 +14,29 @@ export default function SmartAdBanner({
   className = "",
 }: SmartAdBannerProps) {
   const pathname = usePathname();
+  const currentPath = pathname || (typeof window !== "undefined" ? window.location.pathname : "");
+
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const adRef = useRef<HTMLDivElement>(null);
   const scriptContainerRef = useRef<HTMLDivElement>(null);
 
-  // 🚫 لیست مسیرهایی که تبلیغ در آن‌ها کاملاً ممنوع است
+  // 🚫 لیست مسیرهایی که تبلیغ در آن‌ها کاملاً ممنوع و مسدود است
   const isExcluded =
-    !pathname ||
-    pathname.includes("/dashboard") ||
-    pathname.includes("/teacher") ||
-    pathname.includes("/admin") ||
-    pathname.includes("/login") ||
-    pathname.includes("/register") ||
-    pathname.includes("/payment") ||
-    pathname.includes("/store/payment") ||
-    pathname.includes("/checkout") ||
-    pathname.includes("/support/chat");
+    !currentPath ||
+    currentPath.includes("/student") ||
+    currentPath.includes("/dashboard") ||
+    currentPath.includes("/teacher") ||
+    currentPath.includes("/admin") ||
+    currentPath.includes("/login") ||
+    currentPath.includes("/register") ||
+    currentPath.includes("/payment") ||
+    currentPath.includes("/store/payment") ||
+    currentPath.includes("/checkout") ||
+    currentPath.includes("/feed") ||
+    currentPath.includes("/support/chat");
+
+  if (isExcluded || isDismissed) return null;
 
   // بررسی حافظه مرورگر برای عدم نمایش بنرهای بسته شده
   useEffect(() => {

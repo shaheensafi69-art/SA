@@ -229,7 +229,7 @@ export default function TradingJournalPage() {
           <p className="text-neutral-400 text-sm md:text-base leading-relaxed mb-10 max-w-md">
             {t.tradingJournal.accessRestrictedDesc}
           </p>
-          <Link href={`/${currentLocale}/dashboard/courses`} className="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-black uppercase tracking-widest text-xs rounded-2xl hover:scale-105 transition-all shadow-[0_10px_30px_rgba(245,158,11,0.3)]">
+          <Link href={`/${currentLocale}/student/courses`} className="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-black uppercase tracking-widest text-xs rounded-2xl hover:scale-105 transition-all shadow-[0_10px_30px_rgba(245,158,11,0.3)]">
             Explore Courses
           </Link>
         </div>

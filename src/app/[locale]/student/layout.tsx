@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const isFullScreenRoute = pathname.includes('/dashboard/ai-assistant') || pathname.includes('/support/chat');
+  const isFullScreenRoute = pathname.includes('/student/ai-assistant') || pathname.includes('/support/chat');
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -59,19 +59,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const myProfilePath = userProfile?.id ? `/${currentLocale}/feed/profile/${userProfile.id}` : `/${currentLocale}/feed/profile`;
 
   const menuItems = [
-    { id: "overview", name: t.dashboard.overview, path: `/${currentLocale}/dashboard`, icon: <LayoutDashboard size={22} /> },
+    { id: "overview", name: t.dashboard.overview, path: `/${currentLocale}/student`, icon: <LayoutDashboard size={22} /> },
     { id: "feed", name: t.dashboard.feed, path: `/${currentLocale}/feed`, icon: <Rss size={22} /> },
     { id: "profile", name: t.dashboard.myProfile, path: myProfilePath, icon: <User size={22} /> },
-    { id: "announcements", name: t.dashboard.announcements, path: `/${currentLocale}/dashboard/announcements`, icon: <Megaphone size={22} /> },
-    { id: "liveCampus", name: t.dashboard.liveCampus, path: `/${currentLocale}/dashboard/live-classes`, icon: <Video size={22} /> },
-    { id: "assignments", name: t.dashboard.assignments, path: `/${currentLocale}/dashboard/assignments`, icon: <FileText size={22} /> },
-    { id: "quizzes", name: t.dashboard.quizzes, path: `/${currentLocale}/dashboard/quizzes`, icon: <Target size={22} /> },
-    { id: "tradingJournal", name: t.dashboard.tradingJournal, path: `/${currentLocale}/dashboard/trading-journal`, icon: <TrendingUp size={22} /> },
-    { id: "wallet", name: t.dashboard.wallet, path: `/${currentLocale}/dashboard/wallet`, icon: <Wallet size={22} /> },
-    { id: "achievements", name: t.dashboard.achievements, path: `/${currentLocale}/dashboard/achievements`, icon: <Trophy size={22} /> },
+    { id: "announcements", name: t.dashboard.announcements, path: `/${currentLocale}/student/announcements`, icon: <Megaphone size={22} /> },
+    { id: "liveCampus", name: t.dashboard.liveCampus, path: `/${currentLocale}/student/live-classes`, icon: <Video size={22} /> },
+    { id: "assignments", name: t.dashboard.assignments, path: `/${currentLocale}/student/assignments`, icon: <FileText size={22} /> },
+    { id: "quizzes", name: t.dashboard.quizzes, path: `/${currentLocale}/student/quizzes`, icon: <Target size={22} /> },
+    { id: "tradingJournal", name: t.dashboard.tradingJournal, path: `/${currentLocale}/student/trading-journal`, icon: <TrendingUp size={22} /> },
+    { id: "wallet", name: t.dashboard.wallet, path: `/${currentLocale}/student/wallet`, icon: <Wallet size={22} /> },
+    { id: "achievements", name: t.dashboard.achievements, path: `/${currentLocale}/student/achievements`, icon: <Trophy size={22} /> },
     { id: "aiAssistant", name: t.dashboard.aiAssistant, path: "#", icon: <Bot size={22} />, disabled: true },
     { id: "support", name: t.dashboard.support, path: `/${currentLocale}/support`, icon: <Headset size={22} /> },
-    { id: "settings", name: t.dashboard.settings, path: `/${currentLocale}/dashboard/settings`, icon: <Settings size={22} /> },
+    { id: "settings", name: t.dashboard.settings, path: `/${currentLocale}/student/settings`, icon: <Settings size={22} /> },
   ];
 
   const getMenuColor = (id: string) => {
@@ -102,7 +102,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div dir={t.dir} className="flex h-screen bg-[#030305] text-white font-sans overflow-hidden relative selection:bg-[#C2185B] selection:text-white">
+    <div id="student-portal-root" dir={t.dir} className="flex h-screen w-full bg-[#030305] text-white font-sans overflow-hidden relative selection:bg-[#C2185B] selection:text-white">
 
       {/* هاله‌های نوری پس‌زمینه */}
       <div className="absolute top-[-15%] left-[-15%] w-[50vw] h-[50vw] bg-yellow-600/10 rounded-full blur-[140px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '8s' }}></div>
@@ -113,7 +113,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <div className="mb-5 p-4 rounded-2xl bg-gradient-to-br from-[#0c0c14] to-[#07070a] shadow-[inset_0_2px_6px_rgba(0,0,0,0.9),0_6px_20px_rgba(0,0,0,0.5)] border border-white/5 shrink-0 relative group">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-[#C2185B] to-yellow-500 rounded-2xl opacity-20 blur group-hover:opacity-40 transition duration-500"></div>
-          <Link href={`/${currentLocale}/dashboard`} className="flex items-center gap-3.5 relative z-10">
+          <Link href={`/${currentLocale}/student`} className="flex items-center gap-3.5 relative z-10">
             <div className="relative flex items-center justify-center transform group-hover:rotate-6 group-hover:scale-110 transition-transform duration-300">
               <div className="absolute inset-0 bg-[#C2185B]/30 blur-[10px] rounded-full"></div>
               <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(194,24,91,0.7)]" />
@@ -141,8 +141,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             const isActive = item.id === "profile"
               ? pathname.includes(`/${currentLocale}/feed/profile`)
-              : item.path === `/${currentLocale}/dashboard`
-                ? pathname === `/${currentLocale}/dashboard`
+              : item.path === `/${currentLocale}/student`
+                ? pathname === `/${currentLocale}/student`
                 : pathname.startsWith(item.path);
 
             return (
@@ -193,7 +193,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* ================= 2. DESKTOP FLOATING NOTIFICATION ================= */}
       <div className={`hidden lg:flex absolute top-6 ${isRtl ? 'left-10' : 'right-10'} z-50`}>
-        <Link href={`/${currentLocale}/dashboard/announcements`} className="w-12 h-12 bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-[#C2185B] transition-all relative group shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
+        <Link href={`/${currentLocale}/student/announcements`} className="w-12 h-12 bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-[#C2185B] transition-all relative group shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
           <Bell className="w-5 h-5" />
           <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-indigo-500 rounded-full animate-pulse"></span>
         </Link>
@@ -206,7 +206,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-8 h-8 object-contain" />
             <span className="relative z-10 font-black text-xs tracking-widest text-white uppercase">Safi Academy</span>
           </div>
-          <Link href={`/${currentLocale}/dashboard/announcements`} className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-[#C2185B]">
+          <Link href={`/${currentLocale}/student/announcements`} className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-[#C2185B]">
             <Bell size={18} />
           </Link>
         </div>
@@ -220,16 +220,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* ================= 5. FLOATING MOBILE BOTTOM NAV ================= */}
       {!isFullScreenRoute && (
         <div className="lg:hidden fixed bottom-4 left-4 right-4 h-[70px] bg-[#09090e]/95 backdrop-blur-3xl border border-white/10 z-50 px-2 rounded-[2.2rem] flex justify-between items-center shadow-[0_20px_50px_rgba(0,0,0,0.9)]">
-          <Link href={`/${currentLocale}/dashboard`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
-            <LayoutDashboard size={20} className={pathname === `/${currentLocale}/dashboard` ? "text-white" : "text-neutral-500"} />
+          <Link href={`/${currentLocale}/student`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
+            <LayoutDashboard size={20} className={pathname === `/${currentLocale}/student` ? "text-white" : "text-neutral-500"} />
             <span className="text-[8px] font-bold uppercase mt-1">{t.dashboard.overview}</span>
           </Link>
           <Link href={`/${currentLocale}/feed`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
             <Rss size={20} className={pathname.startsWith(`/${currentLocale}/feed`) ? "text-[#C2185B]" : "text-neutral-500"} />
             <span className="text-[8px] font-bold uppercase mt-1">{t.dashboard.feed}</span>
           </Link>
-          <Link href={`/${currentLocale}/dashboard/live-classes`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
-            <Video size={20} className={pathname.includes("/dashboard/live-classes") ? "text-red-500" : "text-neutral-500"} />
+          <Link href={`/${currentLocale}/student/live-classes`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
+            <Video size={20} className={pathname.includes("/student/live-classes") ? "text-red-500" : "text-neutral-500"} />
             <span className="text-[8px] font-bold uppercase mt-1">{t.dashboard.live}</span>
           </Link>
           <button onClick={() => setIsMobileMenuOpen(true)} className="relative flex flex-col items-center justify-center w-[25%] h-full group">

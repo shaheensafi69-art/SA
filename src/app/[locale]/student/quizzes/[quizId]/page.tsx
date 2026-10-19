@@ -77,7 +77,7 @@ export default function StudentExamPaperPage() {
     } catch (error) {
       console.error("Failed to load exam paper:", error);
       alert("Failed to initialize exam. It might be unavailable.");
-      router.push(`/${currentLocale}/dashboard/quizzes`);
+      router.push(`/${currentLocale}/student/quizzes`);
     } finally {
       setIsLoading(false);
     }
@@ -214,7 +214,7 @@ export default function StudentExamPaperPage() {
           </p>
 
           <Link 
-            href={`/${currentLocale}/dashboard/quizzes`}
+            href={`/${currentLocale}/student/quizzes`}
             className="block w-full py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-lg text-white font-black uppercase tracking-widest text-sm rounded-2xl transition-all"
           >
             {t.quizzes.returnToExams}
@@ -230,7 +230,7 @@ export default function StudentExamPaperPage() {
         <AlertCircle size={48} className="text-neutral-600 mb-4" />
         <h2 className="text-2xl font-black mb-2">{t.quizzes.noQuestionsFound}</h2>
         <p className="text-neutral-500 text-sm max-w-sm mb-6">{t.quizzes.noQuestionsDesc}</p>
-        <Link href={`/${currentLocale}/dashboard/quizzes`} className="px-6 py-3 bg-white/10 rounded-xl font-bold">{t.quizzes.goBack}</Link>
+        <Link href={`/${currentLocale}/student/quizzes`} className="px-6 py-3 bg-white/10 rounded-xl font-bold">{t.quizzes.goBack}</Link>
       </div>
     );
   }
@@ -244,7 +244,7 @@ export default function StudentExamPaperPage() {
       {/* هدر چسبان */}
       <header className="h-20 border-b border-white/5 bg-[#050505]/95 backdrop-blur-xl flex items-center justify-between px-4 sm:px-6 md:px-10 shrink-0 sticky top-0 z-50 shadow-lg">
         <div className="flex items-center gap-4">
-          <Link href={`/${currentLocale}/dashboard/quizzes`} className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-full flex items-center justify-center text-neutral-400 transition-colors shrink-0">
+          <Link href={`/${currentLocale}/student/quizzes`} className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-full flex items-center justify-center text-neutral-400 transition-colors shrink-0">
             <ArrowLeft size={16} />
           </Link>
           <div className="min-w-0">

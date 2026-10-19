@@ -143,7 +143,7 @@ export default function LoginPage() {
         } else if (finalRole === "teacher") {
             window.location.href = `/${locale}/teacher`;
         } else {
-            window.location.href = `/${locale}/dashboard`;
+            window.location.href = `/${locale}/student`;
         }
       }
     } catch (error: any) {

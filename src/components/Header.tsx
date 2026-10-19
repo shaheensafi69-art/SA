@@ -230,10 +230,22 @@ const translations: Record<string, any> = {
 };
 
 export default function Header() {
-  const pathname = usePathname() || "/en";
+  const pathname = usePathname();
+  const currentPath = pathname || (typeof window !== "undefined" ? window.location.pathname : "");
+
+  // بررسی فوری و مسدودسازی ۱۰۰٪ هدر در تمام پورتال‌های استودنت، تیچر و ادمین
+  if (
+    currentPath.includes("/student") ||
+    currentPath.includes("/dashboard") ||
+    currentPath.includes("/admin") ||
+    currentPath.includes("/teacher")
+  ) {
+    return null;
+  }
+
   const router = useRouter();
 
-  const currentLocale = pathname.split("/")[1] || "en";
+  const currentLocale = (currentPath ? currentPath.split("/")[1] : "") || "en";
   const activeLang = languages.find((l) => l.code === currentLocale) || languages[0];
   const t = translations[currentLocale] || translations["en"];
   const bt = getBrandTranslation(currentLocale);
@@ -357,10 +369,10 @@ export default function Header() {
     if (userProfile.role === "teacher") {
       return `/${activeLang.code}/teacher`;
     }
-    return `/${activeLang.code}/dashboard`;
+    return `/${activeLang.code}/student`;
   };
 
-  if (pathname.includes("/dashboard") || pathname.includes("/admin") || pathname.includes("/teacher")) return null;
+  if (pathname.includes("/dashboard") || pathname.includes("/student") || pathname.includes("/admin") || pathname.includes("/teacher")) return null;
 
   return (
     <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-50 w-[96%] lg:w-[98%] max-w-[2000px] transition-all duration-700" dir={isRTL ? "rtl" : "ltr"}>

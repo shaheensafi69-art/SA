@@ -63,8 +63,16 @@ const nationalRecognitions = [
 ];
 
 export default function Footer() {
-  const pathname = usePathname() || "/en";
-  const currentLocale = pathname.split("/")[1] || "en";
+  const pathname = usePathname();
+  const currentPath = pathname || (typeof window !== "undefined" ? window.location.pathname : "");
+
+  // Route exclusions - مسدودسازی فوری و قطعی فوتر در تمام پورتال‌ها و صفحات اختصاصی
+  const hideFooterRoutes = ["/student", "/dashboard", "/login", "/register", "/admin", "/teacher", "/feed"];
+  const shouldHideFooter = hideFooterRoutes.some(route => currentPath.includes(route));
+
+  if (shouldHideFooter) return null;
+
+  const currentLocale = (currentPath ? currentPath.split("/")[1] : "") || "en";
   const currentYear = new Date().getFullYear();
   const dict = getDictionary(currentLocale);
   const tf = dict.footer;
@@ -72,10 +80,6 @@ export default function Footer() {
   const tfac = dict.faculties;
   const isRTL = isRtlLocale(currentLocale);
   const bt = getBrandTranslation(currentLocale);
-
-  // Route exclusions
-  const hideFooterRoutes = ["/dashboard", "/login", "/register", "/admin", "/teacher"];
-  const shouldHideFooter = hideFooterRoutes.some(route => pathname.includes(route));
 
   // Newsletter interactive state
   const [newsletterEmail, setNewsletterEmail] = useState("");

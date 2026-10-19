@@ -45,7 +45,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         if (profile) {
           if (profile.role !== "admin" && profile.role !== "super_admin") {
-            router.replace(`/${currentLocale}/dashboard`);
+            router.replace(`/${currentLocale}/student`);
             return;
           }
           setUserProfile({ ...profile, id: user.id });

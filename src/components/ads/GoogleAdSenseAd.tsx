@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 interface GoogleAdSenseAdProps {
   client?: string;
@@ -19,6 +20,19 @@ export default function GoogleAdSenseAd({
   style,
   onAdLoaded,
 }: GoogleAdSenseAdProps) {
+  const pathname = usePathname();
+  const currentPath = pathname || (typeof window !== "undefined" ? window.location.pathname : "");
+
+  // مسدودسازی ۱۰۰٪ در بخش استودنت و پورتال‌ها
+  if (
+    currentPath.includes("/student") ||
+    currentPath.includes("/dashboard") ||
+    currentPath.includes("/admin") ||
+    currentPath.includes("/teacher")
+  ) {
+    return null;
+  }
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

@@ -44,6 +44,29 @@ body {
 }
 
 /* ======================================================== */
+/* ایزولاسیون کامل پورتال‌ها (حذف قطعی هدر، فوتر و تبلیغات عمومی) */
+/* ======================================================== */
+body:has(#student-portal-root) > div > header,
+body:has(#student-portal-root) > header,
+body:has(#student-portal-root) footer,
+body:has(#student-portal-root) aside[aria-label="Sponsored content"],
+body:has(#student-portal-root) section[aria-label="Partner recommendations"],
+body:has(#student-portal-root) section[aria-label="Sponsored Partner Recommendations"],
+body:has(#student-portal-root) .adsterra-native-wrapper,
+body:has(#student-portal-root) #container-ffb70d5f14558619a60ad9f6dbaf30fb {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body:has(#student-portal-root) > div > main,
+body:has(#student-portal-root) main:has(#student-portal-root) {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+}
+
+/* ======================================================== */
 /* پشتیبانی استاندارد از متن‌های چندزبانه و راست‌چین/چپ‌چین خودکار */
 /* ======================================================== */
 [dir="auto"] {
