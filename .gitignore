@@ -41,3 +41,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# standalone portals
+/portals/
+
+# logs
+*.log
+
+# python cache
+__pycache__/
+*.py[cod]
+
+# editor / worktrees
+.kilo/
