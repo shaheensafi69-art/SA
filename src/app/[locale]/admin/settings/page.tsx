@@ -8,7 +8,8 @@ import Link from "next/link";
 import { 
   Loader2, ArrowLeft, Save, LogOut, User, Mail, FileText, Camera, 
   CheckCircle2, AlertCircle, ShieldCheck, Phone, MapPin, Calendar, 
-  Award, Wallet, Fingerprint, Shield, Globe, Smartphone 
+  Award, Wallet, Fingerprint, Shield, Globe, Smartphone,
+  ShoppingBag, RefreshCw, Database, Server, Sparkles, ExternalLink
 } from "lucide-react";
 import DeviceActivityTab from "@/components/settings/DeviceActivityTab";
 import PasswordSecurityTab from "@/components/settings/PasswordSecurityTab";
@@ -25,8 +26,14 @@ export default function AdminSettingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [activeTab, setActiveTab] = useState<"profile" | "security" | "language" | "activity">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "security" | "language" | "activity" | "sync">("profile");
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+  // Sync Products State
+  const [isSyncingProducts, setIsSyncingProducts] = useState(false);
+  const [productsCount, setProductsCount] = useState<number | null>(null);
+  const [lastSyncLog, setLastSyncLog] = useState<any>(null);
+  const [syncHistory, setSyncHistory] = useState<any[]>([]);
   
   const [profileData, setProfileData] = useState({
     id: "",
@@ -83,6 +90,54 @@ export default function AdminSettingsPage() {
       });
     }
     setIsLoading(false);
+    fetchSyncInfo();
+  };
+
+  const fetchSyncInfo = async () => {
+    try {
+      const { count } = await supabase
+        .from("reseller_products")
+        .select("*", { count: "exact", head: true });
+      setProductsCount(count || 0);
+
+      const { data: logs } = await supabase
+        .from("reseller_sync_logs")
+        .select("*")
+        .order("synced_at", { ascending: false })
+        .limit(5);
+
+      if (logs && logs.length > 0) {
+        setLastSyncLog(logs[0]);
+        setSyncHistory(logs);
+      }
+    } catch (e) {
+      console.warn("Notice: Error fetching sync info:", e);
+    }
+  };
+
+  const handleTriggerProductSync = async () => {
+    setIsSyncingProducts(true);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/admin/sync-products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setMessage({
+          type: "success",
+          text: data.message || "Products synced successfully!",
+        });
+        await fetchSyncInfo();
+      } else {
+        throw new Error(data.error || "Sync failed");
+      }
+    } catch (e: any) {
+      setMessage({ type: "error", text: e.message || "Failed to sync products." });
+    } finally {
+      setIsSyncingProducts(false);
+    }
   };
 
   const handleSaveChanges = async (e: React.FormEvent) => {
@@ -168,6 +223,7 @@ export default function AdminSettingsPage() {
             { id: "security", label: t.settings?.security || t.settings?.password || "Password & Security", icon: Shield },
             { id: "language", label: t.settings?.language || "Language & Preferences", icon: Globe },
             { id: "activity", label: t.settings?.activityLog || "Device Activities", icon: Smartphone },
+            { id: "sync", label: isRtl ? "سینک محصولات فروشگاه" : "Store & Products Sync", icon: ShoppingBag },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -439,6 +495,127 @@ export default function AdminSettingsPage() {
         {activeTab === "activity" && (
           <div className="max-w-4xl mx-auto">
             <DeviceActivityTab userId={profileData.id} locale={currentLocale} t={t} isRtl={isRtl} />
+          </div>
+        )}
+
+        {/* TAB 5: STORE & RESELLER PRODUCTS SYNC */}
+        {activeTab === "sync" && (
+          <div className="max-w-4xl mx-auto space-y-6 animate-[fadeIn_0.3s_ease-out]">
+            {/* Header Card */}
+            <div className="bg-gradient-to-br from-amber-950/30 via-[#0a0a14] to-black border border-amber-500/20 rounded-[2.5rem] p-6 sm:p-8 backdrop-blur-3xl shadow-2xl relative overflow-hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+                    <ShoppingBag size={28} />
+                  </div>
+                  <div>
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-300 text-[10px] font-black uppercase tracking-wider border border-amber-500/20">
+                      {isRtl ? "همگام‌ساز محصولات تلگرام و فروشگاه" : "Reseller Products Auto-Sync"}
+                    </span>
+                    <h2 className="text-xl sm:text-2xl font-black text-white mt-1">
+                      {isRtl ? "مدیریت ارتباط دیتابیس محصولات دیجیتال" : "Store & Products Sync Engine"}
+                    </h2>
+                  </div>
+                </div>
+
+                <Link
+                  href={`/${currentLocale}/store`}
+                  target="_blank"
+                  className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-neutral-300 hover:text-white flex items-center justify-center gap-1.5 transition-colors self-start sm:self-auto"
+                >
+                  <span>{isRtl ? "مشاهده فروشگاه عمومی" : "View Live Store"}</span>
+                  <ExternalLink size={12} className="opacity-60" />
+                </Link>
+              </div>
+
+              <p className="text-xs sm:text-sm text-neutral-400 mt-4 leading-relaxed">
+                {isRtl
+                  ? "با کلیک روی دکمه سینک، کاتالوگ محصولات دیجیتال، قیمت‌های خرید و موجودی انبار از طریق وب‌هوک و API بات تلگرام استعلام و در جدول reseller_products پایگاه داده به‌روزرسانی می‌گردد."
+                  : "Syncing pulls the latest digital products, cost prices, and stock statuses from the external Telegram bot API and upserts them into the reseller_products database table."}
+              </p>
+
+              {/* Action Button */}
+              <div className="pt-6 mt-6 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-2 text-xs text-neutral-400">
+                  <Database size={15} className="text-amber-400" />
+                  <span>
+                    {isRtl ? "تعداد کل محصولات در دیتابیس:" : "Total Products in Database:"}{" "}
+                    <strong className="text-white font-mono text-sm">{productsCount ?? "..."}</strong>
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleTriggerProductSync}
+                  disabled={isSyncingProducts}
+                  className="px-8 py-4 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-black font-black text-xs uppercase tracking-wider rounded-2xl transition-all shadow-[0_0_25px_rgba(245,158,11,0.3)] active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  <RefreshCw size={16} className={isSyncingProducts ? "animate-spin text-black" : ""} />
+                  <span>
+                    {isSyncingProducts
+                      ? (isRtl ? "در حال اتصال و همگام‌سازی..." : "Connecting & Syncing...")
+                      : (isRtl ? "شروع همگام‌سازی آنی محصولات" : "Trigger Sync Now")}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Sync History Logs */}
+            <div className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-6 sm:p-8 backdrop-blur-3xl shadow-xl space-y-4">
+              <h3 className="text-sm font-black text-white flex items-center gap-2">
+                <Server size={16} className="text-amber-400" />
+                <span>{isRtl ? "تاریخچه آخرین عملیات‌های همگام‌سازی (reseller_sync_logs)" : "Recent Sync Audit Logs"}</span>
+              </h3>
+
+              {syncHistory.length > 0 ? (
+                <div className="space-y-2.5">
+                  {syncHistory.map((log) => (
+                    <div
+                      key={log.id}
+                      className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between gap-4"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-xs font-black border ${
+                            log.status === "success"
+                              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                              : "bg-rose-500/10 border-rose-500/20 text-rose-400"
+                          }`}
+                        >
+                          {log.status === "success" ? "✓" : "!"}
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-white">{log.log_details}</p>
+                          <p className="text-[10px] text-neutral-500 font-mono mt-0.5">
+                            {new Date(log.synced_at).toLocaleDateString(isRtl ? "fa-IR" : "en-US", {
+                              weekday: "short",
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      </div>
+
+                      <span
+                        className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md border ${
+                          log.status === "success"
+                            ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20"
+                            : "bg-rose-500/10 text-rose-300 border-rose-500/20"
+                        }`}
+                      >
+                        {log.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-neutral-500 italic py-4 text-center">
+                  {isRtl ? "هنوز لاگی برای همگام‌سازی محصولات ثبت نشده است." : "No sync logs recorded yet."}
+                </p>
+              )}
+            </div>
           </div>
         )}
       </>

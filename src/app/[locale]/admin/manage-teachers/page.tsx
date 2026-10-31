@@ -5,16 +5,20 @@ import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
-import { Loader2, ArrowLeft, Search, ShieldAlert, UserCheck, BookOpen, Users, Edit3, Shield, Mail } from "lucide-react";
+import { 
+  Loader2, ArrowLeft, Search, ShieldAlert, UserCheck, 
+  BookOpen, Users, Edit3, Shield, Mail, Wallet, Sparkles, ExternalLink 
+} from "lucide-react";
 
 type Profile = {
   id: string;
   first_name: string;
   last_name: string;
   email: string;
-  role: "teacher" | "super_admin";
+  role: "teacher" | "mentor" | "super_admin" | "admin";
   bio: string | null;
   avatar_url: string | null;
+  wallet_balance: number;
   activeClasses: number;
   totalStudents: number;
 };
@@ -27,6 +31,7 @@ export default function ManageTeachersPage() {
   const [users, setUsers] = useState<Profile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState<"ALL" | "TEACHER" | "MENTOR" | "ADMIN">("ALL");
 
   useEffect(() => {
     fetchTeachers();
@@ -37,17 +42,17 @@ export default function ManageTeachersPage() {
     const supabase = createClient();
     
     try {
-      // ۱. دریافت لیست اساتید و سوپر ادمین‌ها
+      // 1. Fetch teachers, mentors and admins
       const { data: profiles, error: profilesError } = await supabase
         .from("profiles")
-        .select("id, first_name, last_name, email, role, bio, avatar_url")
-        .in("role", ["teacher", "super_admin"])
+        .select("id, first_name, last_name, email, role, bio, avatar_url, wallet_balance")
+        .in("role", ["teacher", "mentor", "super_admin", "admin"])
         .order("created_at", { ascending: false });
 
       if (profilesError) throw profilesError;
 
       if (profiles) {
-        // ۲. محاسبه داینامیک تعداد کلاس‌ها و شاگردان برای هر استاد
+        // 2. Compute dynamic stats for each teacher
         const enrichedProfiles = await Promise.all(
           profiles.map(async (teacher) => {
             const { data: groups } = await supabase
@@ -69,6 +74,7 @@ export default function ManageTeachersPage() {
 
             return {
               ...teacher,
+              wallet_balance: teacher.wallet_balance || 0,
               activeClasses: activeCount,
               totalStudents: uniqueStudents.size,
             };
@@ -85,26 +91,38 @@ export default function ManageTeachersPage() {
   };
 
   const filteredTeachers = useMemo(() => {
-    if (!searchQuery) return users;
-    const query = searchQuery.toLowerCase();
-    return users.filter(t => 
-      t.first_name?.toLowerCase().includes(query) || 
-      t.last_name?.toLowerCase().includes(query) || 
-      t.email?.toLowerCase().includes(query)
-    );
-  }, [users, searchQuery]);
+    return users.filter(t => {
+      if (roleFilter === "TEACHER" && t.role !== "teacher") return false;
+      if (roleFilter === "MENTOR" && t.role !== "mentor") return false;
+      if (roleFilter === "ADMIN" && t.role !== "admin" && t.role !== "super_admin") return false;
+
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase().trim();
+        const matchesName = `${t.first_name || ""} ${t.last_name || ""}`.toLowerCase().includes(query);
+        const matchesEmail = t.email?.toLowerCase().includes(query);
+        const matchesBio = t.bio?.toLowerCase().includes(query);
+        if (!matchesName && !matchesEmail && !matchesBio) return false;
+      }
+
+      return true;
+    });
+  }, [users, searchQuery, roleFilter]);
 
   const stats = useMemo(() => {
     const totalFaculty = users.length;
     const totalClasses = users.reduce((acc, curr) => acc + curr.activeClasses, 0);
-    return { totalFaculty, totalClasses };
+    const totalScholars = users.reduce((acc, curr) => acc + curr.totalStudents, 0);
+    const totalLiabilities = users.reduce((acc, curr) => acc + (curr.wallet_balance || 0), 0);
+    return { totalFaculty, totalClasses, totalScholars, totalLiabilities };
   }, [users]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.loadingFacultyRecords}</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">
+          {t.adminPages.loadingFacultyRecords}
+        </p>
       </div>
     );
   }
@@ -112,7 +130,7 @@ export default function ManageTeachersPage() {
   return (
     <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir={isRtl ? "rtl" : "ltr"}>
       
-      {/* Background Ambient Glows (Indigo & Violet for Faculty) */}
+      {/* Background Ambient Glows */}
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
       <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-violet-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
@@ -126,11 +144,14 @@ export default function ManageTeachersPage() {
             <Link href={`/${currentLocale}/admin`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-indigo-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
               <ArrowLeft size={14} /> Command Center
             </Link>
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2 flex items-center gap-3">
               {t.adminTeachers.title}
+              <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl text-xs font-mono font-bold">
+                {users.length}
+              </span>
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-2xl">
-              Review instructor profiles, monitor their active cohorts, and manage administrative access levels across Safi Academy.
+              Inspect faculty dossiers, track active cohort loads, monitor instructor wallet liabilities, and govern administrative clearances.
             </p>
           </div>
 
@@ -140,38 +161,61 @@ export default function ManageTeachersPage() {
               <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-400"><UserCheck size={18}/></div>
               <div>
                 <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">{t.adminTeachers.totalInstructors}</p>
-                <p className="text-xl font-black text-white">{stats.totalFaculty}</p>
+                <p className="text-xl font-black text-white font-mono">{stats.totalFaculty}</p>
               </div>
             </div>
             <div className="bg-black/40 border border-white/5 px-5 py-3 rounded-2xl flex items-center gap-3 shadow-inner hidden sm:flex">
-              <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-400"><BookOpen size={18}/></div>
+              <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-400"><Wallet size={18}/></div>
               <div>
-                <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">{t.adminPages.classCohorts}</p>
-                <p className="text-xl font-black text-white">{stats.totalClasses}</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500">Unsettled Funds</p>
+                <p className="text-xl font-black text-amber-400 font-mono">${stats.totalLiabilities.toFixed(2)}</p>
               </div>
             </div>
           </div>
         </header>
 
-        {/* ================= SEARCH BAR ================= */}
-        <div className="bg-[#0a0a0f]/60 p-2 rounded-2xl border border-white/5 backdrop-blur-xl flex items-center gap-3 w-full max-w-xl shadow-lg">
-          <div className="pl-4 text-neutral-500"><Search size={18} /></div>
-          <input 
-            type="text" 
-            placeholder={t.adminTeachers.searchPlaceholder}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-transparent border-none text-white text-sm focus:outline-none focus:ring-0 py-3 pr-4 font-medium placeholder:text-neutral-600"
-          />
+        {/* ================= SEARCH & ROLE FILTER BAR ================= */}
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-[#0a0a0f]/60 p-3 rounded-2xl border border-white/5 backdrop-blur-xl">
+          <div className="relative flex-1 max-w-md">
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
+            <input 
+              type="text" 
+              placeholder={t.adminTeachers.searchPlaceholder}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-black/60 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-white text-xs font-medium focus:outline-none focus:border-indigo-500/50 placeholder:text-neutral-600"
+            />
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            {[
+              { id: "ALL", label: "All Faculty" },
+              { id: "TEACHER", label: "Teachers" },
+              { id: "MENTOR", label: "Mentors" },
+              { id: "ADMIN", label: "Admin Staff" },
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setRoleFilter(tab.id as any)}
+                className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                  roleFilter === tab.id
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30"
+                    : "bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* ================= Faculty Grid ================= */}
         {filteredTeachers.length === 0 ? (
-           <div className="text-center py-20 bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] backdrop-blur-md shadow-2xl">
-             <ShieldAlert size={48} className="mx-auto text-neutral-600 mb-4" />
-             <h3 className="text-xl font-black text-white mb-2">{t.adminTeachers.noTeachers}</h3>
-             <p className="text-neutral-500 text-sm">{t.adminTeachers.noTeachers}</p>
-           </div>
+          <div className="text-center py-20 bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] backdrop-blur-md shadow-2xl">
+            <ShieldAlert size={48} className="mx-auto text-neutral-600 mb-4" />
+            <h3 className="text-xl font-black text-white mb-2">{t.adminTeachers.noTeachers}</h3>
+            <p className="text-neutral-500 text-sm">No faculty members found matching your filter criteria.</p>
+          </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {filteredTeachers.map((teacher, index) => (
@@ -190,10 +234,9 @@ export default function ManageTeachersPage() {
                         <img src={teacher.avatar_url} alt={teacher.first_name} className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-xl font-black text-indigo-500">
-                          {teacher.first_name.charAt(0)}{teacher.last_name.charAt(0)}
+                          {teacher.first_name?.charAt(0)}{teacher.last_name?.charAt(0)}
                         </span>
                       )}
-                      {/* Online Status Dot */}
                       <div className="absolute bottom-1 right-1 w-3 h-3 bg-emerald-500 border-2 border-[#0a0a0f] rounded-full"></div>
                     </div>
 
@@ -211,9 +254,11 @@ export default function ManageTeachersPage() {
                   <span className={`shrink-0 rounded-xl px-2.5 py-1.5 text-[9px] font-black uppercase tracking-widest shadow-sm border flex items-center gap-1.5 ${
                     teacher.role === "super_admin" 
                       ? "bg-rose-500/10 text-rose-400 border-rose-500/20" 
-                      : "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
+                      : teacher.role === "admin"
+                        ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                        : "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
                   }`}>
-                    {teacher.role === "super_admin" ? <Shield size={10}/> : <UserCheck size={10}/>}
+                    {teacher.role === "super_admin" || teacher.role === "admin" ? <Shield size={10}/> : <UserCheck size={10}/>}
                     {teacher.role.replace('_', ' ')}
                   </span>
                 </div>
@@ -227,30 +272,31 @@ export default function ManageTeachersPage() {
                 </div>
 
                 {/* Database Live Stats */}
-                <div className="grid grid-cols-2 gap-3 mb-6 relative z-10 mt-auto">
-                  <div className="bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
-                    <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1 flex items-center gap-1"><BookOpen size={10}/> {t.adminPages.assignedClasses}</p>
-                    <p className="text-2xl font-black text-white">{teacher.activeClasses}</p>
+                <div className="grid grid-cols-3 gap-2 mb-6 relative z-10 mt-auto">
+                  <div className="bg-black/40 border border-white/5 rounded-2xl p-3 flex flex-col items-center justify-center text-center">
+                    <p className="text-[8px] font-black text-neutral-500 uppercase tracking-widest mb-1 flex items-center gap-1"><BookOpen size={9}/> Cohorts</p>
+                    <p className="text-lg font-black text-white font-mono">{teacher.activeClasses}</p>
                   </div>
-                  <div className="bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
-                    <p className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-1 flex items-center gap-1"><Users size={10}/> {t.teacherPages.totalStudents}</p>
-                    <p className="text-2xl font-black text-white">{teacher.totalStudents}</p>
+                  <div className="bg-black/40 border border-white/5 rounded-2xl p-3 flex flex-col items-center justify-center text-center">
+                    <p className="text-[8px] font-black text-neutral-500 uppercase tracking-widest mb-1 flex items-center gap-1"><Users size={9}/> Scholars</p>
+                    <p className="text-lg font-black text-white font-mono">{teacher.totalStudents}</p>
+                  </div>
+                  <div className="bg-black/40 border border-white/5 rounded-2xl p-3 flex flex-col items-center justify-center text-center">
+                    <p className="text-[8px] font-black text-neutral-500 uppercase tracking-widest mb-1 flex items-center gap-1"><Wallet size={9}/> Balance</p>
+                    <p className={`text-sm font-black font-mono ${teacher.wallet_balance > 0 ? "text-amber-400" : "text-neutral-400"}`}>
+                      ${teacher.wallet_balance.toFixed(0)}
+                    </p>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-col sm:flex-row gap-3 relative z-10 pt-2 border-t border-white/5">
+                <div className="flex gap-2 relative z-10 pt-2 border-t border-white/5">
                   <Link 
                     href={`/${currentLocale}/admin/manage-teachers/${teacher.id}`}
-                    className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-[10px] font-black uppercase tracking-widest text-neutral-300 hover:border-indigo-400/50 hover:bg-indigo-500/20 hover:text-indigo-300 transition-all shadow-sm flex items-center justify-center gap-2"
+                    className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-[10px] font-black uppercase tracking-widest text-neutral-300 hover:border-indigo-400/50 hover:bg-indigo-500/20 hover:text-indigo-300 transition-all shadow-sm flex items-center justify-center gap-2 active:scale-95"
                   >
-                    View Full Profile
+                    <ExternalLink size={13} /> View Full Profile
                   </Link>
-                  {teacher.role !== "super_admin" && (
-                    <button className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-[10px] font-black uppercase tracking-widest text-neutral-300 hover:border-rose-400/50 hover:bg-rose-500/10 hover:text-rose-400 transition-all shadow-sm flex items-center justify-center gap-2">
-                      <Edit3 size={14}/> Access
-                    </button>
-                  )}
                 </div>
               </div>
             ))}

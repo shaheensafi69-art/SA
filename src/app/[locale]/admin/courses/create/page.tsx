@@ -2,11 +2,15 @@
 
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
-import {  useRouter , usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import { uploadFileToR2 } from "@/utils/upload";
 import Link from "next/link";
-import { Loader2, ArrowLeft, BookOpen, User, DollarSign, Image as ImageIcon, Save, CheckCircle2, AlertCircle, ChevronDown, Check, Type, AlignLeft } from "lucide-react";
+import { 
+  Loader2, ArrowLeft, BookOpen, User, DollarSign, 
+  Image as ImageIcon, Save, CheckCircle2, AlertCircle, 
+  ChevronDown, Check, Type, AlignLeft, Globe, Tag, Sparkles, X 
+} from "lucide-react";
 
 type Teacher = {
   id: string;
@@ -14,7 +18,19 @@ type Teacher = {
   last_name: string;
   email: string;
   avatar_url: string | null;
+  bio: string | null;
 };
+
+const POPULAR_CATEGORIES = [
+  "Technology & AI",
+  "Fintech & Crypto",
+  "Trading & Markets",
+  "Software Engineering",
+  "Business & Leadership",
+  "Design & UI/UX",
+  "Languages",
+  "General Education"
+];
 
 export default function CreateCoursePage() {
   const pathname = usePathname() || "/en";
@@ -22,6 +38,7 @@ export default function CreateCoursePage() {
   const t = getPortalTranslation(currentLocale);
   const isRtl = isRtlPortal(currentLocale);
   const router = useRouter();
+
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
@@ -35,17 +52,20 @@ export default function CreateCoursePage() {
   const [form, setForm] = useState({
     title: "",
     description: "",
+    category: "Technology & AI",
+    customCategory: "",
+    language: "English",
     price: 0,
     teacher_id: "",
     thumbnail_url: "",
     is_published: false
   });
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
     fetchTeachers();
 
-    // بستن دراپ‌داون اساتید وقتی بیرون از آن کلیک می‌شود
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsTeacherDropdownOpen(false);
@@ -61,8 +81,8 @@ export default function CreateCoursePage() {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, first_name, last_name, email, avatar_url")
-        .in("role", ["teacher", "super_admin"])
+        .select("id, first_name, last_name, email, avatar_url, bio")
+        .in("role", ["teacher", "mentor", "super_admin", "admin"])
         .order("first_name", { ascending: true });
 
       if (error) throw error;
@@ -74,10 +94,19 @@ export default function CreateCoursePage() {
     }
   };
 
+  const handleFileChange = (file: File | null) => {
+    setThumbnailFile(file);
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file));
+    } else {
+      setPreviewUrl(null);
+    }
+  };
+
   const handleCreateCourse = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title || !form.teacher_id) {
-      setMessage({ type: 'error', text: 'Title and Instructor are required fields.' });
+    if (!form.title.trim() || !form.teacher_id) {
+      setMessage({ type: 'error', text: 'Course title and lead instructor are required.' });
       return;
     }
 
@@ -86,9 +115,9 @@ export default function CreateCoursePage() {
     const supabase = createClient();
 
     try {
-      let finalThumbnailUrl = form.thumbnail_url;
+      let finalThumbnailUrl = form.thumbnail_url.trim();
 
-      // اگر فایلی برای کاور انتخاب شده باشد، ابتدا آن را آپلود می‌کنیم
+      // Upload custom thumbnail to R2
       if (thumbnailFile) {
         try {
           finalThumbnailUrl = await uploadFileToR2(thumbnailFile, "course-thumbnails");
@@ -97,15 +126,25 @@ export default function CreateCoursePage() {
         }
       }
 
-      // ثبت دوره در دیتابیس
+      const selectedTeacher = teachers.find(t => t.id === form.teacher_id);
+      const finalCategory = form.category === "custom" 
+        ? (form.customCategory.trim() || "General") 
+        : form.category;
+
+      // Insert course record into Supabase
       const { data: newCourse, error } = await supabase
         .from("courses")
         .insert({
           title: form.title.trim(),
           description: form.description.trim(),
-          price: form.price,
-          teacher_id: form.teacher_id, // اختصاص استاد اصلی به دوره
-          thumbnail_url: finalThumbnailUrl.trim() || null,
+          category: finalCategory,
+          language: form.language,
+          price: Number(form.price) || 0,
+          teacher_id: form.teacher_id,
+          instructor_name: selectedTeacher ? `${selectedTeacher.first_name} ${selectedTeacher.last_name}`.trim() : null,
+          instructor_bio: selectedTeacher?.bio || null,
+          instructor_image_url: selectedTeacher?.avatar_url || null,
+          thumbnail_url: finalThumbnailUrl || null,
           is_published: form.is_published,
         })
         .select()
@@ -113,15 +152,14 @@ export default function CreateCoursePage() {
 
       if (error) throw error;
 
-      setMessage({ type: 'success', text: 'Course successfully deployed to the platform!' });
+      setMessage({ type: 'success', text: 'Masterclass successfully deployed to platform!' });
       
-      // هدایت به صفحه دوره‌ها بعد از موفقیت
       setTimeout(() => {
         router.push(`/${currentLocale}/admin/courses`);
-      }, 2000);
+      }, 1800);
 
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Failed to create course.' });
+      setMessage({ type: 'error', text: error.message || 'Failed to deploy course.' });
       setIsSubmitting(false);
     }
   };
@@ -130,15 +168,17 @@ export default function CreateCoursePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center space-y-4">
+      <div className="min-h-screen bg-[#020205] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-violet-500 animate-spin" />
-        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.adminPages.initializingCourseBuilder}</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">
+          {t.adminPages.initializingCourseBuilder}
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="min-h-screen bg-[#020205] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32 lg:pb-10" dir={isRtl ? "rtl" : "ltr"}>
       
       {/* Background Ambient Glows */}
       <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-violet-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
@@ -158,13 +198,15 @@ export default function CreateCoursePage() {
               {t.adminPages.courseBuilder}
             </h1>
             <p className="text-xs sm:text-sm text-neutral-400 font-medium max-w-xl">
-              Construct a new educational program. Set the syllabus, pricing, and assign a lead instructor.
+              Architect and publish new educational curricula. Configure tuition, designate faculty leadership, and upload media assets.
             </p>
           </div>
         </header>
 
         {message && (
-          <div className={`p-4 rounded-2xl flex items-center gap-3 text-sm font-bold animate-[fadeInDown_0.3s_ease-out] border backdrop-blur-md ${message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+          <div className={`p-4 rounded-2xl flex items-center gap-3 text-sm font-bold animate-[fadeInDown_0.3s_ease-out] border backdrop-blur-md ${
+            message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'
+          }`}>
             {message.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
             <p>{message.text}</p>
           </div>
@@ -173,16 +215,17 @@ export default function CreateCoursePage() {
         {/* ================= BUILDER FORM ================= */}
         <form onSubmit={handleCreateCourse} className="space-y-8">
           
-          <div className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-6 sm:p-10 backdrop-blur-3xl shadow-2xl">
-            <h3 className="text-xl font-black text-white flex items-center gap-2 mb-8 border-b border-white/5 pb-4">
-              <BookOpen size={22} className="text-violet-400" /> Core Details
+          {/* Section 1: Core Details */}
+          <div className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-6 sm:p-10 backdrop-blur-3xl shadow-2xl space-y-6">
+            <h3 className="text-xl font-black text-white flex items-center gap-2 border-b border-white/5 pb-4">
+              <BookOpen size={22} className="text-violet-400" /> Core Curriculum Details
             </h3>
 
             <div className="space-y-6">
               
               {/* Title */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.courseTitle}</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.courseTitle} *</label>
                 <div className="relative">
                   <Type size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                   <input 
@@ -206,6 +249,52 @@ export default function CreateCoursePage() {
                 </div>
               </div>
 
+              {/* Category & Language */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
+                    <Tag size={12} className="text-violet-400" /> Category
+                  </label>
+                  <select
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm font-bold focus:outline-none focus:border-violet-500/50 shadow-inner"
+                  >
+                    {POPULAR_CATEGORIES.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                    <option value="custom">Other (Custom Category)</option>
+                  </select>
+
+                  {form.category === "custom" && (
+                    <input
+                      type="text"
+                      placeholder="Type custom category..."
+                      value={form.customCategory}
+                      onChange={(e) => setForm({ ...form, customCategory: e.target.value })}
+                      className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white text-xs font-bold mt-2 focus:border-violet-500/50"
+                    />
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
+                    <Globe size={12} className="text-violet-400" /> Primary Language
+                  </label>
+                  <select
+                    value={form.language}
+                    onChange={(e) => setForm({ ...form, language: e.target.value })}
+                    className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-4 text-white text-sm font-bold focus:outline-none focus:border-violet-500/50 shadow-inner"
+                  >
+                    <option value="English">English</option>
+                    <option value="Persian">Persian (فارسی / دری)</option>
+                    <option value="Pashto">Pashto (پښتو)</option>
+                    <option value="Arabic">Arabic (العربية)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Price & Publication Status */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 
                 {/* Price */}
@@ -252,16 +341,17 @@ export default function CreateCoursePage() {
             </div>
           </div>
 
-          <div className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-6 sm:p-10 backdrop-blur-3xl shadow-2xl">
-            <h3 className="text-xl font-black text-white flex items-center gap-2 mb-8 border-b border-white/5 pb-4">
-              <User size={22} className="text-violet-400" /> Instructor & Media
+          {/* Section 2: Instructor & Media */}
+          <div className="bg-[#0a0a0f]/80 border border-white/5 rounded-[2.5rem] p-6 sm:p-10 backdrop-blur-3xl shadow-2xl space-y-8">
+            <h3 className="text-xl font-black text-white flex items-center gap-2 border-b border-white/5 pb-4">
+              <User size={22} className="text-violet-400" /> Instructor & Media Assets
             </h3>
 
             <div className="space-y-8">
               
-              {/* Custom Teacher Dropdown (With Avatars) */}
+              {/* Custom Teacher Dropdown */}
               <div className="space-y-2" ref={dropdownRef}>
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.leadInstructor}</label>
+                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.leadInstructor} *</label>
                 
                 <div className="relative">
                   <button
@@ -341,10 +431,24 @@ export default function CreateCoursePage() {
               <div className="space-y-4 pt-4 border-t border-white/5">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest ml-1">{t.adminPages.courseCoverThumbnail}</label>
+                  
+                  {previewUrl && (
+                    <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-white/10 mb-3 bg-neutral-900 group">
+                      <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                      <button 
+                        type="button" 
+                        onClick={() => handleFileChange(null)}
+                        className="absolute top-3 right-3 p-2 bg-black/70 hover:bg-rose-600 rounded-full text-white transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  )}
+
                   <div className="relative flex items-center">
                     <input 
                       type="file" accept="image/*"
-                      onChange={(e) => setThumbnailFile(e.target.files ? e.target.files[0] : null)}
+                      onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
                       className="w-full text-sm text-neutral-400 file:mr-4 file:py-3 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:tracking-widest file:bg-violet-500/10 file:text-violet-400 hover:file:bg-violet-500/20 cursor-pointer bg-black/40 border border-white/10 rounded-2xl" 
                     />
                   </div>
@@ -369,14 +473,15 @@ export default function CreateCoursePage() {
             </div>
           </div>
 
+          {/* Submit Action */}
           <div className="sticky bottom-6 sm:static pt-4">
             <button 
               type="submit" 
-              disabled={isSubmitting || !form.title || !form.teacher_id}
+              disabled={isSubmitting || !form.title.trim() || !form.teacher_id}
               className="w-full py-5 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white rounded-[1.5rem] text-sm font-black uppercase tracking-widest transition-all shadow-[0_15px_40px_rgba(139,92,246,0.4)] hover:shadow-[0_20px_50px_rgba(139,92,246,0.6)] active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-3"
             >
               {isSubmitting ? <Loader2 size={20} className="animate-spin" /> : <Save size={20}/>}
-              {isSubmitting ? "Deploying Course..." : "Create & Deploy Course"}
+              {isSubmitting ? "Deploying Course..." : "Create & Deploy Masterclass"}
             </button>
           </div>
 

@@ -2,15 +2,48 @@
 
 import { useEffect, useState } from "react";
 import {
-  X, Sparkles, LogOut, Bell, ShieldCheck, LayoutDashboard,
-  Users, UserCheck, BookOpen, Presentation, CircleDollarSign,
-  Trophy, Megaphone, Video, Headset, Settings, Grid, Rss,
-  Newspaper, GraduationCap, ClipboardList
+  X,
+  Sparkles,
+  LogOut,
+  Bell,
+  ShieldCheck,
+  LayoutDashboard,
+  Users,
+  UserCheck,
+  BookOpen,
+  Presentation,
+  CircleDollarSign,
+  Trophy,
+  Megaphone,
+  Video,
+  Headset,
+  Settings,
+  Grid,
+  Rss,
+  Newspaper,
+  GraduationCap,
+  ClipboardList,
+  RefreshCw,
+  ShoppingBag,
+  ChevronLeft,
+  ChevronRight,
+  Menu,
+  ExternalLink,
+  CheckCircle2,
+  AlertCircle
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
+
+type AdminMenuItem = {
+  id: string;
+  name: string;
+  path: string;
+  icon: any;
+  category: "core" | "academics" | "finance" | "support";
+};
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -22,20 +55,45 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [isReady, setIsReady] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const isLiveMeetRoute = pathname.includes('/admin/live-classes/') && pathname.split('/').length > 4;
-  const isTicketChatRoute = pathname.includes('/admin/tickets/chat');
+  // وضعیت دکمه سینک محصولات
+  const [isSyncingProducts, setIsSyncingProducts] = useState(false);
+  const [syncToast, setSyncToast] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  const isLiveMeetRoute = pathname.includes("/admin/live-classes/") && pathname.split("/").length > 4;
+  const isTicketChatRoute = pathname.includes("/admin/tickets/chat");
   const isFullScreenRoute = isLiveMeetRoute || isTicketChatRoute;
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
+  // بازیابی وضعیت جمع‌شدن سایدبار از localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("safi_admin_sidebar_collapsed");
+      if (saved === "true") setIsCollapsed(true);
+    }
+  }, []);
+
+  const toggleSidebarCollapse = () => {
+    const next = !isCollapsed;
+    setIsCollapsed(next);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("safi_admin_sidebar_collapsed", next ? "true" : "false");
+    }
+  };
+
   useEffect(() => {
     const supabase = createClient();
 
     const fetchProfile = async () => {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
       if (user && !userError) {
         const { data: profile } = await supabase
           .from("profiles")
@@ -65,218 +123,537 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     router.replace(`/${currentLocale}/login`);
   };
 
-  const menuItems = [
-    { id: "overview", name: t.admin.overview, path: `/${currentLocale}/admin`, icon: <LayoutDashboard size={22} />, disabled: false },
-    { id: "applications", name: t.admin.applications, path: `/${currentLocale}/admin/application-form`, icon: <ClipboardList size={22} />, disabled: false },
-    { id: "feed", name: t.admin.feed, path: `/${currentLocale}/feed`, icon: <Rss size={22} />, disabled: false },
-    { id: "students", name: t.admin.students, path: `/${currentLocale}/admin/manage-students`, icon: <Users size={22} />, disabled: false },
-    { id: "faculty", name: t.admin.faculty, path: `/${currentLocale}/admin/manage-teachers`, icon: <UserCheck size={22} />, disabled: false },
-    { id: "courses", name: t.admin.courses, path: `/${currentLocale}/admin/courses`, icon: <BookOpen size={22} />, disabled: false },
-    { id: "classes", name: t.admin.classes, path: `/${currentLocale}/admin/classes`, icon: <Presentation size={22} />, disabled: false },
-    { id: "scholarships", name: t.admin.scholarships, path: `/${currentLocale}/admin/scholarships/create`, icon: <GraduationCap size={22} />, disabled: false },
-    { id: "blogs", name: t.admin.blogs, path: `/${currentLocale}/admin/blogs/create`, icon: <Newspaper size={22} />, disabled: false },
-    { id: "finance", name: t.admin.finance, path: `/${currentLocale}/admin/finance`, icon: <CircleDollarSign size={22} />, disabled: false },
-    { id: "honors", name: t.admin.honors, path: `/${currentLocale}/admin/awards`, icon: <Trophy size={22} />, disabled: false },
-    { id: "notices", name: t.admin.notices, path: `/${currentLocale}/admin/announcements`, icon: <Megaphone size={22} />, disabled: false },
-    { id: "liveStudio", name: t.admin.liveStudio, path: `/${currentLocale}/admin/live-classes`, icon: <Video size={22} />, disabled: false },
-    { id: "tickets", name: t.admin.tickets, path: `/${currentLocale}/admin/tickets`, icon: <Headset size={22} />, disabled: false },
-    { id: "settings", name: t.admin.settings, path: `/${currentLocale}/admin/settings`, icon: <Settings size={22} />, disabled: false },
-  ];
+  // تابع اجرای عملیات سینک محصولات تلگرام / فروشگاه
+  const handleSyncProducts = async () => {
+    if (isSyncingProducts) return;
+    setIsSyncingProducts(true);
+    setSyncToast(null);
 
-  const getMenuColor = (id: string) => {
-    switch (id) {
-      case "overview": return "from-rose-500/20 to-rose-500/5 text-rose-400 border-rose-500/30";
-      case "applications": return "from-amber-500/20 to-amber-500/5 text-amber-400 border-amber-500/30";
-      case "feed": return "from-pink-500/20 to-pink-500/5 text-pink-400 border-pink-500/30";
-      case "students": return "from-blue-500/20 to-blue-500/5 text-blue-400 border-blue-500/30";
-      case "faculty": return "from-indigo-500/20 to-indigo-500/5 text-indigo-400 border-indigo-500/30";
-      case "courses": return "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/30";
-      case "classes": return "from-cyan-500/20 to-cyan-500/5 text-cyan-400 border-cyan-500/30";
-      case "scholarships": return "from-sky-500/20 to-sky-500/5 text-sky-400 border-sky-500/30";
-      case "blogs": return "from-violet-500/20 to-violet-500/5 text-violet-400 border-violet-500/30";
-      case "finance": return "from-green-500/20 to-green-500/5 text-green-400 border-green-500/30";
-      case "honors": return "from-amber-500/20 to-amber-500/5 text-amber-400 border-amber-500/30";
-      case "notices": return "from-orange-500/20 to-orange-500/5 text-orange-400 border-orange-500/30";
-      case "liveStudio": return "from-red-500/20 to-red-500/5 text-red-400 border-red-500/30";
-      case "tickets": return "from-pink-500/20 to-pink-500/5 text-pink-400 border-pink-500/30";
-      case "settings": return "from-slate-500/20 to-slate-500/5 text-slate-400 border-slate-500/30";
-      default: return "from-neutral-500/20 to-neutral-500/5 text-neutral-400 border-neutral-500/30";
+    try {
+      const res = await fetch("/api/admin/sync-products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setSyncToast({
+          type: "success",
+          text: data.message || (isRtl ? "همگام‌سازی محصولات با موفقیت انجام شد ✓" : "Products synced successfully ✓"),
+        });
+      } else {
+        throw new Error(data.error || (isRtl ? "خطا در همگام‌سازی محصولات" : "Sync failed"));
+      }
+    } catch (err: any) {
+      console.error("Products sync error:", err);
+      setSyncToast({
+        type: "error",
+        text: err.message || (isRtl ? "ارتباط با سرور برقرار نشد." : "Failed to sync products."),
+      });
+    } finally {
+      setIsSyncingProducts(false);
+      setTimeout(() => setSyncToast(null), 4500);
     }
   };
 
+  const menuItems: AdminMenuItem[] = [
+    // Core
+    { id: "overview", name: t.admin?.overview || (isRtl ? "مرکز فرماندهی" : "Overview"), path: `/${currentLocale}/admin`, icon: LayoutDashboard, category: "core" },
+    { id: "feed", name: t.admin?.feed || (isRtl ? "فید آکادمی" : "Community Feed"), path: `/${currentLocale}/feed`, icon: Rss, category: "core" },
+    
+    // Academics
+    { id: "courses", name: t.admin?.courses || (isRtl ? "دوره‌های آموزشی" : "Courses"), path: `/${currentLocale}/admin/courses`, icon: BookOpen, category: "academics" },
+    { id: "classes", name: t.admin?.classes || (isRtl ? "صنف‌های فعال" : "Class Cohorts"), path: `/${currentLocale}/admin/classes`, icon: Presentation, category: "academics" },
+    { id: "liveStudio", name: t.admin?.liveStudio || (isRtl ? "استودیو پخش زنده" : "Live Studio"), path: `/${currentLocale}/admin/live-classes`, icon: Video, category: "academics" },
+    { id: "students", name: t.admin?.students || (isRtl ? "دانشجویان" : "Students"), path: `/${currentLocale}/admin/manage-students`, icon: Users, category: "academics" },
+    { id: "faculty", name: t.admin?.faculty || (isRtl ? "هیئت علمی" : "Faculty"), path: `/${currentLocale}/admin/manage-teachers`, icon: UserCheck, category: "academics" },
+    { id: "applications", name: t.admin?.applications || (isRtl ? "درخواست‌های تدریس" : "Applications"), path: `/${currentLocale}/admin/application-form`, icon: ClipboardList, category: "academics" },
+
+    // Finance & Growth
+    { id: "finance", name: t.admin?.finance || (isRtl ? "خزانه‌داری و مالی" : "Finance"), path: `/${currentLocale}/admin/finance`, icon: CircleDollarSign, category: "finance" },
+    { id: "scholarships", name: t.admin?.scholarships || (isRtl ? "بورسیه‌ها" : "Scholarships"), path: `/${currentLocale}/admin/scholarships/create`, icon: GraduationCap, category: "finance" },
+    { id: "honors", name: t.admin?.honors || (isRtl ? "افتخارات و نشان‌ها" : "Honors & Badges"), path: `/${currentLocale}/admin/awards`, icon: Trophy, category: "finance" },
+
+    // Support & Communications
+    { id: "tickets", name: t.admin?.tickets || (isRtl ? "تیکت‌های پشتیبانی" : "Support Tickets"), path: `/${currentLocale}/admin/tickets`, icon: Headset, category: "support" },
+    { id: "notices", name: t.admin?.notices || (isRtl ? "اعلانات سراسری" : "Broadcasts"), path: `/${currentLocale}/admin/announcements`, icon: Megaphone, category: "support" },
+    { id: "blogs", name: t.admin?.blogs || (isRtl ? "وبلاگ و اخبار" : "Academy Blog"), path: `/${currentLocale}/admin/blogs/create`, icon: Newspaper, category: "support" },
+    { id: "settings", name: t.admin?.settings || (isRtl ? "تنظیمات سامانه" : "Settings"), path: `/${currentLocale}/admin/settings`, icon: Settings, category: "support" },
+  ];
+
+  const categories = [
+    { key: "core", label: isRtl ? "فرماندهی و شبکه" : "Core & Network" },
+    { key: "academics", label: isRtl ? "آموزش و کلاس‌ها" : "Academics & Faculty" },
+    { key: "finance", label: isRtl ? "خزانه‌داری و مالی" : "Finance & Growth" },
+    { key: "support", label: isRtl ? "پشتیبانی و ارتباطات" : "Support & Operations" },
+  ];
+
   if (!isReady) {
     return (
-      <div dir={t.dir} className="min-h-screen flex flex-col items-center justify-center bg-[#020202] text-white">
-        <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_25px_rgba(244,63,94,0.4)]"></div>
-        <span className="text-rose-500 font-bold uppercase tracking-widest text-xs animate-pulse">{t.admin.initializing}</span>
+      <div dir={t.dir} className="min-h-screen flex flex-col items-center justify-center bg-[#020205] text-white">
+        <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_25px_rgba(244,63,94,0.4)]" />
+        <span className="text-rose-500 font-bold uppercase tracking-widest text-xs animate-pulse">
+          {t.admin?.initializing || (isRtl ? "در حال اتصال به پنل مدیریت ارشد..." : "Initializing Command Center...")}
+        </span>
       </div>
     );
   }
 
   return (
-    <div dir={t.dir} className="flex h-screen bg-[#030305] text-white font-sans overflow-hidden relative selection:bg-rose-500 selection:text-white">
+    <div
+      dir={t.dir}
+      className="flex h-screen bg-[#020205] text-white font-sans overflow-hidden relative selection:bg-rose-500 selection:text-white"
+    >
+      {/* Background Ambient Glows */}
+      <div
+        className="fixed top-[-15%] left-[-15%] w-[50vw] h-[50vw] bg-rose-600/[0.04] rounded-full blur-[140px] pointer-events-none z-0 animate-pulse"
+        style={{ animationDuration: "9s" }}
+      />
+      <div
+        className="fixed bottom-[-15%] right-[-15%] w-[45vw] h-[45vw] bg-indigo-600/[0.03] rounded-full blur-[140px] pointer-events-none z-0 animate-pulse"
+        style={{ animationDuration: "11s" }}
+      />
 
-      <div className="absolute top-[-15%] left-[-15%] w-[50vw] h-[50vw] bg-rose-600/10 rounded-full blur-[140px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '8s' }}></div>
-      <div className="absolute bottom-[-15%] right-[-15%] w-[40vw] h-[40vw] bg-purple-700/10 rounded-full blur-[130px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '6s' }}></div>
+      {/* ================= TOAST FOR PRODUCT SYNC ================= */}
+      {syncToast && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] animate-[fadeInDown_0.3s_ease-out] w-full max-w-md px-4 pointer-events-none">
+          <div
+            className={`pointer-events-auto flex items-center gap-3 p-4 rounded-2xl border backdrop-blur-2xl shadow-2xl ${
+              syncToast.type === "success"
+                ? "bg-emerald-950/90 border-emerald-500/40 text-emerald-200 shadow-[0_10px_30px_rgba(16,185,129,0.3)]"
+                : "bg-rose-950/90 border-rose-500/40 text-rose-200 shadow-[0_10px_30px_rgba(244,63,94,0.3)]"
+            }`}
+          >
+            {syncToast.type === "success" ? (
+              <CheckCircle2 size={20} className="text-emerald-400 shrink-0" />
+            ) : (
+              <AlertCircle size={20} className="text-rose-400 shrink-0" />
+            )}
+            <p className="text-xs sm:text-sm font-bold flex-1">{syncToast.text}</p>
+            <button
+              onClick={() => setSyncToast(null)}
+              className="text-white/40 hover:text-white p-1 rounded-lg transition-colors"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      )}
 
-      {/* ================= 1. DESKTOP SIDEBAR ================= */}
-      <aside className={`hidden lg:flex w-[295px] bg-[#060609]/90 backdrop-blur-2xl ${isRtl ? 'border-l border-r-0' : 'border-r border-l-0'} border-white/[0.06] flex-col relative z-20 shrink-0 p-4 shadow-[15px_0_40px_rgba(0,0,0,0.9)]`}>
-        <div className="mb-5 p-4 rounded-2xl bg-gradient-to-br from-[#0c0c14] to-[#07070a] shadow-[inset_0_2px_6px_rgba(0,0,0,0.9),0_6px_20px_rgba(0,0,0,0.5)] border border-white/5 shrink-0 relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-rose-500 to-purple-500 rounded-2xl opacity-20 blur group-hover:opacity-40 transition duration-500"></div>
-          <Link href={`/${currentLocale}/admin`} className="flex items-center gap-3.5 relative z-10">
-            <div className="relative flex items-center justify-center transform group-hover:rotate-6 group-hover:scale-110 transition-transform duration-300">
-              <div className="absolute inset-0 bg-rose-500/30 blur-[10px] rounded-full"></div>
-              <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(244,63,94,0.7)]" />
-            </div>
-            <div>
-              <h2 className="text-xs font-black text-white tracking-widest uppercase flex items-center gap-1.5">
-                Safi Academy <Sparkles size={10} className="text-rose-400 animate-spin" style={{ animationDuration: '4s' }} />
-              </h2>
-              <p className="text-[9px] text-rose-500 font-bold uppercase tracking-[0.2em] mt-0.5">{t.admin.commandCenter}</p>
-            </div>
-          </Link>
+      {/* ================= 1. DESKTOP ADVANCED SIDEBAR ================= */}
+      <aside
+        className={`hidden lg:flex ${
+          isCollapsed ? "w-[84px]" : "w-[290px]"
+        } bg-[#06060c]/95 backdrop-blur-3xl ${
+          isRtl ? "border-l border-r-0" : "border-r border-l-0"
+        } border-white/[0.06] flex-col relative z-30 shrink-0 transition-all duration-300 p-3.5 shadow-[15px_0_40px_rgba(0,0,0,0.8)]`}
+      >
+        {/* Brand Header */}
+        <div className="mb-3 p-3 rounded-2xl bg-gradient-to-br from-[#0c0c16] to-[#07070d] border border-white/5 shadow-inner relative group shrink-0">
+          <div className="flex items-center justify-between">
+            <Link
+              href={`/${currentLocale}/admin`}
+              className={`flex items-center gap-3 relative z-10 ${isCollapsed ? "justify-center w-full" : ""}`}
+            >
+              <div className="relative flex items-center justify-center shrink-0">
+                <div className="absolute inset-0 bg-rose-500/25 blur-[10px] rounded-full" />
+                <img
+                  src="/logo-without-b.png"
+                  alt="Safi Academy"
+                  className="relative z-10 w-9 h-9 object-contain drop-shadow-[0_0_10px_rgba(244,63,94,0.7)]"
+                />
+              </div>
+
+              {!isCollapsed && (
+                <div className="min-w-0">
+                  <h2 className="text-xs font-black text-white tracking-widest uppercase flex items-center gap-1.5 truncate">
+                    Safi Academy
+                    <Sparkles size={11} className="text-rose-400 animate-spin" style={{ animationDuration: "5s" }} />
+                  </h2>
+                  <p className="text-[9px] text-rose-400 font-bold uppercase tracking-[0.2em] mt-0.5 truncate">
+                    {t.admin?.commandCenter || (isRtl ? "مرکز فرماندهی ارشد" : "Command Center")}
+                  </p>
+                </div>
+              )}
+            </Link>
+          </div>
         </div>
 
-        <nav className={`flex-1 overflow-y-auto space-y-2 custom-scrollbar ${isRtl ? 'pl-1 pr-0' : 'pr-1 pl-0'}`}>
-          {menuItems.map((item) => {
-            if (item.disabled) return null;
+        {/* Sync Reseller Products Button in Sidebar */}
+        <div className="mb-3 px-1">
+          <button
+            type="button"
+            onClick={handleSyncProducts}
+            disabled={isSyncingProducts}
+            className={`w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/10 hover:from-amber-500/20 hover:to-orange-500/20 border border-amber-500/25 text-amber-300 hover:text-white transition-all text-xs font-bold flex items-center ${
+              isCollapsed ? "justify-center" : "justify-between"
+            } shadow-[0_0_15px_rgba(245,158,11,0.15)] group active:scale-95 disabled:opacity-50`}
+            title={isRtl ? "همگام‌سازی لحظه‌ای محصولات فروشگاه و تلگرام" : "Sync Reseller Products"}
+          >
+            <div className="flex items-center gap-2">
+              <RefreshCw
+                size={15}
+                className={`text-amber-400 shrink-0 ${isSyncingProducts ? "animate-spin text-white" : "group-hover:rotate-180 transition-transform duration-500"}`}
+              />
+              {!isCollapsed && (
+                <span className="text-[11px] font-black truncate">
+                  {isSyncingProducts ? (isRtl ? "در حال سینک..." : "Syncing...") : (isRtl ? "سینک محصولات" : "Sync Products")}
+                </span>
+              )}
+            </div>
+            {!isCollapsed && (
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+            )}
+          </button>
+        </div>
 
-            const isActive = item.path === `/${currentLocale}/admin`
-              ? pathname === `/${currentLocale}/admin`
-              : pathname.startsWith(item.path);
+        {/* Navigation Links (Categorized) */}
+        <nav className={`flex-1 overflow-y-auto space-y-4 custom-scrollbar ${isRtl ? "pl-1 pr-0" : "pr-1 pl-0"}`}>
+          {categories.map((cat) => {
+            const catItems = menuItems.filter((i) => i.category === cat.key);
+            if (catItems.length === 0) return null;
 
             return (
-              <Link
-                key={item.id} href={item.path}
-                className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-bold text-xs transition-all duration-300 relative group overflow-hidden ${isActive ? `bg-gradient-to-r from-[#1c1114] to-[#0a0a0e] text-white shadow-[inset_0_2px_5px_rgba(0,0,0,0.9),0_0_20px_rgba(244,63,94,0.15)] border border-rose-500/30 ${isRtl ? '-translate-x-1' : 'translate-x-1'}` : "bg-[#08080c]/80 text-neutral-400 hover:text-white hover:bg-[#0c0c14] shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-white/[0.03] hover:border-white/10"
-                  }`}
-              >
-                {isActive && <div className={`absolute ${isRtl ? 'right-0 rounded-l-full' : 'left-0 rounded-r-full'} top-1/2 -translate-y-1/2 w-1 h-6 bg-rose-500 shadow-[0_0_10px_#f43f5e]`}></div>}
-                <span className={`transition-all duration-300 ${isActive ? "scale-110 text-rose-400" : "group-hover:scale-110 group-hover:text-white"}`}>{item.icon}</span>
-                <span className="tracking-wide">{item.name}</span>
-              </Link>
+              <div key={cat.key} className="space-y-1">
+                {!isCollapsed && (
+                  <p className="text-[9px] font-black uppercase tracking-widest text-neutral-500 px-3 py-1">
+                    {cat.label}
+                  </p>
+                )}
+
+                {catItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive =
+                    item.path === `/${currentLocale}/admin`
+                      ? pathname === `/${currentLocale}/admin`
+                      : pathname.startsWith(item.path);
+
+                  return (
+                    <Link
+                      key={item.id}
+                      href={item.path}
+                      title={isCollapsed ? item.name : undefined}
+                      className={`flex items-center gap-3.5 px-3 py-2.5 rounded-xl font-bold text-xs transition-all duration-200 relative group overflow-hidden ${
+                        isActive
+                          ? `bg-gradient-to-r from-rose-950/40 via-[#181116] to-[#0a0a10] text-white shadow-[0_0_15px_rgba(244,63,94,0.15)] border border-rose-500/30 ${
+                              isRtl ? "-translate-x-0.5" : "translate-x-0.5"
+                            }`
+                          : "bg-transparent text-neutral-400 hover:text-white hover:bg-white/[0.03] border border-transparent hover:border-white/5"
+                      } ${isCollapsed ? "justify-center px-2" : ""}`}
+                    >
+                      {isActive && (
+                        <div
+                          className={`absolute ${
+                            isRtl ? "right-0 rounded-l-full" : "left-0 rounded-r-full"
+                          } top-1/2 -translate-y-1/2 w-1 h-5 bg-rose-500 shadow-[0_0_10px_#f43f5e]`}
+                        />
+                      )}
+
+                      <span
+                        className={`transition-all duration-200 shrink-0 ${
+                          isActive
+                            ? "scale-110 text-rose-400"
+                            : "group-hover:scale-110 group-hover:text-white text-neutral-400"
+                        }`}
+                      >
+                        <Icon size={18} />
+                      </span>
+
+                      {!isCollapsed && (
+                        <span className="tracking-wide truncate text-xs font-semibold">{item.name}</span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
             );
           })}
         </nav>
 
-        <div className="mt-4 pt-4 border-t border-white/[0.06] space-y-3 shrink-0">
-          <div className="bg-[#09090e] border border-white/[0.05] p-3 rounded-2xl flex items-center justify-between shadow-[inset_0_2px_5px_rgba(0,0,0,0.8)] relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-r from-rose-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <div className="flex items-center gap-3 overflow-hidden relative z-10">
-              <div className="w-10 h-10 rounded-xl border border-rose-500/40 overflow-hidden shrink-0 bg-neutral-900 flex items-center justify-center shadow-inner group-hover:border-rose-500 transition-colors">
-                {userProfile?.avatar_url ? <img src={userProfile.avatar_url} alt="Admin" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" /> : <span className="text-rose-500 font-bold">{userProfile?.first_name?.charAt(0) || "A"}</span>}
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-white truncate flex items-center gap-1.5">{userProfile?.first_name} {userProfile?.last_name} <ShieldCheck size={12} className="text-rose-400 shrink-0" /></p>
-                <p className="text-[9px] text-rose-400 font-black tracking-widest uppercase mt-0.5">{userProfile?.role?.replace('_', ' ') || 'Admin'}</p>
-              </div>
+        {/* Sidebar Footer: Profile, Collapse Toggle & Sign Out */}
+        <div className="mt-2 pt-3 border-t border-white/[0.06] space-y-2 shrink-0">
+          {/* Collapse/Expand Desktop Button */}
+          <button
+            onClick={toggleSidebarCollapse}
+            className={`w-full py-2 px-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 text-neutral-400 hover:text-white text-[11px] font-bold flex items-center transition-all ${
+              isCollapsed ? "justify-center" : "justify-between"
+            }`}
+            title={isCollapsed ? (isRtl ? "باز کردن سایدبار" : "Expand Sidebar") : (isRtl ? "بستن سایدبار" : "Collapse Sidebar")}
+          >
+            {!isCollapsed && <span>{isRtl ? "جمع‌کردن منو" : "Collapse Menu"}</span>}
+            {isCollapsed ? (
+              isRtl ? <ChevronLeft size={16} /> : <ChevronRight size={16} />
+            ) : (
+              isRtl ? <ChevronRight size={16} /> : <ChevronLeft size={16} />
+            )}
+          </button>
+
+          {/* User Profile Mini Badge */}
+          <div
+            className={`p-2.5 rounded-xl bg-white/[0.02] border border-white/5 flex items-center gap-3 overflow-hidden ${
+              isCollapsed ? "justify-center" : ""
+            }`}
+          >
+            <div className="w-8 h-8 rounded-lg border border-rose-500/40 overflow-hidden shrink-0 bg-neutral-900 flex items-center justify-center">
+              {userProfile?.avatar_url ? (
+                <img src={userProfile.avatar_url} alt="Admin" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-rose-400 font-bold text-xs">{userProfile?.first_name?.charAt(0) || "A"}</span>
+              )}
             </div>
+
+            {!isCollapsed && (
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-white truncate flex items-center gap-1">
+                  {userProfile?.first_name} {userProfile?.last_name}
+                  <ShieldCheck size={11} className="text-rose-400 shrink-0" />
+                </p>
+                <p className="text-[9px] text-rose-400 font-black tracking-widest uppercase truncate">
+                  {userProfile?.role?.replace("_", " ") || "Admin"}
+                </p>
+              </div>
+            )}
           </div>
-          <button onClick={handleLogout} className="flex items-center justify-center gap-2 px-4 py-3 text-neutral-400 hover:text-red-400 bg-[#08080c] hover:bg-red-500/10 rounded-2xl text-xs font-bold transition-all w-full border border-white/[0.04] hover:border-red-500/30 shadow-[0_2px_8px_rgba(0,0,0,0.5)] group cursor-pointer">
-            <LogOut size={14} className={`group-hover:${isRtl ? 'translate-x-1' : '-translate-x-1'} transition-transform ${isRtl ? 'rotate-180' : ''}`} /> {t.admin.secureSignOut}
+
+          {/* Secure Logout */}
+          <button
+            onClick={handleLogout}
+            className={`flex items-center gap-2 py-2.5 px-3 text-neutral-400 hover:text-rose-400 bg-white/[0.02] hover:bg-rose-500/10 rounded-xl text-xs font-bold transition-all w-full border border-white/[0.04] hover:border-rose-500/30 ${
+              isCollapsed ? "justify-center" : "justify-start"
+            }`}
+            title={isRtl ? "خروج امن از سیستم" : "Sign Out"}
+          >
+            <LogOut size={15} className={isRtl ? "rotate-180" : ""} />
+            {!isCollapsed && <span>{t.admin?.secureSignOut || (isRtl ? "خروج امن" : "Sign Out")}</span>}
           </button>
         </div>
       </aside>
 
-      {/* ================= 2. DESKTOP FLOATING NOTIFICATION ================= */}
-      <div className={`hidden lg:flex absolute top-6 ${isRtl ? 'left-10' : 'right-10'} z-50`}>
-        <Link href={`/${currentLocale}/admin/announcements`} className="w-12 h-12 bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-rose-400 hover:border-rose-500/40 transition-all relative group shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
-          <Bell className="w-5 h-5 transition-transform group-hover:rotate-12 group-hover:scale-110" />
-          <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_10px_#f43f5e]"></span>
-        </Link>
+      {/* ================= 2. DESKTOP EXECUTIVE TOP NAVIGATION BAR ================= */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header className="hidden lg:flex h-16 border-b border-white/[0.06] bg-[#05050c]/85 backdrop-blur-2xl px-6 items-center justify-between shrink-0 z-20">
+          <div className="flex items-center gap-3">
+            <span className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/5 text-[10px] font-black uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+              <span>{isRtl ? "سرور مرکزی آنلاین" : "Server Online"}</span>
+            </span>
+
+            <span className="text-xs font-bold text-neutral-400">/</span>
+
+            <span className="text-xs font-black text-white">
+              {menuItems.find((i) => pathname === i.path || pathname.startsWith(i.path + "/"))?.name ||
+                (isRtl ? "داشبورد مدیریت" : "Admin Panel")}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Sync Products Fast Button */}
+            <button
+              onClick={handleSyncProducts}
+              disabled={isSyncingProducts}
+              className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500/20 hover:to-orange-500/20 border border-amber-500/30 text-amber-300 hover:text-white text-xs font-bold flex items-center gap-2 transition-all shadow-sm active:scale-95 disabled:opacity-50"
+              title={isRtl ? "همگام‌سازی محصولات تلگرام و فروشگاه" : "Sync Reseller Products"}
+            >
+              <RefreshCw size={13} className={isSyncingProducts ? "animate-spin text-white" : "text-amber-400"} />
+              <span>{isSyncingProducts ? (isRtl ? "در حال سینک..." : "Syncing...") : (isRtl ? "سینک محصولات" : "Sync Products")}</span>
+            </button>
+
+            {/* Link to Public Store */}
+            <Link
+              href={`/${currentLocale}/store`}
+              target="_blank"
+              className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-neutral-300 hover:text-white flex items-center gap-1.5 transition-colors"
+            >
+              <ShoppingBag size={13} className="text-neutral-400" />
+              <span>{isRtl ? "مشاهده فروشگاه" : "Storefront"}</span>
+              <ExternalLink size={10} className="opacity-60" />
+            </Link>
+
+            {/* Announcements Bell */}
+            <Link
+              href={`/${currentLocale}/admin/announcements`}
+              className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-rose-400 transition-colors relative"
+            >
+              <Bell size={16} />
+              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_#f43f5e]" />
+            </Link>
+          </div>
+        </header>
+
+        {/* ================= 3. MOBILE TOP HEADER ================= */}
+        {!isFullScreenRoute && (
+          <div className="lg:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-4 bg-[#030305]/95 backdrop-blur-2xl border-b border-white/[0.06] z-40 shadow-md">
+            <div className="flex items-center gap-2.5">
+              <div className="relative flex items-center justify-center">
+                <div className="absolute inset-0 bg-rose-500/20 blur-[10px] rounded-full" />
+                <img
+                  src="/logo-without-b.png"
+                  alt="Safi Academy"
+                  className="relative z-10 w-8 h-8 object-contain drop-shadow-[0_0_8px_rgba(244,63,94,0.6)]"
+                />
+              </div>
+              <span className="font-black text-xs tracking-widest text-white uppercase">Safi Academy</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleSyncProducts}
+                disabled={isSyncingProducts}
+                className="p-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300"
+                title="Sync Products"
+              >
+                <RefreshCw size={15} className={isSyncingProducts ? "animate-spin" : ""} />
+              </button>
+
+              <Link
+                href={`/${currentLocale}/admin/announcements`}
+                className="w-9 h-9 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-300 hover:text-rose-400 relative"
+              >
+                <Bell size={16} />
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_6px_#f43f5e]" />
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* ================= 4. MAIN CONTENT ROUTE ================= */}
+        <main
+          className={`flex-1 relative z-10 overflow-y-auto custom-scrollbar ${
+            isFullScreenRoute ? "pt-0 pb-0" : "pt-16 pb-28 lg:pt-0 lg:pb-0"
+          }`}
+        >
+          {children}
+        </main>
       </div>
 
-      {/* ================= 3. MOBILE TOP HEADER ================= */}
+      {/* ================= 5. FLOATING MOBILE BOTTOM BAR ================= */}
       {!isFullScreenRoute && (
-        <div className="lg:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-5 bg-[#030305]/90 backdrop-blur-2xl border-b border-white/[0.06] z-40 shadow-md">
-          <div className="flex items-center gap-3 relative">
-            <div className="absolute inset-0 bg-rose-500/20 blur-[12px] rounded-full scale-150"></div>
-            <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-8 h-8 object-contain filter drop-shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
-            <span className="relative z-10 font-black text-xs tracking-widest text-white uppercase">Safi Academy</span>
-          </div>
-          <Link href={`/${currentLocale}/admin/announcements`} className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-rose-400 transition-colors relative shadow-inner">
-            <Bell size={18} />
-            <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_6px_#f43f5e]"></span>
+        <div className="lg:hidden fixed bottom-5 left-4 right-4 h-[72px] bg-[#090912]/95 backdrop-blur-3xl border border-white/10 z-50 px-3 rounded-[2.5rem] flex justify-between items-center shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_20px_rgba(244,63,94,0.1)]">
+          <Link
+            href={`/${currentLocale}/admin`}
+            className={`relative flex flex-col items-center justify-center w-[25%] h-full transition-colors ${
+              pathname === `/${currentLocale}/admin` ? "text-rose-400" : "text-neutral-500"
+            }`}
+          >
+            <LayoutDashboard size={20} />
+            <span className="text-[9px] font-black tracking-widest uppercase mt-1">
+              {t.admin?.overview || (isRtl ? "داشبورد" : "Overview")}
+            </span>
           </Link>
-        </div>
-      )}
 
-      {/* ================= 4. MAIN CONTENT ================= */}
-      <main className={`flex-1 relative z-10 h-screen overflow-y-auto custom-scrollbar ${isFullScreenRoute ? 'pt-0 pb-0' : 'pt-16 pb-32'} lg:pt-0 lg:pb-0`}>
-        {children}
-      </main>
+          <Link
+            href={`/${currentLocale}/admin/manage-students`}
+            className={`relative flex flex-col items-center justify-center w-[25%] h-full transition-colors ${
+              pathname.includes("/admin/manage-students") ? "text-blue-400" : "text-neutral-500"
+            }`}
+          >
+            <Users size={20} />
+            <span className="text-[9px] font-black tracking-widest uppercase mt-1">
+              {t.admin?.students || (isRtl ? "شاگردان" : "Students")}
+            </span>
+          </Link>
 
-      {/* ================= 5. FLOATING MOBILE BOTTOM NAV ================= */}
-      {!isFullScreenRoute && (
-        <div className="lg:hidden fixed bottom-6 left-4 right-4 h-[75px] bg-[#09090e]/95 backdrop-blur-3xl border border-white/10 z-50 px-2 rounded-[2.5rem] flex justify-between items-center shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_20px_rgba(244,63,94,0.05)]">
-          <Link href={`/${currentLocale}/admin`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
-            {pathname === `/${currentLocale}/admin` && <div className="absolute inset-0 bg-gradient-to-t from-rose-500/20 to-transparent rounded-[2rem] opacity-100"></div>}
-            <LayoutDashboard size={22} className={`z-10 transition-all ${pathname === `/${currentLocale}/admin` ? "-translate-y-2 text-rose-400" : "text-neutral-500 group-hover:text-neutral-300"}`} />
-            <span className={`absolute bottom-2 text-[9px] font-black tracking-widest uppercase transition-all z-10 ${pathname === `/${currentLocale}/admin` ? "text-rose-400 opacity-100 translate-y-0" : "text-neutral-500 opacity-0 translate-y-2"}`}>{t.admin.overview}</span>
+          <Link
+            href={`/${currentLocale}/admin/finance`}
+            className={`relative flex flex-col items-center justify-center w-[25%] h-full transition-colors ${
+              pathname.includes("/admin/finance") ? "text-emerald-400" : "text-neutral-500"
+            }`}
+          >
+            <CircleDollarSign size={20} />
+            <span className="text-[9px] font-black tracking-widest uppercase mt-1">
+              {t.admin?.finance || (isRtl ? "مالی" : "Finance")}
+            </span>
           </Link>
-          <Link href={`/${currentLocale}/admin/manage-students`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
-            <Users size={22} className={`z-10 transition-all ${pathname.includes("/admin/manage-students") ? "-translate-y-2 text-blue-400" : "text-neutral-500 group-hover:text-neutral-300"}`} />
-            <span className={`absolute bottom-2 text-[9px] font-black tracking-widest uppercase transition-all z-10 ${pathname.includes("/admin/manage-students") ? "text-blue-400 opacity-100 translate-y-0" : "text-neutral-500 opacity-0 translate-y-2"}`}>{t.admin.students}</span>
-          </Link>
-          <Link href={`/${currentLocale}/feed`} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
-            <Rss size={22} className={`z-10 transition-all ${pathname.startsWith(`/${currentLocale}/feed`) ? "-translate-y-2 text-pink-400" : "text-neutral-500 group-hover:text-neutral-300"}`} />
-            <span className={`absolute bottom-2 text-[9px] font-black tracking-widest uppercase transition-all z-10 ${pathname.startsWith(`/${currentLocale}/feed`) ? "text-pink-400 opacity-100 translate-y-0" : "text-neutral-500 opacity-0 translate-y-2"}`}>{t.admin.feed}</span>
-          </Link>
-          <button onClick={() => setIsMobileMenuOpen(true)} className="relative flex flex-col items-center justify-center w-[25%] h-full group">
-            <Grid size={22} className="z-10 transition-all text-neutral-500 group-hover:text-neutral-300" />
-            <span className="absolute bottom-2 text-[9px] font-black tracking-widest uppercase transition-all z-10 text-neutral-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0">{t.admin.menu}</span>
+
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="relative flex flex-col items-center justify-center w-[25%] h-full text-neutral-500 hover:text-white transition-colors"
+          >
+            <Grid size={20} />
+            <span className="text-[9px] font-black tracking-widest uppercase mt-1">
+              {t.admin?.menu || (isRtl ? "منو کامل" : "Menu")}
+            </span>
           </button>
         </div>
       )}
 
-      {/* ================= 6. MOBILE MENU TERMINAL (Drawer) ================= */}
+      {/* ================= 6. MOBILE FULLSCREEN MENU DRAWER ================= */}
       {isMobileMenuOpen && (
-        <div dir={t.dir} className="fixed inset-0 bg-[#030305]/95 backdrop-blur-3xl z-[100] flex flex-col animate-[fadeIn_0.2s_ease-out] lg:hidden">
-          <div className="h-16 px-5 border-b border-white/[0.06] flex justify-between items-center bg-black/50 shrink-0">
+        <div
+          dir={t.dir}
+          className="fixed inset-0 bg-[#030307]/98 backdrop-blur-3xl z-[100] flex flex-col animate-[fadeIn_0.2s_ease-out] lg:hidden"
+        >
+          {/* Drawer Header */}
+          <div className="h-16 px-5 border-b border-white/[0.08] flex justify-between items-center bg-black/60 shrink-0">
             <span className="font-black text-white uppercase tracking-widest text-xs flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span> {t.admin.commandCenterTools}
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+              <span>{t.admin?.commandCenterTools || (isRtl ? "فهرست ابزارهای مدیریت ارشد" : "Command Tools")}</span>
             </span>
-            <button onClick={() => setIsMobileMenuOpen(false)} className="w-8 h-8 flex items-center justify-center text-neutral-400 hover:text-white bg-white/5 rounded-full border border-white/10 transition-colors">
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="w-8 h-8 flex items-center justify-center text-neutral-400 hover:text-white bg-white/5 rounded-full border border-white/10 transition-colors"
+            >
               <X size={16} />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-5 custom-scrollbar">
-            <div className="grid grid-cols-2 gap-3.5">
+          <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar">
+            {/* Sync Products Tile */}
+            <button
+              onClick={handleSyncProducts}
+              disabled={isSyncingProducts}
+              className="w-full p-4 rounded-2xl bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/40 text-amber-300 font-black text-xs flex items-center justify-between shadow-lg"
+            >
+              <div className="flex items-center gap-3">
+                <RefreshCw size={18} className={isSyncingProducts ? "animate-spin" : ""} />
+                <span>{isSyncingProducts ? (isRtl ? "در حال سینک محصولات..." : "Syncing Products...") : (isRtl ? "همگام‌سازی محصولات تلگرام و فروشگاه" : "Sync Reseller Products")}</span>
+              </div>
+              <Sparkles size={16} className="text-amber-400" />
+            </button>
+
+            {/* All Menu Items Grid */}
+            <div className="grid grid-cols-2 gap-3">
               {menuItems.map((item) => {
-                const isActive = item.path === `/${currentLocale}/admin`
-                  ? pathname === `/${currentLocale}/admin`
-                  : pathname.startsWith(item.path);
-
-                const colorClasses = getMenuColor(item.id);
-
-                if (item.disabled) return null;
+                const Icon = item.icon;
+                const isActive =
+                  item.path === `/${currentLocale}/admin`
+                    ? pathname === `/${currentLocale}/admin`
+                    : pathname.startsWith(item.path);
 
                 return (
                   <Link
                     key={item.id}
                     href={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`relative flex flex-col items-center justify-center gap-2 p-5 rounded-[1.8rem] font-bold transition-all border bg-gradient-to-br hover:scale-105 active:scale-95 shadow-lg ${colorClasses} ${isActive ? "ring-2 ring-white/20 shadow-[0_0_20px_rgba(255,255,255,0.1)] opacity-150 scale-102" : "opacity-90 hover:opacity-100"
-                      }`}
+                    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl font-bold text-center border transition-all ${
+                      isActive
+                        ? "bg-rose-500/20 border-rose-500/50 text-white shadow-[0_0_20px_rgba(244,63,94,0.2)]"
+                        : "bg-white/[0.03] border-white/5 text-neutral-300 hover:text-white hover:bg-white/[0.06]"
+                    }`}
                   >
-                    <div className={isActive ? "text-white scale-110" : ""}>{item.icon}</div>
-                    <span className={`text-[10px] tracking-widest uppercase text-center line-clamp-1 mt-1 ${isActive ? "text-white" : ""}`}>{item.name}</span>
-                    {item.id === "liveStudio" && <div className={`absolute top-3 ${isRtl ? 'left-3' : 'right-3'} w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_#ef4444]`}></div>}
+                    <Icon size={22} className={isActive ? "text-rose-400" : "text-neutral-400"} />
+                    <span className="text-[11px] font-black tracking-wider truncate w-full">{item.name}</span>
                   </Link>
                 );
               })}
             </div>
 
-            <div className="mt-8 pt-6 border-t border-white/10 space-y-4 pb-8">
-              <button onClick={handleLogout} className="flex items-center justify-center gap-2 px-4 py-4 text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-2xl font-bold transition-all w-full border border-red-500/20 shadow-lg cursor-pointer">
-                <LogOut size={16} className={isRtl ? "rotate-180" : ""} /> {t.admin.secureSignOut}
+            {/* Logout Footer */}
+            <div className="pt-4 border-t border-white/10 pb-12">
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-center gap-2 px-4 py-3.5 text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 rounded-2xl font-bold transition-all w-full border border-rose-500/20 shadow-lg text-xs"
+              >
+                <LogOut size={16} className={isRtl ? "rotate-180" : ""} />
+                <span>{t.admin?.secureSignOut || (isRtl ? "خروج امن از حساب مدیریت" : "Sign Out")}</span>
               </button>
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 }

@@ -54,6 +54,10 @@ export async function middleware(request: NextRequest) {
   }
 
   const currentLocale = pathname.split('/')[1] || defaultLocale;
+  const isRtl = ['fa', 'ps', 'ar', 'ur'].includes(currentLocale);
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-locale', currentLocale);
+  requestHeaders.set('x-dir', isRtl ? 'rtl' : 'ltr');
 
   // ۵. تعیین وضعیت مسیرهای محافظت‌شده در برابر مسیرهای عمومی
   const isTeacherOnboarding = pathname.includes('/teacher-onboarding') || pathname.includes('/teacher-register');
@@ -76,13 +80,13 @@ export async function middleware(request: NextRequest) {
   // این تغییر زمان پاسخگویی صفحات عمومی را از 800ms به زیر 10ms کاهش می‌دهد!
   if (!isProtectedRoute && !isAuthPage) {
     return NextResponse.next({
-      request: { headers: request.headers },
+      request: { headers: requestHeaders },
     });
   }
 
   // ۶. برای مسیرهای پنل کاربری یا ورود، احراز هویت را بررسی کن
   let response = NextResponse.next({
-    request: { headers: request.headers },
+    request: { headers: requestHeaders },
   });
 
   const supabase = createServerClient(

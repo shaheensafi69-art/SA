@@ -81,6 +81,12 @@ export default async function DynamicLocaleLayout({
       data-locale={locale}
       className={`w-full h-full ${isRtl ? "font-vazirmatn" : "font-sans"} text-start`}
     >
+      <script
+        id="html-dir-sync"
+        dangerouslySetInnerHTML={{
+          __html: `document.documentElement.lang="${locale}";document.documentElement.dir="${isRtl ? 'rtl' : 'ltr'}";if(${isRtl}){document.documentElement.classList.add('font-vazirmatn');document.documentElement.classList.remove('font-sans');}else{document.documentElement.classList.remove('font-vazirmatn');document.documentElement.classList.add('font-sans');}`
+        }}
+      />
       <OrganizationSchema />
       <ConditionalLayout>
         {children}

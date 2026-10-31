@@ -200,118 +200,42 @@ type TeacherInfo = {
   teacher_info_courses: { courses: { title: string } }[] | null;
 };
 
-
-
-const ecosystemCompanies = [
+const companyMeta = [
   {
-    name: "Safi International Capital LTD",
     url: "https://safiinternationalcapitalltd.site",
     logo: "/company/Safi International Capital LTD.png",
-    description: "The global financial and corporate parent entity of the Safi Ecosystem, registered in England and Wales under company number 17063286.",
     borderHover: "group-hover:border-yellow-500/50",
     textGlow: "text-yellow-500"
   },
   {
-    name: "SafiPay",
     url: "https://safipay.net",
     logo: "/company/SafiPay.png",
-    description: "A digital fintech application facilitating international account creation, Visa card issuance, and instant multi-currency global student payouts.",
     borderHover: "group-hover:border-blue-500/50",
     textGlow: "text-blue-500"
   },
   {
-    name: "Safi TopUp",
     url: "https://www.safitopup.site/en",
     logo: "/company/Safi TopUp.jpg",
-    description: "Cross-border telecommunications, mobile credit distribution, and digital gift cards seamlessly connecting over 150 countries worldwide.",
     borderHover: "group-hover:border-emerald-500/50",
     textGlow: "text-emerald-500"
   },
   {
-    name: "SafiPro",
     url: "https://www.safipro.site/",
     logo: "/company/SafiPro.jpeg",
-    description: "Modern lifestyle, hardware tools, and premium apparel crafted with exacting quality standards for an ambitious international audience.",
     borderHover: "group-hover:border-rose-500/50",
     textGlow: "text-rose-500"
   },
   {
-    name: "Safi AI",
     url: "https://www.safiai.site/",
     logo: "/company/Safi Ai.png",
-    description: "Our proprietary artificial intelligence engine powering automated student tutoring, real-time code analysis, and smart operational tools.",
     borderHover: "group-hover:border-fuchsia-500/50",
     textGlow: "text-fuchsia-500"
   },
   {
-    name: "Shaheen Safi Blog",
     url: "https://shaheensafi.blog/",
     logo: "/company/shaheenblog.png",
-    description: "Exclusive strategic analysis, architectural fintech frameworks, and macroeconomic insights directly from our Founder, Shaheen Safi.",
     borderHover: "group-hover:border-amber-500/50",
     textGlow: "text-amber-500"
-  }
-];
-
-const academicDisciplines = [
-  {
-    title: "Full-Stack & AI Engineering",
-    desc: "From Next.js 15 and TypeScript to building autonomous agentic AI workflows, vector embeddings, and cloud architecture.",
-    icon: Code,
-    color: "amber"
-  },
-  {
-    title: "Global E-Commerce & Logistics",
-    desc: "End-to-end mastering of Amazon FBA, Shopify private labeling, international freight forwarding, and multi-channel sales.",
-    icon: ShoppingBag,
-    color: "emerald"
-  },
-  {
-    title: "Institutional Financial Markets",
-    desc: "Smart Money Concepts (SMC), liquidity algorithms, risk mitigation, and algorithmic trading designed for funded prop firm success.",
-    icon: TrendingUp,
-    color: "blue"
-  },
-  {
-    title: "Cross-Border Business Formation",
-    desc: "Forming US LLCs & UK Ltd entities, federal EIN acquisition, US registered agents, corporate banking, and FinCEN compliance.",
-    icon: Briefcase,
-    color: "purple"
-  },
-  {
-    title: "UI/UX & Modern Creative Media",
-    desc: "Human-centric interface design, Figma masteries, 3D motion graphics, brand identity, and video production.",
-    icon: Sparkles,
-    color: "rose"
-  },
-  {
-    title: "Academic & Business Languages",
-    desc: "Professional English for remote global careers, academic TOEFL/IELTS preparation, and multilingual business communication.",
-    icon: Globe,
-    color: "yellow"
-  }
-];
-
-const techPillars = [
-  {
-    title: "Agora RTC Live Classrooms",
-    desc: "Sub-200ms ultra-low latency real-time video broadcasting with screen sharing, multi-camera hosts, and live student interaction.",
-    icon: Video
-  },
-  {
-    title: "Safi AI 24/7 Smart Tutor",
-    desc: "Embedded Gemini-powered artificial intelligence that answers student questions, debugs code, and analyzes financial setups in real time.",
-    icon: Cpu
-  },
-  {
-    title: "Verifiable Cryptographic Certificates",
-    desc: "Every graduation certificate includes a unique verification code backed by our London corporate registrar for global employer verification.",
-    icon: FileCheck
-  },
-  {
-    title: "Global Cloudflare R2 Content Delivery",
-    desc: "Zero-buffering video streaming and lightning-fast file downloads across 300+ edge locations worldwide.",
-    icon: Layers
   }
 ];
 
@@ -369,22 +293,27 @@ export default function AboutPage() {
   const [isLoadingTeachers, setIsLoadingTeachers] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const localizedDisciplines = academicDisciplines.map((item, idx) => ({
+  const disciplineIcons = [Code, ShoppingBag, TrendingUp, Briefcase, Sparkles, Globe];
+  const disciplineColors = ["amber", "emerald", "blue", "purple", "rose", "yellow"];
+
+  const localizedDisciplines = (ab.disciplines || []).map((item, idx) => ({
     ...item,
-    title: ab.disciplines[idx]?.title || item.title,
-    desc: ab.disciplines[idx]?.desc || item.desc,
+    icon: disciplineIcons[idx % disciplineIcons.length],
+    color: disciplineColors[idx % disciplineColors.length],
   }));
 
-  const localizedPillars = techPillars.map((pillar, idx) => ({
+  const pillarIcons = [Video, Cpu, FileCheck, Layers];
+  const localizedPillars = (ab.techPillars || []).map((pillar, idx) => ({
     ...pillar,
-    title: ab.techPillars[idx]?.title || pillar.title,
-    desc: ab.techPillars[idx]?.desc || pillar.desc,
+    icon: pillarIcons[idx % pillarIcons.length],
   }));
 
-  const localizedCompanies = ecosystemCompanies.map((c, idx) => ({
+  const localizedCompanies = (ab.companies || []).map((c, idx) => ({
     ...c,
-    name: ab.companies[idx]?.name || c.name,
-    description: ab.companies[idx]?.description || c.description,
+    url: companyMeta[idx]?.url || "https://safiinternationalcapitalltd.site",
+    logo: companyMeta[idx]?.logo || "/company/Safi International Capital LTD.png",
+    borderHover: companyMeta[idx]?.borderHover || "group-hover:border-yellow-500/50",
+    textGlow: companyMeta[idx]?.textGlow || "text-yellow-500",
   }));
 
   useEffect(() => {

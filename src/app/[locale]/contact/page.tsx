@@ -22,107 +22,156 @@ export default function ContactPage() {
   const ct = getContactTranslation(currentLocale);
   const isRtl = isRtlLocale(currentLocale);
 
+  const dirLabels = (() => {
+    if (currentLocale === "fa") {
+      return {
+        corporateDirectory: "دفتر مرکزی و اطلاعات تماس",
+        verifiedDossier: "ثبت رسمی تایید شده",
+        globalHq: "مقر بین‌المللی",
+        uk: "بریتانیا",
+        ukReg: "شناسه ثبتی انگلستان:",
+        timezone: "ساعت رسمی:",
+        londonGmt: "لندن (GMT / BST)",
+        centralEmail: "پست الکترونیک رسمی",
+        emailDesc: "پاسخگویی به سوالات عمومی، استعلام مدارک و قراردادها ظرف ۲۴ ساعت کاری.",
+        priorityHotline: "خط تلفن مستقیم و اختصاصی",
+        liveWhatsapp: "واتس‌اپ آنلاین",
+        openWhatsappChat: "گفتگوی مستقیم در واتس‌اپ",
+        communitySocial: "کانال‌ها و شبکه‌های اجتماعی رسمی",
+        followers: "+۱۵,۰۰۰ دنبال‌کننده",
+        whatsappChannel: "کانال رسمی واتس‌اپ",
+        channelDesc: "اطلاعیه‌های زنده، فراخوان بورسیه‌ها و رویدادها",
+        secureDispatchBadge: "ارسال پیام امن و رمزنگاری‌شده",
+        protocolLabel: "پروتکل: ارتباط امن رمزنگاری‌شده",
+        charsEntered: "کاراکتر ثبت‌شده",
+        encryptedBadge: "رمزنگاری پیشرفته TLS 1.3"
+      };
+    }
+    if (currentLocale === "ps") {
+      return {
+        corporateDirectory: "مرکزي دفتر او رسمي اړیکې",
+        verifiedDossier: "تایید شوی رسمي ریکارډ",
+        globalHq: "نړیوال مرکزي دفتر",
+        uk: "برتانیه",
+        ukReg: "په انګلستان کې د ثبت شمیره:",
+        timezone: "رسمي وخت:",
+        londonGmt: "لندن (GMT / BST)",
+        centralEmail: "رسمي برېښنالیک",
+        emailDesc: "عمومي پوښتنې، د اسنادو استعلام او د همکاریو وړاندیزونه. ځواب په ۲۴ کاري ساعتونو کې.",
+        priorityHotline: "مستقیم لومړیتوب لرونکی خط",
+        liveWhatsapp: "آنلاین واټساپ",
+        openWhatsappChat: "په واټساپ کې مستقیم چټ",
+        communitySocial: "رسمي ټولنیزې شبکې او چینلونه",
+        followers: "+۱۵,۰۰۰ څارونکي",
+        whatsappChannel: "د واټساپ رسمي چینل",
+        channelDesc: "ژوندۍ خبرتیاوې، د بورسیو اعلانونه او نوښتونه",
+        secureDispatchBadge: "خوندي او کوډ شوی پیغام",
+        protocolLabel: "پروتوکول: خوندي او کوډ شوی پیوستون",
+        charsEntered: "توري ثبت شول",
+        encryptedBadge: "د TLS 1.3 له لارې پرمختللی کوډ شوی"
+      };
+    }
+    if (currentLocale === "ar") {
+      return {
+        corporateDirectory: "المقر الرئيسي ومعلومات الاتصال",
+        verifiedDossier: "سجل رسمي معتمد",
+        uk: "المملكة المتحدة",
+        ukReg: "رقم السجل البريطاني:",
+        timezone: "التوقيت الرسمي:",
+        londonGmt: "لندن (GMT / BST)",
+        centralEmail: "البريد الإلكتروني المعتمد",
+        emailDesc: "الاستفسارات الرسمية والتحقق من الشهادات والتعاون المؤسسي خلال 24 ساعة.",
+        priorityHotline: "الخط الساخن المباشر",
+        liveWhatsapp: "واتساب مباشر",
+        openWhatsappChat: "محادثة مباشرة عبر واتساب",
+        communitySocial: "القنوات والمنصات الرسمية",
+        followers: "+15,000 متابع",
+        whatsappChannel: "قناة واتساب الرسمية",
+        channelDesc: "الإعلانات المباشرة والمنح والتحديثات الدورية",
+        secureDispatchBadge: "إرسال آمن ومشفّر بالكامل",
+        protocolLabel: "البروتوكول: اتصال مشفر وآمن",
+        charsEntered: "حرف تم إدخاله",
+        encryptedBadge: "تشفير تام عبر TLS 1.3"
+      };
+    }
+    if (currentLocale === "ru") {
+      return {
+        corporateDirectory: "Штаб-квартира и контакты",
+        verifiedDossier: "Официально верифицировано",
+        uk: "ВЕЛИКОБРИТАНИЯ",
+        ukReg: "Регистрационный номер в UK:",
+        timezone: "Часовой пояс:",
+        londonGmt: "Лондон (GMT / BST)",
+        centralEmail: "Центральная электронная почта",
+        emailDesc: "Общие запросы, подтверждение дипломов и предложения о партнерстве в течение 24 часов.",
+        priorityHotline: "Прямая горячая линия",
+        liveWhatsapp: "Онлайн WhatsApp",
+        openWhatsappChat: "Написать в WhatsApp",
+        communitySocial: "Официальные каналы и соцсети",
+        followers: "15 000+ подписчиков",
+        whatsappChannel: "Официальный канал WhatsApp",
+        channelDesc: "Свежие новости, гранты и официальные объявления",
+        secureDispatchBadge: "Безопасное шифрованное обращение",
+        protocolLabel: "Протокол: Защищенный шлюз",
+        charsEntered: "символов введено",
+        encryptedBadge: "Защищено протоколом TLS 1.3"
+      };
+    }
+    return {
+      corporateDirectory: "Corporate Directory",
+      verifiedDossier: "Verified Dossier",
+      uk: "UNITED KINGDOM",
+      ukReg: "UK Registration:",
+      timezone: "Timezone:",
+      londonGmt: "London (GMT / BST)",
+      centralEmail: "Central Electronic Mail",
+      emailDesc: "General inquiries, official verification requests, and strategic partnership proposals. Dispatches reviewed within 24 business hours.",
+      priorityHotline: "Direct Priority Hotline",
+      liveWhatsapp: "Live WhatsApp",
+      openWhatsappChat: "Open Direct WhatsApp Chat",
+      communitySocial: "Community & Social Command",
+      followers: "15,000+ Followers",
+      whatsappChannel: "Official WhatsApp Channel",
+      channelDesc: "Live announcements, scholarships & updates",
+      secureDispatchBadge: "SECURE ENCRYPTED DISPATCH",
+      protocolLabel: "Protocol: Telegram Central",
+      charsEntered: "chars entered",
+      encryptedBadge: "TLS 1.3 256-Bit Encrypted"
+    };
+  })();
+
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [selectedSubject, setSelectedSubject] = useState("");
   const [messageLength, setMessageLength] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const subjectPresets = ct.subjects && ct.subjects.length > 0 ? ct.subjects : [
-    { label: "🎓 Scholarship & Admissions", value: "Scholarship & Admissions Inquiry" },
-    { label: "💻 Enterprise & Software", value: "Enterprise Software & Development Inquiry" },
-    { label: "🤝 Institutional Alliance", value: "Strategic Partnership Proposal" },
-    { label: "⚡ Student Helpdesk", value: "Technical Student Support & Portal Access" },
-    { label: "💖 Philanthropic Grant", value: "Philanthropic Grant & Donation Inquiry" },
+  const subjectPresets = ct.subjects || [];
+
+  const deskIcons = [GraduationCap, Briefcase, HeartHandshake, Headphones];
+  const deskStyles = [
+    { color: "text-amber-400", bgColor: "bg-amber-500/10", borderColor: "border-amber-500/20" },
+    { color: "text-blue-400", bgColor: "bg-blue-500/10", borderColor: "border-blue-500/20" },
+    { color: "text-emerald-400", bgColor: "bg-emerald-500/10", borderColor: "border-emerald-500/20" },
+    { color: "text-purple-400", bgColor: "bg-purple-500/10", borderColor: "border-purple-500/20" }
   ];
 
-  const rawDesks = [
-    {
-      icon: GraduationCap,
-      color: "text-amber-400",
-      bgColor: "bg-amber-500/10",
-      borderColor: "border-amber-500/20",
-      title: "Academic & Scholarship Bureau",
-      sla: "< 4 Hours Response",
-      description: "Handles prospective student evaluations, degree program inquiries, full-ride scholarship dossiers, and portfolio prerequisites for all upcoming cohorts.",
-      coverage: ["Scholarship eligibility audits", "Curriculum syllabus breakdowns", "Academic transcripts verification", "Direct enrollment assistance"]
-    },
-    {
-      icon: Briefcase,
-      color: "text-blue-400",
-      bgColor: "bg-blue-500/10",
-      borderColor: "border-blue-500/20",
-      title: "Enterprise Software Solutions",
-      sla: "< 2 Hours Response",
-      description: "Direct channel for venture startups, banks, and enterprises commissioning mission-critical software, Web3/Fintech platforms, and dedicated engineering squads.",
-      coverage: ["Architecture & security scoping", "Custom enterprise proposals", "Dedicated developer staffing", "NDA execution & SLA contracting"]
-    },
-    {
-      icon: HeartHandshake,
-      color: "text-emerald-400",
-      bgColor: "bg-emerald-500/10",
-      borderColor: "border-emerald-500/20",
-      title: "Global Institutional Alliances",
-      sla: "< 6 Hours Response",
-      description: "Coordinates mutual MOUs with international universities, compute providers, non-profit foundations, and corporate talent recruiters.",
-      coverage: ["University credit transfers", "Cloud credit sponsorship", "Corporate recruitment pipelines", "Joint educational symposiums"]
-    },
-    {
-      icon: Headphones,
-      color: "text-purple-400",
-      bgColor: "bg-purple-500/10",
-      borderColor: "border-purple-500/20",
-      title: "Student Success & LMS Support",
-      sla: "< 1 Hour Priority",
-      description: "Active enrolled students needing instant assistance with learning management systems, lecture archives, code submissions, or Discord community access.",
-      coverage: ["LMS authentication issues", "Certificate ID verification", "Mentor 1-on-1 office hours", "Discord VIP role assignment"]
-    }
-  ];
-
-  const communicationDesks = rawDesks.map((d, i) => ({
+  const communicationDesks = (ct.desks || []).map((d, i) => ({
     ...d,
-    title: ct.desks[i]?.title || d.title,
-    sla: ct.desks[i]?.sla || d.sla,
-    description: ct.desks[i]?.desc || d.description,
-    coverage: ct.desks[i]?.coverage || d.coverage,
+    icon: deskIcons[i % deskIcons.length],
+    ...(deskStyles[i % deskStyles.length] || deskStyles[0]),
+    description: d.desc,
   }));
 
-  const rawSla = [
-    {
-      channel: "Telegram Dispatch Terminal",
-      speed: "2 – 4 Hours",
-      status: "Highest Automated Priority",
-      availability: "24/7/365 Central Routing",
-      badgeClass: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-    },
-    {
-      channel: "WhatsApp Direct Hotline",
-      speed: "15 – 45 Minutes",
-      status: "Rapid Advisory",
-      availability: "Mon – Sat: 08:00 – 20:00 GMT",
-      badgeClass: "bg-green-500/10 text-green-400 border-green-500/20"
-    },
-    {
-      channel: "Official Digital Mail (info@)",
-      speed: "< 24 Business Hours",
-      status: "Document Review & Legal",
-      availability: "Continuous Business Monitoring",
-      badgeClass: "bg-blue-500/10 text-blue-400 border-blue-500/20"
-    },
-    {
-      channel: "WhatsApp Broadcast Channel",
-      speed: "Real-time Instant",
-      status: "One-Way Global Bulletins",
-      availability: "Permanent Public Broadcast",
-      badgeClass: "bg-amber-500/10 text-amber-400 border-amber-500/20"
-    }
+  const slaStyles = [
+    "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+    "bg-green-500/10 text-green-400 border-green-500/20",
+    "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    "bg-amber-500/10 text-amber-400 border-amber-500/20"
   ];
 
-  const slaMatrix = rawSla.map((s, i) => ({
+  const slaMatrix = (ct.slaItems || []).map((s, i) => ({
     ...s,
-    channel: ct.slaItems[i]?.channel || s.channel,
-    speed: ct.slaItems[i]?.speed || s.speed,
-    status: ct.slaItems[i]?.status || s.status,
-    availability: ct.slaItems[i]?.availability || s.availability,
+    badgeClass: slaStyles[i % slaStyles.length] || slaStyles[0]
   }));
 
   const contactFaqs = ct.faqs && ct.faqs.length > 0 ? ct.faqs : [];
@@ -244,10 +293,10 @@ export default function ContactPage() {
           <div className="flex items-center justify-between pb-3 border-b border-white/10">
             <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-3">
               <Building2 className="text-yellow-400" size={28} />
-              Corporate Directory
+              {dirLabels.corporateDirectory}
             </h2>
             <span className="text-xs font-mono px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-              Verified Dossier
+              {dirLabels.verifiedDossier}
             </span>
           </div>
           
@@ -262,10 +311,10 @@ export default function ContactPage() {
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-[11px] text-neutral-400 font-mono uppercase tracking-wider font-bold">
-                    Global {t.publicPages.corporateHeadquarters}
+                    {dirLabels.globalHq}
                   </span>
                   <span className="bg-yellow-500/20 text-yellow-300 text-[10px] font-bold px-2 py-0.5 rounded border border-yellow-500/30">
-                    UNITED KINGDOM
+                    {dirLabels.uk}
                   </span>
                 </div>
                 <h4 className="text-xl sm:text-2xl font-black text-white">Safi International Capital LTD</h4>
@@ -276,11 +325,11 @@ export default function ContactPage() {
                 <div className="pt-2 flex flex-wrap items-center gap-4 text-xs font-mono text-neutral-400">
                   <span className="flex items-center gap-1.5 text-neutral-300">
                     <ShieldCheck size={14} className="text-emerald-400" />
-                    UK Registration: <strong className="text-white">17063286</strong>
+                    {dirLabels.ukReg} <strong className="text-white">17063286</strong>
                   </span>
                   <span className="flex items-center gap-1.5 text-neutral-300">
                     <Clock size={14} className="text-yellow-400" />
-                    Timezone: <span className="text-white font-bold">London (GMT / BST)</span>
+                    {dirLabels.timezone} <span className="text-white font-bold">{dirLabels.londonGmt}</span>
                   </span>
                 </div>
               </div>
@@ -295,7 +344,7 @@ export default function ContactPage() {
               </div>
               <div className="space-y-2">
                 <div className="text-[11px] text-neutral-400 font-mono uppercase tracking-wider font-bold">
-                  Central Electronic Mail
+                  {dirLabels.centralEmail}
                 </div>
                 <div>
                   <a 
@@ -307,7 +356,7 @@ export default function ContactPage() {
                   </a>
                 </div>
                 <p className="text-neutral-400 text-xs leading-relaxed">
-                  General inquiries, official verification requests, and strategic partnership proposals. Dispatches reviewed within 24 business hours.
+                  {dirLabels.emailDesc}
                 </p>
               </div>
             </div>
@@ -322,11 +371,11 @@ export default function ContactPage() {
               <div className="space-y-3 flex-1">
                 <div className="flex items-center justify-between">
                   <div className="text-[11px] text-neutral-400 font-mono uppercase tracking-wider font-bold">
-                    Direct Priority Hotline
+                    {dirLabels.priorityHotline}
                   </div>
                   <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    Live WhatsApp
+                    {dirLabels.liveWhatsapp}
                   </span>
                 </div>
                 <div>
@@ -348,7 +397,7 @@ export default function ContactPage() {
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] text-xs font-bold border border-[#25D366]/30 transition-colors"
                   >
                     <MessageCircle size={14} />
-                    Open Direct WhatsApp Chat
+                    {dirLabels.openWhatsappChat}
                   </a>
                 </div>
               </div>
@@ -360,9 +409,9 @@ export default function ContactPage() {
             <div className="flex items-center justify-between">
               <div className="text-xs text-neutral-400 font-mono uppercase tracking-wider font-bold flex items-center gap-2">
                 <Globe size={16} className="text-yellow-400" />
-                Community & Social Command
+                {dirLabels.communitySocial}
               </div>
-              <span className="text-[11px] text-neutral-500 font-mono">15,000+ Followers</span>
+              <span className="text-[11px] text-neutral-500 font-mono">{dirLabels.followers}</span>
             </div>
 
             {/* Official WhatsApp Channel */}
@@ -378,13 +427,13 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <div className="text-sm font-black text-white flex items-center gap-1.5">
-                    Official WhatsApp Channel
+                    {dirLabels.whatsappChannel}
                     <CheckCircle2 size={14} className="text-[#25D366]" />
                   </div>
-                  <div className="text-xs text-neutral-300">Live announcements, scholarships & updates</div>
+                  <div className="text-xs text-neutral-300">{dirLabels.channelDesc}</div>
                 </div>
               </div>
-              <ArrowRight size={16} className="text-[#25D366] group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={16} className={`text-[#25D366] transition-transform ${isRtl ? "rotate-180 group-hover:-translate-x-1" : "group-hover:translate-x-1"}`} />
             </a>
 
             {/* Social Icons Row */}
@@ -448,9 +497,9 @@ export default function ContactPage() {
             <div className="flex items-center justify-between mb-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-mono font-bold">
                 <Send size={12} />
-                SECURE ENCRYPTED DISPATCH
+                {dirLabels.secureDispatchBadge}
               </div>
-              <span className="text-xs font-mono text-neutral-500">Protocol: Telegram Central</span>
+              <span className="text-xs font-mono text-neutral-500">{dirLabels.protocolLabel}</span>
             </div>
             
             <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
@@ -544,7 +593,7 @@ export default function ContactPage() {
                   {ct.messageLabel} <span className="text-yellow-500">*</span>
                 </label>
                 <span className="text-[11px] font-mono text-neutral-500">
-                  {messageLength} chars entered
+                  {messageLength} {dirLabels.charsEntered}
                 </span>
               </div>
               <textarea 
@@ -626,7 +675,7 @@ export default function ContactPage() {
             <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs text-neutral-400">
               <span className="flex items-center gap-1.5">
                 <Lock size={13} className="text-yellow-400" />
-                TLS 1.3 256-Bit Encrypted
+                {dirLabels.encryptedBadge}
               </span>
               <span>{t.publicPages.zeroSpamGdprGuarantee}</span>
             </div>
@@ -713,7 +762,7 @@ export default function ContactPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[600px]">
+          <table className={`w-full ${isRtl ? "text-right" : "text-left"} border-collapse min-w-[600px]`}>
             <thead>
               <tr className="border-b border-white/10 text-xs font-mono text-neutral-400 uppercase">
                 <th className="py-4 px-4 font-bold">{t.publicPages.communicationChannel}</th>
@@ -772,7 +821,7 @@ export default function ContactPage() {
                 <button
                   type="button"
                   onClick={() => setOpenFaq(isOpen ? null : idx)}
-                  className="w-full text-left p-6 flex items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors"
+                  className={`w-full ${isRtl ? "text-right" : "text-left"} p-6 flex items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors`}
                 >
                   <span className="text-base sm:text-lg font-bold text-white tracking-tight">
                     {faq.q}

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { headers } from "next/headers";
 import "./globals.css";
 import PushAlertScript from "@/components/PushAlertScript";
 
@@ -30,8 +31,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = headers();
+  const locale = headersList.get("x-locale") || "en";
+  const dir = headersList.get("x-dir") || "ltr";
+  const isRtl = dir === "rtl";
+
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang={locale} dir={dir} className={`h-full antialiased ${isRtl ? "font-vazirmatn" : "font-sans"}`}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

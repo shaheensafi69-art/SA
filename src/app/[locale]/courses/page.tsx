@@ -1,4 +1,5 @@
 import { getPortalTranslation } from "@/utils/portalTranslations";
+import { getCourseTranslation } from "@/utils/courseTranslations";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import {
@@ -38,6 +39,7 @@ export default async function CoursesPage({
   const { locale } = await params;
   const currentLocale = locale || "en";
   const t = getPortalTranslation(currentLocale);
+  const ct = getCourseTranslation(currentLocale);
   const isRtl = t.isRtl;
   const supabase = await createClient();
 
@@ -69,126 +71,17 @@ export default async function CoursesPage({
   );
 
   // --------------------------------------------------------------------------
-  // Core Value Pillars of Safi Academy Curriculums
+  // Core Value Pillars with Localized Content & Icons
   // --------------------------------------------------------------------------
-  const learningPillars = [
-    {
-      title: "Production-Grade Portfolio Projects",
-      desc: "Stop building trivial to-do lists. Our students construct scalable full-stack applications, real-time microservices, mobile apps, and autonomous AI agents designed to impress technical hiring managers.",
-      icon: Code2,
-      badge: "Hands-On Execution"
-    },
-    {
-      title: "Direct Senior Developer Code Reviews",
-      desc: "Never program in isolation. Submit your pull requests to seasoned senior software engineers for detailed architectural feedback, optimization tips, and industry best practices.",
-      icon: Users,
-      badge: "1-on-1 Mentorship"
-    },
-    {
-      title: "Verifiable Blockchain & Digital Diplomas",
-      desc: "Every graduate receives an official, cryptographically verifiable digital certificate with a unique credential ID that can be authenticated instantly by employers on LinkedIn and company portals.",
-      icon: Award,
-      badge: "Global Credential"
-    },
-    {
-      title: "Global Alumni Hub & Remote Career Pipeline",
-      desc: "Join an exclusive international network of founders, developers, and tech leads. Access collaborative hackathons, peer study pods, and direct referrals to remote freelance and engineering opportunities.",
-      icon: Globe,
-      badge: "Career Outcomes"
-    }
-  ];
+  const pillarIcons = [Code2, Users, Award, Globe];
+  const learningPillars = ct.learningPillars.map((pillar, idx) => ({
+    ...pillar,
+    icon: pillarIcons[idx % pillarIcons.length]
+  }));
 
-  // --------------------------------------------------------------------------
-  // Comparison Table: Safi Academy vs Traditional vs YouTube
-  // --------------------------------------------------------------------------
-  const comparisonData = [
-    {
-      feature: "Curriculum Depth & Realism",
-      safi: "Production-grade, full-stack systems with real databases & edge deployment",
-      traditional: "Outdated academic theory with minimal modern tooling",
-      youtube: "Fragmented, incomplete toy examples without production architecture"
-    },
-    {
-      feature: "Senior Code Review & PR Audits",
-      safi: "Direct line-by-line code reviews from veteran software engineers",
-      traditional: "Graded by teaching assistants with generic comments",
-      youtube: "None (zero feedback on code quality or architecture)"
-    },
-    {
-      feature: "Accredited Verifiable Diploma",
-      safi: "Cryptographically verifiable credential shareable on LinkedIn",
-      traditional: "Paper degree requiring weeks to verify",
-      youtube: "No recognized proof of completion"
-    },
-    {
-      feature: "Career Support & Remote Job Pipeline",
-      safi: "Direct alumni network, portfolio audits & remote client referrals",
-      traditional: "Generic career fairs with limited remote tech access",
-      youtube: "None (students left to navigate job market alone)"
-    },
-    {
-      feature: "Cost & Accessibility",
-      safi: "Affordable with automatic wallet credits & 100% scholarships",
-      traditional: "$15,000 - $40,000+ tuition plus heavy student debt",
-      youtube: "Free upfront, but costs hundreds of hours in lost time"
-    }
-  ];
-
-  // --------------------------------------------------------------------------
-  // 4-Stage Student Success Roadmap
-  // --------------------------------------------------------------------------
-  const successSteps = [
-    {
-      step: "01",
-      title: "Select Specialization & Enroll",
-      desc: "Browse our industry-curated curriculums and choose your career track in Software Engineering, Mobile Development, AI, or Tech Business."
-    },
-    {
-      step: "02",
-      title: "Immersive Project-Based Learning",
-      desc: "Follow deep, modular video masterclasses, interactive coding milestones, and build real-world systems in browser sandbox labs."
-    },
-    {
-      step: "03",
-      title: "Live Mentorship & Code Audits",
-      desc: "Attend weekly live mentor office hours, participate in collaborative Q&As, and have your code audited line-by-line by industry veterans."
-    },
-    {
-      step: "04",
-      title: "Graduate, Verify & Get Hired",
-      desc: "Complete your capstone project, claim your accredited diploma, and leverage our career templates and alumni network to land remote roles."
-    }
-  ];
-
-  // --------------------------------------------------------------------------
-  // Frequently Asked Questions
-  // --------------------------------------------------------------------------
-  const faqs = [
-    {
-      q: "Are these courses suitable for complete beginners?",
-      a: "Yes! While our curriculums culminate in advanced production-grade architectures, each program is structured with clear progressive learning modules. Complete beginners are guided step-by-step from core syntax to complex systems with dedicated mentor support."
-    },
-    {
-      q: "How do Safi Academy verified certificates work?",
-      a: "Upon completing all required curriculum modules and your final capstone project, an accredited certificate is issued automatically. It includes a unique verification hash and digital URL that potential employers, universities, and clients can verify anytime."
-    },
-    {
-      q: "Can I learn at my own pace around a full-time job or studies?",
-      a: "Absolutely. All video lessons, coding labs, and project repositories are accessible 24/7 with lifetime access. You can watch lessons whenever you want and join live mentor office hours according to your personal schedule."
-    },
-    {
-      q: "What happens if I get stuck on a coding bug or error?",
-      a: "You are never alone. Students have access to dedicated private discussion channels, peer mastermind groups, and weekly live office hours where senior instructors troubleshoot errors and explain complex concepts in real time."
-    },
-    {
-      q: "How does the Wallet Balance discount work at checkout?",
-      a: "If your student profile has a positive wallet balance (earned via referral rewards, platform bonuses, or scholarship grants), it is automatically deducted from your course tuition upon checkout—saving you money instantly."
-    },
-    {
-      q: "Are financial scholarships available for underprivileged students?",
-      a: "Yes! Safi Academy is deeply committed to educational equity. We offer 100% fully-funded scholarships for disadvantaged youth and Afghan women barred from formal schooling. You can apply directly through our Scholarships portal."
-    }
-  ];
+  const comparisonData = ct.comparisonData;
+  const successSteps = ct.successSteps;
+  const faqs = ct.faqs;
 
   return (
     <main dir={isRtl ? "rtl" : "ltr"} className="relative min-h-screen overflow-hidden bg-[#030307] text-white font-sans selection:bg-amber-500 selection:text-black pb-28">
@@ -448,8 +341,7 @@ export default async function CoursesPage({
                               </h3>
 
                               <p className="mt-3 text-xs sm:text-sm leading-relaxed text-neutral-300 line-clamp-3 font-normal">
-                                {course.description ||
-                                  "A rigorous, project-driven masterclass engineered to build confidence, deep technical competence, and career-ready execution."}
+                                {course.description || t.publicPages.premiumExperienceDesc}
                               </p>
 
                               {/* Curriculum Highlights Tags */}
@@ -480,7 +372,7 @@ export default async function CoursesPage({
                                 }`}
                               >
                                 <span>{t.publicPages.enrollNow}</span>
-                                <ArrowRight size={14} />
+                                <ArrowRight size={14} className={isRtl ? "rotate-180" : ""} />
                               </Link>
                             </div>
                           </div>
@@ -625,8 +517,8 @@ export default async function CoursesPage({
                   <p className="text-xs md:text-sm text-neutral-400 leading-relaxed">{step.desc}</p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-amber-400 font-semibold">
-                  <span>Milestone {step.step}</span>
-                  <ArrowRight size={14} />
+                  <span>{t.publicPages.milestone || "Milestone"} {step.step}</span>
+                  <ArrowRight size={14} className={isRtl ? "rotate-180" : ""} />
                 </div>
               </div>
             ))}
@@ -656,7 +548,7 @@ export default async function CoursesPage({
                   <span className="text-amber-400 font-mono">Q.</span>
                   <span>{faq.q}</span>
                 </h3>
-                <p className="text-xs md:text-sm text-neutral-300 leading-relaxed pl-7">
+                <p className="text-xs md:text-sm text-neutral-300 leading-relaxed ps-7">
                   {faq.a}
                 </p>
               </div>
@@ -686,7 +578,7 @@ export default async function CoursesPage({
               className="inline-flex items-center justify-center gap-2 px-10 py-5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-black font-black text-sm uppercase tracking-wider rounded-2xl transition-all shadow-[0_10px_35px_rgba(245,158,11,0.35)] hover:scale-105"
             >
               <span>{t.publicPages.exploreCurriculumsAbove}</span>
-              <ArrowRight size={16} />
+              <ArrowRight size={16} className={isRtl ? "rotate-180" : ""} />
             </Link>
 
             <Link
@@ -694,7 +586,7 @@ export default async function CoursesPage({
               className="inline-flex items-center justify-center gap-2 px-8 py-5 bg-white/5 hover:bg-white/10 text-neutral-200 hover:text-white font-bold text-sm rounded-2xl border border-white/10 transition-colors"
             >
               <span>{t.publicPages.applyForStudentScholarship}</span>
-              <ChevronRight size={16} />
+              <ChevronRight size={16} className={isRtl ? "rotate-180" : ""} />
             </Link>
           </div>
 

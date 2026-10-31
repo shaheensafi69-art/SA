@@ -170,6 +170,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Legal & operational protocols"
         ]
       }
+    ,
+      {
+            "title": "Student Success & LMS Support",
+            "sla": "< 1 Hour Priority",
+            "desc": "Direct assistance for enrolled students with learning management systems, lecture archives, code submissions, or Discord community access.",
+            "coverage": [
+                  "LMS authentication issues",
+                  "Certificate ID verification",
+                  "Mentor 1-on-1 office hours",
+                  "Discord VIP role assignment"
+            ]
+      }
     ],
     "slaSectionBadge": "Institutional Accountability",
     "slaSectionTitle": "Service Level Agreement (SLA) Matrix",
@@ -318,6 +330,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "حمایت‌های خیریه و مالی سازمانی",
           "پروتکل‌های حقوقی و اجرایی مشترک"
         ]
+      }
+    ,
+      {
+            "title": "پشتیبانی دانشجویی و سامانه آموزشی LMS",
+            "sla": "پاسخگویی کمتر از ۱ ساعت (اولویت بالا)",
+            "desc": "پشتیبانی مستقیم دانشجویان فعال در زمینه دسترسی به دوره‌ها، آرشیو ویدیوها، تکالیف و جامعه دیسکورد.",
+            "coverage": [
+                  "مشکلات ورود به حساب و پورتال",
+                  "استعلام و تایید گواهینامه‌ها",
+                  "هماهنگی جلسات خصوصی با اساتید",
+                  "دسترسی به گروه‌های ویژه دیسکورد"
+            ]
       }
     ],
     "slaSectionBadge": "تعهد سازمانی و شفافیت",
@@ -468,6 +492,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Legal & operational protocols"
         ]
       }
+    ,
+      {
+            "title": "د محصلینو ملاتړ او د زده کړې LMS پلاتفورم",
+            "sla": "له ۱ ساعت څخه لږ (لومړیتوب)",
+            "desc": "د ټولو فعالو محصلینو لپاره مستقیم ملاتړ په درسي سیسټم، ویډیوګانو، تمرینونو او ډیسکارډ کې.",
+            "coverage": [
+                  "پورتال ته د ننوتلو ستونزې",
+                  "د سندونو او فراغت تایید",
+                  "له استاد سره د مخامخ کتنې وخت",
+                  "د ډیسکارډ ځانګړي ګروپ ته لاسرسی"
+            ]
+      }
     ],
     "slaSectionBadge": "Institutional Accountability",
     "slaSectionTitle": "Service Level Agreement (SLA) Matrix",
@@ -616,6 +652,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Corporate philanthropic funding",
           "Legal & operational protocols"
         ]
+      }
+    ,
+      {
+            "title": "Поддержка студентов и портала LMS",
+            "sla": "< 1 часа (высокий приоритет)",
+            "desc": "Прямая помощь студентам по вопросам доступа к курсам, архивам лекций, заданиям и сообществу в Discord.",
+            "coverage": [
+                  "Авторизация на учебном портале",
+                  "Проверка подлинности дипломов",
+                  "Запись на консультации с менторами",
+                  "Доступ в закрытое сообщество Discord"
+            ]
       }
     ],
     "slaSectionBadge": "Ответственность и прозрачность",
@@ -766,6 +814,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Legal & operational protocols"
         ]
       }
+    ,
+      {
+            "title": "Öğrenci Başarısı ve LMS Destek Masası",
+            "sla": "< 1 Saat Öncelikli Yanıt",
+            "desc": "Kayıtlı öğrenciler için kurs erişimi, ders arşivleri, ödev gönderimleri ve Discord topluluğu desteği.",
+            "coverage": [
+                  "LMS portalı giriş sorunları",
+                  "Sertifika doğrulama işlemleri",
+                  "Birebir mentor randevuları",
+                  "Özel Discord topluluk erişimi"
+            ]
+      }
     ],
     "slaSectionBadge": "Kurumsal Hesap Verebilirlik",
     "slaSectionTitle": "Hizmet Seviyesi Taahhüdü (SLA)",
@@ -914,6 +974,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Corporate philanthropic funding",
           "Legal & operational protocols"
         ]
+      }
+    ,
+      {
+            "title": "Student Support & LMS-Plattform",
+            "sla": "< 1 Stunde Priorität",
+            "desc": "Direkte Unterstützung für eingeschriebene Studenten bei Portalzugang, Vorlesungsarchiven und Discord-Community.",
+            "coverage": [
+                  "LMS-Anmeldeprobleme",
+                  "Zertifikatsverifizierung",
+                  "1-zu-1 Mentor-Termine",
+                  "VIP-Zugang zur Discord-Community"
+            ]
       }
     ],
     "slaSectionBadge": "Institutional Accountability",
@@ -1064,6 +1136,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Legal & operational protocols"
         ]
       }
+    ,
+      {
+            "title": "Succès étudiant & Support plateforme LMS",
+            "sla": "< 1 heure (priorité haute)",
+            "desc": "Assistance directe pour les étudiants inscrits concernant les cours, les archives vidéo, les devoirs et Discord.",
+            "coverage": [
+                  "Problèmes de connexion au portail",
+                  "Vérification des diplômes",
+                  "Sessions de mentorat individuel",
+                  "Accès à la communauté Discord"
+            ]
+      }
     ],
     "slaSectionBadge": "Institutional Accountability",
     "slaSectionTitle": "Service Level Agreement (SLA) Matrix",
@@ -1212,6 +1296,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Corporate philanthropic funding",
           "Legal & operational protocols"
         ]
+      }
+    ,
+      {
+            "title": "دعم الطلاب ومنصة التعليم الذكية LMS",
+            "sla": "استجابة في أقل من ساعة (أولوية قصوى)",
+            "desc": "مساعدة مباشرة للطلاب المسجلين بخصوص الوصول للدروس والأرشيف وتسليم المشاريع ومجتمع ديسكورد.",
+            "coverage": [
+                  "مشاكل تسجيل الدخول للمنصة",
+                  "التحقق من صحة الشهادات",
+                  "حجز جلسات التوجيه المباشرة",
+                  "صلاحيات مجتمع ديسكورد الحصري"
+            ]
       }
     ],
     "slaSectionBadge": "Institutional Accountability",
@@ -1362,6 +1458,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Legal & operational protocols"
         ]
       }
+    ,
+      {
+            "title": "طلبہ کی معاونت اور LMS ہیلپ ڈیسک",
+            "sla": "< 1 گھنٹہ ترجیحی جواب",
+            "desc": "داخل شدہ طلبہ کے لیے کورسز تک رسائی، لیکچر آرکائیوز، اسائنمنٹس اور ڈسکارڈ کمیونٹی کی براہ راست مدد۔",
+            "coverage": [
+                  "پورٹل لاگ ان کے مسائل",
+                  "سرٹیفکیٹ کی باضابطہ تصدیق",
+                  "مینٹور کے ساتھ انفرادی نشست",
+                  "ڈسکارڈ وی آئی پی رسائی"
+            ]
+      }
     ],
     "slaSectionBadge": "Institutional Accountability",
     "slaSectionTitle": "Service Level Agreement (SLA) Matrix",
@@ -1510,6 +1618,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Corporate philanthropic funding",
           "Legal & operational protocols"
         ]
+      }
+    ,
+      {
+            "title": "Éxito Estudiantil y Soporte LMS",
+            "sla": "< 1 hora (prioridad alta)",
+            "desc": "Asistencia directa para estudiantes activos con acceso a cursos, archivos de lecciones, entregas y Discord.",
+            "coverage": [
+                  "Problemas de acceso al portal",
+                  "Verificación de certificados",
+                  "Horas de mentoría individual",
+                  "Acceso VIP a Discord"
+            ]
       }
     ],
     "slaSectionBadge": "Institutional Accountability",
@@ -1660,6 +1780,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Legal & operational protocols"
         ]
       }
+    ,
+      {
+            "title": "学员服务与 LMS 教学支持",
+            "sla": "< 1 小时优先响应",
+            "desc": "为正式在读学员提供课程平台、讲座存档、代码提交及 Discord 专属社区的全方位技术支持。",
+            "coverage": [
+                  "LMS 教学平台登录与权限",
+                  "官方毕业认证编码核验",
+                  "资深导师 1 对 1 答疑预约",
+                  "Discord 核心学员社群接入"
+            ]
+      }
     ],
     "slaSectionBadge": "机构履约承诺与透明度",
     "slaSectionTitle": "服务等级协议 (SLA) 响应矩阵",
@@ -1808,6 +1940,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Corporate philanthropic funding",
           "Legal & operational protocols"
         ]
+      }
+    ,
+      {
+            "title": "छात्र सहायता एवं एलएमएस सपोर्ट डेस्क",
+            "sla": "< 1 घंटा प्राथमिकता",
+            "desc": "नामांकित छात्रों के लिए पाठ्यक्रम सामग्री, वीडियो संग्रह, असाइनमेंट और डिस्कॉर्ड समुदाय के लिए सीधी सहायता।",
+            "coverage": [
+                  "पोर्टल लॉगिन संबंधी समस्याएं",
+                  "प्रमाणपत्र सत्यापन प्रणाली",
+                  "मेंटर्स के साथ वन-ऑन-वन सत्र",
+                  "डिस्कॉर्ड समुदाय वीआईपी पहुंच"
+            ]
       }
     ],
     "slaSectionBadge": "Institutional Accountability",
@@ -1958,6 +2102,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Legal & operational protocols"
         ]
       }
+    ,
+      {
+            "title": "Supporto Studenti & Piattaforma LMS",
+            "sla": "< 1 ora prioritario",
+            "desc": "Assistenza diretta per gli studenti iscritti su portale didattico, archivio lezioni, compiti e Discord.",
+            "coverage": [
+                  "Accesso al portale studenti",
+                  "Verifica certificati accademici",
+                  "Sessioni 1-a-1 con i docenti",
+                  "Accesso VIP alla community Discord"
+            ]
+      }
     ],
     "slaSectionBadge": "Institutional Accountability",
     "slaSectionTitle": "Service Level Agreement (SLA) Matrix",
@@ -2106,6 +2262,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Corporate philanthropic funding",
           "Legal & operational protocols"
         ]
+      }
+    ,
+      {
+            "title": "Sucesso do Estudante & Suporte LMS",
+            "sla": "< 1 hora prioritário",
+            "desc": "Assistência direta aos alunos matriculados para acesso aos cursos, gravações, projetos e comunidade Discord.",
+            "coverage": [
+                  "Autenticação na plataforma LMS",
+                  "Verificação de credenciais e diplomas",
+                  "Agendamento de mentoria individual",
+                  "Acesso à comunidade VIP no Discord"
+            ]
       }
     ],
     "slaSectionBadge": "Institutional Accountability",
@@ -2256,6 +2424,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Legal & operational protocols"
         ]
       }
+    ,
+      {
+            "title": "学生サポート＆LMSヘルプデスク",
+            "sla": "1時間以内（最優先対応）",
+            "desc": "受講生向けのカリキュラム閲覧、講義アーカイブ、課題提出、Discordコミュニティへの直接支援。",
+            "coverage": [
+                  "LMSポータルのログインサポート",
+                  "公式認定修了証の照会・認証",
+                  "専任メンターとの個別相談枠",
+                  "DiscordコミュニティVIPアクセス"
+            ]
+      }
     ],
     "slaSectionBadge": "Institutional Accountability",
     "slaSectionTitle": "Service Level Agreement (SLA) Matrix",
@@ -2404,6 +2584,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Corporate philanthropic funding",
           "Legal & operational protocols"
         ]
+      }
+    ,
+      {
+            "title": "학생 지원 및 LMS 학습 플랫폼",
+            "sla": "1시간 이내 최우선 지원",
+            "desc": "재학생을 위한 강의 포털, 녹화본 아카이브, 과제 제출 및 디스코드 커뮤니티 전담 지원 서비스.",
+            "coverage": [
+                  "LMS 학습 포털 로그인 문제 해결",
+                  "공식 수료증 및 자격 번호 검증",
+                  "멘토 1:1 오피스 아워 예약",
+                  "디스코드 VIP 학생 커뮤니티 접근"
+            ]
       }
     ],
     "slaSectionBadge": "Institutional Accountability",
@@ -2554,6 +2746,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Legal & operational protocols"
         ]
       }
+    ,
+      {
+            "title": "Studentensucces & LMS-Ondersteuning",
+            "sla": "< 1 uur prioriteit",
+            "desc": "Directe ondersteuning voor ingeschreven studenten bij portaaltoegang, lesarchieven en Discord.",
+            "coverage": [
+                  "LMS-inlogproblemen oplossen",
+                  "Verificatie van officiële certificaten",
+                  "1-op-1 mentor-spreekuren boeken",
+                  "Toegang tot de exclusieve Discord-groep"
+            ]
+      }
     ],
     "slaSectionBadge": "Institutional Accountability",
     "slaSectionTitle": "Service Level Agreement (SLA) Matrix",
@@ -2703,6 +2907,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Legal & operational protocols"
         ]
       }
+    ,
+      {
+            "title": "Talabalar yordami va LMS platformasi",
+            "sla": "< 1 soat (yuqori ustuvorlik)",
+            "desc": "O'quvchilar uchun darslar portali, arxivlar, topshiriqlar va Discord jamoasiga to'g'ridan-to'g'ri yordam.",
+            "coverage": [
+                  "LMS portaliga kirish muammolari",
+                  "Sertifikatlarni rasmiy tasdiqlash",
+                  "Mentorlar bilan shaxsiy muloqot",
+                  "Discord VIP guruhiga ulanish"
+            ]
+      }
     ],
     "slaSectionBadge": "Institutional Accountability",
     "slaSectionTitle": "Service Level Agreement (SLA) Matrix",
@@ -2851,6 +3067,18 @@ export const contactTranslationsMap: Record<string, ContactTranslation> = {
           "Corporate philanthropic funding",
           "Legal & operational protocols"
         ]
+      }
+    ,
+      {
+            "title": "Dukungan Mahasiswa & Platform LMS",
+            "sla": "< 1 jam prioritas",
+            "desc": "Bantuan langsung bagi siswa terdaftar untuk akses portal kursus, arsip video, dan komunitas Discord.",
+            "coverage": [
+                  "Bantuan login portal belajar LMS",
+                  "Verifikasi keaslian sertifikat",
+                  "Konsultasi tatap muka dengan mentor",
+                  "Akses VIP komunitas Discord"
+            ]
       }
     ],
     "slaSectionBadge": "Institutional Accountability",
