@@ -1,6 +1,6 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getInstructorApplicationTranslation } from "@/utils/instructorApplicationTranslations";
+import { getInstructorApplicationTranslation } from "./translations";
 import { usePathname } from "next/navigation";
 
 import { useState, useEffect } from "react";
@@ -432,14 +432,14 @@ export default function InstructorApplicationPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
                   <div>
                     <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest block mb-1">
-                      Faculty Admissions Application
+                      {ia.formBadge}
                     </span>
                     <h2 className="text-2xl md:text-3xl font-black text-white">
                       Step {currentStep} of 4: {
-                        currentStep === 1 ? "Personal Profile" :
-                          currentStep === 2 ? "Teaching Domain & Course" :
-                            currentStep === 3 ? "Experience & Audition Video" :
-                              "Credentials & Review"
+                        currentStep === 1 ? ia.step1Title :
+                          currentStep === 2 ? ia.step2Title :
+                            currentStep === 3 ? ia.step3Title :
+                              ia.step4Title
                       }
                     </h2>
                   </div>
@@ -960,7 +960,7 @@ export default function InstructorApplicationPage() {
                       onClick={prevStep}
                       className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-neutral-300 hover:text-white transition-colors"
                     >
-                      <ArrowLeft size={14} /> Back
+                      <ArrowLeft size={14} /> {ia.prevBtn}
                     </button>
                   ) : <div></div>}
 

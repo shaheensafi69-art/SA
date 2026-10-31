@@ -1,6 +1,5 @@
 "use client";
-import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getTermsTranslation } from "@/utils/termsTranslations";
+import { getTermsTranslation } from "./translations";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -9,71 +8,66 @@ import { motion } from "framer-motion";
 import {
   Scale,
   CheckCircle,
-  FileText,
   AlertCircle,
   BookOpen,
   Share2,
   ShieldAlert,
   CreditCard,
   Gavel,
-  ExternalLink,
   Award,
   Mail,
   Building2,
   ChevronRight,
-  ShieldCheck,
   Sparkles,
   ArrowUpRight,
   Check,
-  Lock,
   UserCheck
 } from "lucide-react";
 
 export default function TermsOfServicePage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
-  const t = getPortalTranslation(currentLocale);
   const tm = getTermsTranslation(currentLocale);
   const isRtl = tm.isRtl;
   const [activeSection, setActiveSection] = useState("agreement");
 
   const sections = [
-    { id: "agreement", title: tm.sections[0].title, icon: Scale },
-    { id: "scope", title: tm.sections[1].title, icon: BookOpen },
-    { id: "disclaimer", title: tm.sections[2].title, icon: ShieldAlert, isWarning: true },
-    { id: "affiliates", title: tm.sections[3].title, icon: Share2, isHighlight: true },
-    { id: "accounts", title: tm.sections[4].title, icon: UserCheck },
-    { id: "ip", title: tm.sections[5].title, icon: Award },
-    { id: "payments", title: tm.sections[6].title, icon: CreditCard },
-    { id: "liability", title: tm.sections[7].title, icon: AlertCircle },
-    { id: "governing-law", title: tm.sections[8].title, icon: Gavel },
-    { id: "contact", title: tm.sections[9].title, icon: Mail },
+    { id: "agreement", title: tm.sections[0]?.title || "1. Agreement to Terms", icon: Scale },
+    { id: "scope", title: tm.sections[1]?.title || "2. Nature of Services", icon: BookOpen },
+    { id: "disclaimer", title: tm.sections[2]?.title || "3. Disclaimers", icon: ShieldAlert, isWarning: true },
+    { id: "affiliates", title: tm.sections[3]?.title || "4. Third Parties & Affiliates", icon: Share2, isHighlight: true },
+    { id: "accounts", title: tm.sections[4]?.title || "5. Accounts & Security", icon: UserCheck },
+    { id: "ip", title: tm.sections[5]?.title || "6. Intellectual Property", icon: Award },
+    { id: "payments", title: tm.sections[6]?.title || "7. Payments & Subscriptions", icon: CreditCard },
+    { id: "liability", title: tm.sections[7]?.title || "8. Limitation of Liability", icon: AlertCircle },
+    { id: "governing-law", title: tm.sections[8]?.title || "9. Governing Law", icon: Gavel },
+    { id: "contact", title: tm.sections[9]?.title || "10. Legal Correspondence", icon: Mail },
   ];
 
   const highlights = [
     {
-      title: tm.highlights[0].title,
-      desc: tm.highlights[0].desc,
+      title: tm.highlights[0]?.title,
+      desc: tm.highlights[0]?.desc,
       icon: ShieldAlert,
-      badge: tm.highlights[0].badge
+      badge: tm.highlights[0]?.badge
     },
     {
-      title: tm.highlights[1].title,
-      desc: tm.highlights[1].desc,
+      title: tm.highlights[1]?.title,
+      desc: tm.highlights[1]?.desc,
       icon: Share2,
-      badge: tm.highlights[1].badge
+      badge: tm.highlights[1]?.badge
     },
     {
-      title: tm.highlights[2].title,
-      desc: tm.highlights[2].desc,
+      title: tm.highlights[2]?.title,
+      desc: tm.highlights[2]?.desc,
       icon: Award,
-      badge: tm.highlights[2].badge
+      badge: tm.highlights[2]?.badge
     },
     {
-      title: tm.highlights[3].title,
-      desc: tm.highlights[3].desc,
+      title: tm.highlights[3]?.title,
+      desc: tm.highlights[3]?.desc,
       icon: Sparkles,
-      badge: tm.highlights[3].badge
+      badge: tm.highlights[3]?.badge
     }
   ];
 
@@ -95,7 +89,7 @@ export default function TermsOfServicePage() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [sections]);
 
   return (
     <main dir={isRtl ? "rtl" : "ltr"} className="w-full relative bg-[#020202] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-32">
@@ -298,7 +292,7 @@ export default function TermsOfServicePage() {
               </p>
             </div>
 
-            {/* Section 3: No Legal/Tax Advice Disclaimer (Crucial Callout) */}
+            {/* Section 3: No Legal/Tax Advice Disclaimer */}
             <div id="disclaimer" className="scroll-mt-36 bg-gradient-to-br from-red-500/[0.08] via-neutral-900/80 to-neutral-900/90 border border-red-500/30 rounded-3xl p-8 md:p-10 backdrop-blur-xl shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -324,7 +318,7 @@ export default function TermsOfServicePage() {
               </div>
             </div>
 
-            {/* Section 4: Third-Party & Affiliates (Registered Agents Inc Spotlight) */}
+            {/* Section 4: Third-Party & Affiliates */}
             <div id="affiliates" className="scroll-mt-36 bg-gradient-to-br from-amber-500/[0.08] via-neutral-900/80 to-neutral-900/90 border border-amber-500/30 rounded-3xl p-8 md:p-10 backdrop-blur-xl shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -334,30 +328,31 @@ export default function TermsOfServicePage() {
                     <Share2 className="w-6 h-6" />
                   </div>
                   <div>
-                    <span className="text-[11px] font-mono text-amber-400 font-bold uppercase tracking-wider block">Section 4 • Third-Party Relations</span>
-                    <h2 className="text-2xl font-black text-white">Third-Party Services & Affiliate Disclosures</h2>
+                    <span className="text-[11px] font-mono text-amber-400 font-bold uppercase tracking-wider block">{tm.section4.secBadge}</span>
+                    <h2 className="text-2xl font-black text-white">{tm.section4.title}</h2>
                   </div>
                 </div>
                 <span className="px-3.5 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold text-xs uppercase tracking-wider">
-                  Partner Referral Terms
+                  {tm.section4.badge}
                 </span>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-6">
-                To help founders implement the principles taught in our academy, we showcase vetted third-party infrastructure providers. On our US Business Formation pages, we recommend <strong className="text-white">Registered Agents Inc</strong> for US registered agent representation, entity formation, and corporate filings.
+                {tm.section4.p1}
               </p>
 
               <div className="space-y-4 text-xs md:text-sm text-neutral-300">
                 <div className="bg-black/40 border border-white/10 rounded-2xl p-5 space-y-3">
                   <h4 className="font-bold text-white flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-amber-400" />
-                    Key Operating Rules for Recommended Third Parties:
+                    {tm.section4.rulesTitle}
                   </h4>
                   <ul className="list-disc list-inside text-neutral-400 space-y-2 pl-2 text-xs leading-relaxed">
-                    <li><strong className="text-white">Affiliate Compensation:</strong> Safi Academy participates in referral and affiliate programs (including Registered Agents Inc and AWIN). We may receive a referral commission when you purchase services via our referral links. This does not increase the price you pay.</li>
-                    <li><strong className="text-white">Independent Entities:</strong> Third parties (including Registered Agents Inc) are independent businesses. Safi Academy does not control, supervise, or own their internal operations or filing processes.</li>
-                    <li><strong className="text-white">Third-Party Client Agreement:</strong> Any contract you enter into for registered agent or formation services is solely between you and Registered Agents Inc, governed by the <a href="https://www.registeredagentsinc.com/client-agreement/" target="_blank" rel="noopener noreferrer" className="text-amber-400 font-bold underline">Registered Agents Inc Client Agreement</a>.</li>
-                    <li><strong className="text-white">Disclaimer of Vendor Liability:</strong> Safi International Capital LTD disclaims any liability for third-party filing mistakes, state rejections, processing delays, or service downtime.</li>
+                    {tm.section4.rulesBullets.map((bullet, idx) => (
+                      <li key={idx}>
+                        <strong className="text-white">{bullet.lead}</strong> {bullet.text}
+                      </li>
+                    ))}
                   </ul>
                 </div>
 
@@ -365,12 +360,14 @@ export default function TermsOfServicePage() {
                 <div className="bg-black/40 border border-white/10 rounded-2xl p-5 space-y-3">
                   <h4 className="font-bold text-white flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-yellow-400" />
-                    Google AdSense & Digital Advertising Network Terms:
+                    {tm.section4.adTitle}
                   </h4>
                   <ul className="list-disc list-inside text-neutral-400 space-y-2 pl-2 text-xs leading-relaxed">
-                    <li><strong className="text-white">Third-Party Commercial Display:</strong> Safi Academy displays advertisements served by Google AdSense and accredited digital ad networks. We do not manufacture, guarantee, or directly endorse the specific products or services advertised by third-party sponsors.</li>
-                    <li><strong className="text-white">Advertiser Interactions:</strong> Any transactions, communications, or engagements you undertake with commercial advertisers found on our platform are solely between you and the respective third-party vendor.</li>
-                    <li><strong className="text-white">Ad Delivery Standards:</strong> Advertisements on Safi Academy adhere to high standards of digital decorum and are integrated natively (such as non-intrusive in-feed cards and in-reel units) to preserve student learning focus.</li>
+                    {tm.section4.adBullets.map((bullet, idx) => (
+                      <li key={idx}>
+                        <strong className="text-white">{bullet.lead}</strong> {bullet.text}
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>
@@ -383,21 +380,21 @@ export default function TermsOfServicePage() {
                   <UserCheck className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono text-yellow-400 font-bold uppercase tracking-wider block">Section 5</span>
-                  <h2 className="text-2xl font-black text-white">User Accounts, Security & Gamification</h2>
+                  <span className="text-[11px] font-mono text-yellow-400 font-bold uppercase tracking-wider block">{tm.section5.secBadge}</span>
+                  <h2 className="text-2xl font-black text-white">{tm.section5.title}</h2>
                 </div>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-6">
-                You must provide accurate, verifiable registration details and maintain the security of your password. Sharing your account credentials or facilitating unauthorized multi-user access is strictly prohibited.
+                {tm.section5.p1}
               </p>
 
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2 text-xs text-neutral-300">
                 <strong className="text-white block flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-yellow-400" /> Academy Points & Wall of Fame Rules
+                  <Sparkles className="w-4 h-4 text-yellow-400" /> {tm.section5.rulesTitle}
                 </strong>
                 <p className="text-neutral-400 leading-relaxed">
-                  Points, badges, and leaderboard rankings represent internal academy achievements and carry no monetary value outside of our platform. Safi Academy reserves the right to reset points or remove accounts from public leaderboards if scripted automation or abuse is detected.
+                  {tm.section5.rulesDesc}
                 </p>
               </div>
             </div>
@@ -409,16 +406,16 @@ export default function TermsOfServicePage() {
                   <Award className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono text-yellow-400 font-bold uppercase tracking-wider block">Section 6</span>
-                  <h2 className="text-2xl font-black text-white">Intellectual Property & Limited License</h2>
+                  <span className="text-[11px] font-mono text-yellow-400 font-bold uppercase tracking-wider block">{tm.section6.secBadge}</span>
+                  <h2 className="text-2xl font-black text-white">{tm.section6.title}</h2>
                 </div>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-4">
-                All platform components—including instructional videos, code repositories, lesson syllabi, trademarks, graphics, UI assets, and downloadable resources—are the proprietary intellectual property of <strong>Safi International Capital LTD</strong>.
+                {tm.section6.p1}
               </p>
               <p className="text-xs text-neutral-400 leading-relaxed">
-                You receive a limited, revocable, non-exclusive, non-transferable personal license to view course materials. You may not record, reproduce, mirror, resell, redistribute, or reverse-engineer our curriculum without prior written authorization.
+                {tm.section6.p2}
               </p>
             </div>
 
@@ -429,17 +426,17 @@ export default function TermsOfServicePage() {
                   <CreditCard className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono text-yellow-400 font-bold uppercase tracking-wider block">Section 7</span>
-                  <h2 className="text-2xl font-black text-white">Payments, Subscriptions & Digital Access</h2>
+                  <span className="text-[11px] font-mono text-yellow-400 font-bold uppercase tracking-wider block">{tm.section7.secBadge}</span>
+                  <h2 className="text-2xl font-black text-white">{tm.section7.title}</h2>
                 </div>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-4">
-                Fees for courses, premium masterclasses, or mentorship programs are displayed before purchase. Payments are securely handled through PCI-compliant gateways (such as Stripe).
+                {tm.section7.p1}
               </p>
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-neutral-300">
-                <strong className="text-white block mb-1">Digital Content Access Policy:</strong>
-                Because digital learning materials and proprietary repositories are made instantly available upon purchase, access fees are non-refundable once content has been accessed, except where required by mandatory statutory consumer protection laws.
+                <strong className="text-white block mb-1">{tm.section7.policyTitle}:</strong>
+                {tm.section7.policyDesc}
               </div>
             </div>
 
@@ -450,16 +447,16 @@ export default function TermsOfServicePage() {
                   <AlertCircle className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono text-yellow-400 font-bold uppercase tracking-wider block">Section 8</span>
-                  <h2 className="text-2xl font-black text-white">Limitation of Liability & Indemnity</h2>
+                  <span className="text-[11px] font-mono text-yellow-400 font-bold uppercase tracking-wider block">{tm.section8.secBadge}</span>
+                  <h2 className="text-2xl font-black text-white">{tm.section8.title}</h2>
                 </div>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-4">
-                To the maximum extent permitted by applicable law, in no event shall <strong>Safi International Capital LTD</strong>, its officers, directors, instructors, or affiliates be liable for any indirect, special, incidental, consequential, or punitive damages (including loss of business profits, corporate filing rejections, loss of data, or operational interruptions).
+                {tm.section8.p1}
               </p>
               <p className="text-xs text-neutral-400 leading-relaxed">
-                You agree to indemnify and hold harmless Safi International Capital LTD against any claims, liabilities, damages, or costs resulting from your breach of these Terms or your unauthorized use of the platform.
+                {tm.section8.p2}
               </p>
             </div>
 
@@ -470,16 +467,16 @@ export default function TermsOfServicePage() {
                   <Gavel className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono text-yellow-400 font-bold uppercase tracking-wider block">Section 9</span>
-                  <h2 className="text-2xl font-black text-white">Governing Law & Exclusive Jurisdiction</h2>
+                  <span className="text-[11px] font-mono text-yellow-400 font-bold uppercase tracking-wider block">{tm.section9.secBadge}</span>
+                  <h2 className="text-2xl font-black text-white">{tm.section9.title}</h2>
                 </div>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-4">
-                These Terms of Service and any dispute or claim arising out of or in connection with them or their subject matter shall be governed by and construed in accordance with the laws of <strong>England and Wales</strong>.
+                {tm.section9.p1}
               </p>
               <p className="text-xs text-neutral-400 leading-relaxed">
-                You irrevocably submit to the exclusive jurisdiction of the courts of England and Wales to resolve any legal disputes or proceedings arising under this agreement.
+                {tm.section9.p2}
               </p>
             </div>
 
@@ -490,13 +487,13 @@ export default function TermsOfServicePage() {
                   <Mail className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono text-yellow-400 font-bold uppercase tracking-wider block">Section 10</span>
-                  <h2 className="text-2xl font-black text-white">Official Legal Correspondence</h2>
+                  <span className="text-[11px] font-mono text-yellow-400 font-bold uppercase tracking-wider block">{tm.section10.secBadge}</span>
+                  <h2 className="text-2xl font-black text-white">{tm.section10.title}</h2>
                 </div>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-6">
-                Official notices, corporate documentation requests, and inquiries regarding these Terms should be addressed to our legal department:
+                {tm.section10.p1}
               </p>
 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/5">

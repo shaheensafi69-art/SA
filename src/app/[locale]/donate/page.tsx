@@ -1,7 +1,7 @@
 "use client";
 import { getDictionary, isRtlLocale } from "@/dictionaries";
 import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getDonateTranslation } from "@/utils/donateTranslations";
+import { getDonateTranslation } from "./translations";
 import { CircularFlag } from "@/components/CircularFlag";
 import { usePathname, useParams } from "next/navigation";
 

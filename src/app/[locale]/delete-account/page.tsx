@@ -1,7 +1,5 @@
 "use client";
-import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getDeleteAccountTranslation } from "@/utils/deleteAccountTranslations";
-import { isRtlLocale } from "@/dictionaries";
+import { getDeleteAccountTranslation } from "./translations";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -38,9 +36,8 @@ import {
 export default function AccountDeletionPortal() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
-  const t = getPortalTranslation(currentLocale);
   const da = getDeleteAccountTranslation(currentLocale);
-  const isRtl = isRtlLocale(currentLocale);
+  const isRtl = da.isRtl;
 
   // Form State
   const [email, setEmail] = useState("");
@@ -93,32 +90,7 @@ export default function AccountDeletionPortal() {
     setTimeout(() => setCopiedTicket(false), 2000);
   };
 
-  const faqs = [
-    {
-      q: "What happens to my enrolled courses and educational certificates?",
-      a: "Upon account deletion, all active course enrollments, lecture progress, quiz submissions, and personal certificates in your portal will be permanently removed. If you require proof of your past achievements, we strongly urge you to download and save all your cryptographic PDF certificates and transcripts BEFORE initiating deletion. Cryptographic hashes stored on our public blockchain ledger for third-party employer verification will have all your personal identifiers (PII) stripped and redacted."
-    },
-    {
-      q: "Can I cancel my account deletion request if I change my mind?",
-      a: "Yes. Safi Academy enforces a mandatory 30-Day Cooling-Off (Grace) Period. During these 30 calendar days, your account is placed in an inactive, locked state. If you decide to cancel the deletion, you can either log back into the Safi Academy mobile app / website, or send an urgent email to support@safi.academy quoting your Request Reference Ticket. After the 30-day window expires, the data purge is absolute and irreversible."
-    },
-    {
-      q: "What happens to remaining balances in my SafiPay or Academy wallet?",
-      a: "Any remaining credits, cash balances, or scholarship stipends stored in your account wallet must be either withdrawn or utilized prior to submitting an account deletion request. Account deletion forfeits unspent platform-specific tokens. If you have an active SafiPay European banking IBAN or physical card linked to your identity, you must separately settle your banking account via the SafiPay portal to comply with international banking liquidation standards."
-    },
-    {
-      q: "Why must some financial records be retained after account deletion?",
-      a: "Under the statutory laws of England and Wales, HM Revenue & Customs (HMRC) regulations, and international Anti-Money Laundering (AML) directives, Safi International Capital LTD is legally required to retain transaction receipts, tax invoices, and accounting ledgers for a statutory period of 6 years from the date of the financial transaction. These records are held in a secure, cold-storage compliance vault, isolated from all marketing and operational databases."
-    },
-    {
-      q: "How does this portal comply with Google Play Store & Apple App Store rules?",
-      a: "Both Google Play and Apple App Store mandate that applications allowing user account creation must also provide an in-app deletion button AND an external web-based URL where users can request deletion without needing the app installed. This page is our official, publicly verifiable App Store Deletion Gateway, honoring Google Play Data Safety policies, App Store Guideline 5.1.1(v), UK GDPR, and the UK Data Protection Act 2018."
-    },
-    {
-      q: "How can I contact the Data Protection Officer (DPO) directly?",
-      a: "You may reach our legal compliance team and Data Protection Officer at privacy@safipay.net or by physical post to: Safi International Capital LTD, Attn: Legal & DPO, 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ, United Kingdom. We respond to verified data subject rights inquiries within 72 business hours."
-    }
-  ];
+  const faqs = da.faqs;
 
   return (
     <main dir={isRtl ? "rtl" : "ltr"} className="w-full relative bg-[#030307] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-32 selection:bg-rose-500 selection:text-white">
@@ -210,8 +182,8 @@ export default function AccountDeletionPortal() {
         {/* ================= 3 OFFICIAL DELETION METHODS ================= */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <span className="text-xs font-black uppercase tracking-[0.25em] text-yellow-400 mb-2 block">{t.publicPages.chooseChannel}</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Three Ways to Terminate Your Account</h2>
+            <span className="text-xs font-black uppercase tracking-[0.25em] text-yellow-400 mb-2 block">{da.methodsBadge}</span>
+            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">{da.methodsTitle}</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -222,24 +194,24 @@ export default function AccountDeletionPortal() {
                   <Smartphone size={24} />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-full mb-3 inline-block">
-                  Method 1 • In-App
+                  {da.method1Badge}
                 </span>
-                <h3 className="text-xl font-black text-white mb-3">Safi Academy Mobile App</h3>
+                <h3 className="text-xl font-black text-white mb-3">{da.method1Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed mb-6">
-                  If you have the Safi Academy iOS or Android application installed on your device, you can delete your account instantly from within your profile:
+                  {da.method1Desc}
                 </p>
                 <ol className="space-y-2.5 text-xs text-neutral-300 font-medium pl-1 mb-6">
                   <li className="flex items-start gap-2">
                     <span className="w-4 h-4 rounded-full bg-white/10 text-[10px] font-mono flex items-center justify-center shrink-0 mt-0.5">1</span>
-                    <span>Open the Safi Academy app & tap your <strong>Profile</strong>.</span>
+                    <span>{da.method1Step1}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="w-4 h-4 rounded-full bg-white/10 text-[10px] font-mono flex items-center justify-center shrink-0 mt-0.5">2</span>
-                    <span>Go to <strong>Settings & Privacy</strong> → <strong>Security</strong>.</span>
+                    <span>{da.method1Step2}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="w-4 h-4 rounded-full bg-white/10 text-[10px] font-mono flex items-center justify-center shrink-0 mt-0.5">3</span>
-                    <span>Tap <strong>Delete Account</strong> & confirm with your password.</span>
+                    <span>{da.method1Step3}</span>
                   </li>
                 </ol>
               </div>
@@ -247,7 +219,7 @@ export default function AccountDeletionPortal() {
                 href={`/${currentLocale}/get-app`}
                 className="w-full py-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/10 text-xs font-bold uppercase tracking-wider text-center transition-all flex items-center justify-center gap-2"
               >
-                <span>Download App</span>
+                <span>{da.method1Btn}</span>
                 <ExternalLink size={12} />
               </Link>
             </div>
@@ -262,16 +234,16 @@ export default function AccountDeletionPortal() {
                   <FileText size={24} />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-rose-300 bg-rose-500/20 px-2.5 py-1 rounded-full mb-3 inline-block">
-                  Method 2 • Direct Web Form
+                  {da.method2Badge}
                 </span>
-                <h3 className="text-xl font-black text-white mb-3">Online Request Dispatch</h3>
+                <h3 className="text-xl font-black text-white mb-3">{da.method2Title}</h3>
                 <p className="text-neutral-300 text-xs leading-relaxed mb-6">
-                  Recommended if you uninstalled the mobile application or no longer have device access. Fill out the verified request form below on this page.
+                  {da.method2Desc}
                 </p>
                 <div className="p-3.5 rounded-2xl bg-black/40 border border-rose-500/20 text-xs text-neutral-300 mb-6">
-                  <p className="font-semibold text-rose-300 mb-1">Instant Ticket Generation:</p>
+                  <p className="font-semibold text-rose-300 mb-1">{da.method2Note.split(':')[0]}:</p>
                   <p className="text-[11px] text-neutral-400">
-                    A cryptographic deletion reference ticket will be issued immediately upon submission.
+                    {da.method2Note.includes(':') ? da.method2Note.split(':')[1].trim() : da.method2Note}
                   </p>
                 </div>
               </div>
@@ -279,7 +251,7 @@ export default function AccountDeletionPortal() {
                 href="#deletion-form"
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-400 hover:to-red-500 text-white font-black text-xs uppercase tracking-wider text-center transition-all shadow-md flex items-center justify-center gap-2"
               >
-                <span>Jump to Request Form</span>
+                <span>{da.method2Btn}</span>
                 <ChevronDown size={14} />
               </a>
             </div>
@@ -291,16 +263,16 @@ export default function AccountDeletionPortal() {
                   <Mail size={24} />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-yellow-400 bg-yellow-500/10 px-2.5 py-1 rounded-full mb-3 inline-block">
-                  Method 3 • Legal Officer
+                  {da.method3Badge}
                 </span>
-                <h3 className="text-xl font-black text-white mb-3">Data Protection Officer</h3>
+                <h3 className="text-xl font-black text-white mb-3">{da.method3Title}</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed mb-6">
-                  Send a formal written erasure request under UK GDPR Article 17 directly to our designated Data Protection Officer and compliance secretariat:
+                  {da.method3Desc}
                 </p>
                 <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 text-xs text-neutral-300 mb-6">
                   <p className="font-mono text-yellow-400 text-xs mb-1">privacy@safipay.net</p>
                   <p className="text-[11px] text-neutral-400 leading-relaxed">
-                    Subject: <em>"UK GDPR Article 17 — Account Erasure Request"</em>
+                    {da.method3Subject}
                   </p>
                 </div>
               </div>
@@ -308,7 +280,7 @@ export default function AccountDeletionPortal() {
                 href="mailto:privacy@safipay.net?subject=UK%20GDPR%20Article%2017%20Account%20Erasure%20Request"
                 className="w-full py-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/10 text-xs font-bold uppercase tracking-wider text-center transition-all flex items-center justify-center gap-2"
               >
-                <span>Email Legal Office</span>
+                <span>{da.method3Btn}</span>
                 <ExternalLink size={12} />
               </a>
             </div>
@@ -503,10 +475,10 @@ export default function AccountDeletionPortal() {
         {/* ================= DATA AUDIT & STATUTORY DISCLOSURES ================= */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <span className="text-xs font-black uppercase tracking-[0.25em] text-yellow-400 mb-2 block">Transparency & Governance</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Data Erasure vs. Statutory Retention</h2>
+            <span className="text-xs font-black uppercase tracking-[0.25em] text-yellow-400 mb-2 block">{da.transparencyBadge}</span>
+            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">{da.transparencyTitle}</h2>
             <p className="text-neutral-400 text-sm max-w-2xl mx-auto mt-3">
-              We operate with absolute transparency regarding exactly what is purged and what must be held under UK statutory law.
+              {da.transparencyDesc}
             </p>
           </div>
 
@@ -518,32 +490,18 @@ export default function AccountDeletionPortal() {
                   <UserX size={20} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-white">Permanently Purged Data</h3>
-                  <p className="text-[11px] text-rose-400 uppercase font-black tracking-wider">Erased on Day 30</p>
+                  <h3 className="text-xl font-black text-white">{da.purgedDataTitle}</h3>
+                  <p className="text-[11px] text-rose-400 uppercase font-black tracking-wider">{da.purgedDataSubtitle}</p>
                 </div>
               </div>
 
               <ul className="space-y-3.5 text-xs text-neutral-300 font-medium">
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 size={16} className="text-rose-400 shrink-0 mt-0.5" />
-                  <span><strong>Profile Credentials:</strong> Full name, email address, password hashes, phone numbers, avatars, and bio.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 size={16} className="text-rose-400 shrink-0 mt-0.5" />
-                  <span><strong>Session & OAuth Tokens:</strong> Google Sign-In tokens, Apple ID tokens, active JWT sessions, and device FCM push tokens.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 size={16} className="text-rose-400 shrink-0 mt-0.5" />
-                  <span><strong>Learning Telemetry:</strong> Video watch percentages, module completion timestamps, quiz scores, and student coding assignments.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 size={16} className="text-rose-400 shrink-0 mt-0.5" />
-                  <span><strong>Community & Communications:</strong> Forum discussion threads, private messages with mentors, likes, comments, and media uploads.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 size={16} className="text-rose-400 shrink-0 mt-0.5" />
-                  <span><strong>Gamification & Honors:</strong> Experience points (XP), Wall of Fame leaderboard rankings, trophy badges, and reward tokens.</span>
-                </li>
+                {da.purgedItems?.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5">
+                    <CheckCircle2 size={16} className="text-rose-400 shrink-0 mt-0.5" />
+                    <span><strong>{item.lead} </strong>{item.text}</span>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -554,28 +512,18 @@ export default function AccountDeletionPortal() {
                   <Scale size={20} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-white">Statutory Retention Exceptions</h3>
-                  <p className="text-[11px] text-amber-400 uppercase font-black tracking-wider">Mandated by UK Law</p>
+                  <h3 className="text-xl font-black text-white">{da.retentionExceptionsTitle}</h3>
+                  <p className="text-[11px] text-amber-400 uppercase font-black tracking-wider">{da.retentionExceptionsSubtitle}</p>
                 </div>
               </div>
 
               <ul className="space-y-3.5 text-xs text-neutral-300 font-medium">
-                <li className="flex items-start gap-2.5">
-                  <Info size={16} className="text-amber-400 shrink-0 mt-0.5" />
-                  <span><strong>Tax & Invoicing Records (6 Years):</strong> HM Revenue & Customs (HMRC) and the UK Companies Act mandate retaining transaction receipts, payment gateway invoice IDs, and VAT calculations for 6 years.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Info size={16} className="text-amber-400 shrink-0 mt-0.5" />
-                  <span><strong>Anti-Money Laundering (AML) Compliance:</strong> Where financial payments were executed via SafiPay banking gateways, transaction logs are archived in encrypted cold storage pursuant to UK financial crime statutes.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Info size={16} className="text-amber-400 shrink-0 mt-0.5" />
-                  <span><strong>Anonymized Cryptographic Hashes:</strong> Hashes of issued academic diplomas remain on public ledger nodes to prevent fraudulent counterfeit diploma claims, but all personally identifiable information (PII) is permanently stripped.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <Info size={16} className="text-amber-400 shrink-0 mt-0.5" />
-                  <span><strong>Security Audit Logs (90 Days):</strong> Anonymized server access logs and firewall IP event hashes are retained for 90 days under legitimate interest to prevent coordinated cyberattacks and DDoS attempts.</span>
-                </li>
+                {da.retentionItems?.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5">
+                    <Info size={16} className="text-amber-400 shrink-0 mt-0.5" />
+                    <span><strong>{item.lead} </strong>{item.text}</span>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -584,8 +532,8 @@ export default function AccountDeletionPortal() {
         {/* ================= COMPREHENSIVE FAQ ACCORDION ================= */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <span className="text-xs font-black uppercase tracking-[0.25em] text-yellow-400 mb-2 block">Answers & Clarifications</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Account Deletion FAQ</h2>
+            <span className="text-xs font-black uppercase tracking-[0.25em] text-yellow-400 mb-2 block">{da.faqBadge}</span>
+            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">{da.faqTitle}</h2>
           </div>
 
           <div className="max-w-3xl mx-auto space-y-4">
@@ -632,16 +580,16 @@ export default function AccountDeletionPortal() {
           <div className="w-12 h-12 rounded-2xl bg-white/5 text-yellow-400 flex items-center justify-center mx-auto mb-4">
             <Lock size={22} />
           </div>
-          <h3 className="text-xl sm:text-2xl font-black text-white mb-2">Statutory Legal Oversight</h3>
+          <h3 className="text-xl sm:text-2xl font-black text-white mb-2">{da.legalOversightTitle}</h3>
           <p className="text-neutral-400 text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed mb-6">
-            Safi Academy is a registered institution governed by Safi International Capital LTD. For formal legal notices, subpoena inquiries, or compliance correspondence, contact our London secretariat:
+            {da.legalOversightDesc}
           </p>
           <div className="inline-flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-neutral-300">
             <span className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/5">
-              Email: <strong>privacy@safipay.net</strong>
+              {da.emailLabelPrefix} <strong>privacy@safipay.net</strong>
             </span>
             <span className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/5">
-              Registered Office: <strong>71-75 Shelton Street, Covent Garden, London, WC2H 9JQ, UK</strong>
+              {da.officeLabelPrefix} <strong>71-75 Shelton Street, Covent Garden, London, WC2H 9JQ, UK</strong>
             </span>
           </div>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getBusinessFormationTranslation } from "@/utils/businessFormationTranslations";
+import { getBusinessFormationTranslation } from "./translations";
 import { usePathname } from "next/navigation";
 
 import Link from "next/link";
@@ -145,13 +145,13 @@ export default function BusinessFormationPage() {
 
               <div className="flex items-center justify-between pb-6 border-b border-white/10 mb-6">
                 <div>
-                  <span className="text-xs font-semibold text-neutral-400 uppercase tracking-widest block">Entity Status</span>
+                  <span className="text-xs font-semibold text-neutral-400 uppercase tracking-widest block">{bf.cardEntityStatus}</span>
                   <h3 className="text-lg font-black text-white flex items-center gap-2">
-                    US Corporate Shield
+                    {bf.cardShieldTitle}
                   </h3>
                 </div>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> {bf.cardActiveBadge}
                 </span>
               </div>
 
@@ -163,8 +163,8 @@ export default function BusinessFormationPage() {
                       <MapPin className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-white">Registered Agent</div>
-                      <div className="text-xs text-neutral-400">All 50 US States Covered</div>
+                      <div className="text-sm font-bold text-white">{bf.cardAgentTitle}</div>
+                      <div className="text-xs text-neutral-400">{bf.cardAgentSub}</div>
                     </div>
                   </div>
                   <CheckCircle2 className="w-5 h-5 text-amber-400" />
@@ -176,8 +176,8 @@ export default function BusinessFormationPage() {
                       <Lock className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-white">Address Privacy</div>
-                      <div className="text-xs text-neutral-400">Owner Data Shielded (Where Permitted by Law)</div>
+                      <div className="text-sm font-bold text-white">{bf.cardPrivacyTitle}</div>
+                      <div className="text-xs text-neutral-400">{bf.cardPrivacySub}</div>
                     </div>
                   </div>
                   <CheckCircle2 className="w-5 h-5 text-emerald-400" />
@@ -189,8 +189,8 @@ export default function BusinessFormationPage() {
                       <FileText className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-white">FinCEN BOI Guidance</div>
-                      <div className="text-xs text-neutral-400">Federal Exemption & Rules Tracking</div>
+                      <div className="text-sm font-bold text-white">{bf.cardBoiTitle}</div>
+                      <div className="text-xs text-neutral-400">{bf.cardBoiSub}</div>
                     </div>
                   </div>
                   <CheckCircle2 className="w-5 h-5 text-purple-400" />
@@ -202,8 +202,8 @@ export default function BusinessFormationPage() {
                       <Mail className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-white">Digital Mailroom</div>
-                      <div className="text-xs text-neutral-400">Same-Day Online Scans</div>
+                      <div className="text-sm font-bold text-white">{bf.cardMailTitle}</div>
+                      <div className="text-xs text-neutral-400">{bf.cardMailSub}</div>
                     </div>
                   </div>
                   <CheckCircle2 className="w-5 h-5 text-emerald-400" />
@@ -212,7 +212,7 @@ export default function BusinessFormationPage() {
 
               <div className="mt-6 pt-5 border-t border-white/10 text-center">
                 <p className="text-xs text-neutral-400">
-                  Recommended by Safi Academy for international & domestic founders.
+                  {bf.cardFootnote}
                 </p>
               </div>
             </div>
@@ -295,7 +295,7 @@ export default function BusinessFormationPage() {
                   <p className="text-xs md:text-sm text-neutral-400 leading-relaxed">{step.desc}</p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-white/5 flex items-center text-xs text-amber-400 font-semibold">
-                  <span>Phase {step.step}</span>
+                  <span>{bf.phaseLabel} {step.step}</span>
                 </div>
               </div>
             ))}
@@ -416,7 +416,7 @@ export default function BusinessFormationPage() {
           </div>
 
           <p className="text-[11px] text-neutral-500 mt-8 max-w-lg">
-            * Registered Agents Inc is an independent service provider. Safi Academy is not a law firm and does not provide legal, tax, or official financial advice. For state filing options, please visit their official website.
+            {bf.disclaimerBottom}
           </p>
         </motion.div>
 

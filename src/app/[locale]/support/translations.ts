@@ -3,6 +3,7 @@
 // ============================================================================
 
 export interface SupportTranslation {
+  loading: string;
   isRtl: boolean;
   howCanWeHelp: string;
   student: string;
@@ -36,6 +37,7 @@ export interface SupportTranslation {
 
 export const supportTranslationsMap: Record<string, SupportTranslation> = {
   en: {
+    loading: "Loading...",
     isRtl: false,
     howCanWeHelp: "How can we help,",
     student: "Student",
@@ -67,6 +69,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "View",
   },
   fa: {
+    loading: "در حال بارگذاری...",
     isRtl: true,
     howCanWeHelp: "چگونه می‌توانیم کمکتان کنیم،",
     student: "دانشجو",
@@ -98,6 +101,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "مشاهده",
   },
   ps: {
+    loading: "د پورته کېدو په حال کې...",
     isRtl: true,
     howCanWeHelp: "څنګه کولی شو ستاسو مرسته وکړو،",
     student: "زده کوونکی",
@@ -129,6 +133,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "کتل",
   },
   ar: {
+    loading: "جار التحميل...",
     isRtl: true,
     howCanWeHelp: "كيف يمكننا مساعدتك،",
     student: "طالب العلم",
@@ -160,6 +165,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "عرض",
   },
   ur: {
+    loading: "لوڈ ہو رہا ہے...",
     isRtl: true,
     howCanWeHelp: "ہم آپ کی کیا مدد کر سکتے ہیں،",
     student: "طالب علم",
@@ -191,6 +197,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "دیکھیں",
   },
   ru: {
+    loading: "Загрузка...",
     isRtl: false,
     howCanWeHelp: "Чем мы можем помочь,",
     student: "Студент",
@@ -222,6 +229,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "Просмотр",
   },
   tr: {
+    loading: "Yükleniyor...",
     isRtl: false,
     howCanWeHelp: "Size nasıl yardımcı olabiliriz,",
     student: "Öğrenci",
@@ -253,6 +261,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "Görüntüle",
   },
   de: {
+    loading: "Laden...",
     isRtl: false,
     howCanWeHelp: "Wie können wir Ihnen helfen,",
     student: "Student",
@@ -284,6 +293,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "Ansehen",
   },
   fr: {
+    loading: "Chargement...",
     isRtl: false,
     howCanWeHelp: "Comment pouvons-nous vous aider,",
     student: "Étudiant",
@@ -315,6 +325,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "Voir",
   },
   es: {
+    loading: "Cargando...",
     isRtl: false,
     howCanWeHelp: "¿Cómo podemos ayudarte,",
     student: "Estudiante",
@@ -346,6 +357,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "Ver",
   },
   zh: {
+    loading: "加载中...",
     isRtl: false,
     howCanWeHelp: "我们能为您提供什么帮助，",
     student: "学员",
@@ -377,6 +389,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "查看附件",
   },
   hi: {
+    loading: "लोड हो रहा है...",
     isRtl: false,
     howCanWeHelp: "हम आपकी क्या सहायता कर सकते हैं,",
     student: "विद्यार्थी",
@@ -408,6 +421,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "देखें",
   },
   it: {
+    loading: "Caricamento...",
     isRtl: false,
     howCanWeHelp: "Come possiamo aiutarti,",
     student: "Studente",
@@ -439,6 +453,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "Visualizza",
   },
   pt: {
+    loading: "Carregando...",
     isRtl: false,
     howCanWeHelp: "Como podemos ajudar,",
     student: "Estudante",
@@ -470,6 +485,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "Ver",
   },
   ja: {
+    loading: "読み込み中...",
     isRtl: false,
     howCanWeHelp: "どのようなご用件でしょうか、",
     student: "受講生",
@@ -501,6 +517,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "ファイルを見る",
   },
   ko: {
+    loading: "로딩 중...",
     isRtl: false,
     howCanWeHelp: "무엇을 도와드릴까요,",
     student: "수강생",
@@ -532,6 +549,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "확인하기",
   },
   nl: {
+    loading: "Laden...",
     isRtl: false,
     howCanWeHelp: "Hoe kunnen we u helpen,",
     student: "Student",
@@ -563,6 +581,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "Bekijken",
   },
   uz: {
+    loading: "Yuklanmoqda...",
     isRtl: false,
     howCanWeHelp: "Sizga qanday yordam bera olamiz,",
     student: "Talaba",
@@ -594,6 +613,7 @@ export const supportTranslationsMap: Record<string, SupportTranslation> = {
     viewAttachment: "Ko'rish",
   },
   id: {
+    loading: "Memuat...",
     isRtl: false,
     howCanWeHelp: "Ada yang bisa kami bantu,",
     student: "Siswa",

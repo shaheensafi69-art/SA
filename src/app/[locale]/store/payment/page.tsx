@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ShieldCheck, CreditCard, Smartphone, Lock } from "lucide-react";
 import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
-import { getPaymentTranslation } from "@/utils/paymentTranslations";
+import { getPaymentTranslation } from "./translations";
 
 interface PageProps {
   params: Promise<{ locale: string }> | { locale: string };

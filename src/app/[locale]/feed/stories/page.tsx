@@ -5,8 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowLeft, Sparkles, Plus, Play, User } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
-import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getStoriesTranslation } from "@/utils/storiesTranslations";
+import { getStoriesTranslation } from "./translations";
 import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 interface StoryUser {
@@ -20,7 +19,6 @@ interface StoryUser {
 export default function StoriesOverviewPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
-  const t = getPortalTranslation(currentLocale);
   const st = getStoriesTranslation(currentLocale);
   const isRtl = st.isRtl;
 

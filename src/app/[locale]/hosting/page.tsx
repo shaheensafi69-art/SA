@@ -42,7 +42,7 @@ import {
 } from "lucide-react";
 import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
-import { getHostingTranslation } from "@/utils/hostingTranslations";
+import { getHostingTranslation } from "./translations";
 
 // ============================================================================
 // OFFICIAL PARTNER & REFERRAL CONFIGURATION
@@ -249,7 +249,7 @@ export default function HostingerAffiliatePage() {
                     </div>
                     <div>
                       <div className="text-xs font-bold text-white">{ht.metricTtfb}</div>
-                      <div className="text-[11px] text-neutral-400">LiteSpeed Optimized</div>
+                      <div className="text-[11px] text-neutral-400">{ht.metricSubTtfb}</div>
                     </div>
                   </div>
                   <span className="font-mono text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
@@ -264,7 +264,7 @@ export default function HostingerAffiliatePage() {
                     </div>
                     <div>
                       <div className="text-xs font-bold text-white">{ht.metricCdn}</div>
-                      <div className="text-[11px] text-neutral-400">Cloudflare Enterprise CDN</div>
+                      <div className="text-[11px] text-neutral-400">{ht.metricSubCdn}</div>
                     </div>
                   </div>
                   <span className="font-mono text-xs font-bold text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded">
@@ -279,7 +279,7 @@ export default function HostingerAffiliatePage() {
                     </div>
                     <div>
                       <div className="text-xs font-bold text-white">{ht.metricUptime}</div>
-                      <div className="text-[11px] text-neutral-400">Monarx & WAF Real-Time</div>
+                      <div className="text-[11px] text-neutral-400">{ht.metricSubSec}</div>
                     </div>
                   </div>
                   <span className="font-mono text-xs font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">
@@ -294,7 +294,7 @@ export default function HostingerAffiliatePage() {
                     </div>
                     <div>
                       <div className="text-xs font-bold text-white">{ht.metricAi}</div>
-                      <div className="text-[11px] text-neutral-400">Enterprise NVMe (RAID-10)</div>
+                      <div className="text-[11px] text-neutral-400">{ht.metricSubNvme}</div>
                     </div>
                   </div>
                   <span className="font-mono text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
@@ -697,36 +697,36 @@ export default function HostingerAffiliatePage() {
               rel="sponsored noopener noreferrer"
               className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white font-black text-base uppercase tracking-wider rounded-2xl transition-all shadow-[0_10px_40px_rgba(147,51,234,0.45)] hover:shadow-[0_15px_50px_rgba(147,51,234,0.65)] group/btn"
             >
-              <span>Get Started with 20% Off</span>
-              <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+              <span>{ht.ctaGetStarted}</span>
+              <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform rtl:rotate-180" />
             </motion.a>
 
             <Link
               href={`/${currentLocale}/courses`}
               className="inline-flex items-center justify-center gap-2 px-7 py-5 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-bold text-sm rounded-2xl border border-white/10 transition-colors"
             >
-              <span>Explore Coding Courses</span>
-              <ChevronRight className="w-4 h-4" />
+              <span>{ht.ctaExploreCourses}</span>
+              <ChevronRight className="w-4 h-4 rtl:rotate-180" />
             </Link>
           </div>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-neutral-400">
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              30-Day Unconditional Money-Back Guarantee
+              {ht.bottomGuarantee}
             </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              Instant Cloud Account Activation
+              {ht.bottomInstant}
             </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              24/7 Priority Chat Assistance
+              {ht.bottomChat}
             </span>
           </div>
 
           <p className="text-[11px] text-neutral-500 mt-6 max-w-lg">
-            * Hostinger is an independent cloud hosting provider. Promotional discounts, domain availability, and renewal terms are managed directly by Hostinger.
+            {ht.bottomDisclaimer}
           </p>
         </motion.div>
       </div>

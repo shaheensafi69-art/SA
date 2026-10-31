@@ -8,7 +8,7 @@ import Script from "next/script";
 import { motion } from "framer-motion";
 import { CheckCircle2, Heart, ArrowRight, Home, ShieldCheck } from "lucide-react";
 import { trackPurchaseConversion } from "@/lib/gtag";
-import { getDonateTranslation } from "@/utils/donateTranslations";
+import { getDonateTranslation } from "../translations";
 
 const SUCCESS_TRANSLATIONS: Record<string, {
   badge: string;

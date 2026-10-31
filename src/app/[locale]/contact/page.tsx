@@ -1,6 +1,6 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getContactTranslation } from "@/utils/contactTranslations";
+import { getContactTranslation } from "./translations";
 import { isRtlLocale } from "@/dictionaries";
 
 import { useState } from "react";

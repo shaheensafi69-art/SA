@@ -1,6 +1,5 @@
 "use client";
-import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getPrivacyTranslation } from "@/utils/privacyTranslations";
+import { getPrivacyTranslation } from "./translations";
 import { usePathname } from "next/navigation";
 
 import { useState, useEffect } from "react";
@@ -14,7 +13,6 @@ import {
   Cookie,
   Share2,
   Scale,
-  FileText,
   CheckCircle2,
   Mail,
   ExternalLink,
@@ -23,56 +21,57 @@ import {
   Check,
   ChevronRight,
   Building2,
-  Clock,
   Sparkles,
   ArrowUpRight,
   ShieldCheck,
-  AlertTriangle,
   Trash2
 } from "lucide-react";
 
 export default function PrivacyPolicyPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
-  const t = getPortalTranslation(currentLocale);
   const pm = getPrivacyTranslation(currentLocale);
   const isRtl = pm.isRtl;
   const [activeSection, setActiveSection] = useState("controller");
 
   const sections = [
-    { id: "controller", title: pm.sections[0].title, icon: Building2 },
-    { id: "collection", title: pm.sections[1].title, icon: Eye },
-    { id: "affiliates", title: pm.sections[2].title, icon: Share2, isHighlight: true },
-    { id: "usage", title: pm.sections[3].title, icon: Server },
-    { id: "cookies", title: pm.sections[4].title, icon: Cookie },
-    { id: "security", title: pm.sections[5].title, icon: Lock },
-    { id: "rights", title: pm.sections[6].title, icon: Scale },
-    { id: "contact", title: pm.sections[7].title, icon: Mail },
+    { id: "controller", title: pm.sections[0]?.title || "1. Data Controller", icon: Building2 },
+    { id: "collection", title: pm.sections[1]?.title || "2. Information We Collect", icon: Eye },
+    { id: "affiliates", title: pm.sections[2]?.title || "3. Affiliates & Third Parties", icon: Share2, isHighlight: true },
+    { id: "usage", title: pm.sections[3]?.title || "4. How We Use Data", icon: Server },
+    { id: "cookies", title: pm.sections[4]?.title || "5. Cookies & Tracking", icon: Cookie },
+    { id: "security", title: pm.sections[5]?.title || "6. Security & Storage", icon: Lock },
+    { id: "rights", title: pm.sections[6]?.title || "7. Your Legal Rights", icon: Scale },
+    { id: "contact", title: pm.sections[7]?.title || "8. Privacy Inquiries", icon: Mail },
   ];
 
   const highlights = [
     {
-      title: pm.highlights[0].title,
-      desc: pm.highlights[0].desc,
+      title: pm.highlights[0]?.title,
+      desc: pm.highlights[0]?.desc,
       icon: ShieldCheck,
+      badge: pm.highlights[0]?.badge,
       color: "emerald"
     },
     {
-      title: pm.highlights[1].title,
-      desc: pm.highlights[1].desc,
+      title: pm.highlights[1]?.title,
+      desc: pm.highlights[1]?.desc,
       icon: Share2,
+      badge: pm.highlights[1]?.badge,
       color: "amber"
     },
     {
-      title: pm.highlights[2].title,
-      desc: pm.highlights[2].desc,
+      title: pm.highlights[2]?.title,
+      desc: pm.highlights[2]?.desc,
       icon: Lock,
+      badge: pm.highlights[2]?.badge,
       color: "blue"
     },
     {
-      title: pm.highlights[3].title,
-      desc: pm.highlights[3].desc,
+      title: pm.highlights[3]?.title,
+      desc: pm.highlights[3]?.desc,
       icon: UserCheck,
+      badge: pm.highlights[3]?.badge,
       color: "purple"
     }
   ];
@@ -95,7 +94,9 @@ export default function PrivacyPolicyPage() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [sections]);
+
+  const SECTION2_ICONS = [UserCheck, Lock, Globe, Sparkles];
 
   return (
     <main dir={isRtl ? "rtl" : "ltr"} className="w-full relative bg-[#020202] text-white font-sans overflow-hidden min-h-screen pt-28 md:pt-36 pb-32">
@@ -175,7 +176,7 @@ export default function PrivacyPolicyPage() {
                   <p className="text-xs text-neutral-400 leading-relaxed">{item.desc}</p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-white/5 flex items-center gap-1.5 text-[11px] text-emerald-400 font-bold uppercase tracking-wider">
-                  <Check className="w-3.5 h-3.5" /> {pm.highlights[0].badge}
+                  <Check className="w-3.5 h-3.5" /> {item.badge}
                 </div>
               </motion.div>
             );
@@ -293,45 +294,23 @@ export default function PrivacyPolicyPage() {
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <div className="text-emerald-400 font-bold text-sm mb-2 flex items-center gap-2">
-                    <UserCheck className="w-4 h-4" /> Identity & Profile Data
-                  </div>
-                  <p className="text-xs text-neutral-400 leading-relaxed">
-                    Full name, username, email address, password hash, language preferences, avatar, and enrolled course records.
-                  </p>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <div className="text-emerald-400 font-bold text-sm mb-2 flex items-center gap-2">
-                    <Lock className="w-4 h-4" /> Billing & Transactions
-                  </div>
-                  <p className="text-xs text-neutral-400 leading-relaxed">
-                    Invoices and order history. Sensitive card numbers are handled directly by Stripe using PCI-DSS Level 1 certified vaulting.
-                  </p>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <div className="text-emerald-400 font-bold text-sm mb-2 flex items-center gap-2">
-                    <Globe className="w-4 h-4" /> Device & Technical Logs
-                  </div>
-                  <p className="text-xs text-neutral-400 leading-relaxed">
-                    IP address, device model, browser metadata, operating system, and system security logs for fraud prevention.
-                  </p>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                  <div className="text-emerald-400 font-bold text-sm mb-2 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" /> Gamification & Academy Points
-                  </div>
-                  <p className="text-xs text-neutral-400 leading-relaxed">
-                    Quiz scores, lesson completions, Academy Points, badges, and public Wall of Fame leaderboards.
-                  </p>
-                </div>
+                {pm.section2.cards.map((card, cidx) => {
+                  const CardIcon = SECTION2_ICONS[cidx] || UserCheck;
+                  return (
+                    <div key={cidx} className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+                      <div className="text-emerald-400 font-bold text-sm mb-2 flex items-center gap-2">
+                        <CardIcon className="w-4 h-4" /> {card.title}
+                      </div>
+                      <p className="text-xs text-neutral-400 leading-relaxed">
+                        {card.desc}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Section 3: Affiliates & Third Parties (Spotlight Card for Registered Agents Inc) */}
+            {/* Section 3: Affiliates & Third Parties */}
             <div id="affiliates" className="scroll-mt-36 bg-gradient-to-br from-amber-500/[0.08] via-neutral-900/80 to-neutral-900/90 border border-amber-500/30 rounded-3xl p-8 md:p-10 backdrop-blur-xl shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -341,30 +320,29 @@ export default function PrivacyPolicyPage() {
                     <Share2 className="w-6 h-6" />
                   </div>
                   <div>
-                    <span className="text-[11px] font-mono text-amber-400 font-bold uppercase tracking-wider block">Section 3 • High Importance</span>
-                    <h2 className="text-2xl font-black text-white">Third-Party Links & Affiliate Partners</h2>
+                    <span className="text-[11px] font-mono text-amber-400 font-bold uppercase tracking-wider block">{pm.section3.secBadge}</span>
+                    <h2 className="text-2xl font-black text-white">{pm.section3.title}</h2>
                   </div>
                 </div>
                 <span className="px-3.5 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold text-xs uppercase tracking-wider">
-                  Affiliate Disclosure
+                  {pm.section3.badge}
                 </span>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-6">
-                To bridge the gap between education and real-world business setup, Safi Academy curates and recommends vetted corporate providers. Our US Business Formation portal features external referral links to <strong className="text-white">Registered Agents Inc</strong> and uses affiliate networks (such as AWIN).
+                {pm.section3.desc}
               </p>
 
               <div className="space-y-4 text-xs md:text-sm text-neutral-300">
                 <div className="bg-black/40 border border-white/10 rounded-2xl p-5 space-y-3">
                   <h4 className="font-bold text-white flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-amber-400" />
-                    How Referral Links & Affiliate Cookies Function:
+                    {pm.section3.rulesTitle}
                   </h4>
                   <ul className="list-disc list-inside text-neutral-400 space-y-2 pl-2 text-xs leading-relaxed">
-                    <li>When you click a link to Registered Agents Inc, an affiliate tracking parameter or cookie may be saved in your browser to verify that the referral originated from Safi Academy.</li>
-                    <li>Safi Academy <strong className="text-white">never</strong> shares your login passwords, personal student details, or academy files with Registered Agents Inc or affiliate networks.</li>
-                    <li>Any personal, corporate, or payment information you supply on Registered Agents Inc is collected directly by them and governed exclusively by their official <a href="https://www.registeredagentsinc.com/privacy-policy/" target="_blank" rel="noopener noreferrer" className="text-amber-400 font-bold underline">Privacy Policy</a>.</li>
-                    <li>We earn a referral commission on qualifying transactions at <strong className="text-white">zero extra cost</strong> to you.</li>
+                    {pm.section3.bullets.map((bullet, bidx) => (
+                      <li key={bidx}>{bullet}</li>
+                    ))}
                   </ul>
                 </div>
               </div>
@@ -377,39 +355,25 @@ export default function PrivacyPolicyPage() {
                   <Server className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">Section 4</span>
-                  <h2 className="text-2xl font-black text-white">Lawful Basis & Use of Data</h2>
+                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">{pm.section4.secBadge}</span>
+                  <h2 className="text-2xl font-black text-white">{pm.section4.title}</h2>
                 </div>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-4">
-                We only process personal data when permitted by law under Article 6 of the UK GDPR:
+                {pm.section4.desc}
               </p>
 
               <div className="space-y-3">
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-neutral-300">
-                  <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-white block mb-0.5">Contractual Fulfillment:</strong>
-                    Delivering courses, granting video access, issuing certificates, and processing payments.
+                {pm.section4.items.map((item, itmIdx) => (
+                  <div key={itmIdx} className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-neutral-300">
+                    <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-white block mb-0.5">{item.title}:</strong>
+                      {item.desc}
+                    </div>
                   </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-neutral-300">
-                  <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-white block mb-0.5">Legitimate Interests:</strong>
-                    Enhancing course curriculum, securing our servers from bot attacks, and analyzing platform usage.
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-neutral-300">
-                  <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-white block mb-0.5">Statutory & Regulatory Obligations:</strong>
-                    Maintaining accurate financial accounting records under UK tax and corporate regulations.
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
@@ -420,47 +384,25 @@ export default function PrivacyPolicyPage() {
                   <Cookie className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">Section 5</span>
-                  <h2 className="text-2xl font-black text-white">Cookies & Tracking Technologies</h2>
+                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">{pm.section5.secBadge}</span>
+                  <h2 className="text-2xl font-black text-white">{pm.section5.title}</h2>
                 </div>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-6">
-                Our platform uses session tokens, local storage, and cookies to keep you signed in securely and personalize your study environment.
+                {pm.section5.desc}
               </p>
 
               <div className="space-y-3">
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                  <div>
-                    <strong className="text-white block">Strictly Necessary Cookies</strong>
-                    <span className="text-neutral-400">Authentication, session state, and security firewall.</span>
+                {pm.section5.cookies.map((cookie, ckIdx) => (
+                  <div key={ckIdx} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                    <div>
+                      <strong className="text-white block">{cookie.title}</strong>
+                      <span className="text-neutral-400">{cookie.desc}</span>
+                    </div>
+                    <span className="text-emerald-400 font-mono text-[11px] bg-emerald-500/10 px-2.5 py-1 rounded-lg shrink-0">{cookie.badge}</span>
                   </div>
-                  <span className="text-emerald-400 font-mono text-[11px] bg-emerald-500/10 px-2.5 py-1 rounded-lg shrink-0">Always Active</span>
-                </div>
-
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                  <div>
-                    <strong className="text-white block">Performance & Metrics</strong>
-                    <span className="text-neutral-400">Anonymous lesson load times and playback metrics.</span>
-                  </div>
-                  <span className="text-neutral-400 font-mono text-[11px] bg-white/5 px-2.5 py-1 rounded-lg shrink-0">Configurable</span>
-                </div>
-
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                  <div>
-                    <strong className="text-white block">Affiliate & Referral Cookies</strong>
-                    <span className="text-neutral-400">Set only when clicking outbound partner links (e.g. Registered Agents Inc).</span>
-                  </div>
-                  <span className="text-amber-400 font-mono text-[11px] bg-amber-500/10 px-2.5 py-1 rounded-lg shrink-0">Outbound Only</span>
-                </div>
-
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                  <div>
-                    <strong className="text-white block">Google AdSense & Advertising Cookies</strong>
-                    <span className="text-neutral-400">Used by Google to serve ads based on user visits to this and other websites across the Internet.</span>
-                  </div>
-                  <span className="text-yellow-400 font-mono text-[11px] bg-yellow-500/10 px-2.5 py-1 rounded-lg shrink-0">Third-Party (Opt-Out Available)</span>
-                </div>
+                ))}
               </div>
 
               {/* Google AdSense & Third-Party Advertising Disclosure */}
@@ -468,18 +410,17 @@ export default function PrivacyPolicyPage() {
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
                   <h4 className="text-sm font-black text-white uppercase tracking-wider">
-                    Google AdSense & Third-Party Advertising Compliance
+                    {pm.section5.adHeading}
                   </h4>
                 </div>
                 <div className="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-3 text-xs leading-relaxed text-neutral-300">
                   <p>
-                    Safi Academy uses <strong className="text-white">Google AdSense</strong> and accredited third-party advertising vendors to display relevant, non-intrusive advertisements on selected community and feed areas.
+                    {pm.section5.adIntro}
                   </p>
                   <ul className="list-disc list-inside space-y-2 text-neutral-400">
-                    <li><strong className="text-white">Third-Party Vendors:</strong> Google and other third-party advertising networks use cookies to serve advertisements based on a user's prior visits to Safi Academy or other websites across the web.</li>
-                    <li><strong className="text-white">DoubleClick DART Cookie:</strong> Google's use of advertising cookies enables it and its partners to serve relevant advertisements to users based on their visits to our platform and other sites on the Internet.</li>
-                    <li><strong className="text-white">Personalized Ad Opt-Out:</strong> Users can opt out of personalized advertising by visiting <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" className="text-yellow-400 underline font-bold">Google Ads Settings</a> or through <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-yellow-400 underline font-bold">AboutAds.info</a>.</li>
-                    <li><strong className="text-white">Privacy Safeguards:</strong> Safi Academy does not sell personal user identifiers to ad brokers and restricts ad formats to native, non-disruptive placements.</li>
+                    {pm.section5.adBullets.map((adb, adbIdx) => (
+                      <li key={adbIdx}><strong className="text-white">{adb.lead}:</strong> {adb.text}</li>
+                    ))}
                   </ul>
                 </div>
               </div>
@@ -492,23 +433,23 @@ export default function PrivacyPolicyPage() {
                   <Lock className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">Section 6</span>
-                  <h2 className="text-2xl font-black text-white">Data Security & Storage Protocols</h2>
+                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">{pm.section6.secBadge}</span>
+                  <h2 className="text-2xl font-black text-white">{pm.section6.title}</h2>
                 </div>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-6">
-                We safeguard user data using multi-layered physical, administrative, and technological controls. Data transmissions utilize modern TLS 1.3 cryptographic protocols with automated vulnerability scanning.
+                {pm.section6.desc}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-neutral-300">
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
-                  <strong className="text-white block mb-1">Data Retention Period:</strong>
-                  We store student records for as long as your account remains active, plus mandatory statutory periods (up to 6 years for UK tax records).
+                  <strong className="text-white block mb-1">{pm.section6.retentionTitle}:</strong>
+                  {pm.section6.retentionDesc}
                 </div>
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
-                  <strong className="text-white block mb-1">International Transfers:</strong>
-                  Cross-border data transfers adhere strictly to UK International Data Transfer Agreements (IDTA) and standard contractual clauses.
+                  <strong className="text-white block mb-1">{pm.section6.transfersTitle}:</strong>
+                  {pm.section6.transfersDesc}
                 </div>
               </div>
             </div>
@@ -520,24 +461,17 @@ export default function PrivacyPolicyPage() {
                   <Scale className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">Section 7</span>
-                  <h2 className="text-2xl font-black text-white">Your Statutory Rights (UK GDPR)</h2>
+                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">{pm.section7.secBadge}</span>
+                  <h2 className="text-2xl font-black text-white">{pm.section7.title}</h2>
                 </div>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-6">
-                Under UK and EU data protection regulations, you hold enforceable statutory rights over your personal data:
+                {pm.section7.desc}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {[
-                  { title: "Right of Access", desc: "Request a complete digital copy of all personal records we hold." },
-                  { title: "Right to Rectification", desc: "Correct outdated, inaccurate, or incomplete information." },
-                  { title: "Right to Erasure", desc: "Request permanent deletion of your account (\"Right to be Forgotten\")." },
-                  { title: "Right to Restriction", desc: "Temporarily freeze data processing during dispute resolution." },
-                  { title: "Right to Portability", desc: "Obtain your course records in an open, machine-readable format." },
-                  { title: "Right to Object", desc: "Object to processing founded solely upon legitimate commercial interests." },
-                ].map((right, idx) => (
+                {pm.section7.rights.map((right, idx) => (
                   <div key={idx} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col justify-between">
                     <strong className="text-white text-xs font-bold block mb-1 flex items-center gap-2">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
@@ -576,13 +510,13 @@ export default function PrivacyPolicyPage() {
                   <Mail className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">Section 8</span>
-                  <h2 className="text-2xl font-black text-white">Privacy Inquiries & ICO Escalation</h2>
+                  <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider block">{pm.section8.secBadge}</span>
+                  <h2 className="text-2xl font-black text-white">{pm.section8.title}</h2>
                 </div>
               </div>
 
               <p className="text-sm text-neutral-300 leading-relaxed mb-6">
-                For questions regarding this policy, to exercise your data rights, or to submit a formal privacy inquiry, contact our Data Protection Team at:
+                {pm.section8.desc}
               </p>
 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/5 mb-6">
@@ -600,7 +534,7 @@ export default function PrivacyPolicyPage() {
               </div>
 
               <p className="text-xs text-neutral-500 leading-relaxed">
-                If you are dissatisfied with our response, you have the right to lodge a complaint with the UK Information Commissioner's Office (ICO), the UK's independent regulatory body for data privacy (<a href="https://ico.org.uk" target="_blank" rel="noopener noreferrer" className="text-neutral-400 underline hover:text-white">ico.org.uk</a>).
+                {pm.section8.icoText}
               </p>
             </div>
 

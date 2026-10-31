@@ -1,6 +1,5 @@
 "use client";
-import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getCoursePartnershipTranslation } from "@/utils/coursePartnershipTranslations";
+import { getCoursePartnershipTranslation } from "./translations";
 import { usePathname } from "next/navigation";
 
 import Link from "next/link";
@@ -13,7 +12,6 @@ import {
 export default function CoursePartnershipPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
-  const t = getPortalTranslation(currentLocale);
   const cp = getCoursePartnershipTranslation(currentLocale);
   const isRtl = cp.isRtl;
 

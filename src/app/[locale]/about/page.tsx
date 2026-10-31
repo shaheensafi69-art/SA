@@ -1,6 +1,6 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getAboutTranslation } from "@/utils/aboutTranslations";
+import { getAboutTranslation } from "./translations";
 import { getFounderLocaleData } from "@/utils/founderTranslations";
 import { isRtlLocale } from "@/dictionaries";
 

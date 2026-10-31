@@ -1,6 +1,6 @@
 "use client";
 import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getScholarshipTranslation } from "@/utils/scholarshipTranslations";
+import { getScholarshipTranslation } from "./translations";
 import { usePathname } from "next/navigation";
 
 import { useState, useEffect, useMemo, useRef } from "react";

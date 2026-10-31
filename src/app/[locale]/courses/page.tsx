@@ -1,5 +1,5 @@
 import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getCourseTranslation } from "@/utils/courseTranslations";
+import { getCourseTranslation } from "./translations";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import {

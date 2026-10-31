@@ -1,6 +1,5 @@
 "use client";
-import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getSupportTranslation } from "@/utils/supportTranslations";
+import { getSupportTranslation } from "./translations";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -18,7 +17,6 @@ type SupportTicket = {
 export default function MinimalSupportPage() {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
-  const t = getPortalTranslation(currentLocale);
   const st = getSupportTranslation(currentLocale);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);

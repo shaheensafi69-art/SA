@@ -10,7 +10,7 @@ import {
   Monitor, Laptop, Sparkles, HardDrive, Info, ExternalLink
 } from "lucide-react";
 import type { AppDownloadsData } from "@/lib/r2";
-import { getAppTranslation } from "./getAppTranslations";
+import { getAppTranslation } from "./translations";
 import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 interface GetAppClientProps {

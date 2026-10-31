@@ -38,7 +38,7 @@ import {
   FileCode2
 } from "lucide-react";
 import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
-import { getDevelopmentServicesTranslation } from "@/utils/developmentServicesTranslations";
+import { getDevelopmentServicesTranslation } from "./translations";
 
 export default function DevelopmentServicesPage() {
   const pathname = usePathname() || "/en";
@@ -563,13 +563,13 @@ export default function DevelopmentServicesPage() {
                     onChange={handleChange}
                     className="w-full bg-[#050505] border border-white/15 rounded-xl px-4 py-3.5 text-white outline-none focus:border-cyan-500 transition-colors text-sm appearance-none"
                   >
-                    <option value="Enterprise Full-Stack Web Applications">Enterprise Web Application</option>
-                    <option value="Cross-Platform & Native Mobile Apps">Mobile App (iOS/Android Flutter)</option>
-                    <option value="Autonomous AI Agents & LLM Infrastructure">Custom AI Integration & Agents</option>
-                    <option value="High-Throughput Cloud & Backend Architecture">Backend & Cloud Microservices</option>
-                    <option value="FinTech & E-Commerce Payment Systems">FinTech / Payment Architecture</option>
-                    <option value="Cybersecurity Auditing & Code Hardening">Cybersecurity & Code Audit</option>
-                    <option value="Other Custom Engineering">Other Custom Software</option>
+                    <option value="Enterprise Full-Stack Web Applications">{dt.optServiceWeb}</option>
+                    <option value="Cross-Platform & Native Mobile Apps">{dt.optServiceMobile}</option>
+                    <option value="Autonomous AI Agents & LLM Infrastructure">{dt.optServiceAi}</option>
+                    <option value="High-Throughput Cloud & Backend Architecture">{dt.optServiceBackend}</option>
+                    <option value="FinTech & E-Commerce Payment Systems">{dt.optServiceFintech}</option>
+                    <option value="Cybersecurity Auditing & Code Hardening">{dt.optServiceSecurity}</option>
+                    <option value="Other Custom Engineering">{dt.optServiceOther}</option>
                   </select>
                 </div>
               </div>
@@ -584,10 +584,10 @@ export default function DevelopmentServicesPage() {
                   onChange={handleChange}
                   className="w-full bg-[#050505] border border-white/15 rounded-xl px-4 py-3.5 text-white outline-none focus:border-cyan-500 transition-colors text-sm appearance-none"
                 >
-                  <option value="To be discussed">To be discussed / Discovery phase</option>
-                  <option value="$1,000 - $5,000">$1,000 - $5,000 (MVP / Prototype)</option>
-                  <option value="$5,000 - $15,000">$5,000 - $15,000 (Standard Production Platform)</option>
-                  <option value="$15,000+">$15,000+ (Enterprise Multi-Platform & AI)</option>
+                  <option value="To be discussed">{dt.optBudgetDiscuss}</option>
+                  <option value="$1,000 - $5,000">{dt.optBudgetMvp}</option>
+                  <option value="$5,000 - $15,000">{dt.optBudgetProd}</option>
+                  <option value="$15,000+">{dt.optBudgetEnterprise}</option>
                 </select>
               </div>
 

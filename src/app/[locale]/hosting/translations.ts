@@ -1,12 +1,12 @@
 // ============================================================================
-// SAFI ACADEMY - 19 LANGUAGES HOSTINGER & CLOUD TRANSLATIONS
+// SAFI ACADEMY - 19 LANGUAGES HOSTINGER TRANSLATIONS (100% NATIVE)
 // ============================================================================
 
 export interface HostingServiceItem {
   id: string;
   name: string;
   badge: string;
-  category: "web" | "cloud" | "vps";
+  category: "web" | "cloud" | "vps" | "email" | "ai" | "agency";
   shortDesc: string;
   longDesc: string;
   specs: string[];
@@ -32,7 +32,9 @@ export interface HostingPlanItem {
 export interface HostingArchItem {
   title: string;
   desc: string;
-  metric: string;
+  metric?: string;
+  tag?: string;
+  techSpecs?: string[];
 }
 
 export interface HostingStepItem {
@@ -87,6 +89,16 @@ export interface HostingTranslation {
   stepsSubtitle: string;
   faqsBadge: string;
   faqsTitle: string;
+  ctaGetStarted: string;
+  ctaExploreCourses: string;
+  bottomGuarantee: string;
+  bottomInstant: string;
+  bottomChat: string;
+  bottomDisclaimer: string;
+  metricSubTtfb: string;
+  metricSubCdn: string;
+  metricSubNvme: string;
+  metricSubSec: string;
   services: HostingServiceItem[];
   plans: HostingPlanItem[];
   architectureHighlights: HostingArchItem[];
@@ -583,7 +595,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "Get Started with 20% Off",
+    "ctaExploreCourses": "Explore Coding Courses",
+    "bottomGuarantee": "30-Day Unconditional Money-Back Guarantee",
+    "bottomInstant": "Instant Cloud Account Activation",
+    "bottomChat": "24/7 Priority Chat Assistance",
+    "bottomDisclaimer": "* Hostinger is an independent cloud hosting provider. Promotional discounts, domain availability, and renewal terms are managed directly by Hostinger.",
+    "metricSubTtfb": "LiteSpeed Optimized",
+    "metricSubCdn": "Cloudflare Enterprise CDN",
+    "metricSubNvme": "Enterprise NVMe (RAID-10)",
+    "metricSubSec": "Monarx & WAF Real-Time"
   },
   "fa": {
     "disclosure": "آکادمی صافی با هاستینگر همکاری رسمی دارد. وقتی از لینک تأییدشده یا کد تخفیف 89LSHAHEEKCO استفاده می‌کنید، ۲۰٪ تخفیف مازاد اختصاصی دریافت می‌کنید و کمیسیون ارجاعی بدون هزینه اضافی برای شما به آکادمی صافی جهت گسترش آموزش رایگان برنامه‌نویسی و وب تعلق می‌گیرد.",
@@ -789,11 +811,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "هاست وب پریمیوم",
+        "tagline": "بهترین گزینه برای وب‌سایت‌های شخصی، وبلاگ‌ها و پروژه‌های دانشجویی",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "۷۵٪ تخفیف + ۲۰٪ کد تخفیف همکار",
         "popular": false,
         "category": "web",
         "specs": [
@@ -834,14 +856,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "انتخاب پلن پریمیوم"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "هاست وب تجاری (بیزینس)",
+        "tagline": "پیشنهاد اصلی برای کسب‌وکارها، استارتاپ‌ها و فروشگاه‌های آنلاین",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "۷۳٪ تخفیف + ۲۰٪ کد تخفیف همکار",
         "popular": true,
         "category": "web",
         "specs": [
@@ -886,14 +908,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "انتخاب پلن بیزینس"
       },
       {
-        "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "name": "هاست ابری کلود استارتاپ",
+        "tagline": "منابع اختصاصی سخت‌افزاری برای پروژه‌های پرترافیک و مقیاس‌پذیر",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "۶۰٪ تخفیف + ۲۰٪ کد تخفیف همکار",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -934,14 +956,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "انتخاب کلود استارتاپ"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "سرور مجازی KVM 2 ابری",
+        "tagline": "دسترسی کامل روت سرور برای مهندسین نرم‌افزار و دواپس",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "۵۵٪ تخفیف + ۲۰٪ کد تخفیف همکار",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -982,7 +1004,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "انتخاب سرور مجازی KVM"
       }
     ],
     "architectureHighlights": [
@@ -1073,7 +1095,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": true
+    "isRtl": true,
+    "ctaGetStarted": "شروع با ۲۰٪ تخفیف اختصاصی",
+    "ctaExploreCourses": "مشاهده دوره‌های برنامه‌نویسی",
+    "bottomGuarantee": "۳۰ روز ضمانت بازگشت کامل وجه بدون قید و شرط",
+    "bottomInstant": "فعال‌سازی آنی حساب ابری در چند ثانیه",
+    "bottomChat": "پشتیبانی چت زنده ۲۴/۷ با اولویت ویژه",
+    "bottomDisclaimer": "* هاستینگر یک ارائه‌دهنده هاست ابری مستقل است. تخفیف‌های ویژه، ثبت دامنه و شرایط تمدید مستقیماً توسط هاستینگر مدیریت می‌شوند.",
+    "metricSubTtfb": "بهینه‌شده با وب‌سرور لایت‌اسپید",
+    "metricSubCdn": "شبکه ابری پیشرفته کلودفلر انترپرایز",
+    "metricSubNvme": "حافظه سازمانی NVMe (RAID-10)",
+    "metricSubSec": "حفاظت آنی با فایروال Monarx"
   },
   "ps": {
     "disclosure": "صافي اکاډمي له هاسټینګر سره رسمي همکاري لري. کله چې تاسو زموږ د تایید شوي لینک یا 89LSHAHEEKCO کوډ له لارې هاست واخلئ، ۲۰٪ اضافي تخفیف ترلاسه کوئ او صافي اکاډمۍ ته پرته له کوم اضافي لګښت څخه کمیسیون رسیږي چې د وړیا زده کړو ملاتړ کوي.",
@@ -1279,11 +1311,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "پریمیوم ویب هاسټینګ",
+        "tagline": "د شخصي وېبپاڼو، بلاګونو او محصلینو پروژو لپاره غوره انتخاب",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "۷۵٪ تخفیف + ۲۰٪ د ملګري ځانګړی کوډ",
         "popular": false,
         "category": "web",
         "specs": [
@@ -1324,14 +1356,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "پریمیوم پلن غوره کړئ"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "سوداګریز (بزنس) ویب هاسټینګ",
+        "tagline": "د سوداګریزو شرکتونو، سټارټ اپونو او آنلاین پلورنځیو لپاره",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "۷۳٪ تخفیف + ۲۰٪ د ملګري ځانګړی کوډ",
         "popular": true,
         "category": "web",
         "specs": [
@@ -1376,14 +1408,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "بزنس پلن غوره کړئ"
       },
       {
-        "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "name": "کلاوډ سټارټ اپ هاسټینګ",
+        "tagline": "د ډیرو لیدونکو او پراخو پروژو لپاره ځانګړي سرور سرچینې",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "۶۰٪ تخفیف + ۲۰٪ د ملګري ځانګړی کوډ",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -1424,14 +1456,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "کلاوډ سټارټ اپ غوره کړئ"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "KVM 2 کلاوډ مجازی سرور (VPS)",
+        "tagline": "د پروګرامرانو او انجینرانو لپاره د بشپړ روټ کنټرول سرور",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "۵۵٪ تخفیف + ۲۰٪ د ملګري ځانګړی کوډ",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -1472,7 +1504,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "KVM سرور غوره کړئ"
       }
     ],
     "architectureHighlights": [
@@ -1563,7 +1595,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": true
+    "isRtl": true,
+    "ctaGetStarted": "د ۲۰٪ ځانګړي تخفیف سره پیل کړئ",
+    "ctaExploreCourses": "د کوډنګ او پروګرامینګ کورسونه",
+    "bottomGuarantee": "د ۳۰ ورځو بې قید او شرطه د پیسو بیرته ورکول",
+    "bottomInstant": "په څو ثانیو کې د کلاوډ حساب فوري فعالیدل",
+    "bottomChat": "۲۴/۷ ځانګړی چټ او آنلاین ملاتړ",
+    "bottomDisclaimer": "* هاستینګر یو خپلواک کلاوډ چمتو کونکی دی. ځانګړي تخفیفونه او د ډومین نومونه مستقیماً د هاستینګر لخوا اداره کیږي.",
+    "metricSubTtfb": "د لایټ سپیډ له لارې چټک شوی",
+    "metricSubCdn": "د کلودفلیر انټرپرایز نړیواله شبکه",
+    "metricSubNvme": "خورا چټک سازمانی NVMe",
+    "metricSubSec": "د Monarx او کلاوډ دیوال امنیت"
   },
   "ru": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -1769,11 +1811,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "Премиум веб-хостинг",
+        "tagline": "Лучший выбор для персональных сайтов, блогов и студенческих проектов",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "Скидка 75% + 20% по промокоду",
         "popular": false,
         "category": "web",
         "specs": [
@@ -1814,14 +1856,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "Выбрать тариф Премиум"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "Бизнес веб-хостинг",
+        "tagline": "Рекомендуется для коммерческих сайтов, стартапов и интернет-магазинов",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "Скидка 73% + 20% по промокоду",
         "popular": true,
         "category": "web",
         "specs": [
@@ -1866,14 +1908,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "Выбрать тариф Бизнес"
       },
       {
-        "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "name": "Облачный Cloud Startup",
+        "tagline": "Выделенные серверные ресурсы для масштабируемых веб-приложений",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "Скидка 60% + 20% по промокоду",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -1914,14 +1956,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "Выбрать Cloud Startup"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "Облачный VPS KVM 2",
+        "tagline": "Полный root-доступ к виртуальному серверу для разработчиков и инженеров",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "Скидка 55% + 20% по промокоду",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -1962,7 +2004,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "Выбрать KVM VPS"
       }
     ],
     "architectureHighlights": [
@@ -2053,7 +2095,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "Начать со скидкой 20%",
+    "ctaExploreCourses": "Смотреть курсы по веб-разработке",
+    "bottomGuarantee": "30 дней безусловной гарантии возврата средств",
+    "bottomInstant": "Мгновенная активация облачного аккаунта",
+    "bottomChat": "Круглосуточная VIP-поддержка 24/7 в чате",
+    "bottomDisclaimer": "* Hostinger является независимым провайдером облачного хостинга. Промо-скидки, регистрация доменов и продление регулируются непосредственно Hostinger.",
+    "metricSubTtfb": "Оптимизация серверами LiteSpeed",
+    "metricSubCdn": "Глобальная сеть Cloudflare Enterprise CDN",
+    "metricSubNvme": "Сверхбыстрые накопители NVMe (RAID-10)",
+    "metricSubSec": "Мониторинг угроз в реальном времени Monarx & WAF"
   },
   "tr": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -2260,10 +2312,10 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     "plans": [
       {
         "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "tagline": "Kişisel web siteleri, bloglar ve öğrenci projeleri için en ideal çözüm",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "%75 İndirim + %20 Ortaklık Kodu",
         "popular": false,
         "category": "web",
         "specs": [
@@ -2304,14 +2356,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "Premium Planı Seç"
       },
       {
         "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "tagline": "Şirketler, e-ticaret mağazaları ve büyüyen işletmeler için önerilir",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "%73 İndirim + %20 Ortaklık Kodu",
         "popular": true,
         "category": "web",
         "specs": [
@@ -2356,14 +2408,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "Business Planı Seç"
       },
       {
-        "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "name": "Cloud Startup Hosting",
+        "tagline": "Yüksek trafikli uygulamalar ve büyük siteler için ayrılmış kaynaklar",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "%60 İndirim + %20 Ortaklık Kodu",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -2404,14 +2456,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "Cloud Startup Seç"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "KVM 2 Bulut VPS",
+        "tagline": "Yazılımcılar ve sistem yöneticileri için tam root yetkili sunucu",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "%55 İndirim + %20 Ortaklık Kodu",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -2452,7 +2504,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "KVM VPS Seç"
       }
     ],
     "architectureHighlights": [
@@ -2543,7 +2595,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "%20 Ekstra İndirimle Başla",
+    "ctaExploreCourses": "Yazılım Kurslarını İncele",
+    "bottomGuarantee": "30 Gün Koşulsuz Para İade Garantisi",
+    "bottomInstant": "Saniyeler İçinde Anında Hesap Aktivasyonu",
+    "bottomChat": "7/24 Öncelikli Canlı Destek",
+    "bottomDisclaimer": "* Hostinger bağımsız bir bulut barındırma sağlayıcısıdır. Promosyon indirimleri, alan adı tahsisleri ve yenileme koşulları doğrudan Hostinger tarafından yönetilir.",
+    "metricSubTtfb": "LiteSpeed Enterprise ile Optimize",
+    "metricSubCdn": "Cloudflare Enterprise Global CDN",
+    "metricSubNvme": "Kurumsal NVMe SSD (RAID-10)",
+    "metricSubSec": "Monarx & WAF ile Anlık Güvenlik"
   },
   "de": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -2749,11 +2811,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "Premium Webhosting",
+        "tagline": "Ideal für persönliche Websites, Blogs und Studentenprojekte",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "75% Rabatt + 20% Partner-Rabatt",
         "popular": false,
         "category": "web",
         "specs": [
@@ -2794,14 +2856,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "Premium-Tarif wählen"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "Business Webhosting",
+        "tagline": "Empfohlen für Unternehmen, Startups und moderne Online-Shops",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "73% Rabatt + 20% Partner-Rabatt",
         "popular": true,
         "category": "web",
         "specs": [
@@ -2846,14 +2908,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "Business-Tarif wählen"
       },
       {
         "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "tagline": "Dedizierte Ressourcen für stark frequentierte Webanwendungen",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "60% Rabatt + 20% Partner-Rabatt",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -2894,14 +2956,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "Cloud Startup wählen"
       },
       {
         "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "tagline": "Dedizierte Serverleistung mit vollem Root-Zugriff für Entwickler",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "55% Rabatt + 20% Partner-Rabatt",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -2942,7 +3004,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "KVM VPS wählen"
       }
     ],
     "architectureHighlights": [
@@ -3033,7 +3095,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "Jetzt mit 20% Rabatt starten",
+    "ctaExploreCourses": "Coding-Kurse entdecken",
+    "bottomGuarantee": "30 Tage bedingungslose Geld-zurück-Garantie",
+    "bottomInstant": "Sofortige Aktivierung des Cloud-Kontos",
+    "bottomChat": "Prioritärer 24/7-Live-Chat-Support",
+    "bottomDisclaimer": "* Hostinger ist ein unabhängiger Cloud-Hosting-Anbieter. Rabattaktionen, Domainverfügbarkeit und Verlängerungsbedingungen werden direkt von Hostinger verwaltet.",
+    "metricSubTtfb": "LiteSpeed Enterprise optimiert",
+    "metricSubCdn": "Cloudflare Enterprise globales CDN",
+    "metricSubNvme": "Enterprise NVMe (RAID-10)",
+    "metricSubSec": "Echtzeit-Sicherheit mit Monarx & WAF"
   },
   "fr": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -3239,11 +3311,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "Hébergement Web Premium",
+        "tagline": "Idéal pour les sites personnels, les blogs et les projets étudiants",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "75% d'économie + 20% code partenaire",
         "popular": false,
         "category": "web",
         "specs": [
@@ -3284,14 +3356,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "Choisir le plan Premium"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "Hébergement Web Business",
+        "tagline": "Recommandé pour les entreprises, créateurs et boutiques en ligne",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "73% d'économie + 20% code partenaire",
         "popular": true,
         "category": "web",
         "specs": [
@@ -3336,14 +3408,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "Choisir le plan Business"
       },
       {
         "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "tagline": "Ressources dédiées pour le trafic massif et les applications Web",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "60% d'économie + 20% code partenaire",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -3384,14 +3456,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "Choisir Cloud Startup"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "Serveur VPS Cloud KVM 2",
+        "tagline": "Accès root complet et puissance dédiée pour développeurs et DevOps",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "55% d'économie + 20% code partenaire",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -3432,7 +3504,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "Choisir le VPS KVM"
       }
     ],
     "architectureHighlights": [
@@ -3523,7 +3595,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "Commencer avec 20% de réduction",
+    "ctaExploreCourses": "Explorer les cours de programmation",
+    "bottomGuarantee": "Garantie de remboursement inconditionnelle de 30 jours",
+    "bottomInstant": "Activation instantanée du compte cloud",
+    "bottomChat": "Assistance par chat prioritaire 24h/24 et 7j/7",
+    "bottomDisclaimer": "* Hostinger est un fournisseur d'hébergement cloud indépendant. Les remises promotionnelles, la disponibilité des domaines et les renouvellements sont gérés directement par Hostinger.",
+    "metricSubTtfb": "Optimisé avec LiteSpeed Enterprise",
+    "metricSubCdn": "Réseau mondial Cloudflare Enterprise CDN",
+    "metricSubNvme": "Stockage NVMe d'entreprise (RAID-10)",
+    "metricSubSec": "Sécurité temps réel Monarx & WAF"
   },
   "ar": {
     "disclosure": "تحتفظ أكاديمية صافي بشراكة رسمية تابعة مع Hostinger. عند الشراء عبر رابط الإحالة أو الرمز الترويجي 89LSHAHEEKCO، ستحصل على خصم إضافي بنسبة 20%، وتدعم بذلك تقديم دورات البرمجة والتقنية المجانية عالمياً.",
@@ -3729,11 +3811,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "استضافة الويب بريميوم",
+        "tagline": "الخيار الأمثل للمواقع الشخصية والمدونات ومشاريع الطلاب",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "خصم 75% + 20% كود الشريك",
         "popular": false,
         "category": "web",
         "specs": [
@@ -3774,14 +3856,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "اختر خطة بريميوم"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "استضافة الويب للأعمال",
+        "tagline": "الخيار الموصى به للشركات والمتاجر الإلكترونية المتنامية",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "خصم 73% + 20% كود الشريك",
         "popular": true,
         "category": "web",
         "specs": [
@@ -3826,14 +3908,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "اختر خطة الأعمال"
       },
       {
-        "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "name": "الاستضافة السحابية للمشاريع",
+        "tagline": "موارد مخصصة للمواقع ذات الزيارات العالية والتطبيقات المتقدمة",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "خصم 60% + 20% كود الشريك",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -3874,14 +3956,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "اختر الخطة السحابية"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "خادم سحابي افتراضي KVM 2",
+        "tagline": "صلاحيات رووت كاملة مخصصة للمطورين ومهندسي البرمجيات",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "خصم 55% + 20% كود الشريك",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -3922,7 +4004,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "اختر خادم KVM"
       }
     ],
     "architectureHighlights": [
@@ -4013,7 +4095,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": true
+    "isRtl": true,
+    "ctaGetStarted": "ابدأ الآن مع خصم 20% إضافي",
+    "ctaExploreCourses": "استكشف دورات البرمجة والتقنية",
+    "bottomGuarantee": "ضمان استرداد الأموال غير المشروط لمدة 30 يومًا",
+    "bottomInstant": "تفعيل فوري للحساب السحابي خلال ثوانٍ",
+    "bottomChat": "دعم فني مباشر على مدار الساعة بأولوية VIP",
+    "bottomDisclaimer": "* تعد Hostinger مزود استضافة سحابية مستقل. العروض الترويجية وتوافر النطاقات وشروط التجديد تُدار مباشرة بواسطة Hostinger.",
+    "metricSubTtfb": "محسّن بمحرك LiteSpeed Enterprise",
+    "metricSubCdn": "شبكة تسليم المحتوى Cloudflare Enterprise",
+    "metricSubNvme": "تخزين فائق السرعة Enterprise NVMe",
+    "metricSubSec": "حماية أمنية مباشرة عبر Monarx و WAF"
   },
   "ur": {
     "disclosure": "صافی اکیڈمی ہوسٹنگر کے ساتھ باضابطہ پارٹنرشپ رکھتی ہے۔ جب آپ ہمارے مصدقہ لنک یا کوپن کوڈ 89LSHAHEEKCO سے ہوسٹنگ خریدتے ہیں تو آپ کو اضافی 20% ڈسکاؤنٹ ملتا ہے اور بغیر کسی اضافی لاگت کے صافی اکیڈمی کی مفت تعلیم کی مہم کو مدد ملتی ہے۔",
@@ -4219,11 +4311,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "پریمیم ویب ہوسٹنگ",
+        "tagline": "ذاتی ویب سائٹس، بلاگز اور طلباء کے پروجیکٹس کے لیے بہترین",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "75٪ چھوٹ + 20٪ پارٹنر رعایت",
         "popular": false,
         "category": "web",
         "specs": [
@@ -4264,14 +4356,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "پریمیم پلان منتخب کریں"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "بزنس ویب ہوسٹنگ",
+        "tagline": "کاروبار، اسٹارٹ اپس اور ای کامرس اسٹورز کے لیے تجویز کردہ",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "73٪ چھوٹ + 20٪ پارٹنر رعایت",
         "popular": true,
         "category": "web",
         "specs": [
@@ -4316,14 +4408,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "بزنس پلان منتخب کریں"
       },
       {
-        "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "name": "کلاؤڈ اسٹارٹ اپ",
+        "tagline": "زیادہ ٹریفک اور جدید ایپس کے لیے مختص سرور وسائل",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "60٪ چھوٹ + 20٪ پارٹنر رعایت",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -4364,14 +4456,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "کلاؤڈ اسٹارٹ اپ منتخب کریں"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "KVM 2 کلاؤڈ وی پی ایس",
+        "tagline": "سافٹ ویئر انجینئرز اور ڈویلپرز کے لیے مکمل روٹ پاور",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "55٪ چھوٹ + 20٪ پارٹنر رعایت",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -4412,7 +4504,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "KVM وی پی ایس منتخب کریں"
       }
     ],
     "architectureHighlights": [
@@ -4503,7 +4595,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": true
+    "isRtl": true,
+    "ctaGetStarted": "اضافی 20٪ رعایت کے ساتھ آغاز کریں",
+    "ctaExploreCourses": "کوڈنگ اور کلاؤڈ کورسز دیکھیں",
+    "bottomGuarantee": "30 دن کی غیر مشروط رقم واپسی کی ضمانت",
+    "bottomInstant": "چند سیکنڈز میں کلاؤڈ اکاؤنٹ کی فوری فعالیت",
+    "bottomChat": "24/7 ترجیحی لائیو چیٹ سپورٹ",
+    "bottomDisclaimer": "* ہوسٹنگر ایک خود مختار کلاؤڈ ہوسٹنگ ادارہ ہے۔ پروموشنل رعایتیں، ڈومین رجسٹریشن اور تجدید کے معاملات براہ راست ہوسٹنگر کے زیر انتظام ہیں۔",
+    "metricSubTtfb": "لائٹ اسپیڈ کے ساتھ جدید رفتار",
+    "metricSubCdn": "کلاؤڈ فلیئر انٹرپرائز گلوبل CDN",
+    "metricSubNvme": "انٹرپرائز گریڈ NVMe اسٹوریج",
+    "metricSubSec": "Monarx اور کلاؤڈ WAF سے لائیو سیکیورٹی"
   },
   "es": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -4709,11 +4811,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "Hosting Web Premium",
+        "tagline": "Ideal para sitios web personales, blogs y proyectos académicos",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "Ahorra 75% + 20% descuento socio",
         "popular": false,
         "category": "web",
         "specs": [
@@ -4754,14 +4856,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "Elegir plan Premium"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "Hosting Web Business",
+        "tagline": "Recomendado para empresas, emprendedores y tiendas en línea",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "Ahorra 73% + 20% descuento socio",
         "popular": true,
         "category": "web",
         "specs": [
@@ -4806,14 +4908,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "Elegir plan Business"
       },
       {
         "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "tagline": "Recursos dedicados para proyectos de alto tráfico y rápido crecimiento",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "Ahorra 60% + 20% descuento socio",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -4854,14 +4956,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "Elegir Cloud Startup"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "VPS Cloud KVM 2",
+        "tagline": "Control total con acceso root dedicado para desarrolladores e ingenieros",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "Ahorra 55% + 20% descuento socio",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -4902,7 +5004,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "Elegir VPS KVM"
       }
     ],
     "architectureHighlights": [
@@ -4993,7 +5095,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "Comenzar con 20% de descuento",
+    "ctaExploreCourses": "Explorar cursos de programación",
+    "bottomGuarantee": "Garantía de reembolso incondicional de 30 días",
+    "bottomInstant": "Activación inmediata de la cuenta cloud",
+    "bottomChat": "Soporte prioritario por chat 24/7",
+    "bottomDisclaimer": "* Hostinger es un proveedor independiente de hosting cloud. Los descuentos promocionales, la disponibilidad de dominios y las renovaciones son gestionados directamente por Hostinger.",
+    "metricSubTtfb": "Optimizado con LiteSpeed Enterprise",
+    "metricSubCdn": "Red de distribución Cloudflare Enterprise CDN",
+    "metricSubNvme": "Almacenamiento NVMe empresarial (RAID-10)",
+    "metricSubSec": "Seguridad en tiempo real con Monarx y WAF"
   },
   "zh": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -5199,11 +5311,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "高级虚拟主机 (Premium)",
+        "tagline": "个人博客、作品集及学生建站入门的最佳之选",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "立省 75% + 专属额外 20% 优惠",
         "popular": false,
         "category": "web",
         "specs": [
@@ -5244,14 +5356,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "选择高级主机方案"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "企业商务主机 (Business)",
+        "tagline": "出海企业、电商品牌及高要求商业网站官方推荐",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "立省 73% + 专属额外 20% 优惠",
         "popular": true,
         "category": "web",
         "specs": [
@@ -5296,14 +5408,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "选择企业商务方案"
       },
       {
-        "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "name": "云启动方案 (Cloud Startup)",
+        "tagline": "独立云端算力资源，轻松承载海量高并发访问",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "立省 60% + 专属额外 20% 优惠",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -5344,14 +5456,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "选择云启动方案"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "KVM 2 极速云服务器 (VPS)",
+        "tagline": "工程师与软件开发人员专属，享完整 Root 管理员权限",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "立省 55% + 专属额外 20% 优惠",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -5392,7 +5504,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "选择 KVM 云服务器"
       }
     ],
     "architectureHighlights": [
@@ -5483,7 +5595,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "立即尊享额外 20% 优惠开启建站",
+    "ctaExploreCourses": "探索全栈编程与云开发实操课程",
+    "bottomGuarantee": "30 天无条件全额退款保障承诺",
+    "bottomInstant": "云端账户秒级自动开通与环境就绪",
+    "bottomChat": "7x24 小时全天候 VIP 专属即时客服通道",
+    "bottomDisclaimer": "* Hostinger 为独立的高性能云主机提供商。相关推广特惠、域名免费配额及续费规则由 Hostinger 官方直接执行与最终解释。",
+    "metricSubTtfb": "LiteSpeed Enterprise 底层极速调优",
+    "metricSubCdn": "Cloudflare Enterprise 全球企业级加速节点",
+    "metricSubNvme": "企业级纯 NVMe 存储阵列 (RAID-10)",
+    "metricSubSec": "Monarx 恶意代码拦截与实时云防火墙"
   },
   "hi": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -5689,11 +5811,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "प्रीमियम वेब होस्टिंग",
+        "tagline": "व्यक्तिगत वेबसाइटों, ब्लॉग्स और छात्र प्रोजेक्ट्स के लिए सर्वोत्तम",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "75% छूट + 20% पार्टनर अतिरिक्त छूट",
         "popular": false,
         "category": "web",
         "specs": [
@@ -5734,14 +5856,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "प्रीमियम प्लान चुनें"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "बिजनेस वेब होस्टिंग",
+        "tagline": "व्यवसायों, स्टार्टअप्स और ऑनलाइन स्टोर के लिए अनुशंसित",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "73% छूट + 20% पार्टनर अतिरिक्त छूट",
         "popular": true,
         "category": "web",
         "specs": [
@@ -5786,14 +5908,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "बिजनेस प्लान चुनें"
       },
       {
-        "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "name": "क्लाउड स्टार्टअप",
+        "tagline": "उच्च ट्रैफ़िक और स्केलेबल अनुप्रयोगों के लिए समर्पित संसाधन",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "60% छूट + 20% पार्टनर अतिरिक्त छूट",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -5834,14 +5956,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "क्लाउड स्टार्टअप चुनें"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "KVM 2 क्लाउड VPS",
+        "tagline": "डेवलपर्स और इंजीनियरों के लिए पूर्ण रूट एक्सेस सर्वर",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "55% छूट + 20% पार्टनर अतिरिक्त छूट",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -5882,7 +6004,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "KVM VPS चुनें"
       }
     ],
     "architectureHighlights": [
@@ -5973,7 +6095,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "अतिरिक्त 20% छूट के साथ शुरुआत करें",
+    "ctaExploreCourses": "कोडिंग और वेब डेवलपमेंट कोर्स देखें",
+    "bottomGuarantee": "30 दिनों की बिना शर्त पैसे वापसी की गारंटी",
+    "bottomInstant": "कुछ ही सेकंड में क्लाउड अकाउंट सक्रियण",
+    "bottomChat": "24/7 प्राथमिकता लाइव चैट सहायता",
+    "bottomDisclaimer": "* Hostinger एक स्वतंत्र क्लाउड होस्टिंग प्रदाता है। प्रचार छूट, डोमेन उपलब्धता और नवीनीकरण की शर्तें सीधे Hostinger द्वारा प्रबंधित की जाती हैं।",
+    "metricSubTtfb": "LiteSpeed Enterprise द्वारा अनुकूलित",
+    "metricSubCdn": "Cloudflare Enterprise वैश्विक CDN",
+    "metricSubNvme": "एंटरप्राइज NVMe स्टोरेज (RAID-10)",
+    "metricSubSec": "Monarx और WAF द्वारा लाइव सुरक्षा"
   },
   "it": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -6179,11 +6311,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "Hosting Web Premium",
+        "tagline": "Ideale per siti web personali, blog e progetti universitari",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "Risparmia il 75% + 20% sconto partner",
         "popular": false,
         "category": "web",
         "specs": [
@@ -6224,14 +6356,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "Scegli il piano Premium"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "Hosting Web Business",
+        "tagline": "Consigliato per aziende, professionisti e negozi e-commerce",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "Risparmia il 73% + 20% sconto partner",
         "popular": true,
         "category": "web",
         "specs": [
@@ -6276,14 +6408,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "Scegli il piano Business"
       },
       {
         "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "tagline": "Risorse dedicate per applicazioni scalabili ad alto traffico",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "Risparmia il 60% + 20% sconto partner",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -6324,14 +6456,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "Scegli Cloud Startup"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "VPS Cloud KVM 2",
+        "tagline": "Potenza con accesso root completo per sviluppatori e ingegneri",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "Risparmia il 55% + 20% sconto partner",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -6372,7 +6504,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "Scegli VPS KVM"
       }
     ],
     "architectureHighlights": [
@@ -6463,7 +6595,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "Inizia con il 20% di sconto",
+    "ctaExploreCourses": "Scopri i corsi di programmazione",
+    "bottomGuarantee": "Garanzia di rimborso incondizionata di 30 giorni",
+    "bottomInstant": "Attivazione immediata dell'account cloud",
+    "bottomChat": "Assistenza prioritaria in chat 24/7",
+    "bottomDisclaimer": "* Hostinger è un provider di hosting cloud indipendente. Gli sconti promozionali, la disponibilità dei domini e i rinnovi sono gestiti direttamente da Hostinger.",
+    "metricSubTtfb": "Ottimizzato con LiteSpeed Enterprise",
+    "metricSubCdn": "Cloudflare Enterprise Global CDN",
+    "metricSubNvme": "Archiviazione Enterprise NVMe (RAID-10)",
+    "metricSubSec": "Sicurezza in tempo reale con Monarx e WAF"
   },
   "pt": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -6669,11 +6811,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "Hospedagem Web Premium",
+        "tagline": "Ideal para sites pessoais, blogs e projetos acadêmicos",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "Economize 75% + 20% desconto parceiro",
         "popular": false,
         "category": "web",
         "specs": [
@@ -6714,14 +6856,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "Escolher plano Premium"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "Hospedagem Web Business",
+        "tagline": "Recomendado para empresas, criadores e lojas virtuais",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "Economize 73% + 20% desconto parceiro",
         "popular": true,
         "category": "web",
         "specs": [
@@ -6766,14 +6908,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "Escolher plano Business"
       },
       {
         "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "tagline": "Recursos dedicados para alto tráfego e aplicativos de rápido crescimento",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "Economize 60% + 20% desconto parceiro",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -6814,14 +6956,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "Escolher Cloud Startup"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "VPS Cloud KVM 2",
+        "tagline": "Servidor com acesso root dedicado para desenvolvedores e DevOps",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "Economize 55% + 20% desconto parceiro",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -6862,7 +7004,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "Escolher VPS KVM"
       }
     ],
     "architectureHighlights": [
@@ -6953,7 +7095,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "Começar com 20% de desconto extra",
+    "ctaExploreCourses": "Conhecer cursos de programação",
+    "bottomGuarantee": "Garantia incondicional de reembolso de 30 dias",
+    "bottomInstant": "Ativação instantânea da conta na nuvem",
+    "bottomChat": "Suporte prioritário via chat 24 horas por dia",
+    "bottomDisclaimer": "* A Hostinger é uma provedora independente de hospedagem em nuvem. Descontos promocionais, disponibilidade de domínios e termos de renovação são gerenciados diretamente pela Hostinger.",
+    "metricSubTtfb": "Otimizado com LiteSpeed Enterprise",
+    "metricSubCdn": "Rede global Cloudflare Enterprise CDN",
+    "metricSubNvme": "Armazenamento NVMe corporativo (RAID-10)",
+    "metricSubSec": "Segurança em tempo real Monarx e WAF"
   },
   "ja": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -7159,11 +7311,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "プレミアムWebホスティング",
+        "tagline": "個人サイト、ブログ、学生プロジェクトの入門に最適",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "75%割引 + 提携20%追加割引",
         "popular": false,
         "category": "web",
         "specs": [
@@ -7204,14 +7356,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "プレミアムプランを選択"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "ビジネスWebホスティング",
+        "tagline": "企業サイト、クリエイター、ECストアにおすすめの標準構成",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "73%割引 + 提携20%追加割引",
         "popular": true,
         "category": "web",
         "specs": [
@@ -7256,14 +7408,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "ビジネスプランを選択"
       },
       {
-        "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "name": "クラウドスタートアップ",
+        "tagline": "高トラフィックや成長期アプリに対応する専用リソース構成",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "60%割引 + 提携20%追加割引",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -7304,14 +7456,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "クラウドプランを選択"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "KVM 2 クラウドVPS",
+        "tagline": "開発者やエンジニア向けの完全Root権限付き仮想専用サーバー",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "55%割引 + 提携20%追加割引",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -7352,7 +7504,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "KVM VPSを選択"
       }
     ],
     "architectureHighlights": [
@@ -7443,7 +7595,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "20%特別割引で今すぐ始める",
+    "ctaExploreCourses": "プログラミング講座一覧を見る",
+    "bottomGuarantee": "安心の30日間無条件全額返金保証",
+    "bottomInstant": "数秒でのクラウド環境即時アクティベーション",
+    "bottomChat": "24時間365日対応の優先ライブチャットサポート",
+    "bottomDisclaimer": "* Hostingerは独立したクラウドホスティング事業者です。特別割引、独自ドメインの付与、更新条件はHostingerにより直接管理されます。",
+    "metricSubTtfb": "LiteSpeed Enterpriseによる高速最適化",
+    "metricSubCdn": "Cloudflare Enterprise グローバルCDN網",
+    "metricSubNvme": "エンタープライズNVMeストレージ (RAID-10)",
+    "metricSubSec": "MonarxとWAFによるリアルタイム脅威検知"
   },
   "ko": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -7649,11 +7811,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "프리미엄 웹 호스팅",
+        "tagline": "개인 웹사이트, 블로그 및 학생 프로젝트를 위한 완벽한 솔루션",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "75% 할인 + 제휴 20% 추가 할인",
         "popular": false,
         "category": "web",
         "specs": [
@@ -7694,14 +7856,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "프리미엄 플랜 선택"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "비즈니스 웹 호스팅",
+        "tagline": "기업, 스타트업 및 온라인 쇼핑몰을 위한 공식 추천 플랜",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "73% 할인 + 제휴 20% 추가 할인",
         "popular": true,
         "category": "web",
         "specs": [
@@ -7746,14 +7908,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "비즈니스 플랜 선택"
       },
       {
-        "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "name": "클라우드 스타트업",
+        "tagline": "대규모 트래픽과 확장형 앱을 위한 전용 클라우드 리소스",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "60% 할인 + 제휴 20% 추가 할인",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -7794,14 +7956,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "클라우드 스타트업 선택"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "KVM 2 클라우드 VPS",
+        "tagline": "개발자와 엔지니어를 위한 루트 관리자 권한 전용 서버",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "55% 할인 + 제휴 20% 추가 할인",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -7842,7 +8004,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "KVM VPS 선택"
       }
     ],
     "architectureHighlights": [
@@ -7933,7 +8095,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "추가 20% 할인받고 시작하기",
+    "ctaExploreCourses": "프로그래밍 및 클라우드 코스 보기",
+    "bottomGuarantee": "30일 무조건 전액 환불 보장",
+    "bottomInstant": "몇 초 만에 완료되는 클라우드 계정 즉시 활성화",
+    "bottomChat": "연중무휴 24/7 우선 라이브 채팅 지원",
+    "bottomDisclaimer": "* Hostinger는 독립된 클라우드 호스팅 제공업체입니다. 프로모션 할인, 도메인 제공 및 갱신 조건은 Hostinger에서 직접 관리합니다.",
+    "metricSubTtfb": "LiteSpeed Enterprise 기반 초고속 최적화",
+    "metricSubCdn": "Cloudflare Enterprise 글로벌 CDN 네트워크",
+    "metricSubNvme": "엔터프라이즈급 NVMe 스토리지 (RAID-10)",
+    "metricSubSec": "Monarx 및 WAF 실시간 웹 보안 방화벽"
   },
   "nl": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -8139,11 +8311,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "Premium Webhosting",
+        "tagline": "Ideaal voor persoonlijke websites, blogs en studentenprojecten",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "Bespaar 75% + 20% extra partnerkorting",
         "popular": false,
         "category": "web",
         "specs": [
@@ -8184,14 +8356,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "Kies Premium Plan"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "Business Webhosting",
+        "tagline": "Aanbevolen voor bedrijven, startups en e-commerce winkels",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "Bespaar 73% + 20% extra partnerkorting",
         "popular": true,
         "category": "web",
         "specs": [
@@ -8236,14 +8408,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "Kies Business Plan"
       },
       {
         "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "tagline": "Toegewezen serverbronnen voor drukbezochte webtoepassingen",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "Bespaar 60% + 20% extra partnerkorting",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -8284,14 +8456,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "Kies Cloud Startup"
       },
       {
         "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "tagline": "Toegewezen serverkracht met volledige root-toegang voor ontwikkelaars",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "Bespaar 55% + 20% extra partnerkorting",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -8332,7 +8504,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "Kies KVM VPS"
       }
     ],
     "architectureHighlights": [
@@ -8423,7 +8595,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "Start met 20% extra korting",
+    "ctaExploreCourses": "Ontdek programmeercursussen",
+    "bottomGuarantee": "30 dagen niet-goed-geld-terug-garantie zonder voorwaarden",
+    "bottomInstant": "Directe activatie van uw cloud-account",
+    "bottomChat": "24/7 prioritaire live chat-ondersteuning",
+    "bottomDisclaimer": "* Hostinger is een onafhankelijke cloud hosting provider. Actiekortingen, domeinbeschikbaarheid en verlengingsvoorwaarden worden rechtstreeks door Hostinger beheerd.",
+    "metricSubTtfb": "LiteSpeed Enterprise geoptimaliseerd",
+    "metricSubCdn": "Cloudflare Enterprise Global CDN",
+    "metricSubNvme": "Enterprise NVMe-opslag (RAID-10)",
+    "metricSubSec": "Real-time beveiliging met Monarx & WAF"
   },
   "uz": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -8629,11 +8811,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "Premium veb-xosting",
+        "tagline": "Shaxsiy veb-saytlar, bloglar va talabalar loyihalari uchun ideal",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "75% tejash + 20% hamkorlik chegirmasi",
         "popular": false,
         "category": "web",
         "specs": [
@@ -8674,14 +8856,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "Premium tarifni tanlash"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "Biznes veb-xosting",
+        "tagline": "Kompaniyalar, startaplar va internet-do'konlar uchun tavsiya etiladi",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "73% tejash + 20% hamkorlik chegirmasi",
         "popular": true,
         "category": "web",
         "specs": [
@@ -8726,14 +8908,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "Biznes tarifni tanlash"
       },
       {
-        "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "name": "Cloud Startup xosting",
+        "tagline": "Yuqori trafikli ilovalar va yirik loyihalar uchun ajratilgan quvvat",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "60% tejash + 20% hamkorlik chegirmasi",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -8774,14 +8956,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "Cloud Startup tanlash"
       },
       {
         "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "tagline": "Dasturchilar va muhandislar uchun to'liq root ruxsatli virtual server",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "55% tejash + 20% hamkorlik chegirmasi",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -8822,7 +9004,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "KVM VPS tanlash"
       }
     ],
     "architectureHighlights": [
@@ -8913,7 +9095,17 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "20% maxsus chegirma bilan boshlash",
+    "ctaExploreCourses": "Dasturlash kurslarini ko'rish",
+    "bottomGuarantee": "30 kunlik so'zsiz pulni qaytarish kafolati",
+    "bottomInstant": "Bulutli hisob bir necha soniyada darhol faollashadi",
+    "bottomChat": "24/7 ustuvor onlayn chat yordami",
+    "bottomDisclaimer": "* Hostinger mustaqil bulutli xosting provayderi hisoblanadi. Maxsus chegirmalar, domen nomlari va yangilash shartlari bevosita Hostinger tomonidan boshqariladi.",
+    "metricSubTtfb": "LiteSpeed Enterprise orqali tezlashtirilgan",
+    "metricSubCdn": "Cloudflare Enterprise global tarmog'i",
+    "metricSubNvme": "Yuqori tezlikdagi korporativ NVMe (RAID-10)",
+    "metricSubSec": "Monarx va WAF bilan real vaqtda himoya"
   },
   "id": {
     "disclosure": "Safi Academy maintains an official affiliate partnership with Hostinger. When you purchase hosting through our verified referral link or apply coupon code 89LSHAHEEKCO, you receive an exclusive 20% additional discount on your order, and Safi Academy may earn a referral commission at no additional cost to you. This support enables us to continue offering free coding, cloud, and entrepreneurship education globally.",
@@ -9119,11 +9311,11 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
     ],
     "plans": [
       {
-        "name": "Premium Web Hosting",
-        "tagline": "Best for personal websites, blogs, and student projects",
+        "name": "Web Hosting Premium",
+        "tagline": "Pilihan tepat untuk website pribadi, blog, dan proyek portofolio",
         "price": "$2.99",
         "period": "/month",
-        "savings": "Save 75% + 20% Partner Off",
+        "savings": "Hemat 75% + 20% Diskon Mitra",
         "popular": false,
         "category": "web",
         "specs": [
@@ -9164,14 +9356,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Basic AI Website Builder"
           }
         ],
-        "ctaText": "Choose Premium Plan"
+        "ctaText": "Pilih Paket Premium"
       },
       {
-        "name": "Business Web Hosting",
-        "tagline": "Recommended for businesses, creators & e-commerce stores",
+        "name": "Web Hosting Bisnis",
+        "tagline": "Direkomendasikan untuk bisnis, kreator, dan toko online",
         "price": "$3.99",
         "period": "/month",
-        "savings": "Save 73% + 20% Partner Off",
+        "savings": "Hemat 73% + 20% Diskon Mitra",
         "popular": true,
         "category": "web",
         "specs": [
@@ -9216,14 +9408,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Full AI Website Builder Suite"
           }
         ],
-        "ctaText": "Choose Business Plan"
+        "ctaText": "Pilih Paket Bisnis"
       },
       {
         "name": "Cloud Startup",
-        "tagline": "Dedicated resources for viral traffic and high-growth apps",
+        "tagline": "Sumber daya server khusus untuk aplikasi dengan trafik tinggi",
         "price": "$9.99",
         "period": "/month",
-        "savings": "Save 60% + 20% Partner Off",
+        "savings": "Hemat 60% + 20% Diskon Mitra",
         "popular": false,
         "category": "cloud",
         "specs": [
@@ -9264,14 +9456,14 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Priority 24/7 VIP Support Queue"
           }
         ],
-        "ctaText": "Choose Cloud Startup"
+        "ctaText": "Pilih Cloud Startup"
       },
       {
-        "name": "KVM 2 Cloud VPS",
-        "tagline": "Dedicated root server power for engineers and developers",
+        "name": "VPS Cloud KVM 2",
+        "tagline": "Akses root penuh dan performa tinggi untuk pengembang & DevOps",
         "price": "$7.99",
         "period": "/month",
-        "savings": "Save 55% + 20% Partner Off",
+        "savings": "Hemat 55% + 20% Diskon Mitra",
         "popular": false,
         "category": "vps",
         "specs": [
@@ -9312,7 +9504,7 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
             "val": "Ubuntu, Debian, AlmaLinux, Rocky"
           }
         ],
-        "ctaText": "Choose KVM VPS"
+        "ctaText": "Pilih VPS KVM"
       }
     ],
     "architectureHighlights": [
@@ -9403,10 +9595,21 @@ export const hostingTranslations: Record<string, HostingTranslation> = {
         "a": "Yes. Every domain, subdomain, and parked domain hosted on Hostinger receives free, lifetime Let's Encrypt SSL certificates that install and renew automatically. You will never have to pay extra fees for website encryption."
       }
     ],
-    "isRtl": false
+    "isRtl": false,
+    "ctaGetStarted": "Mulai dengan Diskon Tambahan 20%",
+    "ctaExploreCourses": "Lihat Kursus Coding & Web Development",
+    "bottomGuarantee": "Jaminan 30 Hari Uang Kembali Tanpa Syarat",
+    "bottomInstant": "Aktivasi Akun Cloud Instan dalam Hitungan Detik",
+    "bottomChat": "Bantuan Prioritas Live Chat 24/7",
+    "bottomDisclaimer": "* Hostinger adalah penyedia cloud hosting independen. Diskon promosi, ketersediaan domain, dan ketentuan perpanjangan dikelola langsung oleh Hostinger.",
+    "metricSubTtfb": "Dioptimalkan dengan LiteSpeed Enterprise",
+    "metricSubCdn": "Jaringan Global Cloudflare Enterprise CDN",
+    "metricSubNvme": "Penyimpanan Kelas Enterprise NVMe (RAID-10)",
+    "metricSubSec": "Keamanan Real-Time Monarx & WAF"
   }
 };
 
 export function getHostingTranslation(locale: string): HostingTranslation {
-  return hostingTranslations[locale] || hostingTranslations["en"];
+  const normalized = (locale || "en").toLowerCase();
+  return hostingTranslations[normalized] || hostingTranslations.en;
 }

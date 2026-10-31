@@ -21,7 +21,7 @@ import {
   Laptop
 } from "lucide-react";
 import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getBankAccountServiceTranslation } from "@/utils/bankAccountServiceTranslations";
+import { getBankAccountServiceTranslation } from "./translations";
 import AdsterraNativeBanner from "@/components/ads/AdsterraNativeBanner";
 
 type AccountType = "Personal" | "Business";

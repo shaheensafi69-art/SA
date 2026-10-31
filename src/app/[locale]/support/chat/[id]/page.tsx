@@ -1,6 +1,5 @@
 "use client";
-import { getPortalTranslation } from "@/utils/portalTranslations";
-import { getSupportTranslation } from "@/utils/supportTranslations";
+import { getSupportTranslation } from "../../translations";
 
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -25,7 +24,6 @@ type TicketInfo = {
 export default function ChatScreen({ params }: { params: { id: string } }) {
   const pathname = usePathname() || "/en";
   const currentLocale = pathname.split("/")[1] || "en";
-  const t = getPortalTranslation(currentLocale);
   const st = getSupportTranslation(currentLocale);
     const router = useRouter();
     const supabase = createClient();
@@ -266,7 +264,7 @@ export default function ChatScreen({ params }: { params: { id: string } }) {
                                 <div className="w-1.5 h-1.5 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
                                 <div className="w-1.5 h-1.5 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
                             </div>
-                            <span className="text-[10px] text-neutral-400 font-bold tracking-widest uppercase ml-2">{t.common.loading}</span>
+                            <span className="text-[10px] text-neutral-400 font-bold tracking-widest uppercase ml-2">{st.loading}</span>
                         </div>
                     </div>
                 )}

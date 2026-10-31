@@ -3,6 +3,7 @@
 // ============================================================================
 
 export interface PaymentTranslation {
+  isRtl: boolean;
   secureBadge: string;
   chooseTitle: string;
   chooseDesc: string;
@@ -20,6 +21,7 @@ export interface PaymentTranslation {
 
 export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
   en: {
+    isRtl: false,
     secureBadge: "End-to-End Encrypted Checkout",
     chooseTitle: "Choose Your Payment Method",
     chooseDesc: "Select your preferred payment gateway to securely complete your digital order with instant verification.",
@@ -35,6 +37,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "Featured Payment & Financial Solutions",
   },
   fa: {
+    isRtl: true,
     secureBadge: "درگاه پرداخت امن و تایید شده",
     chooseTitle: "انتخاب روش پرداخت",
     chooseDesc: "برای تکمیل سفارش دیجیتال خود، یکی از روش‌های پرداخت زیر را انتخاب نمایید. کلیه پرداخت‌ها بلافاصله تایید می‌شوند.",
@@ -50,6 +53,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "پیشنهادهای ویژه پرداخت و خدمات مالی",
   },
   ps: {
+    isRtl: true,
     secureBadge: "خوندي او تایید شوې د پیسو تادیه",
     chooseTitle: "د تادیې طریقه غوره کړئ",
     chooseDesc: "د خپل ډیجیټل آرډر بشپړولو لپاره، لاندې یوه تګلاره غوره کړئ. ټولې تادیات سمدلاسه تایید کیږي.",
@@ -65,6 +69,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "د مالي او بانکي خدمتونو ځانګړي وړاندیزونه",
   },
   ar: {
+    isRtl: true,
     secureBadge: "بوابة دفع مشفرة وآمنة بالكامل",
     chooseTitle: "اختر وسيلة الدفع المناسبة",
     chooseDesc: "حدد بوابة الدفع المفضلة لإتمام طلبك الرقمي بأمان مع التحقق الفوري.",
@@ -80,6 +85,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "حلول الدفع والخدمات المصرفية المميزة",
   },
   ur: {
+    isRtl: true,
     secureBadge: "مکمل محفوظ اور انکرپٹڈ ادائیگی",
     chooseTitle: "ادائیگی کا طریقہ منتخب کریں",
     chooseDesc: "اپنے ڈیجیٹل آرڈر کی تصدیق اور تکمیل کے لیے ترجیحی ادائیگی کا گیٹ وے منتخب کریں۔",
@@ -95,6 +101,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "نمایاں ادائیگی اور مالیاتی حل",
   },
   de: {
+    isRtl: false,
     secureBadge: "Vollständig verschlüsselte Kasse",
     chooseTitle: "Wählen Sie Ihre Zahlungsmethode",
     chooseDesc: "Wählen Sie Ihr bevorzugtes Zahlungsgateway für eine sichere und sofort überprüfte Abwicklung.",
@@ -110,6 +117,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "Empfohlene Zahlungs- & Finanzlösungen",
   },
   fr: {
+    isRtl: false,
     secureBadge: "Paiement sécurisé de bout en bout",
     chooseTitle: "Choisissez votre mode de paiement",
     chooseDesc: "Sélectionnez votre passerelle de paiement pour finaliser votre commande avec vérification instantanée.",
@@ -125,6 +133,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "Solutions de paiement et financières recommandées",
   },
   es: {
+    isRtl: false,
     secureBadge: "Pago seguro y cifrado",
     chooseTitle: "Elige tu método de pago",
     chooseDesc: "Selecciona tu pasarela de pago para completar tu pedido digital con verificación instantánea.",
@@ -140,6 +149,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "Soluciones financieras y de pago destacadas",
   },
   ru: {
+    isRtl: false,
     secureBadge: "Защищенная система оплаты",
     chooseTitle: "Выберите способ оплаты",
     chooseDesc: "Выберите удобный шлюз оплаты для моментального подтверждения цифрового заказа.",
@@ -155,6 +165,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "Рекомендуемые платежные и финансовые решения",
   },
   tr: {
+    isRtl: false,
     secureBadge: "Uçtan Uca Şifreli Ödeme",
     chooseTitle: "Ödeme Yönteminizi Seçin",
     chooseDesc: "Dijital siparişinizi güvenle tamamlamak ve anında onay almak için tercih ettiğiniz ödeme kanalını seçin.",
@@ -170,6 +181,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "Öne Çıkan Ödeme ve Finans Çözümleri",
   },
   zh: {
+    isRtl: false,
     secureBadge: "端到端全程加密结账",
     chooseTitle: "选择您的支付方式",
     chooseDesc: "选择您偏好的安全支付网关，即刻完成数字订单并获取即时验证凭证。",
@@ -185,6 +197,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "精选支付与金融解决方案",
   },
   hi: {
+    isRtl: false,
     secureBadge: "एंड-टू-एंड एन्क्रिप्टेड भुगतान",
     chooseTitle: "अपनी भुगतान विधि चुनें",
     chooseDesc: "अपने डिजिटल ऑर्डर को सुरक्षित रूप से पूरा करने और तत्काल सत्यापन प्राप्त करने के लिए उपयुक्त गेटवे चुनें।",
@@ -200,6 +213,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "विशेष भुगतान और वित्तीय समाधान",
   },
   it: {
+    isRtl: false,
     secureBadge: "Checkout crittografato end-to-end",
     chooseTitle: "Scegli il tuo metodo di pagamento",
     chooseDesc: "Seleziona il gateway di pagamento per completare il tuo ordine in sicurezza con verifica istantanea.",
@@ -215,6 +229,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "Soluzioni di pagamento e finanziarie in evidenza",
   },
   pt: {
+    isRtl: false,
     secureBadge: "Pagamento seguro de ponta a ponta",
     chooseTitle: "Escolha o seu método de pagamento",
     chooseDesc: "Selecione o gateway de pagamento para concluir seu pedido digital com segurança e verificação instantânea.",
@@ -230,6 +245,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "Soluções financeiras e de pagamento em destaque",
   },
   ja: {
+    isRtl: false,
     secureBadge: "エンドツーエンド暗号化チェックアウト",
     chooseTitle: "お支払い方法を選択",
     chooseDesc: "デジタル注文を安全に完了し、即時確認を受けるために希望の決済ゲートウェイを選択してください。",
@@ -245,6 +261,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "注目の決済および金融ソリューション",
   },
   ko: {
+    isRtl: false,
     secureBadge: "종단간 암호화 결제",
     chooseTitle: "결제 수단 선택",
     chooseDesc: "디지털 주문을 안전하게 완료하고 즉각적인 확인을 받을 결제 게이트웨이를 선택하세요.",
@@ -260,6 +277,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "주요 결제 및 금융 솔루션",
   },
   nl: {
+    isRtl: false,
     secureBadge: "End-to-end versleutelde kassa",
     chooseTitle: "Kies uw betaalmethode",
     chooseDesc: "Selecteer uw gewenste betaalgateway om uw bestelling veilig te voltooien met directe verificatie.",
@@ -275,6 +293,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "Aanbevolen betaal- en financiële oplossingen",
   },
   uz: {
+    isRtl: false,
     secureBadge: "To'liq shifrlangan xavfsiz to'lov",
     chooseTitle: "To'lov usulini tanlang",
     chooseDesc: "Buyurtmangizni xavfsiz yakunlash va bir zumda tasdiqlash uchun qulay to'lov tizimini tanlang.",
@@ -290,6 +309,7 @@ export const paymentTranslationsMap: Record<string, PaymentTranslation> = {
     adTitle: "Tavsiya etilgan to'lov va moliyaviy yechimlar",
   },
   id: {
+    isRtl: false,
     secureBadge: "Checkout Terenkripsi Ujung ke Ujung",
     chooseTitle: "Pilih Metode Pembayaran Anda",
     chooseDesc: "Pilih gateway pembayaran pilihan Anda untuk menyelesaikan pesanan digital dengan aman dan verifikasi instan.",
