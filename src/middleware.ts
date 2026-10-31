@@ -66,9 +66,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl, 307);
   }
 
-  const isAdminRoute = pathname.includes('/admin');
+  const isAdminRoute = pathname === `/${currentLocale}/admin` || pathname.startsWith(`/${currentLocale}/admin/`);
   const isTeacherRoute = (pathname === `/${currentLocale}/teacher` || pathname.startsWith(`/${currentLocale}/teacher/`)) && !isTeacherOnboarding;
-  const isStudentRoute = pathname.includes('/student');
+  const isStudentRoute = pathname === `/${currentLocale}/student` || pathname.startsWith(`/${currentLocale}/student/`);
 
   const isProtectedRoute = isAdminRoute || isTeacherRoute || isStudentRoute;
 

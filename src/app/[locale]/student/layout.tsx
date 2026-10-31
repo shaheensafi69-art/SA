@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import {
   X, Sparkles, LogOut, Bell, Wallet, LayoutDashboard,
   Rss, User, Megaphone, Video,
-  FileText, Target, TrendingUp, Trophy, Bot, Headset, Settings, Grid
+  FileText, Target, TrendingUp, Trophy, Bot, Headset, Settings, Grid,
+  CalendarCheck, Award, Gift
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -62,15 +63,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { id: "overview", name: t.dashboard.overview, path: `/${currentLocale}/student`, icon: <LayoutDashboard size={22} /> },
     { id: "feed", name: t.dashboard.feed, path: `/${currentLocale}/feed`, icon: <Rss size={22} /> },
     { id: "profile", name: t.dashboard.myProfile, path: myProfilePath, icon: <User size={22} /> },
+    { id: "notifications", name: isRtl ? "اعلانات و رویدادها" : "Notifications", path: `/${currentLocale}/student/notifications`, icon: <Bell size={22} /> },
     { id: "announcements", name: t.dashboard.announcements, path: `/${currentLocale}/student/announcements`, icon: <Megaphone size={22} /> },
     { id: "liveCampus", name: t.dashboard.liveCampus, path: `/${currentLocale}/student/live-classes`, icon: <Video size={22} /> },
+    { id: "attendance", name: isRtl ? "حضور و غیاب" : "Attendance", path: `/${currentLocale}/student/attendance`, icon: <CalendarCheck size={22} /> },
     { id: "assignments", name: t.dashboard.assignments, path: `/${currentLocale}/student/assignments`, icon: <FileText size={22} /> },
     { id: "quizzes", name: t.dashboard.quizzes, path: `/${currentLocale}/student/quizzes`, icon: <Target size={22} /> },
+    { id: "certificates", name: isRtl ? "گواهینامه‌ها" : "Certificates", path: `/${currentLocale}/student/certificates`, icon: <Award size={22} /> },
     { id: "tradingJournal", name: t.dashboard.tradingJournal, path: `/${currentLocale}/student/trading-journal`, icon: <TrendingUp size={22} /> },
     { id: "wallet", name: t.dashboard.wallet, path: `/${currentLocale}/student/wallet`, icon: <Wallet size={22} /> },
+    { id: "referrals", name: isRtl ? "دعوت دوستان و پاداش" : "Referrals & Rewards", path: `/${currentLocale}/student/referrals`, icon: <Gift size={22} /> },
     { id: "achievements", name: t.dashboard.achievements, path: `/${currentLocale}/student/achievements`, icon: <Trophy size={22} /> },
     { id: "aiAssistant", name: t.dashboard.aiAssistant, path: "#", icon: <Bot size={22} />, disabled: true },
-    { id: "support", name: t.dashboard.support, path: `/${currentLocale}/support`, icon: <Headset size={22} /> },
+    { id: "support", name: t.dashboard.support, path: `/${currentLocale}/student/support`, icon: <Headset size={22} /> },
     { id: "settings", name: t.dashboard.settings, path: `/${currentLocale}/student/settings`, icon: <Settings size={22} /> },
   ];
 
@@ -79,12 +84,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       case "overview": return "from-blue-500/20 to-blue-500/5 text-blue-400 border-blue-500/30";
       case "feed": return "from-pink-500/20 to-pink-500/5 text-pink-400 border-pink-500/30";
       case "profile": return "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/30";
+      case "notifications": return "from-indigo-500/20 to-indigo-500/5 text-indigo-400 border-indigo-500/30";
       case "announcements": return "from-orange-500/20 to-orange-500/5 text-orange-400 border-orange-500/30";
       case "liveCampus": return "from-red-500/20 to-red-500/5 text-red-400 border-red-500/30";
+      case "attendance": return "from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/30";
       case "assignments": return "from-cyan-500/20 to-cyan-500/5 text-cyan-400 border-cyan-500/30";
       case "quizzes": return "from-purple-500/20 to-purple-500/5 text-purple-400 border-purple-500/30";
+      case "certificates": return "from-yellow-500/20 to-yellow-500/5 text-yellow-400 border-yellow-500/30";
       case "tradingJournal": return "from-teal-500/20 to-teal-500/5 text-teal-400 border-teal-500/30";
       case "wallet": return "from-yellow-500/20 to-yellow-500/5 text-yellow-400 border-yellow-500/30";
+      case "referrals": return "from-amber-500/20 to-amber-500/5 text-amber-400 border-amber-500/30";
       case "achievements": return "from-fuchsia-500/20 to-fuchsia-500/5 text-fuchsia-400 border-fuchsia-500/30";
       case "support": return "from-sky-500/20 to-sky-500/5 text-sky-400 border-sky-500/30";
       case "settings": return "from-slate-500/20 to-slate-500/5 text-slate-400 border-slate-500/30";
@@ -193,7 +202,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* ================= 2. DESKTOP FLOATING NOTIFICATION ================= */}
       <div className={`hidden lg:flex absolute top-6 ${isRtl ? 'left-10' : 'right-10'} z-50`}>
-        <Link href={`/${currentLocale}/student/announcements`} className="w-12 h-12 bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-[#C2185B] transition-all relative group shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
+        <Link href={`/${currentLocale}/student/notifications`} className="w-12 h-12 bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-[#C2185B] transition-all relative group shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
           <Bell className="w-5 h-5" />
           <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-indigo-500 rounded-full animate-pulse"></span>
         </Link>
@@ -206,7 +215,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <img src="/logo-without-b.png" alt="Safi Academy" className="relative z-10 w-8 h-8 object-contain" />
             <span className="relative z-10 font-black text-xs tracking-widest text-white uppercase">Safi Academy</span>
           </div>
-          <Link href={`/${currentLocale}/student/announcements`} className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-[#C2185B]">
+          <Link href={`/${currentLocale}/student/notifications`} className="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-neutral-400 hover:text-[#C2185B]">
             <Bell size={18} />
           </Link>
         </div>

@@ -1,17 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
-import {  useParams, useRouter , usePathname } from "next/navigation";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import { getPortalTranslation, isRtlPortal } from "@/utils/portalTranslations";
 import Link from "next/link";
-import { 
-  ArrowLeft, Loader2, Plus, Trash2, HelpCircle, 
-  Save, ListOrdered, AlertCircle, FileText, CheckCircle2, 
-  AlignLeft, ListChecks 
+import {
+  ArrowLeft,
+  Loader2,
+  Plus,
+  Trash2,
+  HelpCircle,
+  Save,
+  ListOrdered,
+  AlertCircle,
+  FileText,
+  CheckCircle2,
+  AlignLeft,
+  ListChecks,
+  Award,
+  Sparkles,
+  Calculator,
+  Search,
+  Filter,
+  Check,
+  X,
+  Copy,
+  ChevronDown,
+  Info
 } from "lucide-react";
 
-type Question = {
+interface Question {
   id: string;
   quiz_id: string;
   question_text: string;
@@ -21,7 +40,17 @@ type Question = {
   option_c: string | null;
   option_d: string | null;
   correct_option: string | null;
-};
+  question_type?: "multiple_choice" | "descriptive" | null;
+  created_at?: string;
+}
+
+interface QuizInfo {
+  id: string;
+  title: string;
+  passing_score: number;
+  quiz_type: string;
+  is_active: boolean;
+}
 
 export default function TeacherManageQuizQuestionsPage() {
   const pathname = usePathname() || "/en";
@@ -30,19 +59,23 @@ export default function TeacherManageQuizQuestionsPage() {
   const isRtl = isRtlPortal(currentLocale);
   const params = useParams();
   const router = useRouter();
-  
-  // رفع مشکل حساس به حروف در دریافت شناسه
+
   const quizId = (params?.quizId || params?.quizid || params?.id) as string;
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  const [quizInfo, setQuizInfo] = useState<QuizInfo | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [quizTitle, setQuizTitle] = useState("");
 
-  // استیت‌های مربوط به ثبت سوال
-  const [questionType, setQuestionType] = useState<"mcq" | "desc">("mcq");
+  // Filtering
+  const [filterType, setFilterType] = useState<"all" | "multiple_choice" | "descriptive">("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // New Question Form state
+  const [questionType, setQuestionType] = useState<"multiple_choice" | "descriptive">("multiple_choice");
   const [newQ, setNewQ] = useState({
     question_text: "",
     points: 10,
@@ -50,7 +83,7 @@ export default function TeacherManageQuizQuestionsPage() {
     option_b: "",
     option_c: "",
     option_d: "",
-    correct_option: "A"
+    correct_option: "A" as "A" | "B" | "C" | "D",
   });
 
   useEffect(() => {
@@ -59,34 +92,55 @@ export default function TeacherManageQuizQuestionsPage() {
     }
   }, [quizId]);
 
+  const showToast = (type: "success" | "error", text: string) => {
+    setToastMessage({ type, text });
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
   const fetchQuizAndQuestions = async () => {
     setIsLoading(true);
     const supabase = createClient();
 
     try {
-      // ۱. واکشی اطلاعات آزمون
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session?.user) {
+        router.push(`/${currentLocale}/login`);
+        return;
+      }
+
+      // 1. Fetch quiz info
       const { data: quizData, error: quizError } = await supabase
         .from("quizzes")
-        .select("title")
+        .select("id, title, passing_score, quiz_type, is_active")
         .eq("id", quizId)
         .single();
 
       if (quizError) throw quizError;
-      if (quizData) setQuizTitle(quizData.title);
+      setQuizInfo(quizData);
 
-      // ۲. واکشی لیست سوالات
+      // 2. Fetch questions
       const { data: questionsData, error: qError } = await supabase
         .from("quiz_questions")
-        .select("*")
+        .select("id, quiz_id, question_text, points, option_a, option_b, option_c, option_d, correct_option, question_type, created_at")
         .eq("quiz_id", quizId)
         .order("created_at", { ascending: true });
 
       if (qError) throw qError;
-      if (questionsData) setQuestions(questionsData);
+
+      // Normalize question types
+      const normalized = (questionsData || []).map((q: any) => {
+        const isDescriptive = q.question_type === "descriptive" || q.option_a === "Descriptive";
+        return {
+          ...q,
+          question_type: isDescriptive ? "descriptive" : "multiple_choice",
+        };
+      });
+
+      setQuestions(normalized);
 
     } catch (error: any) {
       console.error("Error fetching question bank:", error);
-      setErrorMsg("Failed to load the question bank. " + error.message);
+      showToast("error", "Failed to retrieve questions: " + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -94,16 +148,15 @@ export default function TeacherManageQuizQuestionsPage() {
 
   const handleAddQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMsg(null);
 
     if (!newQ.question_text.trim()) {
-      setErrorMsg("Question text cannot be empty.");
+      showToast("error", "Question prompt text cannot be empty.");
       return;
     }
 
-    if (questionType === "mcq") {
+    if (questionType === "multiple_choice") {
       if (!newQ.option_a.trim() || !newQ.option_b.trim() || !newQ.option_c.trim() || !newQ.option_d.trim()) {
-        setErrorMsg("All 4 options must be filled for a multiple-choice question.");
+        showToast("error", "All 4 options (A, B, C, D) are required for multiple-choice questions.");
         return;
       }
     }
@@ -112,16 +165,16 @@ export default function TeacherManageQuizQuestionsPage() {
     const supabase = createClient();
 
     try {
-      // تنظیم مقادیر بر اساس نوع سوال
       const payload = {
         quiz_id: quizId,
         question_text: newQ.question_text.trim(),
-        points: newQ.points,
-        option_a: questionType === "mcq" ? newQ.option_a.trim() : "Descriptive",
-        option_b: questionType === "mcq" ? newQ.option_b.trim() : "Descriptive",
-        option_c: questionType === "mcq" ? newQ.option_c.trim() : "Descriptive",
-        option_d: questionType === "mcq" ? newQ.option_d.trim() : "Descriptive",
-        correct_option: questionType === "mcq" ? newQ.correct_option : "A"
+        points: Number(newQ.points) || 10,
+        option_a: questionType === "multiple_choice" ? newQ.option_a.trim() : "Descriptive",
+        option_b: questionType === "multiple_choice" ? newQ.option_b.trim() : "Descriptive",
+        option_c: questionType === "multiple_choice" ? newQ.option_c.trim() : "Descriptive",
+        option_d: questionType === "multiple_choice" ? newQ.option_d.trim() : "Descriptive",
+        correct_option: questionType === "multiple_choice" ? newQ.correct_option : "A",
+        question_type: questionType,
       };
 
       const { data, error } = await supabase
@@ -133,8 +186,15 @@ export default function TeacherManageQuizQuestionsPage() {
       if (error) throw error;
 
       if (data) {
-        setQuestions([...questions, data]);
-        // ریست فرم
+        setQuestions((prev) => [
+          ...prev,
+          {
+            ...data,
+            question_type: questionType,
+          },
+        ]);
+
+        // Reset form
         setNewQ({
           question_text: "",
           points: 10,
@@ -142,20 +202,24 @@ export default function TeacherManageQuizQuestionsPage() {
           option_b: "",
           option_c: "",
           option_d: "",
-          correct_option: "A"
+          correct_option: "A",
         });
+
+        showToast("success", "Question successfully added to inventory!");
       }
     } catch (error: any) {
-      setErrorMsg(error.message || "Failed to add question.");
+      showToast("error", "Failed to save question: " + error.message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDeleteQuestion = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this question?")) return;
+    if (!confirm("Are you sure you want to permanently delete this question?")) return;
 
+    setIsDeletingId(id);
     const supabase = createClient();
+
     try {
       const { error } = await supabase
         .from("quiz_questions")
@@ -163,19 +227,46 @@ export default function TeacherManageQuizQuestionsPage() {
         .eq("id", id);
 
       if (error) throw error;
-      setQuestions(questions.filter(q => q.id !== id));
+      setQuestions((prev) => prev.filter((q) => q.id !== id));
+      showToast("success", "Question removed from inventory.");
     } catch (error: any) {
-      alert("Failed to delete question: " + error.message);
+      showToast("error", "Failed to delete question: " + error.message);
+    } finally {
+      setIsDeletingId(null);
     }
   };
 
-  const totalPoints = questions.reduce((acc, curr) => acc + (curr.points || 0), 0);
+  // Calculations
+  const totalPoints = useMemo(() => {
+    return questions.reduce((acc, curr) => acc + (Number(curr.points) || 0), 0);
+  }, [questions]);
+
+  const mcqCount = useMemo(() => {
+    return questions.filter((q) => q.question_type === "multiple_choice").length;
+  }, [questions]);
+
+  const descCount = useMemo(() => {
+    return questions.filter((q) => q.question_type === "descriptive").length;
+  }, [questions]);
+
+  const filteredQuestions = useMemo(() => {
+    return questions.filter((q) => {
+      if (filterType !== "all" && q.question_type !== filterType) return false;
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase().trim();
+        return q.question_text.toLowerCase().includes(query);
+      }
+      return true;
+    });
+  }, [questions, filterType, searchQuery]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#030305] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-fuchsia-500 animate-spin" />
-        <p className="text-fuchsia-500 text-xs font-black uppercase tracking-widest animate-pulse">{t.teacherPages.loadingQuestionBank}</p>
+        <p className="text-neutral-500 text-xs font-black uppercase tracking-widest animate-pulse">
+          Loading Question Inventory...
+        </p>
       </div>
     );
   }
@@ -183,207 +274,426 @@ export default function TeacherManageQuizQuestionsPage() {
   return (
     <div className="min-h-screen bg-[#030305] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden pb-32" dir={isRtl ? "rtl" : "ltr"}>
       
-      {/* Background Ambient Glows (Teacher Theme) */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-fuchsia-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-      <div className="fixed bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-700/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+      {/* Background Deep Glows */}
+      <div className="fixed top-[-10%] left-[-10%] w-[60vw] h-[60vw] bg-fuchsia-600/5 rounded-full blur-[150px] pointer-events-none z-0"></div>
+      <div className="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/5 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
-      <div className="relative z-10 max-w-5xl mx-auto space-y-8 sm:space-y-10 animate-[fadeIn_0.4s_ease-out]">
+      {/* Floating Toast Notification */}
+      {toastMessage && (
+        <div className={`fixed top-6 right-6 z-50 px-5 py-4 rounded-2xl border backdrop-blur-2xl shadow-2xl flex items-center gap-3 text-xs font-black uppercase tracking-wider animate-[fadeInDown_0.2s_ease-out] ${
+          toastMessage.type === "success"
+            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+            : "bg-red-500/10 border-red-500/30 text-red-400"
+        }`}>
+          {toastMessage.type === "success" ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+          <span>{toastMessage.text}</span>
+        </div>
+      )}
+
+      <div className="relative z-10 max-w-6xl mx-auto space-y-8 animate-[fadeIn_0.3s_ease-out]">
         
         {/* ================= HEADER ================= */}
-        <header className="flex flex-col md:flex-row justify-between md:items-start gap-6 bg-[#0a0a0f]/80 p-6 sm:p-8 rounded-[2rem] border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-fuchsia-500/5 rounded-full blur-[80px] pointer-events-none"></div>
+        <header className="bg-[#0a0a10]/80 p-6 sm:p-8 rounded-[2.5rem] border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden">
           
-          <div className="relative z-10">
-            <Link href={`/${currentLocale}/teacher/quizzes`} className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-fuchsia-400 transition-colors mb-4 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 w-fit">
-              <ArrowLeft size={14} /> Back to Exam Hub
-            </Link>
-            <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white mb-2">
-              {quizTitle} <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-purple-500">{t.teacherPages.terminalWord}</span>
-            </h1>
-            <p className="text-xs sm:text-sm text-neutral-400 font-medium">{t.teacherPages.manageQuestionBankDesc}</p>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-3 shrink-0 relative z-10">
-            <div className="px-5 py-3 rounded-2xl border text-xs font-black uppercase tracking-widest flex items-center gap-2 bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20 shadow-lg">
-              <ListOrdered size={16} /> {questions.length} Questions
+          <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-6">
+            
+            <div className="space-y-3">
+              <Link
+                href={`/${currentLocale}/teacher/quizzes`}
+                className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-fuchsia-400 transition-colors bg-white/5 px-3 py-1.5 rounded-full border border-white/5 active:scale-95"
+              >
+                <ArrowLeft size={13} className={isRtl ? "rotate-180" : ""} /> Return to Assessments
+              </Link>
+
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-400">
+                    Question Bank Manager
+                  </span>
+                  <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border ${
+                    quizInfo?.quiz_type === "chance"
+                      ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                      : "bg-purple-500/10 text-purple-300 border border-purple-500/20"
+                  }`}>
+                    {quizInfo?.quiz_type === "chance" ? "Chance (Retake)" : "Regular"}
+                  </span>
+                  <span className={`px-2 py-0.5 rounded-md text-[9px] font-mono ${
+                    quizInfo?.is_active
+                      ? "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20"
+                      : "text-neutral-400 bg-white/5 border border-white/5"
+                  }`}>
+                    {quizInfo?.is_active ? "Live" : "Draft"}
+                  </span>
+                </div>
+
+                <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
+                  {quizInfo?.title}
+                </h1>
+              </div>
             </div>
-            <div className="px-5 py-3 rounded-2xl border text-xs font-black uppercase tracking-widest flex items-center gap-2 bg-white/5 text-neutral-300 border-white/10 shadow-lg">
-              Total Points: <span className={totalPoints > 100 ? "text-red-400" : "text-white"}>{totalPoints}</span>
+
+            {/* Metrics Pills */}
+            <div className="flex flex-wrap sm:flex-nowrap lg:flex-col gap-3 shrink-0">
+              <div className="px-5 py-3 rounded-2xl bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-400 text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm">
+                <ListOrdered size={16} /> {questions.length} Questions ({mcqCount} MCQ • {descCount} Desc)
+              </div>
+              <div className="px-5 py-3 rounded-2xl bg-white/5 border border-white/10 text-neutral-300 text-xs font-mono flex items-center gap-2">
+                <Award size={16} className="text-amber-400" />
+                <span>Total Points:</span>
+                <span className={`font-black text-sm ${totalPoints === 100 ? "text-emerald-400" : "text-amber-400"}`}>
+                  {totalPoints} Pts
+                </span>
+                <span className="text-neutral-500 text-[10px]">(Pass: {quizInfo?.passing_score}%)</span>
+              </div>
             </div>
+
           </div>
+
         </header>
 
-        {errorMsg && (
-          <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-start gap-3 text-red-400 text-sm font-bold animate-[fadeInDown_0.3s_ease-out]">
-            <AlertCircle size={18} className="shrink-0 mt-0.5" />
-            <p>{errorMsg}</p>
-          </div>
-        )}
-
         {/* ================= FORM: ADD NEW QUESTION ================= */}
-        <div className="bg-[#0a0a0f]/80 border border-white/5 p-6 sm:p-8 rounded-[2.5rem] shadow-2xl backdrop-blur-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-fuchsia-500/10 blur-[50px] pointer-events-none"></div>
+        <div className="bg-[#0a0a10]/80 border border-white/5 p-6 sm:p-8 rounded-[2.5rem] shadow-2xl backdrop-blur-3xl space-y-6">
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-6 mb-6 relative z-10">
-            <h3 className="text-lg sm:text-xl font-black flex items-center gap-2 text-white">
-              <Plus size={22} className="text-fuchsia-500" /> Add New Question
-            </h3>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
+            <div>
+              <h3 className="text-base sm:text-lg font-black text-white flex items-center gap-2.5">
+                <Plus size={20} className="text-fuchsia-400" />
+                Add Question to Examination
+              </h3>
+              <p className="text-xs text-neutral-400 font-mono mt-0.5">
+                Select question category and specify answer requirements
+              </p>
+            </div>
 
-            {/* Type Switcher */}
-            <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 shrink-0">
+            {/* Question Type Switcher */}
+            <div className="flex bg-black/60 border border-white/10 rounded-2xl p-1.5 shrink-0">
               <button
-                onClick={() => setQuestionType("mcq")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                  questionType === "mcq" 
-                    ? "bg-fuchsia-500 text-white shadow-lg" 
-                    : "text-neutral-500 hover:text-white"
+                type="button"
+                onClick={() => setQuestionType("multiple_choice")}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                  questionType === "multiple_choice"
+                    ? "bg-fuchsia-600 text-white shadow-md"
+                    : "text-neutral-400 hover:text-white"
                 }`}
               >
-                <ListChecks size={14} /> Multiple Choice
+                <ListChecks size={15} /> Multiple Choice (۴ گزینه‌ای)
               </button>
               <button
-                onClick={() => setQuestionType("desc")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                  questionType === "desc" 
-                    ? "bg-fuchsia-500 text-white shadow-lg" 
-                    : "text-neutral-500 hover:text-white"
+                type="button"
+                onClick={() => setQuestionType("descriptive")}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                  questionType === "descriptive"
+                    ? "bg-purple-600 text-white shadow-md"
+                    : "text-neutral-400 hover:text-white"
                 }`}
               >
-                <AlignLeft size={14} /> Descriptive
+                <AlignLeft size={15} /> Descriptive (تشریحی)
               </button>
             </div>
           </div>
-          
-          <form onSubmit={handleAddQuestion} className="space-y-6 relative z-10">
-            {/* Question Text */}
+
+          <form onSubmit={handleAddQuestion} className="space-y-6">
+            
+            {/* Question Prompt */}
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-fuchsia-400 uppercase tracking-widest ml-1">{t.teacherPages.questionPrompt} *</label>
-              <textarea 
-                required placeholder={t.teacherPages.questionPromptPlaceholder} rows={3}
-                value={newQ.question_text} onChange={e => setNewQ({...newQ, question_text: e.target.value})}
-                className="w-full bg-[#050508] border border-white/10 rounded-2xl p-5 text-white text-base font-medium focus:outline-none focus:border-fuchsia-500/50 resize-y shadow-inner custom-scrollbar"
+              <div className="flex items-center justify-between">
+                <label className="text-[11px] font-black text-neutral-300 uppercase tracking-wider block">
+                  Question Prompt Text *
+                </label>
+                <span className="text-[10px] font-mono text-neutral-500">
+                  {questionType === "multiple_choice" ? "Multiple Choice Prompt" : "Open-ended Descriptive Prompt"}
+                </span>
+              </div>
+              <textarea
+                required
+                rows={3}
+                placeholder={
+                  questionType === "multiple_choice"
+                    ? "State the question problem or scenario clearly..."
+                    : "Describe the descriptive essay prompt, analytical question, or technical assignment..."
+                }
+                value={newQ.question_text}
+                onChange={(e) => setNewQ({ ...newQ, question_text: e.target.value })}
+                className="w-full bg-[#050508] border border-white/10 rounded-2xl p-4 text-white text-sm font-medium focus:outline-none focus:border-fuchsia-500/60 resize-y shadow-inner custom-scrollbar transition-colors leading-relaxed"
               />
             </div>
 
-            {/* Options (Only for MCQ) */}
-            {questionType === "mcq" && (
+            {/* Multiple Choice Options Builder */}
+            {questionType === "multiple_choice" ? (
               <div className="bg-white/[0.02] border border-white/5 p-5 rounded-2xl space-y-4">
-                <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest block mb-2">{t.teacherPages.answersCorrectOption} *</label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {(["A", "B", "C", "D"] as const).map((opt) => (
-                    <div key={opt} className={`flex items-center gap-3 p-2 rounded-xl border transition-all ${newQ.correct_option === opt ? 'bg-fuchsia-500/10 border-fuchsia-500/40' : 'bg-black/40 border-white/10'}`}>
-                      <button
-                        type="button"
-                        onClick={() => setNewQ({ ...newQ, correct_option: opt })}
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border transition-all ${newQ.correct_option === opt ? 'bg-fuchsia-500 border-fuchsia-500 text-white' : 'bg-white/5 border-white/10 text-neutral-500 hover:text-white'}`}
-                        title={t.teacherPages.markCorrectAnswer}
+                
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-black text-fuchsia-400 uppercase tracking-widest block">
+                    Define 4 Options & Click Badge to Mark Correct Answer
+                  </label>
+                  <span className="text-[10px] font-mono text-emerald-400">
+                    Correct Key: [{newQ.correct_option}]
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                  {(["A", "B", "C", "D"] as const).map((optKey) => {
+                    const isCorrect = newQ.correct_option === optKey;
+                    const fieldName = `option_${optKey.toLowerCase()}` as keyof typeof newQ;
+
+                    return (
+                      <div
+                        key={optKey}
+                        className={`flex items-center gap-3 p-2.5 rounded-2xl border transition-all ${
+                          isCorrect
+                            ? "bg-emerald-500/10 border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.15)]"
+                            : "bg-black/50 border-white/10 hover:border-white/20"
+                        }`}
                       >
-                        {newQ.correct_option === opt ? <CheckCircle2 size={16} /> : opt}
-                      </button>
-                      <input
-                        type="text"
-                        placeholder={`Option ${opt}`}
-                        value={newQ[`option_${opt.toLowerCase()}` as keyof typeof newQ] as string}
-                        onChange={(e) => setNewQ({ ...newQ, [`option_${opt.toLowerCase()}`]: e.target.value })}
-                        className="flex-1 bg-transparent border-none text-sm text-white focus:outline-none font-medium pr-2"
-                        required={questionType === "mcq"}
-                      />
-                    </div>
-                  ))}
+                        {/* Option Button */}
+                        <button
+                          type="button"
+                          onClick={() => setNewQ({ ...newQ, correct_option: optKey })}
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-black text-xs transition-all ${
+                            isCorrect
+                              ? "bg-emerald-500 text-white shadow-emerald-500/30"
+                              : "bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 border border-white/10"
+                          }`}
+                          title={`Select ${optKey} as correct answer`}
+                        >
+                          {isCorrect ? <CheckCircle2 size={16} /> : optKey}
+                        </button>
+
+                        <input
+                          required
+                          type="text"
+                          placeholder={`Option ${optKey} answer text...`}
+                          value={newQ[fieldName] as string}
+                          onChange={(e) => setNewQ({ ...newQ, [fieldName]: e.target.value })}
+                          className="flex-1 bg-transparent border-none text-sm text-white placeholder:text-neutral-600 focus:outline-none font-medium pr-2"
+                        />
+
+                        {isCorrect && (
+                          <span className="text-[9px] font-black text-emerald-400 uppercase tracking-wider pr-2 hidden sm:inline">
+                            Correct
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+              </div>
+            ) : (
+              /* Descriptive Notice */
+              <div className="p-4 rounded-2xl bg-purple-500/5 border border-purple-500/15 flex items-start gap-3">
+                <Info size={18} className="text-purple-400 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="text-xs font-bold text-purple-300">Descriptive Assessment Notice</p>
+                  <p className="text-[11px] text-neutral-400 leading-relaxed font-normal">
+                    Students will write their answers in an essay editor. You will review and award points for these answers in the <strong className="text-white">Exam Results Hub</strong>.
+                  </p>
                 </div>
               </div>
             )}
 
-            <div className="flex flex-col sm:flex-row gap-5 items-end justify-between border-t border-white/5 pt-6">
-              <div className="w-full sm:w-1/3">
-                <label className="text-[10px] font-black text-fuchsia-400 uppercase tracking-widest ml-1">{t.teacherPages.assignedPoints} *</label>
-                <input 
-                  required type="number" min="1" max="100"
-                  value={newQ.points} onChange={e => setNewQ({...newQ, points: Number(e.target.value)})}
-                  className="w-full bg-[#050508] border border-white/10 rounded-xl px-4 py-3.5 mt-2 text-center text-amber-400 text-sm font-black focus:outline-none focus:border-fuchsia-500/50"
-                />
+            {/* Bottom Row: Points Input & Save Button */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-3 border-t border-white/5">
+              
+              <div className="flex items-center gap-3">
+                <label className="text-[11px] font-black text-neutral-300 uppercase tracking-wider whitespace-nowrap">
+                  Points Allocation:
+                </label>
+                <div className="relative">
+                  <input
+                    required
+                    type="number"
+                    min="1"
+                    max="1000"
+                    value={newQ.points}
+                    onChange={(e) => setNewQ({ ...newQ, points: Math.max(1, Number(e.target.value)) })}
+                    className="w-24 bg-[#050508] border border-white/10 rounded-xl px-3 py-2.5 text-center text-amber-400 font-mono font-black text-sm focus:outline-none focus:border-fuchsia-500/60 shadow-inner"
+                  />
+                </div>
+                <div className="flex items-center gap-1">
+                  {[5, 10, 15, 20, 25].map((pts) => (
+                    <button
+                      key={pts}
+                      type="button"
+                      onClick={() => setNewQ({ ...newQ, points: pts })}
+                      className={`px-2 py-1 rounded-lg text-[10px] font-mono border transition-all ${
+                        newQ.points === pts
+                          ? "bg-amber-500/20 text-amber-300 border-amber-500/40 font-bold"
+                          : "bg-white/5 text-neutral-400 border-white/5 hover:text-white"
+                      }`}
+                    >
+                      {pts}p
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <button 
-                type="submit" disabled={isSubmitting}
-                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-[0_10px_30px_rgba(217,70,239,0.3)] flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95 shrink-0"
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-8 py-3.5 bg-gradient-to-r from-fuchsia-600 via-purple-600 to-indigo-600 hover:from-fuchsia-500 hover:to-indigo-500 text-white font-black uppercase tracking-wider text-xs rounded-xl transition-all shadow-[0_10px_25px_rgba(217,70,239,0.25)] disabled:opacity-40 flex items-center justify-center gap-2 active:scale-95"
               >
-                {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save Question
+                {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                <span>{isSubmitting ? "Adding Question..." : "Save Question to Bank"}</span>
               </button>
+
             </div>
+
           </form>
+
         </div>
 
-        {/* ================= QUESTION LIST INVENTORY ================= */}
+        {/* ================= INVENTORY LIST & SEARCH ================= */}
         <div className="space-y-6">
-          <h3 className="text-xl font-black text-white flex items-center gap-3 border-b border-white/5 pb-4">
-            <HelpCircle size={22} className="text-fuchsia-500" /> Current Inventory
-          </h3>
           
-          {questions.length === 0 ? (
-            <div className="text-center py-12 bg-[#0a0a0f]/50 border border-dashed border-white/10 rounded-[2rem]">
-              <p className="text-neutral-500 text-sm font-bold">{t.teacherPages.noQuestionsYet}</p>
+          {/* Inventory Controls */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+            
+            <h3 className="text-xl font-black text-white flex items-center gap-2.5">
+              <HelpCircle size={22} className="text-fuchsia-400" />
+              Existing Questions ({filteredQuestions.length})
+            </h3>
+
+            <div className="flex items-center gap-2">
+              
+              {/* Filter Tabs */}
+              <div className="flex bg-black/60 border border-white/10 rounded-xl p-1 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setFilterType("all")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    filterType === "all" ? "bg-fuchsia-600 text-white shadow-md" : "text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  All ({questions.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFilterType("multiple_choice")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    filterType === "multiple_choice" ? "bg-fuchsia-600 text-white shadow-md" : "text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  MCQ ({mcqCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFilterType("descriptive")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    filterType === "descriptive" ? "bg-purple-600 text-white shadow-md" : "text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  Descriptive ({descCount})
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Questions Grid */}
+          {filteredQuestions.length === 0 ? (
+            <div className="p-16 text-center bg-[#0a0a10]/50 border border-dashed border-white/10 rounded-[2.5rem]">
+              <HelpCircle size={44} className="text-neutral-600 mx-auto mb-3" />
+              <p className="text-neutral-400 text-sm font-bold">No questions match your current view.</p>
+              <p className="text-neutral-500 text-xs mt-1">Add your first question using the editor above.</p>
             </div>
           ) : (
             <div className="space-y-4">
-              {questions.map((q, index) => {
-                const isDescriptive = !q.option_a || q.option_a === "Descriptive";
+              {filteredQuestions.map((q, idx) => {
+                const isDescriptive = q.question_type === "descriptive";
 
                 return (
-                  <div key={q.id} className="bg-[#0a0a0f]/90 border border-white/5 p-5 sm:p-6 rounded-[1.5rem] flex flex-col sm:flex-row justify-between items-start gap-4 group hover:border-fuchsia-500/30 transition-colors shadow-lg relative overflow-hidden">
+                  <div
+                    key={q.id}
+                    className="bg-[#0a0a10]/90 border border-white/5 hover:border-fuchsia-500/30 p-5 sm:p-7 rounded-[2rem] transition-all duration-300 shadow-xl space-y-4 group relative overflow-hidden"
+                  >
                     
-                    <div className="flex gap-4 items-start flex-1 min-w-0 z-10">
-                      <div className="w-8 h-8 rounded-full bg-fuchsia-500/10 text-fuchsia-400 font-black flex items-center justify-center text-sm shrink-0 mt-1 border border-fuchsia-500/20 shadow-inner">
-                        {index + 1}
-                      </div>
-                      <div className="space-y-3 w-full">
-                        <p className="text-sm sm:text-base font-bold text-white leading-relaxed">{q.question_text}</p>
-                        
-                        {/* Tags */}
-                        <div className="flex items-center gap-2">
-                          <span className="px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[9px] font-black uppercase tracking-widest text-neutral-400 flex items-center gap-1.5">
-                            {isDescriptive ? <AlignLeft size={10} className="text-blue-400"/> : <ListChecks size={10} className="text-emerald-400"/>}
-                            {isDescriptive ? "Descriptive" : "Multiple Choice"}
-                          </span>
+                    {/* Header: Index, Type Badge, Points, Delete */}
+                    <div className="flex items-start justify-between gap-4">
+                      
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-xl bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/20 font-black flex items-center justify-center text-xs shrink-0 shadow-inner">
+                          {idx + 1}
                         </div>
+                        <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider border flex items-center gap-1.5 ${
+                          isDescriptive
+                            ? "bg-purple-500/10 text-purple-300 border-purple-500/20"
+                            : "bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20"
+                        }`}>
+                          {isDescriptive ? <AlignLeft size={11} /> : <ListChecks size={11} />}
+                          {isDescriptive ? "Descriptive (تشریحی)" : "Multiple Choice (۴ گزینه‌ای)"}
+                        </span>
+                      </div>
 
-                        {/* Options preview for MCQ */}
-                        {!isDescriptive && (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3 p-3 bg-white/[0.02] rounded-xl border border-white/5">
-                            {(["A", "B", "C", "D"] as const).map(optKey => {
-                              const optVal = q[`option_${optKey.toLowerCase()}` as keyof typeof q];
-                              const isCorrect = q.correct_option === optKey;
-                              return optVal ? (
-                                <div key={optKey} className={`flex items-center gap-2 text-xs font-medium ${isCorrect ? 'text-emerald-400' : 'text-neutral-400'}`}>
-                                  <span className={`w-5 h-5 rounded-md flex items-center justify-center text-[9px] font-black shrink-0 ${isCorrect ? 'bg-emerald-500/20 border border-emerald-500/30' : 'bg-black border border-white/10'}`}>
-                                    {optKey}
+                      <div className="flex items-center gap-3">
+                        <span className="px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 font-mono text-xs font-black">
+                          {q.points} Pts
+                        </span>
+
+                        <button
+                          type="button"
+                          disabled={isDeletingId === q.id}
+                          onClick={() => handleDeleteQuestion(q.id)}
+                          className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl transition-all active:scale-95 disabled:opacity-40"
+                          title="Delete Question"
+                        >
+                          {isDeletingId === q.id ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
+                        </button>
+                      </div>
+
+                    </div>
+
+                    {/* Question Prompt */}
+                    <div className="pl-0 sm:pl-11">
+                      <p className="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        {q.question_text}
+                      </p>
+                    </div>
+
+                    {/* MCQ Options Display */}
+                    {!isDescriptive && (
+                      <div className="pl-0 sm:pl-11 pt-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
+                          {(["A", "B", "C", "D"] as const).map((optKey) => {
+                            const optText = q[`option_${optKey.toLowerCase()}` as keyof Question] as string;
+                            const isCorrect = q.correct_option === optKey;
+
+                            if (!optText || optText === "Descriptive") return null;
+
+                            return (
+                              <div
+                                key={optKey}
+                                className={`flex items-center gap-2.5 p-2 rounded-xl text-xs font-medium border ${
+                                  isCorrect
+                                    ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+                                    : "bg-black/30 border-white/5 text-neutral-300"
+                                }`}
+                              >
+                                <span className={`w-6 h-6 rounded-lg flex items-center justify-center font-black text-[10px] shrink-0 ${
+                                  isCorrect ? "bg-emerald-500 text-white" : "bg-white/5 text-neutral-400"
+                                }`}>
+                                  {optKey}
+                                </span>
+                                <span className="truncate flex-1">{optText}</span>
+                                {isCorrect && (
+                                  <span className="text-[9px] font-black uppercase text-emerald-400 font-mono pr-1">
+                                    Correct
                                   </span>
-                                  <span className="truncate">{optVal}</span>
-                                </div>
-                              ) : null;
-                            })}
-                          </div>
-                        )}
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="flex flex-row sm:flex-col items-center gap-3 shrink-0 self-end sm:self-start w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-white/5 z-10">
-                      <div className="flex-1 sm:flex-none text-center px-4 py-2 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
-                        {q.points} Points
-                      </div>
-                      <button 
-                        onClick={() => handleDeleteQuestion(q.id)} 
-                        className="p-3 sm:px-4 sm:py-2 bg-red-500/5 hover:bg-red-500/20 text-red-500/70 hover:text-red-400 rounded-xl transition-all border border-red-500/10 active:scale-95 flex items-center justify-center gap-2 text-xs font-bold sm:w-full"
-                      >
-                        <Trash2 size={14}/> <span className="sm:hidden">{t.teacherPages.delete}</span>
-                      </button>
-                    </div>
+                    )}
 
                   </div>
                 );
               })}
             </div>
           )}
+
         </div>
 
       </div>
